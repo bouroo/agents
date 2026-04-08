@@ -51,7 +51,7 @@ Run a comprehensive health check on the project with automatic fixing where poss
   ```
   grep -rniE '(password|secret|api_key|token|private_key)\s*[:=]' --include='*.go' --include='*.ts' --include='*.py'
   ```
-- Check for known vulnerability patterns (SQL injection, path traversal, unsafe deserialization).
+- Check for known vulnerability patterns (SQL injection, rooted path traversal, unsafe deserialization).
 - **Auto-fix**: For fixable security issues:
   - Replace hardcoded secrets with environment variable references or placeholder markers
   - Add `.env` to `.gitignore` if missing

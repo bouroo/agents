@@ -113,7 +113,7 @@ Items needing resolution before implementation begins.
    - Data model definitions
    - API contracts
    - Module boundaries
-   - Test requirements (one test task per requirement)
+   - Test requirements (one test task per requirement - Red-Green-Refactor)
 3. Annotate each task:
    - `[parallel]` — can run concurrently with other parallel tasks
    - `[sequential]` — depends on a prior task (list the dependency)

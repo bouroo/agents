@@ -22,12 +22,13 @@ Perform a structured review of `$ARGUMENTS` (or the current diff if no target is
    | Dimension | Checks |
    |---|---|
    | **Correctness** | Logic errors, off-by-one, unhandled edge cases, race conditions |
-   | **Security** | Input validation, path traversal, secrets in code, injection risks |
-   | **Performance** | Unnecessary allocations, N+1 queries, missing caching, unbuffered I/O |
-   | **Readability** | Cyclomatic complexity <10, descriptive names, no magic values, flat control flow |
-   | **Error handling** | All errors checked, wrapped with context, sentinel errors for matching |
+   | **Security** | Input validation, rooted path traversal prevention, least-privilege, no secrets logged or hardcoded |
+   | **Performance** | Memory pre-allocation, object pooling, zero-copy, buffered I/O, lazy initialization |
+   | **Readability** | Clarity over writeability, cyclomatic complexity <10, explicit names, flat control flow |
+   | **Simplicity** | Least mechanism, core language features over wrappers (anti-abstraction), no speculative features |
+   | **Error handling** | Validated system boundaries, errors wrapped with context, sentinel errors for matching |
    | **Consistency** | Naming conventions, export patterns, file organization match project norms |
-   | **Test coverage** | Error paths covered, descriptive test names, no change-detector tests |
+   | **Test coverage** | Test-first approach, error paths covered, descriptive test names, no change-detector tests |
 
 4. **Report** — Output a structured review with severity ratings:
 

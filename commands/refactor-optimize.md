@@ -39,8 +39,9 @@ Apply these patterns when applicable:
 | **Simplify control flow** | Early returns, guard clauses, eliminate flag variables |
 | **Remove duplication** | Same logic in 2+ places (but avoid premature abstraction) |
 | **Tighten types** | Replace `any`/`interface{}` with concrete types; prevent invalid states by design |
-| **Pre-allocate** | Known-size slices/maps without `make` with capacity |
-| **Error context** | Bare errors wrapped with `fmt.Errorf("doing X: %w", err)` or equivalent |
+| **Memory efficiency** | Pre-allocate slices/maps, use object pooling, zero-copy views |
+| **I/O & Concurrency** | Use buffered I/O, batch operations, structured concurrency, lazy initialization |
+| **Error context** | Bare errors wrapped with context (`fmt.Errorf("doing X: %w", err)`) |
 
 ## Constraints
 
