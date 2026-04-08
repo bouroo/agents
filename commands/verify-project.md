@@ -1,5 +1,5 @@
 ---
-description: Validate project health, deps, lint, security, and tests with auto-fix
+description: Validate project health, deps, lint, static analysis, vuln scanning, security, and tests with auto-fix
 agent: code
 subtask: true
 ---
@@ -45,7 +45,55 @@ Run a comprehensive health check on the project with automatic fixing where poss
   - Python: `ruff check --fix`, `ruff format`, `black .`
 - Report violations that cannot be auto-fixed, grouped by rule/type with file paths and line numbers.
 
-### 5. Security
+### 5. Static Check
+
+Run deep static analysis tools that go beyond basic linting to detect logic errors, performance issues, dead code, and correctness problems:
+
+- **Go**: `staticcheck ./...`, `go vet ./...`
+- **TypeScript/JS**: `tsc --noEmit` (type check), `ts-prune` (unused exports)
+- **Python**: `mypy .` or `pytype`, `vulture` (dead code)
+- **Rust**: `cargo clippy -- -W clippy::all` (already partially covered in lint; use stricter settings here)
+- **Java**: `spotbugs`, `PMD`
+- **C/C++**: `cppcheck --enable=all`, `clang-tidy`
+- **Auto-fix**: Most static analysis findings require manual fixes. Auto-fixable items include:
+  - Unused imports: remove automatically (Go: `golangci-lint run --fix`, Python: `ruff check --fix`)
+  - Dead code: remove unused functions/variables if confidently unreachable
+  - Missing type annotations: add inferred types where the tool can determine them (Python: `mypy --strict` hints)
+- Report findings grouped by severity (error / warning / info) with file paths and line numbers.
+
+### 6. Vulnerability Check
+
+Scan the project's source code **and** dependency graph for known CVEs, vulnerable functions, and insecure patterns:
+
+- **Dependency vulnerability scanning** (run the appropriate tool for the language):
+  - Go: `govulncheck ./...`
+  - Node: `npm audit`, `yarn audit`, `pnpm audit`
+  - Python: `pip-audit`, `safety check`
+  - Rust: `cargo audit`
+  - Java: `OWASP Dependency-Check`
+  - Multi-language: `trivy fs .`, `grype dir:.`
+- **Source code vulnerability scanning** (detect insecure API usage, known bad patterns):
+  - Go: `govulncheck ./...` (also traces vulnerable symbol usage in code)
+  - Node: `snyk code test`, `eslint-plugin-security`
+  - Python: `bandit -r .`
+  - General: `semgrep --config auto`
+- **Container / IaC scanning** (if Dockerfiles or manifests are present):
+  - `trivy image <image>` or `trivy config .`
+  - `grype <image>`
+- **Auto-fix**:
+  - For dependency CVEs: attempt to upgrade the vulnerable package to the nearest non-breaking patched version
+    - Go: `go get -u=patch <module>`, `go mod tidy`
+    - Node: `npm audit fix` (or `npm audit fix --force` for breaking patches)
+    - Python: `pip install --upgrade <package>`
+    - Rust: `cargo update`
+  - For source code findings: flag for manual review — auto-fixing vulnerability patterns without understanding context is unsafe
+- Report:
+  - Total CVEs found, grouped by severity (critical / high / medium / low)
+  - Whether each CVE is actually called (reachable) vs. only in the dependency graph
+  - Packages and versions involved, with links to CVE details
+  - Which CVEs were auto-fixed vs. require manual intervention
+
+### 7. Security
 
 - Scan for hardcoded secrets, API keys, tokens using `grep` for common patterns:
   ```
@@ -58,7 +106,7 @@ Run a comprehensive health check on the project with automatic fixing where poss
   - Generate `.env.example` with placeholder names (no actual values)
   - Flag complex issues (SQL injection, path traversal) for manual review with specific file/line references
 
-### 6. Tests
+### 8. Tests
 
 - Run the full test suite with coverage:
   - Go: `go test -cover -race ./...`
@@ -74,7 +122,7 @@ Run a comprehensive health check on the project with automatic fixing where poss
   - Coverage percentage (target >80% for business logic)
   - Any flaky or race-condition failures that require manual intervention
 
-### 7. Auto-Fix Summary
+### 9. Auto-Fix Summary
 
 After each fixable issue is addressed, re-run the relevant check to verify the fix succeeded.
 
@@ -86,11 +134,13 @@ Track auto-fix results:
 |-------------|--------------|-------|-----------|--------|
 | Dependencies| N            | N     | 0         | ✓      |
 | Lint        | N            | N     | M         | !      |
+| Static      | N            | N     | M         | !      |
+| Vuln        | N            | N     | M         | !      |
 | Security    | N            | N     | M         | !      |
 | Tests       | N            | N     | M         | !      |
 ```
 
-### 8. Report
+### 10. Report
 
 Output a structured health report:
 
@@ -103,6 +153,8 @@ Output a structured health report:
 | Dependencies| ✓/✗/!  | <summary> (auto-fixed: N issues) |
 | Build       | ✓/✗/!  | <summary>                        |
 | Lint        | ✓/✗/!  | <summary> (auto-fixed: N issues) |
+| Static      | ✓/✗/!  | <summary>                        |
+| Vuln        | ✓/✗/!  | <summary> (auto-fixed: N issues) |
 | Security    | ✓/✗/!  | <summary> (auto-fixed: N issues) |
 | Tests       | ✓/✗/!  | <summary>                        |
 
