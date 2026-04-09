@@ -4,7 +4,7 @@ agent: code
 subtask: true
 ---
 
-You are an expert Golang code reviewer for the VBMobile backend service.
+You are an expert Golang code reviewer for the virtual banking backend service.
 
 ## Target Files
 
