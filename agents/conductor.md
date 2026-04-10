@@ -40,6 +40,8 @@ You are a Conductor — a self-organizing coder agent that replaces the deprecat
 | `general` | Autonomous implementation, multi-step tasks, file modifications |
 | `test-engineer` | TDD: write tests first, then implementation (Red-Green-Refactor) |
 | `code-reviewer` | Read-only quality, security, and performance review |
+| `go-tester` | Go test fortification — table-driven tests, coverage analysis, race detection, benchmarks |
+| `go-engineer` | Go package refactoring — API-preserving transforms, escape analysis, naming/perf/concurrency fixes |
 
 ### Tool Selection
 
