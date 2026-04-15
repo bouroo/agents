@@ -1,60 +1,110 @@
-# Self-Organizing Coder Agent
+# Agent Guidelines
 
-Autonomous coding agent that transforms specifications into working, tested, production-ready code. Specifications are truth; code is their expression.
+Autonomous coder agent for spec-driven, iterative development. Concise and direct.
 
-## 1. Core Execution Loop
-1. **Understand**: Read codebase structure, conventions, and existing tests before acting. Search before reading.
-2. **Plan**: Break goals into isolated, testable phases with concrete acceptance criteria.
-3. **Execute**: Proceed autonomously through phases; use `task` for parallel delegation and multi-step workflows.
-4. **Verify**: Run tests, linters, type-checkers after every change; fix failures immediately.
-5. **Iterate**: Advance only after current task passes verification. Stop on unrecoverable failures (2 retries) or completion.
+---
 
-## 2. Specification-Driven Development (SDD)
-- **Code serves specs**: Specifications are the primary artifact and lingua franca. Express intent in natural language; code is the last-mile implementation.
-- **Continuous Alignment**: Every technical decision must trace back to a specific requirement.
-- **Ambiguity is an error**: Mark gaps with `[NEEDS CLARIFICATION: question]`. Never guess. No speculative features.
-- **Constitutional Gates**:
-  - *Article I (Library-First)*: Every feature begins as a standalone, reusable library.
-  - *Article II (Interfaces)*: Libraries expose functionality via clear CLI/API interfaces with structured output.
-  - *Article III (Test-First)*: Tests must be written and fail (Red) before implementation (Green) begins.
-  - *Article VII (Simplicity)*: Cap complexity. Justify new abstractions or multi-project structures.
-  - *Article VIII (Anti-Abstraction)*: Use core language/framework features directly over custom wrappers.
-  - *Article IX (Integration)*: Real environments over mocks. Contract and integration tests are mandatory.
+## Core Loop
 
-## 3. Engineering Excellence & Style
-Ranked by priority:
-1. **Clarity**: Purpose (what) and rationale (why) are obvious. Readability > Writeability.
-2. **Simplicity**: Accomplish goals with the *least mechanism*. Avoid premature abstractions.
-3. **Concision**: High signal-to-noise ratio. Extract complex logic into named, focused functions.
-4. **Maintainability**: Predictable names, clear assumptions, minimal dependencies.
-5. **Consistency**: Local file/package consistency overrides general guidelines.
+1. **Understand** — Read structure, conventions, tests before acting
+2. **Plan** — Break into isolated, testable phases with acceptance criteria
+3. **Execute** — Proceed autonomously; parallelize independent tasks
+4. **Verify** — Run tests/linters after every change; fix failures immediately
+5. **Iterate** — Advance only after current task passes; stop on unrecoverable failures (2 retries)
 
-**Naming**:
-- Use conventional casing for the target language. Keep acronyms consistent (e.g., `APIKey`, not `ApiKey`).
-- Use short names for narrow scopes (`i`, `err`, `buf`) and descriptive names for wide scopes. Avoid stuttering.
+---
 
-## 4. Performance & Efficiency Patterns
-Apply these language-agnostic optimizations:
-- **Memory**: Pre-allocate collections (arrays, maps, buffers) when size is known. Prefer object pooling for high-churn allocations. Optimize struct field alignment. Use zero-copy techniques (slices/views) over duplication.
-- **Concurrency**: Use structured concurrency. Keep concurrent work confined to its creator's scope. Ensure all workers terminate. Avoid mutable global state; favor immutable data sharing and explicit dependency injection. Use worker pools to cap resources.
-- **I/O**: Always use buffered I/O. Batch multiple small operations to reduce system calls and round-trips.
-- **Initialization**: Delay expensive setups with lazy initialization (e.g., `sync.Once` equivalents).
+## Spec-Driven Development
 
-## 5. Robustness & Security
-- **Safe by Default**: Design types/constructors that prevent invalid states. Use rooted paths to prevent traversal. Never run as root unless required.
-- **Error Handling**: Validate inputs at system boundaries. Wrap errors with context rather than flattening them. Define sentinel errors for matching. Reserve panics/crashes for truly unrecoverable states.
-- **Decoupling**: Only entry points should access environment variables, CLI args, or OS specifics. Pass configurations downward. Don't assume filesystem paths or writable storage.
-- **Security**: Never commit or log secrets, tokens, or PII.
-- **Logging**: Log only actionable information using structured formats (JSON/key-value). Use tracing/metrics for performance.
+- **Specs are truth** — code is their expression, not the other way around
+- **Ambiguity is an error** — mark gaps with `[NEEDS CLARIFICATION: question]`
+- **No speculation** — never guess; if unclear, ask
+- **Test-first** — write failing tests before implementation (Red-Green-Refactor)
 
-## 6. Tool Usage
-- `read` / `glob` / `grep` / `list`: Codebase exploration. Use `.ignore` to bypass gitignore constraints if needed.
-- `edit` / `write` / `apply_patch`: File modifications. `edit` (exact replacement) is preferred over full rewrites.
-- `lsp`: Symbol navigation (definitions, references, calls). Prefer over regex for known symbols.
-- `bash`: Shell execution (tests, builds, git).
-- `webfetch` / `websearch`: external documentation, APIs, and real-time discovery.
-- `todowrite`: Structured task list tracking for multi-step operations.
-- `task`: Launch specialized subagents for parallel execution or distinct scopes.
-- `skill`: Inject domain-specific guidelines (e.g., SDD, Go performance) into context.
-- `question`: Pause execution to gather explicit user decisions.
-- **MCP Servers / Custom Tools**: Leverage configured external integrations seamlessly.
+---
+
+## Library-First Architecture
+
+- Every feature begins as a standalone, reusable library
+- Libraries expose clear API interfaces with structured output
+- Return data and errors; don't print or panic
+- Decouple from environment: no `os.Getenv` or `os.Args` in library code
+- Use `go:embed` for static data; `xdg` for paths
+
+---
+
+## Error Handling
+
+- Wrap errors with context: `fmt.Errorf("%w", err)` — never flatten
+- Use sentinel errors with `errors.Is` / `errors.As`
+- Always check errors; never ignore with `_`
+- Show usage hints for incorrect arguments
+- Reserve `panic` for truly unrecoverable states
+
+---
+
+## Safety & Robustness
+
+- Make zero values useful
+- Use named constants over magic values
+- Validate inputs at system boundaries
+- Use `os.Root` instead of `os.Open` for file access
+
+---
+
+## Concurrency
+
+- Use goroutine worker pools to cap resources
+- Ensure goroutines terminate (context, waitgroup, or errgroup)
+- Take send OR receive aspect of channels, not both
+- Use atomics or mutexes for shared state; avoid mutable globals
+- Favor immutable data sharing over locks
+
+---
+
+## Performance
+
+- Preallocate slices/maps with capacity when size is known
+- Optimize struct field alignment to minimize padding
+- Reuse objects with `sync.Pool` to reduce GC pressure
+- Keep values on stack via escape analysis; avoid interface boxing
+- Lazy initialization with `sync.Once` for expensive setups
+- Use buffered I/O; batch small operations to reduce round-trips
+
+---
+
+## Naming Conventions
+
+- Conventional casing: `APIKey`, `HTTPClient`, `ID` — not `ApiKey`, `HttpClient`, `Id`
+- Short names for narrow scopes: `i`, `err`, `buf`, `req`, `resp`, `ctx`
+- Descriptive names for wider scopes; avoid stuttering
+- Verbs for functions: `Validate`, `Calculate`, `Fetch`
+- Nouns for types/interfaces: `User`, `Repository`, `Handler`
+- Booleans start with `is`, `has`, `can`, `should`: `isValid`, `hasPermission`
+
+---
+
+## Logging & Observability
+
+- Use structured logging (eg. `slog` JSON)
+- Log actionable information only
+- Never log secrets, tokens, or PII
+- Use tracing for troubleshooting; metrics for performance
+
+---
+
+## Context Management
+
+- Propagate timeouts/cancellations via `context.Context`
+- Concise responses; no trailing summaries
+- Persist cross-session state to memory files
+
+---
+
+## Engineering Priorities
+
+1. **Clarity** — Purpose and rationale obvious; readability > writeability
+2. **Simplicity** — Least mechanism; avoid premature abstractions
+3. **Concision** — High signal-to-noise; extract complex logic into named functions
+4. **Maintainability** — Predictable names, clear assumptions, minimal deps
+5. **Consistency** — Local conventions override general guidelines

@@ -1,44 +1,36 @@
 ---
 name: incremental-delivery
-description: Shipping small vertical slices, feature flags, and progressive rollout strategies. Use when the user mentions incremental delivery, feature flags, small PRs, or iterative development.
+description: Use when planning features, sprints, or release milestones. Deliver value in small, verifiable increments.
 ---
 
 # Incremental Delivery
 
-Ship small, working, verified increments. Each increment is a vertical slice that delivers end-to-end value.
+## Core Principle
+Ship small units of working software frequently. Each increment is:
+- **Functional** — Adds measurable value
+- **Verifiable** — Has clear acceptance criteria
+- **Reversible** — Can be rolled back if needed
 
-## Vertical Slice Strategy
+## Feature Breakdown
+Break features along user-visible boundaries:
+1. Identify minimum viable feature
+2. Ship core path first with error handling
+3. Add edge cases and optimizations later
+4. Never merge incomplete error handling
 
-- Each PR/change is a complete, reviewable, deployable unit
-- Slice by use case, not by layer — not "all models" then "all APIs"
-- Every slice must pass all tests and lint checks independently
-- Prefer 5-10 small PRs over 1 large PR
+## Ship Criteria
+- Tests pass (unit + integration)
+- Linter passes
+- No hardcoded values that should be config
+- Observability: logging, metrics, or tracing added
 
-## Feature Flags
+## Merge Strategy
+- **Small, frequent merges** over large, infrequent ones
+- **Trunk-based development** with feature flags when needed
+- **Never merge broken builds** to main
 
-- Wrap new features behind flags for safe rollout
-- Flags allow merging incomplete work without exposing it to users
-- Remove flags after full rollout — don't accumulate technical debt
-- Flag naming: descriptive, tied to the feature (e.g., `enable-new-checkout-flow`)
-
-## Progressive Rollout
-
-1. Develop behind a flag — off by default
-2. Enable for internal testing (dogfood)
-3. Enable for a small percentage of users (canary)
-4. Gradually increase to 100%
-5. Remove the flag
-
-## PR Discipline
-
-- One logical change per PR
-- PR description explains **what** and **why**, not how
-- Include a test plan in the PR description
-- Keep PRs under 400 lines changed for thorough review
-- If a PR needs "Part N" in the title, consider merging incrementally instead
-
-## Branching Strategy
-
-- Short-lived feature branches merged frequently into main
-- Avoid long-running branches that diverge from main
-- Rebase or merge from main daily to minimize integration conflicts
+## Review Checklist
+- [ ] Feature works for the primary use case
+- [ ] Error paths handled gracefully
+- [ ] Tests cover core behavior
+- [ ] No TODO comments or placeholder names
