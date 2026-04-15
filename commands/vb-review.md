@@ -1,6 +1,6 @@
 ---
 description: Virtual Banking Mobile Backend Review Checklist - Comprehensive code quality, security, and architecture review
-agent: code
+agent: general
 subtask: true
 ---
 
@@ -34,7 +34,7 @@ Read every file in scope. Understand intent, context, and conventions before jud
 
 ### 4. Checklist Evaluation
 
-Evaluate code against the following checklist. Use `task` with `code-reviewer` subagent for large scopes.
+Evaluate code against the following checklist. Use `task` with `general` subagent for large scopes.
 
 ---
 

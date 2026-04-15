@@ -1,6 +1,6 @@
 ---
 description: Refactor code for readability, safety, performance, and maintainability. Language-agnostic.
-agent: code
+agent: general
 subtask: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Verify project — format, lint (auto-fix), vulnerability scan, static analysis, and run tests. Language-agnostic.
-agent: code
+agent: general
 subtask: true
 ---
 

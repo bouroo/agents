@@ -9,31 +9,24 @@ Shared agent configuration for Claude Code, Gemini, OpenCode, and Kilo. One sour
 ├── AGENTS.md              # Core agent instructions (symlinked to each tool)
 ├── link.sh                # Bootstrap: creates symlinks for all supported tools
 ├── agents/                # Named agent modes (OpenCode/Kilo)
-│   ├── conductor.md       # Orchestrator — waves of parallel subagent work
-│   ├── code-reviewer.md   # Read-only quality, security, and performance reviewer
-│   ├── test-engineer.md   # TDD specialist — Red-Green-Refactor cycle
-│   ├── go-engineer.md     # Go refactoring — API-preserving transforms
-│   └── go-tester.md       # Go test fortification — coverage, races, benchmarks
+│   └── conductor.md       # Autonomous conductor — decomposes tasks, delegates to subagents
 ├── commands/              # Slash commands
-│   ├── spec.md            # /spec — feature spec → plan → tasks pipeline
-│   ├── code-review.md     # /code-review — quality, security, performance review
-│   ├── verify-project.md  # /verify-project — project health validation
-│   ├── refactor-optimize.md # /refactor-optimize — feature-by-feature refactoring
+│   ├── refactor.md        # /refactor — readability, safety, performance, maintainability
+│   ├── verify-project.md  # /verify-project — format, lint, vulnerability scan, tests
 │   └── vb-review.md       # /vb-review — VB Mobile Backend review checklist
-├── docs/                  # Reference documentation
-│   └── go-bestpractices.md
-├── skills/                # Conditional skill modules loaded by context
-│   ├── go-excellence/     # Go naming, performance, concurrency, security
-│   ├── spec-driven-dev/   # Planning features, writing specs, PRDs
-│   ├── test-first/        # TDD workflow, writing tests before implementation
-│   ├── library-first/     # Architecture design, new feature structure
-│   ├── security-by-default/ # Input handling, auth, file access, secrets
-│   ├── error-design/      # Error types, wrapping, actionable messages
-│   ├── code-quality/      # Readability, clean code, naming
-│   ├── context-management/ # Long sessions, context limits, compaction
-│   ├── incremental-delivery/ # Feature flags, small PRs, progressive rollout
-│   └── prompt-engineering/ # AI prompting, few-shot examples, task decomposition
-└── document.md
+└── skills/                # Conditional skill modules loaded by context
+    ├── code-quality/      # Readability, clean code, naming
+    ├── context-management/ # Long sessions, context limits, compaction
+    ├── error-design/      # Error types, wrapping, actionable messages
+    ├── go-excellence/     # Go naming, performance, concurrency, security
+    ├── go-performance/    # Go memory, CPU, and throughput optimization
+    ├── incremental-delivery/ # Feature flags, small PRs, progressive rollout
+    ├── library-first/     # Architecture design, new feature structure
+    ├── security-by-default/ # Input handling, auth, file access, secrets
+    ├── self-organized-coder/ # Task decomposition, subagent delegation, iterative delivery
+    ├── simplify/          # Refactoring, reducing technical debt, unnecessary complexity
+    ├── spec-driven-dev/   # Planning features, writing specs, PRDs
+    └── test-first/        # TDD workflow, writing tests before implementation
 ```
 
 ## Setup
@@ -58,23 +51,13 @@ The script also symlinks `commands/`, `skills/`, and `agents/` directories where
 
 **AGENTS.md** is the top-level instruction file. It defines:
 
-- **Execution loop** — Understand → Plan → Execute → Verify → Iterate
+- **Execution loop** — Understand → Research → Plan → Test First → Implement → Verify → Iterate
 - **Specification-Driven Development** — Specs are truth; code is their expression
-- **Constitutional Foundation** — Six non-negotiable implementation gates
 - **Library-First Architecture** — Features begin as standalone libraries
 - **Test-First** — Tests written before implementation, always
-- **Code Standards** — Style hierarchy, naming, performance, security
-
-### Constitutional Foundation
-
-| Article | Rule |
-|---------|------|
-| I | Every feature begins as a standalone library with a clean interface |
-| II | Libraries expose functionality through CLI/API interfaces producing structured output |
-| III | Test-First: tests written and approved before any implementation code |
-| VII | Simplicity: max 3 active projects; complexity requires documented justification |
-| VIII | Anti-Abstraction: use framework features directly; one model per concept |
-| IX | Integration-First Testing: real databases and actual services; no mocks at boundaries |
+- **Code Standards** — Readability, naming, performance, security, error handling
+- **Performance Awareness** — Preallocation, zero-copy, buffered I/O, benchmarking
+- **Concurrency** — Structured concurrency, confinement over sharing, no globals
 
 ## Agents
 
@@ -82,11 +65,7 @@ Named agent modes available for delegation via the `task` tool:
 
 | Agent | Mode | Purpose |
 |-------|------|---------|
-| `conductor` | Primary | Orchestrates complex tasks into waves of parallel subagent work |
-| `code-reviewer` | Subagent | Read-only review for quality, security, performance, and maintainability |
-| `test-engineer` | Subagent | Language-agnostic TDD specialist — Red-Green-Refactor cycle |
-| `go-engineer` | Subagent | Go refactoring — API-preserving transforms with escape analysis |
-| `go-tester` | Subagent | Go test fortification — table-driven tests, coverage, race detection |
+| `conductor` | Primary | Decomposes complex tasks, delegates to subagents, delivers working increments |
 
 ## Commands
 
@@ -94,11 +73,9 @@ Slash commands available in supported tools:
 
 | Command | Description |
 |---------|-------------|
-| `/spec` | Transform a feature description into a gated spec → plan → tasks pipeline |
-| `/code-review` | Review code for quality, security, and performance |
-| `/verify-project` | Validate project health, deps, lint, security, and tests |
-| `/refactor-optimize` | Refactor and optimize code feature-by-feature |
-| `/vb-review` | VB Mobile Backend review checklist — comprehensive Go/Kafka/Postgres/Mongo/Redis/K8s checks |
+| `/refactor` | Refactor code for readability, safety, performance, and maintainability |
+| `/verify-project` | Format, lint (auto-fix), vulnerability scan, static analysis, and run tests |
+| `/vb-review` | Virtual Banking Mobile Backend review — comprehensive Go/Kafka/Postgres/Mongo/Redis/K8s checks |
 
 ## Skills
 
@@ -106,16 +83,18 @@ Skills are conditional rule modules loaded when context matches. Each skill live
 
 | Skill | Trigger |
 |-------|---------|
-| `go-excellence` | Go codebases — naming, performance, concurrency, security |
-| `spec-driven-dev` | Planning features, writing specs, PRDs |
-| `test-first` | TDD workflow, writing tests before implementation |
-| `library-first` | Architecture design, new feature structure |
-| `security-by-default` | Input handling, auth, file access, secrets |
-| `error-design` | Error types, wrapping, actionable messages |
 | `code-quality` | Readability, clean code, naming |
 | `context-management` | Long sessions, context limits, compaction |
+| `error-design` | Error types, wrapping, actionable messages |
+| `go-excellence` | Go codebases — naming, performance, concurrency, security |
+| `go-performance` | Go memory, CPU, and throughput optimization |
 | `incremental-delivery` | Feature flags, small PRs, progressive rollout |
-| `prompt-engineering` | AI prompting, few-shot examples, task decomposition |
+| `library-first` | Architecture design, new feature structure |
+| `security-by-default` | Input handling, auth, file access, secrets |
+| `self-organized-coder` | Task decomposition, subagent delegation, iterative delivery |
+| `simplify` | Refactoring, reducing technical debt, unnecessary complexity |
+| `spec-driven-dev` | Planning features, writing specs, PRDs |
+| `test-first` | TDD workflow, writing tests before implementation |
 
 ## Spec Artifacts
 
