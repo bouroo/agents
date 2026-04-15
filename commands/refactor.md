@@ -86,34 +86,35 @@ Evaluate and fix code against the following checklist. Each item includes the ra
 | 25 | P2 | Large allocations avoided in request-scoped handlers | Move to pre-allocated buffers or pools |
 | 26 | P2 | Struct/record field order considers memory alignment (large types first) | Reorder fields to minimize padding |
 | 27 | P1 | String concatenation in loops uses builder pattern | Replace `+=` in loops with `StringBuilder` or equivalent |
+| 28 | P2 | Unnecessary heap allocations avoided — prefer stack-allocated values, pass by reference for large structs | Reduce escape analysis failures, use value types where possible |
 
 #### Architecture & Coupling
 
 | # | Severity | Check | Action |
 |---|----------|-------|--------|
-| 28 | P0 | Domain logic decoupled from environment (no env vars, CLI args, OS calls in packages) | Move env/arg access to entrypoint only |
-| 29 | P1 | Packages return data, not print; return errors, not exit | Separate I/O from logic |
-| 30 | P2 | Public surface minimized — unexport by default, export only what others need | Reduce visibility |
-| 31 | P1 | Single responsibility — each module/package has a clear, focused purpose | Split catch-all modules |
-| 32 | P2 | No circular dependencies between packages | Restructure to eliminate import cycles |
+| 29 | P0 | Domain logic decoupled from environment (no env vars, CLI args, OS calls in packages) | Move env/arg access to entrypoint only |
+| 30 | P1 | Packages return data, not print; return errors, not exit | Separate I/O from logic |
+| 31 | P2 | Public surface minimized — unexport by default, export only what others need | Reduce visibility |
+| 32 | P1 | Single responsibility — each module/package has a clear, focused purpose | Split catch-all modules |
+| 33 | P2 | No circular dependencies between packages | Restructure to eliminate import cycles |
 
 #### Concurrency
 
 | # | Severity | Check | Action |
 |---|----------|-------|--------|
-| 33 | P0 | Every concurrent unit has a bounded lifetime (context, wait group, errgroup) | Add lifecycle bounds |
-| 34 | P0 | No goroutine/thread leaks — all terminate before enclosing scope exits | Ensure cleanup on all paths |
-| 35 | P1 | Concurrency used only when necessary; not introduced speculatively | Remove unnecessary concurrency |
-| 36 | P1 | Shared data protected — confinement preferred over shared memory with locks | Use channel-based or confined patterns |
-| 37 | P2 | Worker pools or semaphores cap concurrent units | Add bounded concurrency |
+| 34 | P0 | Every concurrent unit has a bounded lifetime (context, wait group, errgroup) | Add lifecycle bounds |
+| 35 | P0 | No goroutine/thread leaks — all terminate before enclosing scope exits | Ensure cleanup on all paths |
+| 36 | P1 | Concurrency used only when necessary; not introduced speculatively | Remove unnecessary concurrency |
+| 37 | P1 | Shared data protected — confinement preferred over shared memory with locks | Use channel-based or confined patterns |
+| 38 | P2 | Worker pools or semaphores cap concurrent units | Add bounded concurrency |
 
 #### Logging
 
 | # | Severity | Check | Action |
 |---|----------|-------|--------|
-| 38 | P0 | No secrets or PII in logs | Redact sensitive fields |
-| 39 | P1 | Only actionable information logged — no trivia spam | Remove debug noise, keep structured entries |
-| 40 | P2 | Structured logging used; trace for request-scoped debugging, metrics for performance | Use appropriate signal (log/trace/metric) |
+| 39 | P0 | No secrets or PII in logs | Redact sensitive fields |
+| 40 | P1 | Only actionable information logged — no trivia spam | Remove debug noise, keep structured entries |
+| 41 | P2 | Structured logging used; trace for request-scoped debugging, metrics for performance | Use appropriate signal (log/trace/metric) |
 
 ---
 
