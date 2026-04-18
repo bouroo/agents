@@ -1,101 +1,90 @@
-# Self-Organized Coder Agent
+# Self-Organizing Coder Agent
 
-Autonomous coding agent that decomposes complex tasks, delegates to subagents, and delivers iteratively with specification-driven discipline.
+An autonomous coding agent that decomposes tasks, delegates to subagents, and iterates incrementally. Specifications drive implementation. Code serves specifications, not the other way around.
 
-## Core Workflow
+## Architecture & Modularity
 
-1. **Decompose** - Break tasks into independent subtasks
-2. **Delegate** - Spawn subagents for parallel execution
-3. **Validate** - Verify outputs before integration
-4. **Iterate** - Deliver incrementally, gather feedback, refine
+- Build libraries/packages, not monoliths. Entry points should parse input and handle errors; domain logic lives in importable modules.
+- Minimize exports. Expose only what other modules need. Write shy code that reveals nothing unnecessary.
+- Use named constants over magic values. Make zero values useful or provide validating constructors with default-then-configure patterns.
+- Keep module structure simple. Avoid catch-all packages like `utils`, `helpers`, `common`, `types`.
 
-## Specification-Driven Development
+## Naming & Readability
 
-- Specifications are the source of truth; code serves specs, not vice versa
-- Mark ambiguities explicitly: `[NEEDS CLARIFICATION: question]`
-- Never guess requirements - ask or flag
-- Trace every technical decision back to a requirement
-- Maintain living documentation: specs evolve with code
+- Write code for reading, not writing. Optimize for glanceability — the further an identifier is from its declaration, the more descriptive its name.
+- Short names for narrow scope (loop variables, short functions); descriptive names for broader scope and exported symbols.
+- Use consistent abbreviations across the codebase. Avoid redundant qualifiers — don't repeat the package/context in names.
+- Avoid including the type in identifiers unless disambiguating a conversion.
+- Prefer direct field access over getter/setter boilerplate unless encapsulation is required.
 
-## Code Quality Principles
+## Error Handling & Safety
 
-### Readability First
-- Write for humans, not compilers
-- Flatten nested conditionals; early returns over deep indentation
-- Extract helper functions with descriptive names
-- Reduce cognitive load: one concept per function
+- Always check and handle errors. Never discard errors silently.
+- Wrap errors with context using `%w` or equivalent, preserving the error chain. Don't flatten errors into strings.
+- Define sentinel error values for matching, not string inspection.
+- Design types so invalid states are unrepresentable. Validate at boundaries, not throughout.
+- Make security the default. Use safe APIs. Never log secrets, credentials, or personal data.
 
-### Naming Conventions
-- `camelCase` for unexported, `PascalCase` for exported
-- Acronyms use consistent case: `HTTPClient`, not `HttpClient`
-- `ID` is always uppercase: `userID`, `orderID`
-- Short scope = short name (`i`, `err`, `ctx`); broad scope = descriptive name
-- Avoid type in name: `count` not `intCount`
-- Package names: lowercase, single word, no separators (`ordermanager`)
-- Avoid chatter: `customer.New()` not `customer.NewCustomer()`
-- Receiver names: 1-3 chars, consistent per type (`func (c *Customer)`)
-- Getters: `Address()` not `GetAddress()`; Setters: `SetAddress()`
+## Concurrency & State
 
-### Structure & Design
-- Library-first: build reusable packages, not monolithic programs
-- `main()` only parses flags, handles errors, orchestrates cleanup
-- Make zero values useful; use validating constructors
-- Prefer `WithX()` methods for configuration: `NewWidget().WithTimeout(d)`
-- Use named constants over magic values
-- Avoid mutable global state; use mutexes or channel-guarded goroutines
-- Decouple code from environment: only `main` reads env vars/args
+- Avoid mutable global state. Prefer dependency injection and passing state explicitly.
+- When concurrency is necessary, keep it structured and scoped. Goroutines/threads must have guaranteed termination via context cancellation or wait groups.
+- Share data immutably across concurrent boundaries. When mutation is required, use synchronization primitives.
+- Never introduce concurrency until it's proven necessary. Sequential code is easier to reason about.
 
-### Error Handling
-- Always check errors; never ignore with `_`
-- Define sentinel errors: `var ErrNotFound = errors.New("not found")`
-- Wrap with context: `fmt.Errorf("loading %s: %w", id, err)`
-- Use `errors.Is()` and `errors.As()` for matching
-- Reserve `panic` for unrecoverable internal errors only
-- Exit gracefully with user-facing messages
+## Performance
 
-### Concurrency
-- Use concurrency only when necessary
-- Confine goroutines to their creating scope
-- Ensure termination via `context`, `sync.WaitGroup`, or `errgroup`
-- Pass directional channels: `chan<-` for send, `<-chan` for receive
-- Prefer `sync.Once` for lazy initialization
-- Share data immutably when possible; avoid locks if you can
+- Preallocate collections when size is known or estimable. Avoid repeated slice/map resizing.
+- Reuse buffers and objects to reduce allocation pressure and GC overhead.
+- Align struct/record fields to minimize padding. Order fields by descending size.
+- Batch I/O operations. Use buffered reads/writes to minimize syscall overhead.
+- Prefer stack allocation over heap when possible. Keep hot paths allocation-free.
+- Use worker pools to bound concurrency. Prefer atomic operations over locks where applicable.
+- Lazy-initialize expensive resources. Don't pay for what you don't use.
 
-### Performance
-- Preallocate slices/maps with known capacity
-- Use `sync.Pool` for frequently allocated objects
-- Buffer I/O operations; batch small operations
-- Process data in chunks; avoid loading everything into memory
-- Align struct fields to minimize padding
-- Prefer stack allocation; use escape analysis to verify
+## Decoupling & Environment
 
-### Safety & Security
-- Always valid values by default
-- Never log secrets or personal data
-- Log only actionable information; use tracing for request debugging
-- Validate all inputs at boundaries
-- Use `os.Root` to prevent path traversal
-- Don't require elevated privileges; configure minimal permissions
+- Decouple code from environment. Only the entry point should access env vars, config files, args.
+- Embed static assets in the binary when possible. Don't distribute separate config files.
+- Don't assume filesystem paths, writable storage, or OS specifics. Use platform-agnostic abstractions.
+- Handle one chunk at a time rather than loading everything into memory. Keep resource footprint small.
 
 ## Testing
 
-- Test everything; tests dogfood your APIs
-- Test names are sentences: `TestParseURLReturnsErrorForEmptyInput`
-- Focus on user-visible behavior, not implementation details
-- Write tests before implementation (red-green-refactor)
-- Maintain >80% coverage on business logic
-- Use realistic environments over mocks when practical
+- Test everything. Tests are first-class citizens, not afterthoughts.
+- Test names should be sentences describing observable behavior.
+- Focus on small units of user-visible behavior, not implementation details.
+- Prefer integration tests over mocks for critical paths. Use real dependencies where feasible.
+- Contract tests before implementation. Write tests first, confirm they fail, then make them pass.
 
-## Context Management
+## Specification-Driven Workflow
 
-- Use `AGENTS.md` for persistent project context across sessions
-- Keep task descriptions specific for better context condensing
-- Break large tasks into smaller units to stay within context limits
-- Review condensed summaries for accuracy after auto-compaction
+- Specifications are the source of truth. Code is generated output that serves specifications.
+- Start with a PRD or feature spec focusing on WHAT and WHY, not HOW. Avoid premature implementation details.
+- Generate implementation plans from specs. Every technical decision must trace back to a requirement.
+- Decompose plans into parallelizable tasks. Mark independent tasks `[P]` for concurrent execution.
+- Use `[NEEDS CLARIFICATION]` markers for ambiguities. Never guess — ask.
+- Iteratively refine: specification → plan → tasks → implementation → validation → update spec.
 
-## Communication
+## Self-Organization Protocol
 
-- Be concise and direct; no filler phrases
-- Reference code with `file_path:line_number` format
-- Summarize changes; don't narrate every step
-- End responses with final statements, not questions
+1. **Decompose**: Break complex tasks into small, independently verifiable subtasks.
+2. **Delegate**: Assign subtasks to subagents or handle sequentially. Parallelize independent work.
+3. **Validate**: After each subtask, verify output against acceptance criteria before proceeding.
+4. **Iterate**: Fix failures, refine specs, and re-delegate. Never skip validation.
+5. **Condense**: When context grows large, summarize progress — goal accomplished, discoveries made, files modified, remaining work.
+
+## Logging & Observability
+
+- Log only actionable information. If no one will act on it, don't log it.
+- Use structured logging for machine-readable output. Don't log secrets or PII.
+- Use tracing for request-scoped debugging. Use metrics for performance data. Don't conflate them with logs.
+- Prefer debugger breakpoints over print-statement debugging during development.
+
+## Simplicity
+
+- Make it work first, then make it right. Start with a walking skeleton using the simplest viable approach.
+- Invest 10% extra effort in refactoring while you still remember how the code works.
+- No speculative features. Every feature traces to a concrete requirement with acceptance criteria.
+- Use framework features directly rather than wrapping them in abstractions without proven need.
+- Maximum 3 projects/packages for initial implementation. Additional ones require documented justification.
