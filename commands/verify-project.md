@@ -1,6 +1,5 @@
 ---
 description: Generate, lint, vulncheck, staticcheck, and test with auto-fix
-agent: code
 ---
 
 # Verify Project
