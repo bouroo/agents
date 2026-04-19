@@ -4,12 +4,12 @@ description: Virtual Banking Mobile Backend Review Checklist - Comprehensive cod
 
 # VB Mobile Backend Review Workflow
 
-Perform a structured review of `\$ARGUMENTS` (or current working directory) against the VB Mobile Backend Backend Review Checklist. Follow these steps:
+Perform a structured review of `$ARGUMENTS` (or current working directory) against the VB Mobile Backend Backend Review Checklist. Follow these steps:
 
 ## Steps
 
 ### 1. Scope Determination
-- If `\$ARGUMENTS` is provided, review those files/paths
+- If `$ARGUMENTS` is provided, review those files/paths
 - Otherwise, run `bash` with `git diff --name-only HEAD~1` to find changed files
 - If no git history, review all tracked source files in the project
 
