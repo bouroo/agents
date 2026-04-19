@@ -1,129 +1,25 @@
 ---
 name: self-organizing-coder
-description: Self-organized coding agent workflow: decompose tasks, delegate to subagents, validate outputs, iterate incrementally. Use when building complex features, refactoring large codebases, or any task requiring multi-step planning and parallel execution.
-license: MIT
-metadata:
-  author: kilo-config
-  version: 1.0.0
-  source: AGENTS.md self-organized coder pattern
+description: An autonomous workflow for agents to build complex features, refactor codebases, and execute multi-step planning incrementally.
 ---
+# Self-Organizing Coder Agent
 
-# Self-Organized Coder Agent
+An autonomous workflow for agents to build complex features, refactor codebases, and execute multi-step planning incrementally.
 
-Autonomous coding agent that decomposes complex tasks, delegates to subagents, and delivers iteratively with specification-driven discipline.
+## 1. Decompose and Plan
+- **Analyze the Goal**: Understand the user's specification comprehensively. Do not implement speculative features.
+- **Task Breakdown**: Decompose complex goals into small, actionable, and testable tasks. Create an explicit implementation plan before writing code.
+- **Parallel Execution**: Identify independent tasks and execute them concurrently (e.g., using subagents) to maximize efficiency.
 
-## Core Workflow
+## 2. Manage Context and Focus
+- **Context Condensing**: As complexity grows, proactively summarize progress, key discoveries, and modified files. Maintain focus to avoid exceeding token limits.
+- **Explicit Uncertainty**: If a requirement is vague, do not guess. Halt and ask the user for clarification, marking unknowns with `[NEEDS CLARIFICATION]`.
 
-### 1. Decompose
+## 3. Implement and Iterate
+- **Test-First Validation**: Write tests (unit, integration) that validate the specification before writing the functional code. Ensure tests fail, then write code to pass them.
+- **Incremental Delivery**: Deliver working slices of functionality one step at a time.
+- **Anti-Abstraction**: Keep the implementation straightforward. Use existing frameworks directly without wrapping them in unnecessary layers of abstraction.
 
-Break tasks into independent subtasks:
-
-- Identify natural boundaries in the work
-- Separate concerns into distinct subtasks
-- Ensure each subtask has clear inputs and outputs
-- Mark dependencies between subtasks
-- Identify which subtasks can run in parallel
-
-### 2. Delegate
-
-Spawn subagents for parallel execution:
-
-- Assign independent subtasks to separate subagents
-- Provide each subagent with clear, specific instructions
-- Include relevant context and file paths
-- Specify expected output format
-- Set validation criteria for each subtask
-
-### 3. Validate
-
-Verify outputs before integration:
-
-- Check each subagent output against validation criteria
-- Run tests if available
-- Verify code compiles/lints
-- Check for consistency across subtask outputs
-- Reject outputs that don't meet criteria; request fixes
-
-### 4. Iterate
-
-Deliver incrementally, gather feedback, refine:
-
-- Integrate validated outputs
-- Run full test suite
-- Gather user feedback
-- Refine based on feedback
-- Repeat until task complete
-
-## Specification-Driven Development
-
-- Specifications are the source of truth; code serves specs
-- Mark ambiguities: `[NEEDS CLARIFICATION: question]`
-- Never guess requirements—ask or flag
-- Trace every technical decision back to a requirement
-- Maintain living documentation: specs evolve with code
-
-## Task Decomposition Strategy
-
-### Identify Parallel Work
-
-```
-Task: Build user authentication system
-├── [P] Create User model and database schema
-├── [P] Create password hashing utility
-├── [P] Create JWT token generation
-├── [P] Create login endpoint
-├── [P] Create registration endpoint
-├── [P] Create test suite for auth package
-└── [Sequential] Integration tests (depends on all above)
-```
-
-### Subagent Instructions Template
-
-```
-Task: [specific subtask]
-Context: [relevant files, existing patterns]
-Requirements: [what to build]
-Constraints: [coding standards, naming conventions]
-Output: [expected deliverable]
-Validation: [how to verify correctness]
-```
-
-## Context Management
-
-- Use `AGENTS.md` for persistent project context
-- Keep task descriptions specific for better context condensing
-- Break large tasks into smaller units to stay within context limits
-- Review condensed summaries for accuracy after auto-compaction
-
-## Communication
-
-- Be concise and direct; no filler phrases
-- Reference code with `file_path:line_number` format
-- Summarize changes; don't narrate every step
-- End responses with final statements, not questions
-
-## Error Handling
-
-- Always check errors from subagent execution
-- Wrap errors with context for debugging
-- Retry failed subtasks with additional context
-- Escalate persistent failures to user
-
-## Quality Gates
-
-Before delivering:
-
-- [ ] All subtasks completed and validated
-- [ ] Tests pass (unit, integration, e2e)
-- [ ] Code follows project conventions
-- [ ] No linting errors
-- [ ] Documentation updated if needed
-- [ ] No `[NEEDS CLARIFICATION]` markers remain
-
-## When to Use
-
-- Building complex features with multiple components
-- Refactoring large codebases
-- Tasks requiring parallel execution
-- Multi-step workflows with dependencies
-- Any task benefiting from decomposition and delegation
+## 4. Continuous Validation
+- **Traceability**: Ensure every architectural choice and block of generated code traces back directly to the original specification.
+- **Review and Refine**: After completing a task, review the output. Run linters, type-checkers, and test suites. Fix errors autonomously before proceeding to the next step.

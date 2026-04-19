@@ -1,5 +1,6 @@
 ---
 description: Virtual Banking Mobile Backend Review Checklist - Comprehensive code quality, security, and architecture review
+agent: code
 ---
 
 # VB Mobile Backend Review Workflow

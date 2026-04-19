@@ -1,61 +1,77 @@
 ---
-description: Refactor code for clarity, performance, and safety without breaking public API
+description: Refactor & optimize code for quality and performance without breaking public API
+agent: code
 ---
+# Refactor & Optimize
 
-# /refactor
+Refactor the specified target `$ARGUMENTS` for readability, quality, and performance while preserving the public API contract (exported symbols, signatures, behavior, and tests must remain compatible).
 
-Refactor the target code to improve readability, performance, and safety while preserving all public API contracts.
+## Step 1 — Analyze
 
-## Steps
+1. Read the target file(s) or module identified by `$ARGUMENTS`. If `$ARGUMENTS` is empty, use `question` to ask which file(s) or module to refactor.
+2. Identify the public API surface: exported functions, types, methods, constants, and their call sites across the codebase (use `grep` to find usages).
+3. Run existing tests to establish a green baseline (use `bash`). Record the test command for re-validation.
 
-1. **Analyze** — Read the code, identify the public API surface, and map all callers to ensure no breaking changes
-2. **Refactor** — Apply improvements below
-3. **Validate** — Run linter, type checker, and tests; confirm public API unchanged
-4. **Report** — Summarize changes, trade-offs, and remaining issues
+## Step 2 — Apply Refactoring Principles
 
-## Principles
+Apply the following language-agnostic rules. Only refactor what improves the code — do not make changes for the sake of change.
 
-### Readability
-- Flatten nested conditionals; early returns over deep indentation
-- Extract helpers with descriptive names; one concept per function
-- Reduce cognitive load — write for humans
-- Use consistent naming: `err` for errors, `ctx` for contexts, `i` for index, `req`/`resp` for requests/responses
-- `camelCase` for private, `PascalCase` for public; acronyms consistent (`HTTPClient`, `userID`)
-- Short scope = short name; broad scope = descriptive name
-- Avoid type in name (`count` not `intCount`); avoid chatter (`orders.New()` not `orders.NewOrder()`)
-- Getters: `Address()` not `GetAddress()`; Setters: `SetAddress()`
+### Naming & Readability
+- Use consistent casing conventions (camelCase for local, PascalCase for exported). Acronyms keep uniform case (e.g., `HTTPClient`, not `HttpClient`; `userID`, not `userId`).
+- Scope-appropriate length: short names for narrow scope (loop variables, lambdas), descriptive names for broad scope (public functions, types, constants).
+- Eliminate chattery names — avoid repeating the package or type context at the call site (e.g., `customer.New()` not `customer.NewCustomer()`).
+- Do not encode types in identifiers (e.g., `count` not `countInt`). Exception: type-conversion disambiguation.
+- Avoid identifiers that clash with standard library or built-in names.
 
-### Architecture
-- Library-first: reusable packages, `main()` only orchestrates
-- Make zero values useful; use validating constructors
-- Prefer `WithX()` methods for configuration
-- Named constants over magic values
-- Avoid mutable global state; use mutexes or channel-guarded goroutines
-- Decouple from environment: only `main` reads env vars/args
+### Code Structure
+- Write shy code: default to minimal visibility. Only expose what consumers need; prefer unexported/internal helpers.
+- Extract small, named helper functions from long routines to reduce cognitive load and document intent through function names.
+- Initialize objects in a valid state. Constructors or factory functions should guarantee usable defaults; use With-style configurators for optional parameters.
+- Prefer named constants over magic values.
 
 ### Error Handling
-- Always check errors; never ignore with `_`
-- Define sentinel errors; wrap with context (`%w` pattern)
-- Use `errors.Is()` / `errors.As()` for matching
-- Reserve `panic` for unrecoverable internal errors
+- Always check and propagate errors — never silently ignore them.
+- Wrap errors with context (source, operation, key values) so the call chain is traceable.
+- Define sentinel errors for public matching; do not compare error strings.
 
-### Concurrency
-- Use concurrency only when necessary
-- Confine goroutines to their creating scope
-- Ensure termination via `context`, `WaitGroup`, or `errgroup`
-- Pass directional channels (send-only or receive-only)
-- Prefer `sync.Once` for lazy initialization
+### State & Concurrency
+- Avoid mutable global state. Pass dependencies explicitly as parameters.
+- When concurrency is needed, use structured patterns: ensure all async work terminates before the enclosing scope exits.
+- Share immutable data across concurrent boundaries; use atomic operations for simple shared counters.
 
-### Performance
-- Preallocate slices/maps with known capacity
-- Use object pools for frequently allocated objects
-- Buffer I/O; batch small operations
-- Process data in chunks; avoid loading everything into memory
-- Prefer stack allocation; verify with escape analysis
-- Align struct fields to minimize padding
+### Performance — Memory Management & Efficiency
+- **Object Pooling**: Reuse objects via pooling for high-churn allocations to reduce GC pressure and allocation overhead.
+- **Memory Preallocation**: Allocate collections (slices, maps, lists, buffers) with capacity upfront when the size is known or estimable to avoid costly dynamic resizes.
+- **Struct/Record Field Alignment**: Order fields by descending alignment size (pointers and large scalars first) to minimize padding, reduce struct size, and improve cache locality.
+- **Avoid Interface Boxing**: Prevent hidden heap allocations by avoiding unnecessary interface/abstract conversions on hot paths — keep concrete types where the indirection isn't needed.
+- **Zero-Copy Techniques**: Minimize data copying with sub-slicing, buffer reuse, and reference passing instead of copying byte slices, strings, or large records.
+- **Reduce Heap Usage**: Minimize heap allocations to reduce GC overhead. Reuse memory buffers across iterations rather than allocating fresh ones.
+- **Stack Over Heap**: Favor stack allocation by keeping values local, passing by value when small, and avoiding escapes (e.g., don't return pointers to locals, don't store references in heap-escaped closures). Prefer value receivers for small structs.
 
-### Safety
-- Always valid values by default
-- Never log secrets or personal data
-- Validate all inputs at boundaries
-- Log only actionable information; use tracing for request-scoped debugging
+### Performance — Concurrency & Synchronization
+- **Worker Pools**: Control concurrency with a fixed-size pool to cap resource usage; avoid unbounded spawning of goroutines/threads.
+- **Atomic Operations**: Use atomic primitives or lightweight locks for shared counters and flags — avoid heavy mutexes for simple state.
+- **Lazy Initialization**: Delay expensive setup (connection pools, caches, parsed configs) until first use using once-style initialization primitives.
+- **Immutable Data Sharing**: Share data safely across concurrent boundaries without locks by making it immutable (copy-on-write, frozen collections).
+- **Context/Cancellation Propagation**: Propagate timeouts, deadlines, and cancel signals through all concurrent work to prevent leaked goroutines/threads.
+
+### Performance — I/O Optimization & Throughput
+- **Buffered I/O**: Wrap raw readers/writers with buffered equivalents to minimize syscalls and I/O round-trips.
+- **Batching**: Combine multiple small operations (writes, DB inserts, network sends) into batches to reduce per-call overhead and improve throughput.
+
+### Performance — Compiler & Build Tuning
+- **Compiler Flags**: Where applicable, leverage optimization flags (e.g., inlining thresholds, dead-code elimination, size optimizations) for hot packages/modules.
+- **Escape Analysis**: Analyze which values escape to the heap and restructure code to keep them on the stack (avoid returning pointers to locals, capturing loop variables in closures, storing references in interface values).
+
+### Logging & Observability
+- Log only actionable information. Never log secrets or personal data.
+- Use structured logging (key-value pairs or JSON) for machine readability.
+- Prefer tracing for request-scoped debugging, metrics for performance data — not logs.
+
+## Step 3 — Validate
+
+1. Re-run the test command from Step 1. All tests must pass.
+2. Run the project's linter (use `bash` to run the appropriate lint command for the ecosystem).
+3. Verify no public API symbols were removed or had their signatures changed (use `grep` to confirm call sites still compile/resolve).
+
+If any step fails, fix the issue and re-validate until all checks pass.

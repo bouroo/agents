@@ -1,130 +1,81 @@
 ---
-description: Verify project health — lint, security scan, and test with auto-fix
+description: Generate, lint, vulncheck, staticcheck, and test with auto-fix
+agent: code
 ---
 
-# /verify-project
+# Verify Project
 
-Run the full verification pipeline to check code quality, security, and correctness. Auto-fix issues where possible.
+Run the full verification pipeline for `$ARGUMENTS` (defaults to `./...`). Detect the language ecosystem automatically and execute the appropriate toolchain. Fix any issues found and re-verify until clean or the issue requires human input.
 
 ## Steps
 
-1. **Detect** — Identify project language and select toolchain
-2. **Generate** — Run code generation to ensure derived files are up to date
-3. **Lint** — Run linter with `--fix` to auto-correct style and common issues
-4. **Static Pre-check** — Run static analysis to find fixable issues, then auto-fix them
-5. **Security** — Scan for known vulnerabilities in dependencies
-6. **Static Analysis** — Run final static analysis pass to confirm clean
-7. **Test** — Clear test cache and run full test suite
-8. **Report** — Summarize findings, fixed issues, and remaining failures
+### 1. Detect Ecosystem
 
-## Language Detection
+Use `glob` to detect the project type:
 
-Detect project language by checking for lock/manifest files in priority order:
+- `go.mod` present → Go
+- `package.json` present → Node/TypeScript
+- `Cargo.toml` present → Rust
+- `pom.xml` / `build.gradle` present → Java
+- `pyproject.toml` / `setup.py` / `requirements.txt` present → Python
+- No recognized manifest → ask the user via `question`
 
-| Priority | File            | Language        |
-|----------|-----------------|-----------------|
-| 1        | `go.mod`        | Go              |
-| 2        | `Cargo.toml`    | Rust            |
-| 3        | `package.json`  | JavaScript/Node |
-| 4        | `requirements.txt` or `pyproject.toml` | Python |
-| 5        | `pom.xml`       | Java            |
-| 6        | `Gemfile`       | Ruby            |
+### 2. Run Verification Pipeline
 
-## Toolchain Matrix
+Execute the following steps using `bash`. Target path is `$ARGUMENTS` or `./...` if empty. Run each step sequentially — stop on the first failure, fix, then restart from that step.
 
-Set tool variables based on detected language:
+#### Go
 
-| Phase       | Go                    | Rust                  | JavaScript/Node       | Python              | Java              | Ruby              |
-|-------------|-----------------------|-----------------------|-----------------------|---------------------|-------------------|-------------------|
-| Generate    | `go generate ./...`   | `cargo build`         | `npm run generate`    | —                   | `mvn generate-sources` | `rake generate` |
-| Lint        | `golangci-lint run --fix` | `cargo clippy --fix` | `eslint --fix`        | `ruff check --fix`  | `checkstyle`      | `rubocop -a`      |
-| Static      | `staticcheck`         | `cargo clippy`        | `tsc --noEmit`        | `mypy`              | `spotbugs`        | `rubocop`         |
-| Security    | `govulncheck`         | `cargo audit`         | `npm audit`           | `pip-audit`         | `owasp-dependency-check` | `bundler-audit` |
-| Test        | `go test -race ./...` | `cargo test`          | `jest --coverage`     | `pytest -v`         | `mvn test`        | `rake test`       |
-| Test Clear  | `go clean -testcache` | —                     | `jest --clearCache`   | `pytest --cache-clear` | `mvn clean test` | `rake tmp:clear`  |
+1. `go generate $TARGET`
+2. `go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest run --fix $TARGET`
+3. `govulncheck $TARGET`
+4. `staticcheck $TARGET`
+5. `go clean -testcache && go test -v -race $TARGET`
 
-## Execution
+#### Node/TypeScript
 
-Run each phase sequentially; stop and report on first failure:
+1. `npm install` (or `pnpm install` / `yarn` based on lockfile)
+2. `npx biome check --write .` (or project-configured linter: eslint --fix, prettier --write)
+3. `npm run build` (if build script exists)
+4. `npm test` (or `vitest run` / `jest --ci`)
 
-```bash
-# Phase 1: Detect language and set tool variables
-# (agent determines language from manifest files above)
+#### Rust
 
-# Phase 2: Generate
-$GENERATE_CMD
+1. `cargo clippy --fix --allow-dirty`
+2. `cargo fmt`
+3. `cargo build`
+4. `cargo test`
 
-# Phase 3: Lint with auto-fix
-$LINT_CMD --fix ./...
+#### Java
 
-# Phase 4: Static pre-check — find fixable issues
-$STATIC_CMD ./...
+1. `mvn spotless:apply` (or `./gradlew spotlessApply`)
+2. `mvn compile` (or `./gradlew build`)
+3. `mvn test` (or `./gradlew test`)
 
-# If fixable issues found (see Auto-Fix Rules below), fix them, then re-run:
-$STATIC_CMD ./...
+#### Python
 
-# Phase 5: Security scan
-$SECURITY_CMD ./...
+1. `ruff check --fix .`
+2. `ruff format .`
+3. `mypy .` (if configured)
+4. `pytest` (or `python -m pytest`)
 
-# Phase 6: Final static check (must pass clean)
-$STATIC_CMD ./...
+### 3. Auto-Fix Loop
 
-# Phase 7: Test
-$TEST_CLEAR_CMD 2>/dev/null || true  # Some languages have no clear command
-$TEST_CMD
+If any step fails:
+
+1. Read the error output carefully.
+2. Fix the issue using `edit` or `write`.
+3. Re-run only the failed step (not the full pipeline).
+4. If the same step fails 3 times, report the issue to the user and ask how to proceed via `question`.
+
+### 4. Report
+
+When all steps pass, output a brief summary:
+
 ```
-
-## Auto-Fix Rules
-
-When static analysis or linters report these fixable issues, correct them automatically:
-
-### Doc Comment Style (all languages)
-
-| Pattern | Fix |
-|---------|-----|
-| Doc comment doesn't start with the declared name | Rewrite to start with the function/type/variable name |
-
-**Go example (ST1020/ST1021):**
-```go
-// Before: Run starts the consumer loop
-// After:  ConsumerRun starts the consumer loop
-func ConsumerRun() { ... }
+✓ generate — passed
+✓ lint — passed (N issues auto-fixed)
+✓ vulncheck — passed
+✓ staticcheck — passed
+✓ test — passed (M tests, 0 failures)
 ```
-
-**JavaScript/TypeScript example:**
-```ts
-// Before: handles user authentication
-// After:  authenticateUser validates credentials and returns a session
-function authenticateUser(creds: Credentials): Session { ... }
-```
-
-**Python example:**
-```python
-# Before: calculates the total price
-# After:  calculate_total computes the final price including tax
-def calculate_total(items: list[Item]) -> float: ...
-```
-
-**Rust example:**
-```rust
-// Before: creates a new connection pool
-// After:  ConnectionPool creates a new pool with the given config
-impl ConnectionPool {
-    pub fn new(config: Config) -> Self { ... }
-}
-```
-
-### Unused Imports/Variables
-- Remove unused imports, variables, and dead code when safe to do so
-
-### Formatting
-- Apply language formatter: `gofmt`, `cargo fmt`, `prettier`, `black`, `rustfmt`
-
-## Principles
-
-- **Auto-fix first** — Let tools correct what they can before reporting
-- **Fix mechanical issues** — Doc comment style, formatting, and unused imports are always safe to auto-correct
-- **Fail fast** — Surface errors early; don't cascade failures
-- **Clean slate** — Always clear test cache before running tests
-- **Race detection** — Run tests with race detection when the language supports it
-- **Zero tolerance** — Treat warnings as errors; fix or explicitly suppress with justification
