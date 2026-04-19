@@ -62,8 +62,10 @@ Apply the following language-agnostic rules. Only refactor what improves the cod
 - **Respect escape analysis**: Keep hot values on the stack; avoid capturing loop vars in closures or storing refs in interfaces.
 
 ### Verification — Before & After
+- **Benchmark before**: Run the project's benchmark suite (or write one if none exists) and record baseline results (throughput, latency, memory allocations, GC pauses).
 - **Measure before**: Capture baseline metrics (complexity, performance, memory, line count) before refactoring.
-- **Measure after**: Compare post-refactor metrics against baseline — result must be strictly better, not merely different.
+- **Benchmark after**: Re-run the same benchmark suite under identical conditions and compare results against baseline.
+- **Compare results**: Present a before/after table showing key metrics (ns/op, B/op, allocs/op, throughput, p99 latency). Result must be strictly better or neutral — never worse.
 - **Quality gates**: Refactor is only acceptable if it reduces complexity, improves performance, or enhances readability without degrading any other metric.
 - **Reject regression**: If any metric worsens, revert or iterate until metrics improve or stay neutral.
 
@@ -77,5 +79,6 @@ Apply the following language-agnostic rules. Only refactor what improves the cod
 1. Re-run the test command from Step 1. All tests must pass.
 2. Run the project's linter (use `bash` to run the appropriate lint command for the ecosystem).
 3. Verify no public API symbols were removed or had their signatures changed (use `grep` to confirm call sites still compile/resolve).
+4. Run benchmarks and compare before & after results. Display a comparison table (ns/op, B/op, allocs/op, throughput). If any metric regresses beyond noise threshold, investigate and fix before proceeding.
 
 If any step fails, fix the issue and re-validate until all checks pass.
