@@ -3,7 +3,7 @@ description: Refactor & optimize code for quality and performance without breaki
 ---
 # Refactor & Optimize
 
-Refactor the specified target `$ARGUMENTS` (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract (exported symbols, signatures, behavior, and tests must remain compatible).
+Refactor the specified target `$ARGUMENTS` (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract (exported symbols, signatures, behavior, and tests must remain compatible). benchmark results must not regress beyond noise threshold.
 
 ## Step 1 — Analyze
 
@@ -11,6 +11,7 @@ Refactor the specified target `$ARGUMENTS` (or current working directory if not 
 2. Identify the public API surface: exported functions, types, methods, constants, and their call sites across the codebase (use `grep` to find usages).
 3. Run existing tests to establish a green baseline (use `bash`). Record the test command for re-validation.
 4. If no tests exist for the target code, write essential valid tests covering core functionality before making any refactoring changes. Tests must verify current behavior so refactoring can be validated against them.
+5. Run pprof and heap profilers to identify performance bottlenecks.
 
 ## Step 2 — Apply Refactoring Principles
 
