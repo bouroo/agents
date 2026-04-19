@@ -4,7 +4,7 @@ description: Generate, lint, vulncheck, staticcheck, and test with auto-fix
 
 # Verify Project
 
-Run the full verification pipeline for `$ARGUMENTS` (defaults to `./...`). Detect the language ecosystem automatically and execute the appropriate toolchain. Fix any issues found and re-verify until clean or the issue requires human input.
+Run the full verification pipeline for `$ARGUMENTS` (or current working directory if not specified). Detect the language ecosystem automatically and execute the appropriate toolchain. Fix any issues found and re-verify until clean or the issue requires human input.
 
 ## Steps
 
@@ -21,15 +21,15 @@ Use `glob` to detect the project type:
 
 ### 2. Run Verification Pipeline
 
-Execute the following steps using `bash`. Target path is `$ARGUMENTS` or `./...` if empty. Run each step sequentially — stop on the first failure, fix, then restart from that step.
+Execute the following steps using `bash`. Set `$TARGET` to `$ARGUMENTS` if provided, otherwise `.` (current working directory). For Go projects, append `/...` to `$TARGET` when running go commands. Run each step sequentially — stop on the first failure, fix, then restart from that step.
 
 #### Go
 
-1. `go generate $TARGET`
-2. `go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest run --fix $TARGET`
-3. `govulncheck $TARGET`
-4. `staticcheck $TARGET`
-5. `go clean -testcache && go test -v -race $TARGET`
+1. `go generate $TARGET/...`
+2. `go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest run --fix $TARGET/...`
+3. `govulncheck $TARGET/...`
+4. `staticcheck $TARGET/...`
+5. `go clean -testcache && go test -v -race $TARGET/...`
 
 #### Node/TypeScript
 
