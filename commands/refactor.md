@@ -11,6 +11,7 @@ Refactor the specified target `$ARGUMENTS` for readability, quality, and perform
 1. Read the target file(s) or module identified by `$ARGUMENTS`. If `$ARGUMENTS` is empty, use `question` to ask which file(s) or module to refactor.
 2. Identify the public API surface: exported functions, types, methods, constants, and their call sites across the codebase (use `grep` to find usages).
 3. Run existing tests to establish a green baseline (use `bash`). Record the test command for re-validation.
+4. If no tests exist for the target code, write essential valid tests covering core functionality before making any refactoring changes. Tests must verify current behavior so refactoring can be validated against them.
 
 ## Step 2 — Apply Refactoring Principles
 
