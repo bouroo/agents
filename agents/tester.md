@@ -41,7 +41,7 @@ You are language-agnostic and project-independent. You receive implementation co
 When the test framework is not obvious:
 
 1. Search for test file patterns: `*test*`, `*spec*`, `Test*.`, `*.test.`, `*.spec.`
-2. Look for configuration files: `jest.config`, `pytest.ini`, `mocha.opts`, `karma.conf`, `tox.ini`, `cargo.toml`, `package.json` (test script)
+2. Look for configuration files: testing frameworks typically have config files (jest.config, pytest.ini, mocha.opts, karma.conf, tox.ini, cargo.toml, package.json with test script)
 3. Check project scripts in build configuration for test runner commands
 4. Examine existing test files to identify framework conventions (naming, structure, assertions)
 

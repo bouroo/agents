@@ -1,21 +1,21 @@
 ---
-description: Refactor & optimize code for quality and performance without breaking public API
+description: Refactor and optimize code for quality and performance without breaking public API
 ---
 # Refactor & Optimize
 
-Refactor the specified target `$ARGUMENTS` (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract (exported symbols, signatures, behavior, and tests must remain compatible). Benchmark results must not regress beyond noise threshold.
+Refactor the specified target `$ARGUMENTS` (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract (exported symbols, signatures, behavior, and tests must remain compatible).
 
 ## Step 1 — Analyze
 
 1. Read the target file(s) or module identified by `$ARGUMENTS`. If `$ARGUMENTS` is empty, use the current working directory (`.`) as the target.
-2. Identify the public API surface: exported functions, types, methods, constants, and their call sites across the codebase (use `grep` to find usages).
-3. Run existing tests to establish a green baseline (use `bash`). Record the test command for re-validation.
+2. Identify the public API surface: exported functions, types, methods, constants, and their call sites across the project (use `grep` to find usages).
+3. Run existing tests to establish a green baseline (use `execute`). Record the test command for re-validation.
 4. If no tests exist for the target code, write essential valid tests covering core functionality before making any refactoring changes. Tests must verify current behavior so refactoring can be validated against them.
 5. Run performance profilers to identify bottlenecks.
 
 ## Step 2 — Apply Refactoring Principles
 
-Apply the following language-agnostic rules. Only refactor what improves the code — do not make changes for the sake of change.
+Apply the following principles. Only refactor what improves the code — do not make changes for the sake of change.
 
 ### Naming & Readability
 - **Casing**: camelCase for local, PascalCase for exported. Acronyms keep uniform case (`HTTPClient`, `userID` — not `HttpClient`, `userId`).
@@ -27,7 +27,7 @@ Apply the following language-agnostic rules. Only refactor what improves the cod
 ### Code Structure
 - **Minimal visibility**: Write shy code — only expose what consumers need; prefer unexported helpers.
 - **Extract helpers**: Break long routines into small, named functions to reduce cognitive load.
-- **Valid initial state**: Constructors/factories must guarantee usable defaults; use With-style configurators for optional params.
+- **Valid initial state**: Constructors/factories must guarantee usable defaults; use configurators for optional params.
 - **Named constants**: Prefer constants over magic values.
 
 ### Error Handling
@@ -57,9 +57,6 @@ Apply the following language-agnostic rules. Only refactor what improves the cod
 - **Buffered I/O**: Wrap readers/writers with buffered equivalents to minimize syscalls.
 - **Batch operations**: Combine small writes, DB inserts, or network sends into batches.
 
-### Performance — Code Generation
-- **Enable compiler optimizations**: Use compiler hints or flags to enable optimizations for hot paths where supported by the language/toolchain.
-
 ### Verification — Before & After
 - **Benchmark before**: Run the project's benchmark suite (or write one if none exists) and record baseline results (throughput, latency, memory allocations).
 - **Measure before**: Capture baseline metrics (complexity, performance, memory, line count) before refactoring.
@@ -76,7 +73,7 @@ Apply the following language-agnostic rules. Only refactor what improves the cod
 ## Step 3 — Validate
 
 1. Re-run the test command from Step 1. All tests must pass.
-2. Run the project's linter (use `bash` to run the appropriate lint command for the ecosystem).
+2. Run the project's linter (use `execute` to run the appropriate lint command for the ecosystem).
 3. Verify no public API symbols were removed or had their signatures changed (use `grep` to confirm call sites still compile/resolve).
 4. Run benchmarks and compare before & after results. Display a comparison table. If any metric regresses beyond noise threshold, investigate and fix before proceeding.
 

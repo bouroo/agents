@@ -1,6 +1,6 @@
-# Self-Organizing Coder Agent
+# Agent Configuration
 
-Shared agent configuration for Claude Code, Gemini, OpenCode, Kilo, and Qwen. One source of truth, symlinked to each tool's expected location.
+Shared agent configuration for AI coding assistants. One source of truth, symlinked to each tool's expected location.
 
 ## Quick Start
 
@@ -17,9 +17,9 @@ This bootstraps symlinks for all supported tools. Run it once after cloning or u
 ├── AGENTS.md              # Core agent instructions (symlinked to each tool)
 ├── README.md              # This file
 ├── link.sh                # Bootstrap script: creates symlinks
-├── agents/                # Named agent modes (for delegation via `task` tool)
+├── agents/                # Named agent modes (for delegation via task tool)
 │   ├── conductor.md       # Master orchestrator — decomposes tasks, delegates to subagents
-│   ├── explorer.md        # Read-only codebase exploration
+│   ├── explorer.md        # Read-only project exploration
 │   ├── implementer.md     # Full-capability implementation — writes code, runs commands
 │   ├── planner.md         # Analysis and planning — designs solutions, creates plans
 │   ├── reviewer.md        # Read-only code review — quality, security, performance
@@ -27,7 +27,7 @@ This bootstraps symlinks for all supported tools. Run it once after cloning or u
 ├── commands/              # Slash commands
 │   ├── refactor.md        # /refactor — readability, safety, performance, maintainability
 │   ├── verify-project.md  # /verify-project — format, lint, vulnerability scan, tests
-│   └── vb-review.md       # /vb-review — VB Mobile Backend review checklist
+│   └── vb-review.md       # /vb-review — Mobile Backend review checklist
 └── skills/                # Conditional skill modules loaded by context
     ├── code-quality/      # Readability, clean code, naming
     ├── context-management/ # Long sessions, context limits, compaction, quality maintenance
@@ -68,7 +68,7 @@ Agents available for delegation via the `task` tool:
 | Agent | Mode | Purpose | Permissions |
 |-------|------|---------|-------------|
 | `conductor` | primary | Master orchestrator — decomposes tasks, delegates to subagents, validates outputs | No edits, no bash |
-| `explorer` | subagent | Read-only codebase exploration — finds files, searches content, maps architecture | No edits, no bash |
+| `explorer` | subagent | Read-only project exploration — finds files, searches content, maps architecture | No edits, no bash |
 | `implementer` | subagent | Full-capability implementation — writes code, edits files, runs commands | Full edit, write, bash |
 | `planner` | subagent | Analysis and planning — designs solutions, creates implementation plans, estimates scope | Read-only |
 | `reviewer` | subagent | Code review — quality, security, performance, best practices | Read-only (+ git diff/log) |
@@ -80,7 +80,7 @@ Agents available for delegation via the `task` tool:
 |---------|-------------|
 | `/refactor` | Refactor code for readability, safety, performance, and maintainability |
 | `/verify-project` | Format, lint (auto-fix), vulnerability scan, static analysis, and run tests |
-| `/vb-review` | Virtual Banking Mobile Backend review — backend service architecture checks |
+| `/vb-review` | Mobile Backend review — backend service architecture checks |
 
 ### Skills
 
@@ -97,9 +97,9 @@ Conditional rule modules loaded when context matches. Each skill is a `SKILL.md`
 
 ## Large Project Strategies
 
-When working with large, complex codebases:
+When working with large, complex projects:
 
-- **Navigation** — Use glob and grep to find files by pattern, locate patterns across the codebase. Build mental model of module boundaries before making changes.
+- **Navigation** — Use glob and grep to find files by pattern, locate patterns across the project. Build mental model of module boundaries before making changes.
 - **Incremental Changes** — Work within modular boundaries. Small, verifiable changes over broad refactoring. Ship each step. Update shared interfaces across all callers together.
 - **Context Efficiency** — Reference specific files with paths. Break large tasks into smaller subtasks. Summarize large code sections in prompts rather than including full content. Use `/compact` manually before major transitions.
 - **Working with Unfamiliar Code** — Read the module's public interface first. Trace call chains to understand data flow. Identify core domain types and relationships. Look for tests to understand expected behavior.

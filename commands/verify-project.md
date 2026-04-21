@@ -4,16 +4,16 @@ description: Generate, lint, vulncheck, staticcheck, and test with auto-fix
 
 # Verify Project
 
-Run the full verification pipeline for `$ARGUMENTS` (or current working directory if not specified). Detect the language ecosystem automatically and execute the appropriate toolchain. Fix any issues found and re-verify until clean or the issue requires human input.
+Run the full verification pipeline for `$ARGUMENTS` (or current working directory if not specified). Detect the project type automatically and execute the appropriate toolchain. Fix any issues found and re-verify until clean or the issue requires human input.
 
 ## Steps
 
-### 1. Detect Ecosystem
+### 1. Detect Project Type
 
-Use `glob` to detect the project type:
+Use `glob` to detect the project type by looking for build manifests:
 
-| Manifest | Ecosystem |
-|----------|-----------|
+| Manifest | Project Type |
+|----------|--------------|
 | `go.mod` | Go |
 | `package.json` / `pnpm-lock.yaml` / `yarn.lock` | Node/TypeScript |
 | `Cargo.toml` | Rust |
@@ -30,79 +30,68 @@ If no recognized manifest is found, ask the user via `question` to specify the p
 
 ### 2. Run Verification Pipeline
 
-Execute the following steps using `bash`. Set `$TARGET` to `$ARGUMENTS` if provided, otherwise `.` (current working directory). Run each step sequentially — stop on the first failure, fix, then restart from that step.
+Execute the following steps using `execute`. Set `$TARGET` to `$ARGUMENTS` if provided, otherwise `.` (current working directory). Run each step sequentially — stop on the first failure, fix, then restart from that step.
 
 For compiled languages (Go, Rust, Java, C#), append the appropriate path suffix for recursive operations where applicable.
 
 #### Go
-
 1. `go generate $TARGET/...`
-2. `golangci-lint run --fix $TARGET/...` (or `go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest run --fix $TARGET/...`)
+2. `golangci-lint run --fix $TARGET/...` (or equivalent)
 3. `govulncheck $TARGET/...`
 4. `staticcheck $TARGET/...`
 5. `go test -v -race $TARGET/...`
 
 #### Node/TypeScript
-
-1. `npm install` (or `pnpm install` / `yarn install` based on lockfile presence)
-2. `npx biome check --write .` (or `eslint --fix . && prettier --write .`)
-3. `npm run build` (if build script exists)
-4. `npm test` (or `vitest run` / `jest --ci`)
+1. Install dependencies (use appropriate package manager)
+2. Run formatter/linter with auto-fix
+3. Build if build script exists
+4. Run tests
 
 #### Rust
-
 1. `cargo clippy --fix --allow-dirty`
 2. `cargo fmt`
 3. `cargo build`
 4. `cargo test`
 
 #### Java (Maven)
-
 1. `mvn spotless:apply`
 2. `mvn compile`
 3. `mvn test`
 
 #### Java (Gradle)
-
-1. `./gradlew spotlessApply`
-2. `./gradlew build`
-3. `./gradlew test`
+1. Apply formatting
+2. `build`
+3. `test`
 
 #### Python
-
 1. `ruff check --fix .`
 2. `ruff format .`
-3. `mypy .` (if configured, skip otherwise)
-4. `pytest` (or `python -m pytest`)
+3. Type check if configured
+4. Run tests
 
 #### Ruby
-
 1. `bundle exec rubocop -A`
-2. `bundle exec rake spec` (or `bundle exec rspec`)
+2. Run specs
 
 #### PHP
-
-1. `composer install` (if composer.json present)
-2. `./vendor/bin/phpcs --standard=PSR12 --colors --fix .` (or `php-cs-fixer fix .`)
-3. `./vendor/bin/phpstan analyse .` (if configured)
-4. `./vendor/bin/phpunit` (or `php phpunit.phar`)
+1. Install dependencies if composer.json present
+2. Run code style fixer
+3. Run static analysis if configured
+4. Run unit tests
 
 #### C# (.NET)
-
 1. `dotnet format --verify-no-changes` (or `dotnet build`)
 2. `dotnet test`
 
 #### Swift
-
-1. `swiftformat .` (if configured)
+1. Format if configured
 2. `swift build`
 3. `swift test`
 
 #### Kotlin
-
-1. `./gradlew ktlintFormat` (or `ktlint --format .`)
-2. `./gradlew build`
-3. `./gradlew test`
+1. Format
+2. `build`
+3. `test`
 
 ### 3. Large Project Mode
 

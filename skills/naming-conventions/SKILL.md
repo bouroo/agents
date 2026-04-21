@@ -7,7 +7,7 @@ description: Language-agnostic naming conventions for writing clear, predictable
 Language-agnostic naming conventions for writing clear, predictable, and maintainable code.
 
 ## 1. Consistent Casing
-- **Standard rules**: Adhere to the language's idiomatic casing (e.g., camelCase for variables, PascalCase for classes/types). Do not mix snake_case and camelCase arbitrarily.
+- **Standard rules**: Adhere to the project's idiomatic casing conventions (e.g., camelCase for variables, PascalCase for types). Do not mix snake_case and camelCase arbitrarily.
 - **Acronyms and Initialisms**: Keep acronyms consistently cased within identifiers (e.g., `apiKey` or `APIKey`, but not `ApiKey`). This also applies to `ID` (e.g., `userID`, not `userId`).
 
 ## 2. Identifier Clarity

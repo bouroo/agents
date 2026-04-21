@@ -16,10 +16,10 @@ Language-agnostic code quality principles for writing, reviewing, and refactorin
 
 ## 3. Write Code for Reading
 - **Minimize cognitive load**: Flatten nested logic, extract complex paperwork into smaller functions.
-- **Glanceability**: Ask yourself if a reviewer can understand what the code does by reading it line-by-line. 
+- **Glanceability**: Ask yourself if a reviewer can understand what the code does by reading it line-by-line.
 
 ## 4. Be Safe by Default
-- **Always valid states**: Ensure objects and data structures are initialized in a valid state. 
+- **Always valid states**: Ensure objects and data structures are initialized in a valid state.
 - **Useful defaults**: Make the zero or default value of a type useful and safe.
 - **Named constants**: Avoid magic numbers or strings; use named constants to prevent typos.
 
@@ -29,7 +29,7 @@ Language-agnostic code quality principles for writing, reviewing, and refactorin
 - **Don't ignore errors**: Never silently swallow errors. Handle them or return them.
 
 ## 6. Avoid Mutable Global State
-- **Prevent data races**: Do not use module-level or global mutable variables. 
+- **Prevent data races**: Do not use module-level or global mutable variables.
 - **Encapsulation**: Encapsulate state within objects and pass them explicitly, or use proper synchronization mechanisms.
 
 ## 7. Manage Concurrency Carefully
