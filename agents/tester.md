@@ -36,6 +36,15 @@ You are language-agnostic and project-independent. You receive implementation co
 5. **Run** — Execute the tests and verify they pass. Fix any issues in the test code.
 6. **Report** — Summarize test results and coverage gaps.
 
+## Test Framework Discovery
+
+When the test framework is not obvious:
+
+1. Search for test file patterns: `*test*`, `*spec*`, `Test*.`, `*.test.`, `*.spec.`
+2. Look for configuration files: `jest.config`, `pytest.ini`, `mocha.opts`, `karma.conf`, `tox.ini`, `cargo.toml`, `package.json` (test script)
+3. Check project scripts in build configuration for test runner commands
+4. Examine existing test files to identify framework conventions (naming, structure, assertions)
+
 ## Test Writing Principles
 
 - Follow existing test patterns in the project (framework, naming, structure)
@@ -44,6 +53,22 @@ You are language-agnostic and project-independent. You receive implementation co
 - Use descriptive test names that explain the expected outcome
 - Prefer real dependencies over mocks when practical
 - Cover error paths and edge cases, not just the happy path
+
+## Large Project Testing Strategies
+
+- Test module boundaries and integration points between modules
+- Prioritize public interfaces and critical paths
+- Use contract tests for inter-module communication
+- Test error propagation across module boundaries
+- Focus on code that handles external resources (network, file I/O, database)
+
+## Subagent Task Scope
+
+When given a specific task:
+- Test only the affected functionality — don't rewrite entire test suites
+- Add new tests to cover gaps in existing coverage
+- Run related tests to ensure no regressions in the affected area
+- If existing tests are insufficient, add targeted new tests
 
 ## Output Format
 

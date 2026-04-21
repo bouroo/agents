@@ -30,6 +30,7 @@ This bootstraps symlinks for all supported tools. Run it once after cloning or u
 │   └── vb-review.md       # /vb-review — VB Mobile Backend review checklist
 └── skills/                # Conditional skill modules loaded by context
     ├── code-quality/      # Readability, clean code, naming
+    ├── context-management/ # Long sessions, context limits, compaction, quality maintenance
     ├── naming-conventions/ # Language-agnostic naming conventions
     ├── performance/       # Language-agnostic performance optimization
     ├── self-organizing-coder/ # Task decomposition, subagent delegation, iterative delivery
@@ -79,7 +80,7 @@ Agents available for delegation via the `task` tool:
 |---------|-------------|
 | `/refactor` | Refactor code for readability, safety, performance, and maintainability |
 | `/verify-project` | Format, lint (auto-fix), vulnerability scan, static analysis, and run tests |
-| `/vb-review` | Virtual Banking Mobile Backend review — comprehensive Go/Kafka/Postgres/Mongo/Redis/K8s checks |
+| `/vb-review` | Virtual Banking Mobile Backend review — backend service architecture checks |
 
 ### Skills
 
@@ -88,10 +89,20 @@ Conditional rule modules loaded when context matches. Each skill is a `SKILL.md`
 | Skill | Trigger Context |
 |-------|-----------------|
 | `code-quality` | Readability, clean code, naming discussions |
+| `context-management` | Long sessions, context limits, compaction, context quality |
 | `naming-conventions` | Writing or reviewing identifier names |
 | `performance` | Performance optimization discussions |
 | `self-organizing-coder` | Task decomposition, subagent delegation, iterative delivery |
 | `spec-driven` | Planning features, writing specs, spec-first workflows |
+
+## Large Project Strategies
+
+When working with large, complex codebases:
+
+- **Navigation** — Use glob and grep to find files by pattern, locate patterns across the codebase. Build mental model of module boundaries before making changes.
+- **Incremental Changes** — Work within modular boundaries. Small, verifiable changes over broad refactoring. Ship each step. Update shared interfaces across all callers together.
+- **Context Efficiency** — Reference specific files with paths. Break large tasks into smaller subtasks. Summarize large code sections in prompts rather than including full content. Use `/compact` manually before major transitions.
+- **Working with Unfamiliar Code** — Read the module's public interface first. Trace call chains to understand data flow. Identify core domain types and relationships. Look for tests to understand expected behavior.
 
 ## Planned Skills (Not Yet Implemented)
 
@@ -99,10 +110,7 @@ The following skills are described in the desired-state but not yet implemented:
 
 | Skill | Purpose |
 |-------|---------|
-| `context-management` | Long sessions, context limits, compaction |
 | `error-design` | Error types, wrapping, actionable messages |
-| `go-excellence` | Go naming, performance, concurrency, security |
-| `go-performance` | Go memory, CPU, and throughput optimization |
 | `incremental-delivery` | Feature flags, small PRs, progressive rollout |
 | `library-first` | Architecture design, new feature structure |
 | `security-by-default` | Input handling, auth, file access, secrets |

@@ -29,3 +29,9 @@ Language-agnostic performance optimization patterns for reducing latency, improv
 ## 4. Compiler-Level Optimization
 - **Compiler Flags**: Leverage release builds and compiler optimization flags (e.g., inlining, link-time optimization) for production environments.
 - **Profile-Guided Optimization**: Rely on profiling and benchmarking data before applying optimizations. Do not guess where the bottlenecks are.
+
+## 5. Large Project Performance
+- **Profile at module boundaries**: Identify cross-module bottlenecks by measuring interface-level latency. A slow module interface can cascade into overall system slowdown.
+- **Minimize data transfer**: Reduce the volume of data passed between modules or services. Serialize only what's needed; use pagination for large result sets.
+- **Cache at the right layer**: Cache expensive computations or remote lookups at the appropriate layer—close to where the data is consumed, not so deep that cache invalidation becomes complex.
+- **Monitor in CI/CD**: Track performance metrics in CI/CD pipelines. Fail builds on regressions beyond defined thresholds.

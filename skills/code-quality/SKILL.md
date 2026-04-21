@@ -29,7 +29,7 @@ Language-agnostic code quality principles for writing, reviewing, and refactorin
 - **Don't ignore errors**: Never silently swallow errors. Handle them or return them.
 
 ## 6. Avoid Mutable Global State
-- **Prevent data races**: Do not use package-level or global mutable variables. 
+- **Prevent data races**: Do not use module-level or global mutable variables. 
 - **Encapsulation**: Encapsulate state within objects and pass them explicitly, or use proper synchronization mechanisms.
 
 ## 7. Manage Concurrency Carefully
@@ -49,3 +49,8 @@ Language-agnostic code quality principles for writing, reviewing, and refactorin
 - **No logorrhea**: Do not spam logs with trivia. Log only actionable errors that need fixing.
 - **Structured logging**: Emit machine-readable formats (e.g., JSON) instead of plain text.
 - **Data privacy**: Never log secrets, credentials, or sensitive personal data.
+
+## 11. Large Project Quality
+- **Review module boundaries**: Ensure each module exposes a clear contract. Changes within a module should not break consumers.
+- **Actionable errors at every layer**: Error messages must indicate what failed and why, not just "error occurred." Include operation identifiers for tracing.
+- **Log context for tracing**: Include request/operation identifiers in log entries to trace behavior across module boundaries.

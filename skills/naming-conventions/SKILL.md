@@ -30,3 +30,8 @@ Language-agnostic naming conventions for writing clear, predictable, and maintai
 
 ## 6. Interface Naming
 - **Behavior-based**: Interfaces with a single primary behavior should often be named after that action (e.g., `Reader`, `Writer`, `Authenticator`). Avoid suffixing everything generically with `Interface` unless strictly mandated by framework conventions.
+
+## 7. Large Project Naming
+- **Establish conventions early**: Define project-wide naming conventions before scaling. Document agreed-upon patterns for module prefixes, abbreviations, and compound names.
+- **Avoid cross-module collisions**: In large projects, ensure names don't clash across modules. Use namespace prefixes only when disambiguation is genuinely needed.
+- **Consistency over brevity**: When the same concept appears across modules, use identical naming. Don't mix `getUser`, `fetchUser`, and `retrieveUser` for the same operation.
