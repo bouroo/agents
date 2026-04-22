@@ -1,6 +1,6 @@
 # Agent Configuration
 
-Shared agent configuration for AI coding assistants. One source of truth, symlinked to each tool's expected location.
+Shared agent configuration for AI coding assistants. Language-agnostic, tool-agnostic instructions for autonomous coding work. One source of truth, symlinked to each tool's expected location.
 
 ## Quick Start
 
@@ -20,9 +20,9 @@ This bootstraps symlinks for all supported tools. Run it once after cloning or u
 ├── agents/                # Named agent modes (for delegation via task tool)
 │   ├── conductor.md       # Master orchestrator — decomposes tasks, delegates to subagents
 │   ├── explorer.md        # Read-only project exploration
-│   ├── implementer.md     # Full-capability implementation — writes code, runs commands
+│   ├── implementer.md      # Full-capability implementation — writes code, runs commands
 │   ├── planner.md         # Analysis and planning — designs solutions, creates plans
-│   ├── reviewer.md        # Read-only code review — quality, security, performance
+│   ├── reviewer.md         # Read-only code review — quality, security, performance
 │   └── tester.md          # Test engineering — writes and runs tests
 ├── commands/              # Slash commands
 │   ├── refactor.md        # /refactor — readability, safety, performance, maintainability
@@ -58,21 +58,21 @@ Defines the core execution loop and coding standards:
 - **Workflow** — Specify → Plan → Delegate → Validate → Iterate
 - **Code Quality** — Readability, safe defaults, error wrapping, no mutable globals, decoupled from environment
 - **Performance** — Preallocation, object reuse, batched I/O, minimized copies, lazy initialization
-- **Naming Conventions** — camelCase/PascalCase, no type names in identifiers, short lowercase package names
+- **Naming Conventions** — Follow project conventions, no type names in identifiers, short lowercase module names
 - **Architecture** — Modular by default, test first, simple (≤3 top-level modules), no speculative features
 
 ### Named Agents
 
-Agents available for delegation via the `task` tool:
+Agents available for delegation via the `task` tool. All agents are language-agnostic and operate on generic code structures (files, functions, classes, modules, interfaces, data structures, collections).
 
 | Agent | Mode | Purpose | Permissions |
 |-------|------|---------|-------------|
-| `conductor` | primary | Master orchestrator — decomposes tasks, delegates to subagents, validates outputs | No edits, no bash |
-| `explorer` | subagent | Read-only project exploration — finds files, searches content, maps architecture | No edits, no bash |
-| `implementer` | subagent | Full-capability implementation — writes code, edits files, runs commands | Full edit, write, bash |
+| `conductor` | primary | Master orchestrator — decomposes tasks, delegates to subagents, validates outputs | No edits, no shell commands |
+| `explorer` | subagent | Read-only project exploration — finds files, searches content, maps architecture | No edits, no shell commands |
+| `implementer` | subagent | Full-capability implementation — writes code, edits files, runs commands | Full edit, write, shell commands |
 | `planner` | subagent | Analysis and planning — designs solutions, creates implementation plans, estimates scope | Read-only |
 | `reviewer` | subagent | Code review — quality, security, performance, best practices | Read-only (+ git diff/log) |
-| `tester` | subagent | Test engineering — writes and runs tests, validates against acceptance criteria | Edit/write (test files), full bash |
+| `tester` | subagent | Test engineering — writes and runs tests, validates against acceptance criteria | Edit/write (test files), full shell access |
 
 ### Slash Commands
 

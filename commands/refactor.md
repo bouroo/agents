@@ -18,14 +18,14 @@ Refactor the specified target `$ARGUMENTS` (or current working directory if not 
 Apply the following principles. Only refactor what improves the code — do not make changes for the sake of change.
 
 ### Naming & Readability
-- **Casing**: camelCase for local, PascalCase for exported. Acronyms keep uniform case (`HTTPClient`, `userID` — not `HttpClient`, `userId`).
+- **Casing**: Follow the project's naming conventions for visibility levels (e.g., public vs private/internal). Acronyms keep uniform case (`HTTPClient`, `userID` — not `HttpClient`, `userId`).
 - **Length**: Short for narrow scope (loop vars, lambdas); descriptive for broad scope (public functions, types).
-- **Avoid repetition**: Don't repeat package/type context at call site (`customer.New()`, not `customer.NewCustomer()`).
+- **Avoid repetition**: Avoid repeating the module or type context at the call site. If the module is `customer`, its constructor should be `New`, not `NewCustomer`.
 - **No type encoding**: `count` not `countInt`. Exception: type-conversion disambiguation.
 - **No shadowing**: Avoid names that clash with standard library or built-ins.
 
 ### Code Structure
-- **Minimal visibility**: Write shy code — only expose what consumers need; prefer unexported helpers.
+- **Minimal visibility**: Write shy code — only expose what consumers need; prefer private/internal helpers.
 - **Extract helpers**: Break long routines into small, named functions to reduce cognitive load.
 - **Valid initial state**: Constructors/factories must guarantee usable defaults; use configurators for optional params.
 - **Named constants**: Prefer constants over magic values.
@@ -44,12 +44,12 @@ Apply the following principles. Only refactor what improves the code — do not 
 - **Preallocate**: Allocate collections with capacity upfront when size is known to avoid dynamic resizes.
 - **Pool high-churn objects**: Reuse objects via pooling to reduce memory management overhead.
 - **Minimize padding**: Order data structure fields by descending alignment size (pointers/large scalars first).
-- **Zero-copy**: Use sub-slicing, buffer reuse, and reference passing instead of copying large data.
-- **Stack over heap**: Keep values local, pass by value when small, avoid unnecessary heap allocations.
+- **Zero-copy**: Use sub-ranging or view operations, buffer reuse, and reference passing instead of copying large data.
+- **Stack allocation**: Keep values local, pass by value when small, prefer stack allocation over heap where appropriate.
 
 ### Performance — Concurrency
-- **Worker pools**: Use fixed-size pools to cap resource usage; avoid unbounded thread/process spawning.
-- **Atomics over locks**: Use atomic primitives for simple shared state; reserve locks/mutexes for complex state.
+- **Worker pools**: Use fixed-size pools to cap resource usage; avoid unbounded concurrent task spawning.
+- **Atomics over locks**: Use atomic primitives for simple shared state; reserve locks for complex state.
 - **Lazy init**: Delay expensive setup (pools, caches, configs) until first use.
 - **Propagate cancellation**: Pass timeouts, deadlines, and cancel signals through all concurrent work.
 

@@ -109,7 +109,7 @@ For each finding include:
 ## Constraints
 
 - NEVER edit, write, or modify any files
-- NEVER execute bash commands (except read-only git commands)
+- NEVER execute shell commands (except read-only git commands)
 - ALWAYS cite specific file paths and line numbers
 - Be constructive — explain why something is an issue, not just that it is one
 - Prioritize actionable feedback over stylistic preferences

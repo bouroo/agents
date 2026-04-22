@@ -1,5 +1,5 @@
 ---
-description: Generate, lint, vulncheck, staticcheck, and test with auto-fix
+description: Detect project type, run verification pipeline with auto-fix
 ---
 
 # Verify Project
@@ -10,90 +10,40 @@ Run the full verification pipeline for `$ARGUMENTS` (or current working director
 
 ### 1. Detect Project Type
 
-Use `glob` to detect the project type by looking for build manifests:
-
-| Manifest | Project Type |
-|----------|--------------|
-| `go.mod` | Go |
-| `package.json` / `pnpm-lock.yaml` / `yarn.lock` | Node/TypeScript |
-| `Cargo.toml` | Rust |
-| `pom.xml` | Java (Maven) |
-| `build.gradle` / `build.gradle.kts` | Java (Gradle) |
-| `pyproject.toml` / `setup.py` / `requirements.txt` | Python |
-| `Gemfile` | Ruby |
-| `composer.json` | PHP |
-| `*.csproj` / `*.sln` | C# (.NET) |
-| `Package.swift` | Swift |
-| `*.kts` / `build.gradle.kts` | Kotlin |
+Scan the project root for build manifests, lock files, and configuration files to determine the project type and build system.
 
 If no recognized manifest is found, ask the user via `question` to specify the project type or provide guidance.
 
-### 2. Run Verification Pipeline
+### 2. Determine Verification Commands
 
-Execute the following steps using `execute`. Set `$TARGET` to `$ARGUMENTS` if provided, otherwise `.` (current working directory). Run each step sequentially — stop on the first failure, fix, then restart from that step.
+Look for configuration files that indicate the project's toolchain (linters, formatters, test runners, security scanners).
 
-For compiled languages (Go, Rust, Java, C#), append the appropriate path suffix for recursive operations where applicable.
+Read the project's build manifest to determine the standard verification commands:
 
-#### Go
-1. `go generate $TARGET/...`
-2. `golangci-lint run --fix $TARGET/...` (or equivalent)
-3. `govulncheck $TARGET/...`
-4. `staticcheck $TARGET/...`
-5. `go test -v -race $TARGET/...`
+1. Look for scripts defined in the manifest that invoke verification tools.
+2. Identify the build system and its standard verification targets.
 
-#### Node/TypeScript
-1. Install dependencies (use appropriate package manager)
-2. Run formatter/linter with auto-fix
-3. Build if build script exists
-4. Run tests
+### 3. Run Verification Pipeline
 
-#### Rust
-1. `cargo clippy --fix --allow-dirty`
-2. `cargo fmt`
-3. `cargo build`
-4. `cargo test`
+Execute the verification pipeline using `execute`. Set `$TARGET` to `$ARGUMENTS` if provided, otherwise `.` (current working directory).
 
-#### Java (Maven)
-1. `mvn spotless:apply`
-2. `mvn compile`
-3. `mvn test`
+Run steps in this order:
+1. **Generate** — Run code generation if configured (protobuf generation, OpenAPI generation, etc.)
+2. **Lint/Fix** — Run the project's linter with auto-fix
+3. **Format** — Run the project's formatter
+4. **Security Scan** — Run security/vulnerability checks if configured
+5. **Static Analysis** — Run static analysis if configured
+6. **Build** — Build the project to verify compilation
+7. **Test** — Run the project's test suite
 
-#### Java (Gradle)
-1. Apply formatting
-2. `build`
-3. `test`
+Run the standard verification commands appropriate for the detected build system: code generation, linting with auto-fix, formatting, security scanning, static analysis, building, and testing. Use commands defined in the project's build configuration or standard for the detected ecosystem.
 
-#### Python
-1. `ruff check --fix .`
-2. `ruff format .`
-3. Type check if configured
-4. Run tests
+For each step:
+- Check if the required tool is installed before running
+- If the tool is not found, report the missing tool and ask the user whether to skip or install
+- If a step fails, proceed to the auto-fix loop
 
-#### Ruby
-1. `bundle exec rubocop -A`
-2. Run specs
-
-#### PHP
-1. Install dependencies if composer.json present
-2. Run code style fixer
-3. Run static analysis if configured
-4. Run unit tests
-
-#### C# (.NET)
-1. `dotnet format --verify-no-changes` (or `dotnet build`)
-2. `dotnet test`
-
-#### Swift
-1. Format if configured
-2. `swift build`
-3. `swift test`
-
-#### Kotlin
-1. Format
-2. `build`
-3. `test`
-
-### 3. Large Project Mode
+### 4. Large Project Mode
 
 If `$TARGET` contains more than 100 source files (detected via `glob`), run verification in batches to avoid timeouts and resource exhaustion:
 
@@ -102,17 +52,6 @@ If `$TARGET` contains more than 100 source files (detected via `glob`), run veri
 3. Aggregate results and report any failures with batch context.
 
 This mode can be disabled by setting `$LARGE_PROJECT_MODE=false`.
-
-### 4. Tool Availability Check
-
-Before running each step, check if the required tool is installed:
-
-1. Attempt to invoke the tool with `--version` or `version` flag.
-2. If the tool is not found:
-   - Report which tool is missing
-   - Ask the user via `question` whether to skip this step or install the tool
-   - If user confirms skip, proceed to next step
-   - If user provides installation instructions, execute them and retry
 
 ### 5. Auto-Fix Loop
 
@@ -130,8 +69,9 @@ When all steps pass, output a brief summary:
 ```
 ✓ generate — passed
 ✓ lint — passed (N issues auto-fixed)
-✓ vulncheck — passed
-✓ staticcheck — passed
+✓ security scan — passed
+✓ static analysis — passed
+✓ build — passed
 ✓ test — passed (M tests, 0 failures)
 ```
 

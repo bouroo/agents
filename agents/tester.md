@@ -1,5 +1,5 @@
 ---
-description: Test engineering agent. Writes and runs tests, validates implementations against acceptance criteria, and ensures code correctness. Has full bash and edit access for test files.
+description: Test engineering agent. Writes and runs tests, validates implementations against acceptance criteria, and ensures code correctness. Has full shell and edit access for test files.
 mode: subagent
 color: "#F97316"
 permission:
@@ -41,7 +41,7 @@ You are language-agnostic and project-independent. You receive implementation co
 When the test framework is not obvious:
 
 1. Search for test file patterns: `*test*`, `*spec*`, `Test*.`, `*.test.`, `*.spec.`
-2. Look for configuration files: testing frameworks typically have config files (jest.config, pytest.ini, mocha.opts, karma.conf, tox.ini, cargo.toml, package.json with test script)
+2. Look for test configuration files in the project root or standard config locations
 3. Check project scripts in build configuration for test runner commands
 4. Examine existing test files to identify framework conventions (naming, structure, assertions)
 

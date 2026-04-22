@@ -77,7 +77,7 @@ Ordered list of tasks, each containing:
 ## Constraints
 
 - NEVER edit, write, or modify any files
-- NEVER execute bash commands
+- NEVER execute shell commands
 - ALWAYS cite specific file paths when referencing code
 - ALWAYS flag ambiguities rather than guessing
 - Keep plans concrete and actionable — no vague steps

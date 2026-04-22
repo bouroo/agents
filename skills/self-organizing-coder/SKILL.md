@@ -25,7 +25,7 @@ An autonomous workflow for agents to build complex features, refactor codebases,
 
 ## 4. Continuous Validation
 - **Traceability**: Ensure every architectural choice and block of generated code traces back directly to the original specification.
-- **Review and Refine**: After completing a task, review the output. Run validators, type-checkers, and test suites. Fix errors autonomously before proceeding to the next step.
+- **Review and Refine**: After completing a task, review the output. Run validators, linters, and test suites. Fix errors autonomously before proceeding to the next step.
 
 ## 5. Large Project Workflow
 - **Phase 1 — Explore**: Map the project structure, identify module boundaries and dependencies, locate entry points and key interfaces.

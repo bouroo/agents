@@ -56,6 +56,8 @@ Abstract capabilities represented by available tools:
 | `edit` | Make targeted changes — precise string replacements in existing files |
 | `write` | Create new files or overwrite — for new files or complete rewrites |
 | `execute` | Run commands — build, test, validate, git operations |
+| `lsp` | Language server protocol — cross-file analysis, definitions, refactoring |
+| `apply_patch` | Apply targeted patches — fix specific issues with minimal scope |
 | `todowrite` | Track progress — manage multi-step task lists |
 | `skill` | Load specialized instructions — access skill workflows on demand |
 | `question` | Clarify requirements — ask for decisions or missing info |
@@ -85,12 +87,12 @@ Abstract capabilities represented by available tools:
 
 ## Naming Conventions
 
-- Identifier case conventions should follow project conventions — typically camelCase for private/internal, PascalCase for exported/public.
+- Identifier case conventions should follow project conventions — follow the project's public/private visibility rules.
 - Acronyms keep consistent case within an identifier (`apiKey`, `APIKey` — not `ApiKey`).
 - Don't encode type in name (`userID` not `userIDString`) except for conversion disambiguation.
 - Avoid name clashes with builtins or standard library in scope.
 - Modules/packages: short, lowercase, one word. No `utils`, `helpers`, `common`.
-- Don't repeat module name in exports (`customer.New()` not `customer.NewCustomer()`).
+- Don't repeat module name in exports — follow project conventions for constructor/export naming.
 
 ## Architecture
 
@@ -124,7 +126,7 @@ When facing complex work:
 **Condensing behavior:**
 - Auto-compaction triggers when conversation approaches token limit (~20K headroom reserved).
 - Old tool outputs beyond ~40K recency window are pruned and replaced with `[Old tool result content cleared]`.
-- Compaction produces a structured summary: goal, instructions, discoveries, accomplishments, relevant files.
+- Compaction produces a structured summary: goal, discoveries, accomplishments, modified files, remaining tasks.
 - Manual trigger: `/compact` slash command or compact button in task header.
 
 **Maintaining context quality:**

@@ -49,30 +49,30 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 5 | P0 | No global mutable variables; all state via Dependency Injection | Global state = data race + untestable |
 | 6 | P2 | All magic numbers/strings declared as constants or config values | Never hardcoded in logic |
 | 7 | P2 | Naming follows project conventions | Package names short/descriptive |
-| 8 | P1 | Deferred cleanup not used inside loops | Defer accumulates; only runs when enclosing function returns |
+| 8 | P1 | Cleanup handlers not accumulated in loops | Cleanup handlers only execute when enclosing scope exits |
 | 9 | P2 | Interfaces are small (≤5 methods); no "god interfaces" | Interface Segregation Principle |
 | 10 | P2 | Data structure field ordering considers memory alignment | Validate with appropriate linter |
 
 **Request Input Validation:**
 | 11 | P0 | All request bodies bound and validated before use | Never proceed with unvalidated input |
-| 12 | P1 | Format-specific validators for email, URL, UUID fields | Reject malformed input at boundary |
+| 12 | P1 | Format-specific validators for email, URL, identifier fields | Reject malformed input at boundary |
 | 13 | P0 | Request body size limited | Prevents DoS |
 | 14 | P1 | Pagination params validated: page >= 1, limit between 1 and max | Enforce server-side max |
 
 **Error Handling:**
 | 15 | P2 | Wrap errors at every layer | Clear debug stack trace |
 | 16 | P2 | No ignored errors; add comment if necessary | Ignored error = bug waiting to happen |
-| 17 | P0 | Panic only for programmer errors, never as error return | Unrecovered panic crashes process |
-| 18 | P2 | No fatal logging in library code; only in main/bootstrap | Fatal calls bypass defers |
-| 19 | P2 | Timeout/deadline contexts always paired with deferred cleanup | Prevents context leak |
+| 17 | P0 | Fatal errors only for programmer errors, never as error return | Unrecovered fatal errors crash process |
+| 18 | P2 | No fatal logging in library code; only in main/bootstrap | Fatal calls bypass cleanup handlers |
+| 19 | P2 | Timeout/deadline contexts always paired with cleanup handlers | Prevents context leak |
 
 **Concurrency:**
-| 20 | P0 | No goroutine/thread leaks; every async unit has explicit exit condition | Test with leak detection |
-| 21 | P0 | All async units have bounded lifetime; no fire-and-forget | Tie to context, WaitGroup, or errgroup |
+| 20 | P0 | No concurrent task leaks; every async unit has explicit exit condition | Test with leak detection |
+| 21 | P0 | All async units have bounded lifetime; no fire-and-forget | Tie to context or explicit coordination |
 | 22 | P1 | Async pool/semaphore for bounded concurrency | Prevent unbounded creation |
-| 23 | P0 | Shared data protected by Mutex/RWMutex/channel | RWMutex when read >> write |
+| 23 | P0 | Shared data protected by synchronization primitives | Use appropriate locking for read-heavy workloads |
 | 24 | P0 | Race detection tests pass with zero data races | Race detector before code push |
-| 25 | P2 | Never sleep for synchronization; use channel/WaitGroup | Sleep is non-deterministic |
+| 25 | P2 | Never sleep for synchronization; use explicit coordination | Sleep is non-deterministic |
 | 26 | P0 | Context passed to all parallel async units for timeout/cancellation | Parent context must propagate |
 
 **Testing & Quality:**
@@ -84,13 +84,13 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 32 | P0 | Async leak detection in tests | Critical for async-spawning tests |
 
 **Memory & Resource Management:**
-| 33 | P1 | No memory leak from slice header referencing large underlying array | Use copy for sub-slices kept long-term |
+| 33 | P1 | No reference retaining large underlying arrays | Use copy for sub-ranges or references kept long-term |
 | 34 | P1 | String concatenation in loops uses efficient builder | Concatenation in loop = O(n²) allocation |
 | 35 | P0 | Response body/IO always closed | Unclosed resource leaks |
 | 36 | P1 | Large allocations avoided in request-scoped handlers | Pre-allocate buffers, reuse via pool |
-| 37 | P1 | Slice/Map pre-allocate capacity | Reduces memory reallocation and GC pressure |
+| 37 | P1 | Collection pre-allocate capacity | Reduces memory reallocation and GC pressure |
 | 38 | P2 | Pool for frequently created/destroyed objects in hot path | Reduces GC pressure |
-| 39 | P1 | Atomic operations used for simple counters/flags instead of Mutex | 5-10x faster than Mutex |
+| 39 | P1 | Atomic operations used for simple counters/flags instead of locks | 5-10x faster than locks |
 
 ---
 
@@ -98,14 +98,14 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 
 | No. | Severity | Check | Rationale |
 |-----|----------|-------|-----------|
-| 1 | P2 | Domain layer has zero imports from infrastructure | Dependency rule; domain is pure |
+| 1 | P2 | Domain layer has zero dependencies on infrastructure | Dependency rule; domain is pure |
 | 2 | P1 | Port (Interface) declared in Domain/Application layer, not Infrastructure | Decouples business logic from external |
 | 3 | P2 | DTO separated from Domain Entity; conversion at handler boundary | Never pass DTO into domain layer |
-| 4 | P2 | ORM/BSON structs never used as Domain Entity; mapper between layers | Tags are infrastructure concern |
+| 4 | P2 | ORM/document models never used as Domain Entity; mapper between layers | Persistence format is infrastructure concern |
 
 **Dependency Injection & Config:**
 | 5 | P1 | All wiring in main entry point, not in business logic | Creates concrete types, injects |
-| 6 | P0 | Config struct immutable after load; no runtime modification | Load once at bootstrap; pass via DI as read-only |
+| 6 | P0 | Configuration type/object immutable after load; no runtime modification | Load once at bootstrap; pass via DI as read-only |
 | 7 | P0 | Never wrap config with in-memory cache library | Config from file is already in-memory |
 | 8 | P2 | Config validation at startup; fail fast if required config missing | Validation on config struct |
 | 9 | P2 | Config per environment clearly separated | Environment-based override, not if-else in code |
@@ -117,7 +117,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | No. | Severity | Check | Rationale |
 |-----|----------|-------|-----------|
 | 1 | P0 | ReadTimeout, WriteTimeout, IdleTimeout configured | Prevents slowloris; tune per layer |
-| 2 | P1 | ReadHeaderTimeout separate from ReadTimeout (5s) | Prevents slow header attack |
+| 2 | P1 | Header read timeout separate from request read timeout (5s) | Prevents slow header attack |
 | 3 | P1 | Body limit set | Prevents large payload DoS |
 | 4 | P0 | CorrelationID/RequestID on every request, propagated in context and headers | End-to-end request tracing |
 
@@ -162,24 +162,24 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 **Connection Pool Configuration:**
 | No. | Severity | Check | Rationale |
 |-----|----------|-------|-----------|
-| 1 | P0 | MaxOpenConns should not be too much | Prevents exceeding DB max connections |
-| 2 | P1 | MaxIdleConns >= 70% of MaxOpenConns | Too few = churn |
-| 3 | P1 | ConnMaxLifetime = 5-30 minutes | Prevents stale connections after failover |
-| 4 | P1 | ConnMaxIdleTime closes long-idle connections | Prevents stale conn errors |
-| 5 | P0 | Deferred close after every Query | Unclosed rows leak connections |
-| 6 | P1 | Rows.Err checked after iteration loop | Iteration errors missed without explicit check |
+| 1 | P0 | Max open connections should not be too high | Prevents exceeding DB max connections |
+| 2 | P1 | Max idle connections >= 70% of max open connections | Too few = churn |
+| 3 | P1 | Connection max lifetime = 5-30 minutes | Prevents stale connections after failover |
+| 4 | P1 | Connection max idle time closes long-idle connections | Prevents stale connection errors |
+| 5 | P0 | Close result sets after every query | Unclosed rows leak connections |
+| 6 | P1 | Iteration errors checked after loop completion | Iteration errors missed without explicit check |
 | 7 | P2 | Ping at startup | Fail fast if DB unreachable |
 
 **Query Safety & Performance:**
 | 8 | P0 | Parameterized queries only; never string concat | SQL injection is P0 security vulnerability |
-| 9 | P0 | Every query hits index; EXPLAIN ANALYZE verified | Seq scan = slow query = production critical |
+| 9 | P0 | Every query hits index; EXPLAIN ANALYZE verified | Full scan = slow query = production critical |
 | 10 | P0 | No N+1 queries; use JOIN, IN, batch | N+1 in loop scales linearly with data |
 | 11 | P2 | No SELECT *; select only needed columns | Wastes bandwidth/memory; may leak sensitive columns |
 | 12 | P0 | LIMIT on every list query; no unbounded results | Missing LIMIT can OOM, Network Congestion |
 | 13 | P2 | Prepared statements for frequently executed queries | Driver auto-caches |
 
 **Transaction Management:**
-| 14 | P0 | Deferred rollback immediately after Begin | Safe no-op after Commit; prevents leaked connections |
+| 14 | P0 | Rollback immediately after beginning a transaction | Safe no-op after commit; prevents leaked connections |
 | 15 | P0 | Transactional short; no external I/O inside | Long tx = locks = deadlock + pool exhaustion |
 | 16 | P2 | Deadlock errors caught and retried | DB aborts one tx on deadlock |
 
@@ -187,9 +187,9 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 17 | P0 | Check Indexes on WHERE/JOIN/ORDER BY columns; composite by selectivity | Equality first, then range; B-Tree default |
 | 18 | P2 | Partial indexes for subset-filtered queries if needed | Smaller, faster index |
 | 19 | P0 | Foreign keys have indexes; never FK without index on child table | DB does NOT auto-create FK indexes |
-| 20 | P1 | No unbounded TEXT/JSON columns in hot query path without index | Without index = seq scan |
-| 21 | P1 | UUID primary key uses random generation | v1 UUIDs leak info; random UUIDs avoid hotspot |
-| 22 | P1 | TIMESTAMPTZ used for all timestamp columns | Always stores UTC |
+| 20 | P1 | No unbounded TEXT/JSON columns in hot query path without index | Without index = full scan |
+| 21 | P1 | Random generation used for primary keys | Sequential keys leak info and cause hotspot |
+| 22 | P1 | Timezone-aware timestamps used for all timestamp columns | Always stores UTC |
 | 23 | P1 | Index column order follows query filter pattern | Leading column must appear in WHERE |
 | 24 | P1 | Numeric/Decimal used for money; never floating point | Floating point is inexact |
 | 25 | P2 | No over-indexing; each index adds write amplification | Audit unused indexes |
@@ -202,7 +202,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | No. | Severity | Check | Rationale |
 |-----|----------|-------|-----------|
 | 1 | P1 | Embedding vs Referencing based on read/write pattern | Embed: always queried together; Reference: updated independently |
-| 2 | P0 | No unbounded arrays; document limit exists | Bucket Pattern or separate collection for growing data |
+| 2 | P0 | No unbounded arrays; document limit exists | Partitioning or separate collection for growing data |
 | 3 | P0 | Write Concern majority for critical data | Replicate to majority before ACK |
 | 4 | P2 | Read Concern secondaryPreferred | Improves availability and reduces load on primary |
 | 5 | P2 | Read Concern majority for consistent reads | Prevents dirty reads |
@@ -219,13 +219,13 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 **Driver Configuration:**
 | 13 | P0 | MaxPoolSize, MinPoolSize, MaxConnIdleTime configured | Default may not suffice for high throughput |
 | 14 | P2 | Projection: fetch only required fields | Wastes bandwidth/memory |
-| 15 | P0 | BulkWrite instead of loop insert/update | Reduces round-trips from N to 1 |
+| 15 | P0 | Bulk writes instead of loop insert/update | Reduces round-trips from N to 1 |
 | 16 | P0 | ConnectTimeout and SocketTimeout configured | Fail fast on connection issues |
 | 17 | P0 | Aggregate pipeline: match and project as earliest stages | Early filter = index used |
 | 18 | P0 | Aggregate lookup uses pipeline form with match | Simple form loads entire foreign collection |
-| 19 | P0 | Never use cursor.All on unbounded result | Loads entire result set into memory |
+| 19 | P0 | Never iterate entire unbounded result | Loads entire result set into memory |
 | 20 | P1 | Transactions only for truly atomic multi-document writes | Locks documents and degrades write throughput |
-| 21 | P0 | Aggregate pipeline never uses AllowDiskUse in production | Writes intermediate data to disk when RAM exceeded |
+| 21 | P0 | Aggregate pipeline never uses disk spill in production | Writes intermediate data to disk when RAM exceeded |
 
 ---
 
@@ -238,7 +238,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 2 | P0 | PoolSize matches concurrency | Default may not match actual concurrent |
 | 3 | P1 | Pipeline for multiple sequential commands | Single round-trip instead of N |
 | 4 | P0 | ReadTimeout, WriteTimeout, DialTimeout all set | No timeout = indefinite hang |
-| 5 | P0 | MinIdleConns + MaxIdleConns for latency-sensitive apps | Pre-warms connections at startup |
+| 5 | P0 | Min idle connections + max idle connections for latency-sensitive apps | Pre-warms connections at startup |
 
 **Operations:**
 | 6 | P0 | Atomic increment/decrement used for counters | GET+SET is not atomic |
@@ -253,9 +253,9 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 13 | P1 | Cache invalidation strategy documented and tested | Various patterns; tested stale tolerance |
 
 **Cluster:**
-| 14 | P0 | Multi-key commands only on keys sharing same hash slot | Cluster rejects cross-slot multi-key commands |
-| 15 | P0 | Keys with same logical group use hash tag | Cluster hashes to determine slot |
-| 16 | P0 | No hot hash tag | Hot tag = all traffic hits one shard |
+| 14 | P0 | Multi-key commands only on keys sharing same cluster slot | Cluster rejects cross-slot multi-key commands |
+| 15 | P0 | Keys with same logical group use grouping tag | Cluster hashes to determine slot |
+| 16 | P0 | No hot grouping tag | Hot tag = all traffic hits one shard |
 
 **Distributed Lock:**
 | 17 | P1 | Atomic set-if-not-exists with expiration for lock acquire | Atomic: set only if not exists |
@@ -270,10 +270,10 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 |-----|----------|-------|-----------|
 | 1 | P0 | Custom client; never use default | Default has no timeout, no tuned transport |
 | 2 | P0 | SetTimeout (10-30s depending on SLA) | Covers entire request lifecycle |
-| 3 | P0 | MaxIdleConnsPerHost tuned | Default starves connection reuse |
-| 4 | P1 | MaxConnsPerHost limits total connections per host | Caps total conns to one host |
+| 3 | P0 | Max idle connections per host tuned | Default starves connection reuse |
+| 4 | P1 | Max connections per host limits total connections per host | Caps total conns to one host |
 | 5 | P1 | Keep-Alive enabled | Disable forces new TCP+TLS handshake per request |
-| 6 | P2 | TLSHandshakeTimeout configured | Fail fast on TLS issues |
+| 6 | P2 | TLS handshake timeout configured | Fail fast on TLS issues |
 
 **Response Handling:**
 | 7 | P0 | HTTP status code checked before decode | 5xx/4xx responses may not be expected format |
@@ -312,7 +312,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 |-----|----------|-------|-----------|
 | 1 | P0 | resources.requests and limits set for CPU and Memory | No limits = unbounded usage = Node crash |
 | 2 | P0 | Minimum 2-3 replicas for production | Single replica = SPOF; rolling update = downtime |
-| 3 | P2 | PodDisruptionBudget minAvailable configured | Prevents drain removing all pods |
+| 3 | P2 | Pod disruption budget minAvailable configured | Prevents drain removing all pods |
 | 4 | P1 | Liveness probe configured | Prevents zombie pods |
 | 5 | P1 | Readiness probe configured | Prevents traffic to pods not yet ready |
 
@@ -330,7 +330,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 5 | P1 | Do not log data you never read or use | Omit fields whose values are always the same |
 
 **Log Deduplication:**
-| 6 | P0 | Request/response body logged at most once per request lifecycle | If middleware logs body, handler must not repeat |
+| 6 | P0 | Request/response body logged at most once per request lifecycle | If request pipeline logs the body, downstream handlers must not repeat |
 | 7 | P2 | Consumer logs processing once, not on receive + process + commit separately | Single log with all relevant data |
 | 8 | P1 | Limit log: truncate field big length | - |
 | 9 | P1 | Avoid duplicate or redundant log entries | Log only the most critical steps |
