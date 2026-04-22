@@ -116,3 +116,8 @@ The following skills are described in the desired-state but not yet implemented:
 | `security-by-default` | Input handling, auth, file access, secrets |
 | `simplify` | Refactoring, reducing technical debt, unnecessary complexity |
 | `test-first` | TDD workflow, writing tests before implementation |
+
+## References
+
+kilo: https://kilo.ai/docs/customize
+opencode: https://opencode.ai/docs/tools/
