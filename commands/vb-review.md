@@ -4,41 +4,43 @@ description: Mobile Backend Review Checklist - Comprehensive code quality, secur
 
 # Mobile Backend Review Workflow
 
-Perform a structured review of `$ARGUMENTS` (or current working directory) against the Mobile Backend Review Checklist. Follow these steps:
+Perform a structured review of `$ARGUMENTS` (or current working directory) against the Mobile Backend Review Checklist.
 
-## Steps
+> **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
-### 1. Scope Determination
-- If `$ARGUMENTS` is provided, review those files/paths
-- Otherwise, run `execute` with `git diff --name-only HEAD~1` to find changed files
-- If no git history, review all tracked source files in the project
+## Constraints
 
-### 2. Initialize Tracking
-Use `todowrite` to create a task list for each checklist section:
-- Code Quality
-- Project Architecture
-- Web Server Configuration
-- Message Queue Producer/Consumer
-- Primary Database Operations
-- Secondary Database Operations
-- Cache Operations
-- REST Client Configuration
-- Cloud Services
-- Container & Deployment
-- Logging Practices
+- Every P0 (Critical) check must be evaluated. No P0 item may be skipped.
+- Findings must cite exact file paths and line numbers.
+- The final verdict is APPROVE only if zero P0 issues remain.
 
-### 3. Read & Analyze
-Read every file in scope. Understand intent, context, and conventions before judging.
+## Phase 1 — Scope & Discovery
 
-### 4. Checklist Evaluation
+Delegate the following in parallel where possible:
 
-Evaluate code against the following checklist. Use `task` with `general` subagent for large scopes.
+### 1.1 Determine review scope
+- **Agent**: `explorer`
+- **Task**: Identify files to review.
+  - If `$ARGUMENTS` is provided, use those paths.
+  - Otherwise, find changed files via `git diff --name-only HEAD~1` (delegate to `reviewer` or `explorer` with git permissions).
+  - If no git history, review all tracked source files.
+- **Deliverable**: List of file paths in scope.
 
----
+### 1.2 Initialize tracking
+- **Agent**: `conductor` (you)
+- **Task**: Use `todowrite` to create a task list for each checklist section (see Phase 2).
+- **Deliverable**: Task list created and visible.
 
-## Checklist
+## Phase 2 — Checklist Evaluation
 
-### 1. Code Quality
+Delegate the following to `reviewer` subagents. For large scopes, split sections across multiple `reviewer` tasks (one per section or one per ~10 files).
+
+### 2.1 Code Quality
+- **Agent**: `reviewer`
+- **Task**: Evaluate all items in the Code Quality checklist below. For each item, state PASS, FAIL, or N/A with file:line evidence.
+- **Deliverable**: Evaluated checklist with citations.
+
+**Code Quality Checklist**
 
 | No. | Severity | Check | Rationale |
 |-----|----------|-------|-----------|
@@ -92,9 +94,10 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 38 | P2 | Pool for frequently created/destroyed objects in hot path | Reduces GC pressure |
 | 39 | P1 | Atomic operations used for simple counters/flags instead of locks | 5-10x faster than locks |
 
----
-
-### 2. Project Architecture
+### 2.2 Project Architecture
+- **Agent**: `reviewer`
+- **Task**: Evaluate architecture, DI, and config items.
+- **Deliverable**: Evaluated checklist with citations.
 
 | No. | Severity | Check | Rationale |
 |-----|----------|-------|-----------|
@@ -102,17 +105,16 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 2 | P1 | Port (Interface) declared in Domain/Application layer, not Infrastructure | Decouples business logic from external |
 | 3 | P2 | DTO separated from Domain Entity; conversion at handler boundary | Never pass DTO into domain layer |
 | 4 | P2 | ORM/document models never used as Domain Entity; mapper between layers | Persistence format is infrastructure concern |
-
-**Dependency Injection & Config:**
 | 5 | P1 | All wiring in main entry point, not in business logic | Creates concrete types, injects |
 | 6 | P0 | Configuration type/object immutable after load; no runtime modification | Load once at bootstrap; pass via DI as read-only |
 | 7 | P0 | Never wrap config with in-memory cache library | Config from file is already in-memory |
 | 8 | P2 | Config validation at startup; fail fast if required config missing | Validation on config struct |
 | 9 | P2 | Config per environment clearly separated | Environment-based override, not if-else in code |
 
----
-
-### 3. Web Server
+### 2.3 Web Server
+- **Agent**: `reviewer`
+- **Task**: Evaluate server configuration and graceful shutdown items.
+- **Deliverable**: Evaluated checklist with citations.
 
 | No. | Severity | Check | Rationale |
 |-----|----------|-------|-----------|
@@ -120,25 +122,22 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 2 | P1 | Header read timeout separate from request read timeout (5s) | Prevents slow header attack |
 | 3 | P1 | Body limit set | Prevents large payload DoS |
 | 4 | P0 | CorrelationID/RequestID on every request, propagated in context and headers | End-to-end request tracing |
-
-**Graceful Shutdown:**
 | 5 | P0 | SIGTERM/SIGINT intercepted; shutdown called | In-flight requests complete |
 | 6 | P0 | Shutdown closes all deps with timeout for deadline | Calculate time of deadline via context |
 
----
+### 2.4 Message Queue
+- **Agent**: `reviewer`
+- **Task**: Evaluate producer, consumer, and source code items.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 4. Message Queue
-
-**Producer Configuration:**
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
+**Producer:**
 | 1 | P0 | Acknowledgment configured for critical data | All replicas ACK before success |
 | 2 | P0 | Idempotence enabled if needed | Service deduplicates retried messages |
 | 3 | P1 | Message key correct for ordering; same key = same partition | Ordering guaranteed within partition only |
 | 4 | P2 | Linger and batch size tuned | Balance throughput vs latency |
 | 5 | P2 | Compression configured | Choose appropriate algorithm |
 
-**Consumer Configuration:**
+**Consumer:**
 | 6 | P0 | Consumer Group 1:1 with Topic per Use Case | Never share group across different topics |
 | 7 | P0 | Manual commit after success only | Auto commit may commit before processing |
 | 8 | P1 | Session timeout and heartbeat configured (heartbeat = 1/3 session) | Prevents unnecessary rebalance |
@@ -147,7 +146,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 11 | P2 | Fetch min bytes and max wait tuned for batching | - |
 
 **Source Code:**
-| 12 | P0 | Idempotent consumer: reprocess causes no side effects | Check idempotency key in DB/Cache before processing |
+| 12 | P0 | Idempotent consumer: reprocess causes no side effects | Check idempotency key before processing |
 | 13 | P0 | DLQ: max retries exceeded sends broken message to DLQ; ack original | Poison messages must not block partition |
 | 14 | P0 | Consumer Graceful shutdown: close on termination | Returns partitions immediately |
 | 15 | P1 | Batch partial failure: do not commit if some messages failed | Per-message offset tracking or separate retry |
@@ -155,13 +154,12 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 17 | P1 | Consumer Group Strategies always configured | Default Round robin |
 | 18 | P0 | Producer Graceful shutdown: close waits for in-flight messages | Never exit without close |
 
----
+### 2.5 Primary Database
+- **Agent**: `reviewer`
+- **Task**: Evaluate connection pool, query safety, transactions, and schema design.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 5. Primary Database
-
-**Connection Pool Configuration:**
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
+**Connection Pool:**
 | 1 | P0 | Max open connections should not be too high | Prevents exceeding DB max connections |
 | 2 | P1 | Max idle connections >= 70% of max open connections | Too few = churn |
 | 3 | P1 | Connection max lifetime = 5-30 minutes | Prevents stale connections after failover |
@@ -172,7 +170,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 
 **Query Safety & Performance:**
 | 8 | P0 | Parameterized queries only; never string concat | SQL injection is P0 security vulnerability |
-| 9 | P0 | Every query hits index; EXPLAIN ANALYZE verified | Full scan = slow query = production critical |
+| 9 | P0 | Every query hits index; execution plan verified | Full scan = slow query = production critical |
 | 10 | P0 | No N+1 queries; use JOIN, IN, batch | N+1 in loop scales linearly with data |
 | 11 | P2 | No SELECT *; select only needed columns | Wastes bandwidth/memory; may leak sensitive columns |
 | 12 | P0 | LIMIT on every list query; no unbounded results | Missing LIMIT can OOM, Network Congestion |
@@ -194,20 +192,19 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 24 | P1 | Numeric/Decimal used for money; never floating point | Floating point is inexact |
 | 25 | P2 | No over-indexing; each index adds write amplification | Audit unused indexes |
 
----
+### 2.6 Secondary Database
+- **Agent**: `reviewer`
+- **Task**: Evaluate schema, index, and driver configuration.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 6. Secondary Database
-
-**Schema Design:**
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
+**Schema:**
 | 1 | P1 | Embedding vs Referencing based on read/write pattern | Embed: always queried together; Reference: updated independently |
 | 2 | P0 | No unbounded arrays; document limit exists | Partitioning or separate collection for growing data |
 | 3 | P0 | Write Concern majority for critical data | Replicate to majority before ACK |
 | 4 | P2 | Read Concern secondaryPreferred | Improves availability and reduces load on primary |
 | 5 | P2 | Read Concern majority for consistent reads | Prevents dirty reads |
 
-**Index Design:**
+**Index:**
 | 6 | P0 | Compound index follows ESR: Equality, Sort, Range by selectivity | Field order must match query pattern |
 | 7 | P0 | Every query hits index; explain verified | Full scan = slow |
 | 8 | P1 | Index count limited per collection | Each index adds write overhead |
@@ -216,7 +213,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 11 | P1 | Avoid Negation Operators | Kills index efficiency; leads to full scans |
 | 12 | P1 | Case-Insensitive Regex without Collation | High CPU cost; use Case-Insensitive Indexes |
 
-**Driver Configuration:**
+**Driver:**
 | 13 | P0 | MaxPoolSize, MinPoolSize, MaxConnIdleTime configured | Default may not suffice for high throughput |
 | 14 | P2 | Projection: fetch only required fields | Wastes bandwidth/memory |
 | 15 | P0 | Bulk writes instead of loop insert/update | Reduces round-trips from N to 1 |
@@ -227,14 +224,13 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 20 | P1 | Transactions only for truly atomic multi-document writes | Locks documents and degrades write throughput |
 | 21 | P0 | Aggregate pipeline never uses disk spill in production | Writes intermediate data to disk when RAM exceeded |
 
----
+### 2.7 Cache
+- **Agent**: `reviewer`
+- **Task**: Evaluate client config, operations, key design, cluster, and distributed lock items.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 7. Cache
-
-**Client Configuration:**
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
-| 1 | P0 | Never use KEYS or SCAN | Blocks single thread; production outage |
+**Client:**
+| 1 | P0 | Never use full-keyspace scan commands | Blocks single thread; production outage |
 | 2 | P0 | PoolSize matches concurrency | Default may not match actual concurrent |
 | 3 | P1 | Pipeline for multiple sequential commands | Single round-trip instead of N |
 | 4 | P0 | ReadTimeout, WriteTimeout, DialTimeout all set | No timeout = indefinite hang |
@@ -261,13 +257,12 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 17 | P1 | Atomic set-if-not-exists with expiration for lock acquire | Atomic: set only if not exists |
 | 18 | P1 | Lock TTL more than max critical section execution time | Premature expiry = two processes in critical section |
 
----
+### 2.8 REST Client
+- **Agent**: `reviewer`
+- **Task**: Evaluate client config, response handling, retry/circuit breaker, and observability.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 8. REST Client
-
-**Client Configuration:**
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
+**Client:**
 | 1 | P0 | Custom client; never use default | Default has no timeout, no tuned transport |
 | 2 | P0 | SetTimeout (10-30s depending on SLA) | Covers entire request lifecycle |
 | 3 | P0 | Max idle connections per host tuned | Default starves connection reuse |
@@ -275,7 +270,7 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 5 | P1 | Keep-Alive enabled | Disable forces new TCP+TLS handshake per request |
 | 6 | P2 | TLS handshake timeout configured | Fail fast on TLS issues |
 
-**Response Handling:**
+**Response:**
 | 7 | P0 | HTTP status code checked before decode | 5xx/4xx responses may not be expected format |
 
 **Retry & Circuit Breaker:**
@@ -287,12 +282,11 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 11 | P0 | Outgoing request tracing: correlationID, reqID injected into headers | Always tracing fields into header injection |
 | 12 | P1 | Sensitive headers not logged | Redact Authorization, API keys, etc. |
 
----
+### 2.9 Cloud Services
+- **Agent**: `reviewer`
+- **Task**: Evaluate SDK usage, upload/download, queue, and secret management.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 9. Cloud Services
-
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
 | 1 | P0 | SDK v2 used if available | Better performance, context support, modular |
 | 2 | P0 | Client created once, reused across requests | Internal pool; recreation is expensive |
 | 3 | P1 | Multipart upload/download for large files | PartSize/Concurrency tuned to bandwidth |
@@ -304,42 +298,45 @@ Evaluate code against the following checklist. Use `task` with `general` subagen
 | 9 | P2 | Batch operations used | Reduces API calls and costs |
 | 10 | P0 | Secrets cached in memory with TTL refresh | Never call per request; use caching client |
 
----
+### 2.10 Container & Deployment
+- **Agent**: `reviewer`
+- **Task**: Evaluate resource limits, replicas, and health probes.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 10. Container & Deployment
-
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
 | 1 | P0 | resources.requests and limits set for CPU and Memory | No limits = unbounded usage = Node crash |
 | 2 | P0 | Minimum 2-3 replicas for production | Single replica = SPOF; rolling update = downtime |
 | 3 | P2 | Pod disruption budget minAvailable configured | Prevents drain removing all pods |
 | 4 | P1 | Liveness probe configured | Prevents zombie pods |
 | 5 | P1 | Readiness probe configured | Prevents traffic to pods not yet ready |
 
----
+### 2.11 Logging
+- **Agent**: `reviewer`
+- **Task**: Evaluate structured logging, deduplication, and PII handling.
+- **Deliverable**: Evaluated checklist with citations.
 
-### 11. Logging
-
-**Structured Logging:**
-| No. | Severity | Check | Rationale |
-|-----|----------|-------|-----------|
+**Structured:**
 | 1 | P0 | Correlation/Req ID/Trace ID propagated in context through every layer | Every log, DB, HTTP call includes trace_id |
 | 2 | P1 | Log Effectiveness: Keep logs optimized for fastest post-mortem | Log must include key data identifiers at each flow step |
 | 3 | P0 | Log level on environment: uat, prod should be >= INFO | Should not enable DEBUG on production |
 | 4 | P0 | PII never raw logged: passwords, cards, national IDs, tokens | PII in logs = compliance violation; use redactor with hash |
 | 5 | P1 | Do not log data you never read or use | Omit fields whose values are always the same |
 
-**Log Deduplication:**
+**Deduplication:**
 | 6 | P0 | Request/response body logged at most once per request lifecycle | If request pipeline logs the body, downstream handlers must not repeat |
 | 7 | P2 | Consumer logs processing once, not on receive + process + commit separately | Single log with all relevant data |
 | 8 | P1 | Limit log: truncate field big length | - |
 | 9 | P1 | Avoid duplicate or redundant log entries | Log only the most critical steps |
 
----
+## Phase 3 — Synthesize & Report
 
-### 5. Report Generation
+### 3.1 Consolidate findings
+- **Agent**: `conductor` (you)
+- **Task**: Gather all reviewer deliverables from Phase 2. Deduplicate findings. Categorize by severity.
+- **Deliverable**: Consolidated issue list.
 
-Output a structured review report with severity ratings:
+### 3.2 Generate review report
+- **Agent**: `conductor` (you)
+- **Task**: Produce the final report in this exact format:
 
 ```markdown
 ## Mobile Backend Review Report
@@ -367,21 +364,20 @@ Output a structured review report with severity ratings:
 <Brief summary of overall quality and priority fixes>
 ```
 
-### 6. Completion
+### 3.3 Final gate
+- **Gate**: Verdict is **APPROVE** only if zero P0 issues remain. If any P0 exists, verdict must be **BLOCKING ISSUES** (or **REQUEST CHANGES** if only P1/P2 remain).
+- Use `todowrite` to mark all tasks complete.
 
-Mark all tasks complete in `todowrite`. End with a brief verdict: approve, request changes, or blocking issues.
+## Severity Legend
+
+- **P0**: Must fix before deploy; direct production impact
+- **P1**: Fix within sprint; reduces technical debt and risk
+- **P2**: Improve when time permits; quality improvement
 
 ## Principles
-
-- **Severity Legend**:
-  - **P0**: Must fix before deploy; direct production impact
-  - **P1**: Fix within sprint; reduces technical debt and risk
-  - **P2**: Improve when time permits; quality improvement
 
 - Review for the reader, not the writer — code is read far more than written
 - Prefer idiomatic patterns in the project's language
 - Flag *why* something is wrong, not just *that* it is wrong
 - Do not nit-pick style that formatters would fix automatically
 - Distinguish canonical rules (must fix) from best-practice suggestions (nice to have)
-
-Trigger this workflow by typing `/vb-review` in the chat.

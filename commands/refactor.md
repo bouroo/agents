@@ -1,80 +1,107 @@
 ---
 description: Refactor and optimize code for quality and performance without breaking public API
 ---
+
 # Refactor & Optimize
 
-Refactor the specified target `$ARGUMENTS` (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract (exported symbols, signatures, behavior, and tests must remain compatible).
+Refactor the specified target `$ARGUMENTS` (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract.
 
-## Step 1 — Analyze
+> **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
-1. Read the target file(s) or module identified by `$ARGUMENTS`. If `$ARGUMENTS` is empty, use the current working directory (`.`) as the target.
-2. Identify the public API surface: exported functions, types, methods, constants, and their call sites across the project (use `grep` to find usages).
-3. Run existing tests to establish a green baseline (use `execute`). Record the test command for re-validation.
-4. If no tests exist for the target code, write essential valid tests covering core functionality before making any refactoring changes. Tests must verify current behavior so refactoring can be validated against them.
-5. Run performance profilers to identify bottlenecks.
+## Constraints
 
-## Step 2 — Apply Refactoring Principles
+- Public API symbols, signatures, and observable behavior must remain unchanged.
+- All existing and newly written tests must pass.
+- Before/after metrics must be recorded and compared. Any regression blocks completion.
 
-Apply the following principles. Only refactor what improves the code — do not make changes for the sake of change.
+## Phase 1 — Baseline & Safety Net
 
-### Naming & Readability
-- **Casing**: Follow the project's naming conventions for visibility levels (e.g., public vs private/internal). Acronyms keep uniform case (`HTTPClient`, `userID` — not `HttpClient`, `userId`).
-- **Length**: Short for narrow scope (loop vars, lambdas); descriptive for broad scope (public functions, types).
-- **Avoid repetition**: Avoid repeating the module or type context at the call site. If the module is `customer`, its constructor should be `New`, not `NewCustomer`.
-- **No type encoding**: `count` not `countInt`. Exception: type-conversion disambiguation.
-- **No shadowing**: Avoid names that clash with standard library or built-ins.
+Delegate the following in parallel where possible:
 
-### Code Structure
-- **Minimal visibility**: Write shy code — only expose what consumers need; prefer private/internal helpers.
-- **Extract helpers**: Break long routines into small, named functions to reduce cognitive load.
-- **Valid initial state**: Constructors/factories must guarantee usable defaults; use configurators for optional params.
-- **Named constants**: Prefer constants over magic values.
+### 1.1 Discover public API surface
+- **Agent**: `explorer`
+- **Scope**: Target module(s) identified by `$ARGUMENTS`
+- **Task**: Identify every public symbol (functions, types, methods, constants) and locate call sites across the project.
+- **Deliverable**: List of public symbols and files that reference them.
 
-### Error Handling
-- **Always propagate**: Never silently ignore errors.
-- **Wrap with context**: Add source, operation, and key values so call chains are traceable.
-- **Sentinel errors**: Define public sentinel errors for matching; never compare error strings.
+### 1.2 Run existing tests and record baseline
+- **Agent**: `tester`
+- **Task**: Run the project's test suite for the target code. Record the exact command used and the result (pass/fail count).
+- **Deliverable**: Test command, baseline result, and any failing tests noted.
 
-### State & Concurrency
-- **Explicit dependencies**: Avoid mutable global state; pass dependencies as parameters.
-- **Structured concurrency**: Ensure all async work terminates before the enclosing scope exits.
-- **Immutable sharing**: Share immutable data across concurrent boundaries; use atomic primitives for simple shared counters.
+### 1.3 Add missing tests (MANDATORY if absent)
+- **Agent**: `tester`
+- **Task**: If no tests cover the target code, write tests that verify current behavior before any refactoring begins. Follow existing project test patterns.
+- **Deliverable**: New test file paths and confirmation that they pass.
+- **Gate**: Do NOT proceed to Phase 2 until tests exist and are green.
 
-### Performance — Memory
-- **Preallocate**: Allocate collections with capacity upfront when size is known to avoid dynamic resizes.
-- **Pool high-churn objects**: Reuse objects via pooling to reduce memory management overhead.
-- **Minimize padding**: Order data structure fields by descending alignment size (pointers/large scalars first).
-- **Zero-copy**: Use sub-ranging or view operations, buffer reuse, and reference passing instead of copying large data.
-- **Stack allocation**: Keep values local, pass by value when small, prefer stack allocation over heap where appropriate.
+### 1.4 Add missing benchmarks (MANDATORY if absent)
+- **Agent**: `tester`
+- **Task**: If no performance benchmarks exist for the target code, write benchmarks covering the hot paths. Use the project's benchmark conventions.
+- **Deliverable**: New benchmark file paths and confirmation that they execute successfully.
+- **Gate**: Do NOT proceed to Phase 2 until benchmarks exist and run.
 
-### Performance — Concurrency
-- **Worker pools**: Use fixed-size pools to cap resource usage; avoid unbounded concurrent task spawning.
-- **Atomics over locks**: Use atomic primitives for simple shared state; reserve locks for complex state.
-- **Lazy init**: Delay expensive setup (pools, caches, configs) until first use.
-- **Propagate cancellation**: Pass timeouts, deadlines, and cancel signals through all concurrent work.
+### 1.5 Record baseline metrics
+- **Agent**: `tester` (or `implementer` if tester lacks shell access for profiling tools)
+- **Task**: Capture baseline metrics before refactoring:
+  - Performance: throughput, latency, memory usage (from benchmarks).
+  - Complexity: approximate cyclomatic complexity or line count of changed routines.
+  - Memory: allocations per operation (if benchmark reports them).
+- **Deliverable**: Baseline metrics table.
 
-### Performance — I/O
-- **Buffered I/O**: Wrap readers/writers with buffered equivalents to minimize syscalls.
-- **Batch operations**: Combine small writes, DB inserts, or network sends into batches.
+## Phase 2 — Apply Refactoring
 
-### Verification — Before & After
-- **Benchmark before**: Run the project's benchmark suite (or write one if none exists) and record baseline results (throughput, latency, memory allocations).
-- **Measure before**: Capture baseline metrics (complexity, performance, memory, line count) before refactoring.
-- **Benchmark after**: Re-run the same benchmark suite under identical conditions and compare results against baseline.
-- **Compare results**: Present a before/after table showing key metrics (throughput, latency, memory, allocations). Result must be strictly better or neutral — never worse.
-- **Quality gates**: Refactor is only acceptable if it reduces complexity, improves performance, or enhances readability without degrading any other metric.
-- **Reject regression**: If any metric worsens, revert or iterate until metrics improve or stay neutral.
+### 2.1 Refactor target code
+- **Agent**: `implementer`
+- **Scope**: Files identified in Phase 1.1
+- **Task**: Apply refactoring principles:
+  - **Naming & Readability**: Follow project conventions; short names for narrow scope, descriptive for broad; acronyms uniform case; no type encoding; no shadowing.
+  - **Structure**: Minimal visibility; extract helpers; valid initial state in constructors; named constants over magic values.
+  - **Error Handling**: Propagate all errors; wrap with context; define sentinel errors for matching.
+  - **State & Concurrency**: No mutable global state; explicit dependencies; structured concurrency; immutable sharing.
+  - **Performance**: Preallocate collections; pool high-churn objects; minimize padding; zero-copy where possible; stack-friendly local values; buffered I/O; batch operations; worker pools; atomics for simple shared state; lazy init; propagate cancellation.
+- **Constraints**:
+  - Do NOT change public API signatures or behavior.
+  - Do NOT make changes for the sake of change — only improve readability, quality, or performance.
+- **Deliverable**: Modified files with summary of changes.
 
-### Observability
-- **Actionable logs only**: Never log secrets or personal data.
-- **Structured logging**: Use key-value pairs or JSON for machine readability.
-- **Tracing over logs**: Use tracing for request-scoped debugging, metrics for performance data.
+## Phase 3 — Validate & Compare
 
-## Step 3 — Validate
+Delegate the following in parallel where possible:
 
-1. Re-run the test command from Step 1. All tests must pass.
-2. Run the project's linter (use `execute` to run the appropriate lint command for the ecosystem).
-3. Verify no public API symbols were removed or had their signatures changed (use `grep` to confirm call sites still compile/resolve).
-4. Run benchmarks and compare before & after results. Display a comparison table. If any metric regresses beyond noise threshold, investigate and fix before proceeding.
+### 3.1 Re-run tests
+- **Agent**: `tester`
+- **Task**: Re-run the same test command from Phase 1.2, including any new tests.
+- **Deliverable**: Test results. Must be green.
+- **Gate**: If tests fail, return to `implementer` to fix. Do NOT proceed until green.
 
-If any step fails, fix the issue and re-validate until all checks pass.
+### 3.2 Re-run benchmarks
+- **Agent**: `tester`
+- **Task**: Re-run the same benchmarks from Phase 1.4 under identical conditions.
+- **Deliverable**: Benchmark results.
+
+### 3.3 Run lint / type check
+- **Agent**: `implementer` or `tester`
+- **Task**: Run the project's lint and type-check commands.
+- **Deliverable**: Lint/type-check output. Must have no new errors.
+
+### 3.4 Verify public API unchanged
+- **Agent**: `reviewer` or `explorer`
+- **Task**: Confirm no public symbols were removed or had signatures changed. Use `grep` or static analysis to verify call sites still resolve.
+- **Deliverable**: Confirmation or list of detected API changes.
+
+### 3.5 Compare before & after (MANDATORY)
+- **Agent**: `conductor` (you)
+- **Task**: Compare the baseline metrics from Phase 1.5 against Phase 3.2 results. Produce a table:
+  | Metric | Before | After | Delta | Status |
+  |---|---|---|---|---|
+- **Gate**: Result must be strictly better or neutral on every metric. If any metric worsened beyond noise threshold, reject the refactor and return to `implementer` with the comparison table. Iterate until all metrics are green or neutral.
+
+## Completion Criteria
+
+Refactor is complete ONLY when:
+1. Public API is unchanged (3.4).
+2. All tests pass (3.1).
+3. Lint / type check is clean (3.3).
+4. Before/after comparison shows no regressions (3.5).
+5. A comparison table is presented to the user.

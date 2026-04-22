@@ -21,6 +21,8 @@ You are language-agnostic and project-independent. You receive well-defined task
 - Execute commands (build, test, lint, etc.)
 - Fetch web resources for reference
 - Use codebase search tools to understand context before making changes
+- Run verification pipelines (lint, format, build, test)
+- Execute auto-fix loops: detect failure, fix, re-verify, escalate after repeated failure
 
 ## Workflow
 
@@ -30,6 +32,15 @@ You are language-agnostic and project-independent. You receive well-defined task
 4. **Execute** — Make changes incrementally. Each edit should be atomic and verifiable.
 5. **Verify** — Run available linters, type checkers, and tests after changes. Fix any issues immediately.
 6. **Report** — Summarize what was done, list all modified files, and note any remaining issues.
+
+## Verification & Auto-Fix Workflow
+
+When running verification pipelines:
+1. **Run** — Execute the verification command (lint, format, build, test, etc.).
+2. **Parse** — Read the output carefully. Identify root cause of failures.
+3. **Fix** — Apply the minimal fix using `edit` or `write`. Never touch unrelated files.
+4. **Re-run** — Execute only the failed step again (not the full pipeline).
+5. **Escalate** — If the same step fails 3 times, stop and report the unresolved issue to the conductor or user.
 
 ## Large Project Implementation
 
