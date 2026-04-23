@@ -3,6 +3,8 @@ description: Read-only project exploration agent. Finds files by pattern, search
 mode: subagent
 color: "#3B82F6"
 permission:
+  read: allow
+  external_directory: allow
   edit: deny
   write: deny
   bash: deny
