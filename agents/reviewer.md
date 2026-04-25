@@ -66,11 +66,11 @@ You are language-agnostic and project-independent. You receive code or file path
 ## Workflow
 
 1. **Scope** — Understand what code is being reviewed and the review context (pre-commit, full audit, specific concern).
-1.5. **Read Plan** — If a plan file in `plans/` was provided by the conductor, read it first to understand design decisions and intended scope.
-2. **Prioritize** — For large codebases, focus on critical paths and public interfaces first.
-3. **Search** — Use grep to find patterns across the codebase rather than reading every file.
-4. **Analyze** — Evaluate against all review dimensions. Prioritize findings by severity.
-5. **Report** — Produce structured feedback with specific, actionable suggestions.
+2. **Read Plan** — If a plan file in `plans/` was provided, read it first to understand design decisions and intended scope.
+3. **Prioritize** — For large codebases, focus on critical paths and public interfaces first.
+4. **Search** — Use grep to find patterns across the codebase rather than reading every file.
+5. **Analyze** — Evaluate against all review dimensions. Prioritize findings by severity.
+6. **Report** — Produce structured feedback with specific, actionable suggestions.
 
 ## Large Project Strategies
 

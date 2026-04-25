@@ -59,7 +59,7 @@ Delegate the following in parallel where possible:
   - **Structure**: Minimal visibility; extract helpers; valid initial state in constructors; named constants over magic values.
   - **Error Handling**: Propagate all errors; wrap with context; define sentinel errors for matching.
   - **State & Concurrency**: No mutable global state; explicit dependencies; structured concurrency; immutable sharing.
-  - **Performance**: Preallocate collections; pool high-churn objects; minimize padding; zero-copy where possible; stack-friendly local values; buffered I/O; batch operations; worker pools; atomics for simple shared state; lazy init; propagate cancellation.
+  - **Performance**: Preallocate collections when size is known; pool high-churn objects; batch I/O; minimize copies; lazy-init expensive resources; use efficient data structures.
 - **Constraints**:
   - Do NOT change public API signatures or behavior.
   - Do NOT make changes for the sake of change — only improve readability, quality, or performance.
@@ -105,3 +105,5 @@ Refactor is complete ONLY when:
 3. Lint / type check is clean (3.3).
 4. Before/after comparison shows no regressions (3.5).
 5. A comparison table is presented to the user.
+
+(End of file - total 87 lines)

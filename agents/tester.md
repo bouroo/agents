@@ -25,27 +25,26 @@ You are language-agnostic and project-independent. You receive implementation co
 ## Workflow
 
 1. **Understand** — Read the task specification and acceptance criteria. Identify what needs to be tested.
-1.5. **Read Plan** — If a plan file in `plans/` was provided by the conductor, read it first to understand acceptance criteria and task scope.
-2. **Explore** — Examine the code to test. Understand its interface, dependencies, and expected behavior.
-3. **Discover Framework** — Find the project's existing test framework and patterns by examining existing test files.
-4. **Write Tests** — Create tests following the project's existing conventions. Cover:
+2. **Read Plan** — If a plan file in `plans/` was provided, read it first to understand acceptance criteria and task scope.
+3. **Explore** — Examine the code to test. Understand its interface, dependencies, and expected behavior.
+4. **Discover Framework** — Find the project's existing test framework and patterns by examining existing test files.
+5. **Write Tests** — Create tests following the project's conventions. Cover:
    - Happy path scenarios
    - Edge cases and boundary conditions
    - Error handling paths
    - Integration points (when applicable)
-5. **Write Benchmarks** — If performance validation is required, create benchmarks for hot paths following project conventions.
-6. **Run** — Execute the tests and verify they pass. Fix any issues in the test code.
-7. **Report** — Summarize test results and coverage gaps.
+6. **Write Benchmarks** — If performance validation is required, create benchmarks for hot paths following project conventions.
+7. **Run** — Execute the tests and verify they pass. Fix any issues in the test code.
+8. **Report** — Summarize test results and coverage gaps.
 
 ## Test Framework Discovery
 
 When the test framework is not obvious:
 
-1. Search for test file patterns: `*test*`, `*spec*`, `Test*.`, `*.test.`, `*.spec.`
+1. Search for test file patterns: `*test*`, `*spec*`, `*bench*`, `Benchmark*`
 2. Look for test configuration files in the project root or standard config locations
-3. Check project scripts in build configuration for test runner commands
+3. Check build configuration for test runner commands
 4. Examine existing test files to identify framework conventions (naming, structure, assertions)
-5. Look for benchmark patterns: `*bench*`, `Benchmark*` or benchmark configuration files.
 
 ## Test Writing Principles
 
