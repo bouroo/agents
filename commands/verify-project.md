@@ -38,8 +38,13 @@ Set `$TARGET` to $ARGUMENTS if provided, otherwise `.` (current working director
 
 ### 2.2 Run lint with auto-fix
 - **Agent**: `implementer`
-- **Task**: Run the project's linter with auto-fix enabled. Record issues found and fixes applied.
-- **Deliverable**: Lint result and count of auto-fixed issues.
+- **Task**:
+  1. Run the project's linter with auto-fix enabled.
+  2. Re-run the linter in check mode (without auto-fix) to verify zero issues remain.
+  3. If issues remain, treat this as a failure and enter Phase 3.
+  Record issues found, fixes applied, and any remaining issues.
+- **Deliverable**: Lint result. Must report zero issues before proceeding.
+- **Note for Go/golangci-lint**: `golangci-lint run --fix` does not auto-fix `staticcheck` duplicate import errors (ST1019). These must be manually fixed by consolidating duplicate imports into a single alias.
 
 ### 2.3 Run format
 - **Agent**: `implementer`
@@ -78,7 +83,7 @@ Set `$TARGET` to $ARGUMENTS if provided, otherwise `.` (current working director
 
 ## Phase 3 — Auto-Fix Loop
 
-If any step in Phase 2 fails:
+If any step in Phase 2 fails OR if a step reports remaining issues after auto-fix (e.g., linter still reports errors):
 
 ### 3.1 Analyze failure
 - **Agent**: `implementer`
@@ -87,7 +92,7 @@ If any step in Phase 2 fails:
 
 ### 3.2 Fix issue
 - **Agent**: `implementer`
-- **Task**: Fix the issue using `edit` or `write`. Do not touch unrelated files.
+- **Task**: Fix the issue using `edit` or `write`. For issues not resolvable by auto-fix (e.g., Go duplicate imports requiring alias consolidation, naming conflicts, or unused imports with side effects), apply the semantic fix manually. Do not touch unrelated files.
 - **Deliverable**: Modified files list.
 
 ### 3.3 Re-verify
@@ -131,5 +136,5 @@ Verification is complete ONLY when:
 1. Project type is detected (1.1).
 2. Build passes (2.6).
 3. Tests pass (2.7).
-4. All fixable lint/format issues are auto-fixed (2.2, 2.3).
+4. The linter reports zero issues after auto-fix and any required manual fixes (2.2, 2.3).
 5. A summary report is presented to the user (4.1).
