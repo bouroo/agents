@@ -3,6 +3,8 @@ description: Analysis and planning agent. Examines code, designs solutions, crea
 mode: subagent
 color: "#6366F1"
 permission:
+  read: allow
+  external_directory: allow
   edit: allow
   write: allow
   bash: deny
