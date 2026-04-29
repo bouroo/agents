@@ -26,10 +26,14 @@ This bootstraps symlinks for all supported tools. Run it once after cloning or u
 │   └── tester.md          # Test engineering — writes and runs tests
 ├── commands/              # Slash commands
 │   ├── refactor.md        # /refactor — readability, safety, performance, maintainability
+│   ├── spdd-workflow.md   # /spdd-workflow — run the full SPDD workflow
 │   └── verify-project.md  # /verify-project — format, lint, vulnerability scan, tests
 └── skills/                # Conditional skill modules loaded by context
+    ├── abstraction-first/ # Design before you generate — entities, boundaries, collaboration
+    ├── alignment/         # Lock intent before writing code — explicit scope, constraints, DoD
     ├── code-quality/      # Readability, clean code, naming
     ├── context-management/ # Long sessions, context limits, compaction, quality maintenance
+    ├── iterative-review/  # Controlled review loop — fix prompt first, then code
     ├── naming-conventions/ # Language-agnostic naming conventions
     ├── performance/       # Language-agnostic performance optimization
     ├── self-organizing-coder/ # Task decomposition, subagent delegation, iterative delivery
@@ -72,11 +76,14 @@ Agents available for delegation via the `task` tool. All agents are language-agn
 | `reviewer` | subagent | Code review — quality, security, performance, best practices | Read-only (+ git diff/log) |
 | `tester` | subagent | Test engineering — writes and runs tests, validates against acceptance criteria | Edit/write (test files), full shell access |
 
+All agents operate within the SPDD framework — prompts are first-class artifacts, and the REASONS Canvas in `plans/` governs implementation for complex tasks.
+
 ### Slash Commands
 
 | Command | Description |
 |---------|-------------|
 | `/refactor` | Refactor code for readability, safety, performance, and maintainability |
+| `/spdd-workflow` | Run the full Structured-Prompt-Driven Development workflow — analyze, generate REASONS Canvas, implement, verify, and sync |
 | `/verify-project` | Format, lint (auto-fix), vulnerability scan, static analysis, and run tests |
 
 ### Skills
@@ -85,12 +92,27 @@ Conditional rule modules loaded when context matches. Each skill is a `SKILL.md`
 
 | Skill | Trigger Context |
 |-------|-----------------|
+| `abstraction-first` | Design before you generate — entities, boundaries, collaboration |
+| `alignment` | Lock intent before writing code — explicit scope, constraints, DoD |
 | `code-quality` | Readability, clean code, naming discussions |
 | `context-management` | Long sessions, context limits, compaction, context quality |
+| `iterative-review` | Controlled review loop — fix prompt first, then code |
 | `naming-conventions` | Writing or reviewing identifier names |
 | `performance` | Performance optimization discussions |
 | `self-organizing-coder` | Task decomposition, subagent delegation, iterative delivery |
-| `spec-driven` | Planning features, writing specs, spec-first workflows |
+| `spec-driven` | Planning features, writing specs, spec-first workflows; REASONS Canvas for complex tasks |
+
+## Structured-Prompt-Driven Development (SPDD)
+
+SPDD is the governing methodology for agent execution.
+
+- **Prompts are first-class delivery artifacts** — version controlled, reviewed, reused, and improved over time.
+- **The REASONS Canvas** — For complex tasks, agents generate a REASONS Canvas in `plans/` (R-E-A-S-O-N-S) that structures and governs implementation.
+- **Golden rule** — When reality diverges, fix the prompt first — then update the code.
+  - **Logic corrections (behavior changes):** Update the structured prompt first, then generate/update code.
+  - **Refactoring (non-behavior changes):** Refactor code first, then sync back to the prompt.
+
+The three core SPDD skills are `abstraction-first`, `alignment`, and `iterative-review`. Run the full workflow with the `/spdd-workflow` command.
 
 ## Context Condensing
 
@@ -141,6 +163,7 @@ Environment overrides:
 - Use **subdirectory `AGENTS.md`** for domain-specific context that doesn't need to be compacted.
 - After compaction, **re-read modified files** to avoid stale assumptions.
 - Use **`todowrite`** for progress tracking — external tracking survives context compaction.
+- Preserve **REASONS Canvas state** during compaction — plan files are the SPDD source of truth.
 
 ## Large Project Strategies
 
@@ -150,6 +173,8 @@ When working with large, complex projects:
 - **Incremental Changes** — Work within modular boundaries. Small, verifiable changes over broad refactoring. Ship each step. Update shared interfaces across all callers together.
 - **Context Efficiency** — Reference specific files with paths. Break large tasks into smaller subtasks. Summarize large code sections in prompts rather than including full content. Use `/compact` manually before major transitions.
 - **Working with Unfamiliar Code** — Read the module's public interface first. Trace call chains to understand data flow. Identify core domain types and relationships. Look for tests to understand expected behavior.
+- **Generate REASONS Canvas before implementation** — It serves as the governed blueprint for complex changes.
+- **Reference the Canvas in subagent prompts** — Rather than duplicating intent, point subagents to the relevant section of the plan.
 
 ## Planned Skills (Not Yet Implemented)
 

@@ -2,6 +2,41 @@
 
 Autonomous coding agent. Specifications drive implementation; code serves specifications.
 
+## Structured-Prompt-Driven Development (SPDD)
+
+Prompts are first-class delivery artifacts — version controlled, reviewed, reused, and improved over time.
+
+**Golden rule:** When reality diverges, fix the prompt first — then update the code.
+
+**Two types of changes:**
+
+- **Logic corrections (behavior changes):** Update the structured prompt first, then generate/update code.
+- **Refactoring (non-behavior changes):** Refactor code first, then sync back to the structured prompt.
+
+## REASONS Canvas
+
+For complex tasks, the planner creates a REASONS Canvas in `plans/` before implementation begins.
+
+| Letter | Dimension | Description |
+|---|---|---|
+| **R** | Requirements | What problem are we solving, and what is the Definition of Done? |
+| **E** | Entities | Domain entities and their relationships |
+| **A** | Approach | The strategy of how we'll meet the requirements |
+| **S** | Structure | Where the change fits in the system; components and dependencies |
+| **O** | Operations | Concrete, testable implementation steps derived from the approach |
+| **N** | Norms | Cross-cutting engineering norms (naming, observability, defensive coding, etc.) |
+| **S** | Safeguards | Non-negotiable boundaries (invariants, performance limits, security rules, etc.) |
+
+## Three Core SPDD Skills
+
+These skills govern how agents interact with structured prompts:
+
+| Skill | Use For |
+|---|---|
+| `abstraction-first` | Design before you generate — what objects exist, how they collaborate, where boundaries are |
+| `alignment` | Lock intent before you write code — make "what we will do / won't do" explicit, agree on standards and constraints up front |
+| `iterative-review` | Turn output into a controlled loop — disciplined review-and-iterate, not one-shot drafts |
+
 ## Core Loop
 
 1. **Specify** — Decompose requests into concrete, testable tasks. Clarify ambiguity before coding.
@@ -99,18 +134,25 @@ Abstract capabilities:
 
 When facing complex work:
 
+0. Generate REASONS Canvas for complex tasks before decomposition.
 1. Identify independent units — mark `[P]`.
 2. Identify sequential dependencies — order explicitly.
 3. Assign each unit a single deliverable.
 4. Validate each deliverable independently before merging.
 5. Track progress: `pending` → `in_progress` → `completed`.
 
+Decomposition output feeds into the **Operations** section of the REASONS Canvas.
+
 ## Large Project Workflow
 
 1. **Explore** — Map structure, identify module boundaries, locate entry points.
-2. **Plan** — Design approach, identify affected modules, create task breakdown.
-3. **Implement** — Delegate bounded tasks. Validate each module independently.
-4. **Validate** — Run full test suite. Verify no regressions across boundaries.
+2. **Analyze & Generate Canvas** — Build REASONS Canvas to lock requirements, approach, and constraints.
+3. **Plan** — Design approach, identify affected modules, create task breakdown.
+4. **Implement** — Delegate bounded tasks. Validate each module independently.
+5. **Validate** — Run full test suite. Verify no regressions across boundaries.
+6. **Sync** — Update prompts and canvas to reflect final state; prompts are first-class artifacts.
+
+Plan files should follow the REASONS Canvas structure when applicable.
 
 **Context efficiency:**
 - Reference specific files with paths, not vague descriptions.
@@ -130,11 +172,12 @@ Load on demand via `skill` tool:
 
 | Skill | Use For |
 |---|---|
+| `abstraction-first` | Design before you generate — what objects exist, how they collaborate, where boundaries are |
+| `alignment` | Lock intent before you write code — make "what we will do / won't do" explicit, agree on standards and constraints up front |
 | `code-quality` | Readability, clean code, naming |
 | `context-management` | Long sessions, context limits, compaction |
+| `iterative-review` | Turn output into a controlled loop — disciplined review-and-iterate, not one-shot drafts |
 | `naming-conventions` | Writing or reviewing identifier names |
 | `performance` | Performance optimization discussions |
 | `self-organizing-coder` | Task decomposition, delegation, iterative delivery |
 | `spec-driven` | Planning features, spec-first workflows |
-
-Skills are located in `skills/<name>/SKILL.md`.
