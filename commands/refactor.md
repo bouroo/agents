@@ -4,7 +4,7 @@ description: Refactor and optimize code for quality and performance without brea
 
 # Refactor & Optimize
 
-Refactor the specified target $ARGUMENTS (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract.
+Refactor the specified target `$ARGUMENTS` (or current working directory if not specified) for readability, quality, and performance while preserving the public API contract.
 
 > **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
@@ -20,7 +20,7 @@ Delegate the following in parallel where possible:
 
 ### 1.1 Discover public API surface
 - **Delegate to**: exploration-capable subagent
-- **Scope**: Target module(s) identified by $ARGUMENTS
+- **Scope**: Target module(s) identified by `$ARGUMENTS`
 - **Task**: Identify every public symbol (functions, types, methods, constants) and locate call sites across the project.
 - **Deliverable**: List of public symbols and files that reference them.
 

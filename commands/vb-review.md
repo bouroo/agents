@@ -4,7 +4,7 @@ description: Mobile Backend Review Checklist - Comprehensive code quality, secur
 
 # Mobile Backend Review Workflow
 
-Perform a structured review of $ARGUMENTS (or current working directory) against the Mobile Backend Review Checklist.
+Perform a structured review of `$ARGUMENTS` (or current working directory) against the Mobile Backend Review Checklist.
 
 > **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
@@ -21,7 +21,7 @@ Delegate the following in parallel where possible:
 ### 1.1 Determine review scope
 - **Delegate to**: exploration-capable subagent
 - **Task**: Identify files to review.
-  - If $ARGUMENTS is provided, use those paths.
+  - If `$ARGUMENTS` is provided, use those paths.
   - Otherwise, find changed files via `git diff --name-only HEAD~1` (delegate to a review or exploration subagent with git permissions).
   - If no git history, review all tracked source files.
 - **Deliverable**: List of file paths in scope.

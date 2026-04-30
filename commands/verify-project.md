@@ -4,7 +4,7 @@ description: Detect project type, run verification pipeline with auto-fix
 
 # Verify Project
 
-Run the full verification pipeline for $ARGUMENTS (or current working directory if not specified). Detect the project type automatically and execute the appropriate toolchain. Fix any issues found and re-verify until clean or the issue requires human input.
+Run the full verification pipeline for `$ARGUMENTS` (or current working directory if not specified). Detect the project type automatically and execute the appropriate toolchain. Fix any issues found and re-verify until clean or the issue requires human input.
 
 > **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
@@ -32,7 +32,7 @@ Run the full verification pipeline for $ARGUMENTS (or current working directory 
 
 ## Phase 2 — Verification Pipeline
 
-Set `$TARGET` to $ARGUMENTS if provided, otherwise `.` (current working directory).
+Set `$TARGET` to `$ARGUMENTS` if provided, otherwise `.` (current working directory).
 
 ### 2.1 Run generate
 - **Delegate to**: implementation-capable subagent

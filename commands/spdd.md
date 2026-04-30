@@ -4,7 +4,7 @@ description: Structured Prompt-Driven Development — guide a feature from requi
 
 # SPDD Workflow
 
-Execute the Structured Prompt-Driven Development workflow for $ARGUMENTS (a feature description, requirements document, or user story).
+Execute the Structured Prompt-Driven Development workflow for `$ARGUMENTS` (a feature description, requirements document, or user story).
 
 > **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
@@ -21,7 +21,7 @@ Delegate the following in parallel where possible:
 
 ### 1.1 Create or refine user story
 - **Delegate to**: planning-capable subagent
-- **Task**: If $ARGUMENTS is a raw idea or enhancement description, break it into structured user stories following INVEST principles. If it's already a user story, validate and refine it.
+- **Task**: If `$ARGUMENTS` is a raw idea or enhancement description, break it into structured user stories following INVEST principles. If it's already a user story, validate and refine it.
 - **Deliverable**: Structured user story with Background, Business Value, Scope In, Scope Out, and Acceptance Criteria in Given/When/Then format.
 
 ### 1.2 Domain analysis
