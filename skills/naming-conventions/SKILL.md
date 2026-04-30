@@ -35,3 +35,8 @@ Language-agnostic naming conventions for writing clear, predictable, and maintai
 - **Establish conventions early**: Define project-wide naming conventions before scaling. Document agreed-upon patterns for module prefixes, abbreviations, and compound names.
 - **Avoid cross-module collisions**: In large projects, ensure names don't clash across modules. Use namespace prefixes only when disambiguation is genuinely needed.
 - **Consistency over brevity**: When the same concept appears across modules, use identical naming. Don't mix different verbs for the same operation (e.g., avoid using `getUser`, `fetchUser`, and `retrieveUser` interchangeably).
+
+## 8. Specification Naming
+- **Spec terms match code**: When a specification names a concept, use the same term in code. Avoid translating spec terminology into different code names.
+- **Acceptance criteria naming**: Use concrete domain terms in acceptance criteria. "Given a Premium customer" not "Given a user with plan_type=2".
+- **Consistent vocabulary**: When the same concept appears in specs, tests, and code, use identical naming across all three.

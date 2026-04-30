@@ -35,3 +35,4 @@ Language-agnostic performance optimization patterns for reducing latency, improv
 - **Minimize data transfer**: Reduce the volume of data passed between modules or services. Serialize only what is needed; use pagination for large result sets.
 - **Cache at the right layer**: Cache expensive computations or remote lookups at the appropriate layer — close to where the data is consumed, not so deep that cache invalidation becomes complex.
 - **Monitor in CI/CD**: Track performance metrics in CI/CD pipelines. Fail builds on regressions beyond defined thresholds.
+- **Benchmark against spec safeguards**: When the specification defines performance safeguards (latency limits, throughput requirements), validate against these in CI/CD. Fail builds on safeguard violations.

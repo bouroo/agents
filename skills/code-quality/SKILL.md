@@ -50,7 +50,12 @@ Language-agnostic code quality principles for writing, reviewing, and refactorin
 - **Structured logging**: Emit machine-readable formats (e.g., JSON) instead of plain text.
 - **Data privacy**: Never log secrets, credentials, or sensitive personal data.
 
-## 11. Large Project Quality
+## 11. Alignment and Scope Discipline
+- **Stay in scope**: Implement only what the specification defines. No speculative features or improvements beyond the stated requirements.
+- **Spec-code consistency**: If the code and specification diverge, flag it. Logic corrections should update the spec first; refactoring should sync back to the spec.
+- **Review intent before details**: When reviewing code, check alignment with specification before checking naming or formatting.
+
+## 12. Large Project Quality
 - **Review module boundaries**: Ensure each module exposes a clear contract. Changes within a module should not break consumers.
 - **Actionable errors at every layer**: Error messages must indicate what failed and why, not just "error occurred." Include operation identifiers for tracing.
 - **Log context for tracing**: Include request/operation identifiers in log entries to trace behavior across module boundaries.

@@ -8,7 +8,7 @@ Run the full verification pipeline for $ARGUMENTS (or current working directory 
 
 > **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
-> **CRITICAL**: This command requires manual file editing for issues that auto-fixers cannot resolve (e.g., duplicate imports). You MUST use `edit` or `write` tools to fix these issues. Auto-fix flags alone are NOT sufficient.
+> **CRITICAL**: This command requires manual file editing for issues that auto-fixers cannot resolve (e.g., duplicate imports). You MUST use available editing tools to fix these issues. Auto-fix flags alone are NOT sufficient.
 
 ## Constraints
 
@@ -19,13 +19,13 @@ Run the full verification pipeline for $ARGUMENTS (or current working directory 
 ## Phase 1 — Discovery
 
 ### 1.1 Detect project type and toolchain
-- **Agent**: `explorer`
+- **Delegate to**: exploration-capable subagent
 - **Task**: Scan the project root for build manifests, lock files, and configuration files to determine project type, build system, and available verification tools.
 - **Deliverable**: Project type, build system, and list of detected verification tools/commands.
-- **Gate**: If no recognized manifest is found, ask the user via `question` for the project type before proceeding.
+- **Gate**: If no recognized manifest is found, ask the user for clarification for the project type before proceeding.
 
 ### 1.2 Determine verification commands
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**: Read the build manifest and config files. Identify the standard commands for: generate, lint (with auto-fix), format, security scan, static analysis, build, test.
 - **Deliverable**: Exact command list for each verification step.
 - **Note**: Also check for project-specific verification scripts such as pre-commit hooks, Makefile targets, CI scripts, or local verification scripts. If such scripts exist, record them as they may run multiple tools in sequence.
@@ -35,12 +35,12 @@ Run the full verification pipeline for $ARGUMENTS (or current working directory 
 Set `$TARGET` to $ARGUMENTS if provided, otherwise `.` (current working directory).
 
 ### 2.1 Run generate
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**: Run code generation if configured (e.g., protobuf, OpenAPI, schema generation).
 - **Deliverable**: Generate output or confirmation that no generation is needed.
 
 ### 2.2 Run lint with auto-fix
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**:
   1. Identify ALL configured lint tools for the project.
   2. **MANDATORY**: Run EACH lint tool individually BEFORE running any project verification script.
@@ -51,37 +51,38 @@ Set `$TARGET` to $ARGUMENTS if provided, otherwise `.` (current working director
 - **Deliverable**: Lint result from ALL configured tools. EACH must report zero issues before proceeding.
 - **Common tool families**: compiler linters, style checkers, type checkers, security scanners. Run these if no configured tools are detected.
 - **Note**: Some issues (e.g., duplicate imports) require manual code edits. No auto-fix tool handles these.
+- **Note**: If lint fixes change function signatures, type names, or exported symbols, flag these for spec synchronization. Lint-driven renaming may require updating plan/spec files.
 
 ### 2.3 Run format
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**: Run the project's formatter. Record files changed.
 - **Deliverable**: Format result.
 
 ### 2.4 Run security scan
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**: Run security/vulnerability checks if configured.
 - **Deliverable**: Security scan result or confirmation that no scanner is configured.
 
 ### 2.5 Run static analysis
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**: Run static analysis if configured.
 - **Deliverable**: Static analysis result or confirmation that no analyzer is configured.
 
 ### 2.6 Build
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**: Build the project to verify compilation.
 - **Deliverable**: Build result. Must pass.
 - **Gate**: If build fails, enter Phase 3 (Auto-Fix) before proceeding.
 
 ### 2.7 Run tests
-- **Agent**: `tester`
+- **Delegate to**: testing-capable subagent
 - **Task**: Run the project's test suite for `$TARGET`.
 - **Deliverable**: Test result (pass/fail count). Must pass.
 - **Gate**: If tests fail, enter Phase 3 (Auto-Fix) before proceeding.
 
 ### Large Project Mode
-- **Agent**: `conductor` (you)
-- **Task**: If `$TARGET` contains more than 100 source files (detected via `glob`), instruct `implementer` to run verification in batches:
+- **Owner**: conductor (you)
+- **Task**: If `$TARGET` contains more than 100 source files (detected via file search), instruct the implementation subagent to run verification in batches:
   1. Divide source files into groups of 50 files each.
   2. Run the pipeline on each batch sequentially.
   3. Aggregate results and report any failures with batch context.
@@ -92,7 +93,7 @@ Set `$TARGET` to $ARGUMENTS if provided, otherwise `.` (current working director
 If any step in Phase 2 fails OR if a step reports remaining issues after auto-fix:
 
 ### 3.1 Analyze failure
-- **Agent**: `implementer`
+- **Delegate to**: implementation-capable subagent
 - **Task**: Read the error output carefully. Identify root cause. Determine:
   1. Which specific tool failed
   2. The exact error message and file location
@@ -100,8 +101,8 @@ If any step in Phase 2 fails OR if a step reports remaining issues after auto-fi
 - **Deliverable**: Failure analysis with specific tool name and root cause.
 
 ### 3.2 Fix issue
-- **Agent**: `implementer`
-- **Task**: Fix the issue using `edit` or `write`. For issues not resolvable by auto-fix, apply the semantic fix manually. Do not touch unrelated files.
+- **Delegate to**: implementation-capable subagent
+- **Task**: Fix the issue using available editing tools. For issues not resolvable by auto-fix, apply the semantic fix manually. Do not touch unrelated files.
 - **Reminder**: You are in the Auto-Fix Loop because a lint tool reported issues. You MUST fix the underlying code and re-run the specific failing tool. Do NOT skip re-running the tool.
 - **Manual fix for duplicate imports**:
   1. Read the file reported in the lint error.
@@ -116,23 +117,23 @@ If any step in Phase 2 fails OR if a step reports remaining issues after auto-fi
 - **Deliverable**: Modified files list.
 
 ### 3.3 Re-verify
-- **Agent**: `implementer` or `tester` (whichever owns the failed step)
+- **Delegate to**: implementation or testing subagent (whichever owns the failed step)
 - **Task**: Re-run the failed verification. For lint fixes:
   - First re-run the specific failing tool to verify zero issues.
   - Then re-run ALL other configured lint tools to ensure no regressions.
   - Finally, if the project has a verification script, re-run the full script.
   ALL must pass before proceeding.
 - **Deliverable**: Step result.
-- **Gate**: If the same step fails 3 times, stop the auto-fix loop and report the issue to the user via `question`.
+- **Gate**: If the same step fails 3 times, stop the auto-fix loop and report the issue to the user for clarification.
 
 ### 3.4 Resume pipeline
-- **Agent**: `conductor` (you)
+- **Owner**: conductor (you)
 - **Task**: Once the failed step passes, resume the pipeline from the next step. Repeat Phase 3 for any new failures.
 
 ## Phase 4 — Report
 
 ### 4.1 Produce summary
-- **Agent**: `conductor` (you)
+- **Owner**: conductor (you)
 - **Task**: Output a brief summary only after ALL steps pass:
 
 ```

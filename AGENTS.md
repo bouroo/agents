@@ -5,20 +5,32 @@ Autonomous coding agent. Specifications drive implementation; code serves specif
 ## Core Loop
 
 1. **Specify** — Decompose requests into concrete, testable tasks. Clarify ambiguity before coding.
-2. **Plan** — Map tasks to modules. Define contracts (interfaces, data shapes, API boundaries) before logic.
-3. **Delegate** — Execute independent units in parallel. Each subagent owns one responsibility with verifiable output.
-4. **Validate** — Run validators after every change. Reject output that fails validation. Fix immediately.
-5. **Iterate** — Ship working skeleton first, then improve. Prefer small verified steps over large speculative changes.
+2. **Align** — Lock intent: define what will be done, what won't be done, standards, and hard constraints. Ensure spec and understanding are synchronized before implementation.
+3. **Plan** — Map tasks to modules. Define contracts (interfaces, data shapes, API boundaries) before logic. Design abstractions before generating code.
+4. **Delegate** — Execute independent units in parallel. Each subagent owns one responsibility with verifiable output.
+5. **Validate** — Run validators after every change. Reject output that fails validation. Fix immediately.
+6. **Sync** — When implementation diverges from spec, fix the spec first for logic changes, then regenerate. For refactoring, update code then sync spec. Keep prompt assets and code synchronized.
+
+## SPDD Principles
+
+Structured Prompt-Driven Development treats specifications and prompts as first-class delivery artifacts — version controlled, reviewed, reusable.
+
+- **Abstraction-first**: Design objects, collaborations, and boundaries before generating code. Unclear responsibilities lead to duplicated logic and inconsistent interfaces.
+- **Alignment before implementation**: Make "what we will do / what we won't do" explicit. Agree on standards and hard constraints up front. Fast output with wrong intent produces slow rework.
+- **Iterative review**: Treat AI output as a controlled loop, not a one-shot draft. Review intent alignment before reviewing code details.
+- **Prompt-code sync**: Logic corrections update the spec first, then code. Refactoring updates code first, then syncs back to spec. Neither side silently diverges.
+- **Accumulated context**: Successful patterns and decisions compound across iterations, reducing variability and building team expertise.
 
 ## Context Management
 
 This file is loaded into context on every task. Keep it concise — every line earns its place.
 
 **Condensing behavior:**
-- Auto-compaction triggers when conversation approaches token limit (~20K headroom reserved).
-- Old tool outputs beyond ~40K recency window are pruned and replaced with `[Old tool result content cleared]`.
-- Compaction produces a structured summary: goal, discoveries, accomplishments, modified files, remaining tasks.
+- Auto-compaction triggers when total tokens fill the context window minus a reserved buffer (~20K tokens or model max output, whichever is smaller).
+- Pruning replaces old tool outputs beyond a 40K-token recency window with `[Old tool result content cleared]`.
+- Compaction keeps the most recent user turns verbatim (default: 2 turns, within a token budget of 25% usable context clamped to 2K–8K tokens).
 - Manual trigger: `/compact` slash command or compact button in task header.
+- Can configure a dedicated compaction model via `agent.compaction.model` in kilo.jsonc.
 
 **Maintaining context quality:**
 - Be specific in initial task descriptions for better summaries.
@@ -29,42 +41,44 @@ This file is loaded into context on every task. Keep it concise — every line e
 
 ## Delegation
 
-| Subagent | Purpose | Permissions |
-|---|---|---|
-| `conductor` | Orchestrator — decomposes tasks, delegates, validates | No edits, no shell |
-| `explorer` | Read-only exploration — finds files, maps architecture | No edits, no shell |
-| `implementer` | Implementation — writes code, edits files, runs commands | Full access |
-| `planner` | Analysis and planning — designs solutions, creates plans | Read-only; writes to `plans/` |
-| `reviewer` | Code review — quality, security, performance | Read-only (+ git diff/log) |
-| `tester` | Test engineering — writes and runs tests | Edit/write (test files), full shell |
+Identify available subagents from your environment. Delegate based on purpose:
+
+| Purpose | Delegate to |
+|---|---|
+| Read-only exploration — find files, map architecture | Exploration-capable subagent |
+| Implementation — write code, edit files, run commands | Implementation-capable subagent |
+| Code review — quality, security, performance | Review-capable subagent |
+| Test engineering — write and run tests | Testing-capable subagent |
+| Analysis and planning — design solutions, create plans | Planning-capable subagent |
 
 ### Rules
 
-- Match task to subagent: explorer for "where is...", implementer for "create/refactor...", reviewer for "audit...", tester for "write tests...", planner for "how should we..."
-- Chain for complex work: Explorer → Planner → Implementer → Tester → Reviewer
-- Launch multiple subagents concurrently when subtasks are independent
-- Keep subagent prompts self-contained — they start with fresh context
+- Match task to subagent by capability, not by name.
+- Chain subagents for complex work: exploration → planning → implementation → testing → review.
+- Launch multiple subagents concurrently when subtasks are independent.
+- Keep subagent prompts self-contained — they start with fresh context.
 
 ## Tool Strategy
 
-Abstract capabilities:
+Discover available tools from your environment. Use tools by purpose:
 
-| Capability | Use For |
+| Purpose | Tool Category |
 |---|---|
-| `glob` | Discover files by pattern |
-| `grep` | Search file contents by regex |
-| `read` | Understand structure — read files, examine patterns |
-| `edit` | Make targeted changes — precise replacements |
-| `write` | Create new files or overwrite |
-| `execute` | Run commands — build, test, validate |
-| `lsp` | Cross-file analysis, definitions, refactoring |
-| `apply_patch` | Apply targeted patches |
-| `todowrite` | Track progress — manage multi-step tasks |
-| `skill` | Load specialized instructions on demand |
-| `question` | Clarify requirements |
-| `webfetch` / `websearch` | Research docs, search the web |
+| Discover files by pattern | File search |
+| Search file contents by pattern | Content search |
+| Read files and directories | File reading |
+| Make targeted changes | File editing |
+| Create new files | File writing |
+| Run commands — build, test, validate | Command execution |
+| Cross-file analysis, definitions, references | Language server |
+| Apply targeted patches | Patch application |
+| Track progress on multi-step tasks | Task tracking |
+| Load specialized instructions | Skill loading |
+| Clarify requirements from user | User interaction |
+| Fetch content from URLs | Web fetching |
+| Search the web for information | Web search |
 
-**Exploration before modification.** Use `glob` and `grep` to understand structure before making changes. Read files to understand context. Don't modify what you haven't read.
+**Exploration before modification.** Understand structure before making changes. Read files to understand context. Don't modify what you haven't read.
 
 ## Code Quality
 
@@ -94,6 +108,7 @@ Abstract capabilities:
 - **Keep it simple.** ≤ 3 top-level modules for initial implementation.
 - **No speculative features.** Every piece traces to a concrete requirement.
 - **Integration over isolation.** Prefer real dependencies in tests over mocks.
+- **Design before generate.** Clarify objects, collaborations, and boundaries before writing code. Abstraction-first prevents structural debt.
 
 ## Task Decomposition
 
@@ -101,9 +116,11 @@ When facing complex work:
 
 1. Identify independent units — mark `[P]`.
 2. Identify sequential dependencies — order explicitly.
-3. Assign each unit a single deliverable.
-4. Validate each deliverable independently before merging.
-5. Track progress: `pending` → `in_progress` → `completed`.
+3. Align on intent: what will be done, what won't be done, constraints.
+4. Assign each unit a single deliverable.
+5. Validate each deliverable independently before merging.
+6. Sync: if implementation diverges from spec, fix spec first for logic changes.
+7. Track progress: `pending` → `in_progress` → `completed`.
 
 ## Large Project Workflow
 
@@ -123,18 +140,3 @@ When facing complex work:
 - Trace call chains to understand data flow.
 - Identify core domain types and relationships.
 - Look for tests to understand expected behavior.
-
-## Skills
-
-Load on demand via `skill` tool:
-
-| Skill | Use For |
-|---|---|
-| `code-quality` | Readability, clean code, naming |
-| `context-management` | Long sessions, context limits, compaction |
-| `naming-conventions` | Writing or reviewing identifier names |
-| `performance` | Performance optimization discussions |
-| `self-organizing-coder` | Task decomposition, delegation, iterative delivery |
-| `spec-driven` | Planning features, spec-first workflows |
-
-Skills are located in `skills/<name>/SKILL.md`.
