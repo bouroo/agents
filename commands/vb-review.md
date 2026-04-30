@@ -19,10 +19,10 @@ Perform a structured review of `$ARGUMENTS` (or current working directory) again
 Delegate the following in parallel where possible:
 
 ### 1.1 Determine review scope
-- **Delegate to**: exploration-capable subagent
+- **Delegate to**: discovery agent
 - **Task**: Identify files to review.
   - If `$ARGUMENTS` is provided, use those paths.
-  - Otherwise, find changed files via `git diff --name-only HEAD~1` (delegate to a review or exploration subagent with git permissions).
+  - Otherwise, find changed files via `git diff --name-only HEAD~1` (delegate to a review or discovery agent with git permissions).
   - If no git history, review all tracked source files.
 - **Deliverable**: List of file paths in scope.
 
@@ -33,10 +33,10 @@ Delegate the following in parallel where possible:
 
 ## Phase 2 — Checklist Evaluation
 
-Delegate the following to review-capable subagents. For large scopes, split sections across multiple review-capable subagent tasks.
+Delegate the following to review agents. For large scopes, split sections across multiple review agent tasks.
 
 ### 2.1 Code Quality
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate all items in the Code Quality checklist below. For each item, state PASS, FAIL, or N/A with file:line evidence.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -85,7 +85,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 39 | P1 | Appropriate synchronization primitives chosen for the workload |
 
 ### 2.2 Project Architecture
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate architecture, DI, and config items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -102,7 +102,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 9 | P2 | Config per environment clearly separated |
 
 ### 2.3 Web Server
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate server configuration and graceful shutdown items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -116,7 +116,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 6 | P0 | Shutdown closes all deps with timeout for deadline |
 
 ### 2.4 Message Queue
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate producer, consumer, and source code items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -151,7 +151,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 18 | P0 | Producer Graceful shutdown: close waits for in-flight messages |
 
 ### 2.5 Primary Database
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate connection pool, query safety, transactions, and schema design.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -184,7 +184,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 25 | P2 | No over-indexing; each index adds write amplification |
 
 ### 2.6 Secondary Database
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate schema, index, and driver configuration.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -213,7 +213,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 21 | P0 | Aggregate pipeline never uses disk spill in production |
 
 ### 2.7 Cache
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate client config, operations, key design, cluster, and distributed lock items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -239,7 +239,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 18 | P1 | Lock TTL more than max critical section execution time |
 
 ### 2.8 REST Client
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate client config, response handling, retry/circuit breaker, and observability.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -259,7 +259,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 12 | P1 | Sensitive headers not logged |
 
 ### 2.9 Cloud Services
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate SDK usage, upload/download, queue, and secret management.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -277,7 +277,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 10 | P0 | Secrets cached in memory with TTL refresh |
 
 ### 2.10 Container & Deployment
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate resource limits, replicas, and health probes.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -290,7 +290,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 5 | P1 | Readiness probe configured |
 
 ### 2.11 Logging
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate structured logging, deduplication, and PII handling.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -307,7 +307,7 @@ Delegate the following to review-capable subagents. For large scopes, split sect
 | 9 | P1 | Avoid duplicate or redundant log entries |
 
 ### 2.12 Spec-Code Alignment
-- **Delegate to**: review-capable subagent
+- **Delegate to**: review agent
 - **Task**: Evaluate whether the code matches its specification or plan.
 - **Deliverable**: Evaluated checklist with citations.
 
