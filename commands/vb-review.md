@@ -4,7 +4,7 @@ description: Mobile Backend Review Checklist - Comprehensive code quality, secur
 
 # Mobile Backend Review Workflow
 
-Perform a structured review of $ARGUMENTS (or current working directory) against the Mobile Backend Review Checklist.
+Perform a structured review of `$ARGUMENTS` (or current working directory) against the Mobile Backend Review Checklist.
 
 > **Conductor note**: You do NOT execute steps directly. Decompose this command into the subtasks below, delegate each to the correct subagent, and validate every deliverable before proceeding.
 
@@ -19,24 +19,24 @@ Perform a structured review of $ARGUMENTS (or current working directory) against
 Delegate the following in parallel where possible:
 
 ### 1.1 Determine review scope
-- **Agent**: `explorer`
+- **Delegate to**: discovery agent
 - **Task**: Identify files to review.
-  - If $ARGUMENTS is provided, use those paths.
-  - Otherwise, find changed files via `git diff --name-only HEAD~1` (delegate to `reviewer` or `explorer` with git permissions).
+  - If `$ARGUMENTS` is provided, use those paths.
+  - Otherwise, find changed files via `git diff --name-only HEAD~1` (delegate to a review or discovery agent with git permissions).
   - If no git history, review all tracked source files.
 - **Deliverable**: List of file paths in scope.
 
 ### 1.2 Initialize tracking
-- **Agent**: `conductor` (you)
-- **Task**: Use `todowrite` to create a task list for each checklist section (see Phase 2).
+- **Owner**: conductor (you)
+- **Task**: Use task tracking to create a task list for each checklist section (see Phase 2).
 - **Deliverable**: Task list created and visible.
 
 ## Phase 2 — Checklist Evaluation
 
-Delegate the following to `reviewer` subagents. For large scopes, split sections across multiple `reviewer` tasks.
+Delegate the following to review agents. For large scopes, split sections across multiple review agent tasks.
 
 ### 2.1 Code Quality
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate all items in the Code Quality checklist below. For each item, state PASS, FAIL, or N/A with file:line evidence.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -85,7 +85,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 39 | P1 | Appropriate synchronization primitives chosen for the workload |
 
 ### 2.2 Project Architecture
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate architecture, DI, and config items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -102,7 +102,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 9 | P2 | Config per environment clearly separated |
 
 ### 2.3 Web Server
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate server configuration and graceful shutdown items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -116,7 +116,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 6 | P0 | Shutdown closes all deps with timeout for deadline |
 
 ### 2.4 Message Queue
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate producer, consumer, and source code items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -151,7 +151,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 18 | P0 | Producer Graceful shutdown: close waits for in-flight messages |
 
 ### 2.5 Primary Database
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate connection pool, query safety, transactions, and schema design.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -184,7 +184,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 25 | P2 | No over-indexing; each index adds write amplification |
 
 ### 2.6 Secondary Database
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate schema, index, and driver configuration.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -213,7 +213,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 21 | P0 | Aggregate pipeline never uses disk spill in production |
 
 ### 2.7 Cache
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate client config, operations, key design, cluster, and distributed lock items.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -239,7 +239,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 18 | P1 | Lock TTL more than max critical section execution time |
 
 ### 2.8 REST Client
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate client config, response handling, retry/circuit breaker, and observability.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -259,7 +259,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 12 | P1 | Sensitive headers not logged |
 
 ### 2.9 Cloud Services
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate SDK usage, upload/download, queue, and secret management.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -277,7 +277,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 10 | P0 | Secrets cached in memory with TTL refresh |
 
 ### 2.10 Container & Deployment
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate resource limits, replicas, and health probes.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -290,7 +290,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 5 | P1 | Readiness probe configured |
 
 ### 2.11 Logging
-- **Agent**: `reviewer`
+- **Delegate to**: review agent
 - **Task**: Evaluate structured logging, deduplication, and PII handling.
 - **Deliverable**: Evaluated checklist with citations.
 
@@ -306,15 +306,28 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 | 8 | P1 | Limit log: truncate field big length |
 | 9 | P1 | Avoid duplicate or redundant log entries |
 
+### 2.12 Spec-Code Alignment
+- **Delegate to**: review agent
+- **Task**: Evaluate whether the code matches its specification or plan.
+- **Deliverable**: Evaluated checklist with citations.
+
+| No. | Severity | Check |
+|-----|----------|-------|
+| 1 | P0 | Code implements all features specified in the plan; no specified features missing |
+| 2 | P0 | No features implemented beyond what the specification defines (no scope creep) |
+| 3 | P1 | Error handling and edge cases align with spec safeguards |
+| 4 | P1 | Naming in code matches terminology used in specification |
+| 5 | P2 | Specification updated to reflect any refactoring or structural changes |
+
 ## Phase 3 — Synthesize & Report
 
 ### 3.1 Consolidate findings
-- **Agent**: `conductor` (you)
+- **Owner**: conductor (you)
 - **Task**: Gather all reviewer deliverables from Phase 2. Deduplicate findings. Categorize by severity.
 - **Deliverable**: Consolidated issue list.
 
 ### 3.2 Generate review report
-- **Agent**: `conductor` (you)
+- **Owner**: conductor (you)
 - **Task**: Produce the final report in this exact format:
 
 ```markdown
@@ -325,6 +338,8 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 - **P0 (Critical)**: <count> issues found
 - **P1 (Should Fix)**: <count> issues found
 - **P2 (Nice to Have)**: <count> suggestions
+
+- **Spec-Code Alignment**: <count> issues found
 
 ### Critical Issues (P0)
 ## [P0] <file>:<line> — <checklist item>
@@ -345,7 +360,7 @@ Delegate the following to `reviewer` subagents. For large scopes, split sections
 
 ### 3.3 Final gate
 - **Gate**: Verdict is **APPROVE** only if zero P0 issues remain. If any P0 exists, verdict must be **BLOCKING ISSUES** (or **REQUEST CHANGES** if only P1/P2 remain).
-- Use `todowrite` to mark all tasks complete.
+- Use task tracking to mark all tasks complete.
 
 ## Severity Legend
 

@@ -35,6 +35,8 @@ Kilo Code uses an automatic compaction system to manage context efficiently:
 | Setting | Default | Effect |
 |---------|---------|--------|
 | `compaction.reserved` | `min(20,000, model_max_output)` | Token headroom for next turn; smaller = later trigger, larger = earlier trigger |
+| `compaction.tail_turns` | `2` | Recent user turns to keep verbatim during compaction |
+| `compaction.preserve_recent_tokens` | 25% of usable context, clamped 2K–8K | Token budget for the verbatim recent tail |
 
 **Trade-off guidance**: Lower values (e.g., 10K) give more raw window turns but risk mid-turn overflow on large responses. Higher values (e.g., 40K) trigger earlier with fewer overflow errors but shorter effective conversations between summaries.
 
@@ -95,11 +97,11 @@ For domain-specific context that applies to particular areas:
 
 ## Tool-Specific Context Tips
 
-- `read`: Read specific line ranges for large files, not entire files
-- `grep`: Use targeted patterns, not broad searches that return thousands of results
-- `glob`: Map directory structure first, then drill down
-- `todowrite`: Track progress externally so it survives context compaction
-- `skill`: Load skills on-demand rather than keeping all context loaded
+- **File reading**: Read specific line ranges for large files, not entire files
+- **Content search**: Use targeted patterns, not broad searches that return thousands of results
+- **File search**: Map directory structure first, then drill down
+- **Task tracking**: Track progress externally so it survives context compaction
+- **Skill loading**: Load skills on-demand rather than keeping all context loaded
 
 ## Configuration Reference
 
@@ -108,9 +110,11 @@ Compaction settings in kilo.jsonc:
 ```jsonc
 {
   "compaction": {
-    "auto": true,     // Enable/disable automatic compaction
-    "prune": true,    // Clear old tool outputs beyond recency window
-    "reserved": 20000 // Token buffer for next turn
+    "auto": true,              // Enable/disable automatic compaction
+    "prune": true,             // Clear old tool outputs beyond recency window
+    "reserved": 20000,         // Token buffer for next turn
+    "tail_turns": 2,           // Recent turns to keep verbatim
+    "preserve_recent_tokens": 8000  // Token budget for verbatim tail
   }
 }
 ```

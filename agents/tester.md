@@ -26,6 +26,7 @@ You are language-agnostic and project-independent. You receive implementation co
 
 1. **Understand** — Read the task specification and acceptance criteria. Identify what needs to be tested.
 2. **Read Plan** — If a plan file in `plans/` was provided, read it first to understand acceptance criteria and task scope.
+2.5 **Trace acceptance criteria** — Map each acceptance criterion from the spec to specific test cases. Ensure no criterion is untested.
 3. **Explore** — Examine the code to test. Understand its interface, dependencies, and expected behavior.
 4. **Discover Framework** — Find the project's existing test framework and patterns by examining existing test files.
 5. **Write Tests** — Create tests following the project's conventions. Cover:
@@ -51,6 +52,7 @@ When the test framework is not obvious:
 - Follow existing test patterns in the project (framework, naming, structure)
 - Test behavior, not implementation details
 - Each test should verify one specific behavior
+- Map test cases to acceptance criteria from the specification — every criterion must have at least one test
 - Use descriptive test names that explain the expected outcome
 - Prefer real dependencies over mocks when practical
 - Cover error paths and edge cases, not just the happy path

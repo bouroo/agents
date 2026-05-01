@@ -1,6 +1,6 @@
 # Agent Configuration
 
-Shared agent configuration for AI coding assistants. Language-agnostic, tool-agnostic instructions for autonomous coding work. One source of truth, symlinked to each tool's expected location.
+Shared agent instructions for AI coding assistants. Language-agnostic, tool-agnostic configuration symlinked to each tool's expected location.
 
 ## Quick Start
 
@@ -8,189 +8,136 @@ Shared agent configuration for AI coding assistants. Language-agnostic, tool-agn
 ~/.agents/link.sh
 ```
 
-This bootstraps symlinks for all supported tools. Run it once after cloning or updating.
+Creates symlinks for all supported tools. Run once after cloning or updating.
 
 ## Directory Structure
 
 ```
 ~/.agents/
-├── AGENTS.md              # Core agent instructions (symlinked to each tool)
+├── AGENTS.md              # Core agent instructions (symlinked)
 ├── README.md              # This file
-├── link.sh                # Bootstrap script: creates symlinks
-├── agents/                # Named agent modes (for delegation via task tool)
-│   ├── conductor.md       # Master orchestrator — decomposes tasks, delegates to subagents
+├── link.sh                # Bootstrap script
+├── agents/                # Named agent modes for delegation
+│   ├── conductor.md       # Master orchestrator — decomposes and delegates tasks
 │   ├── explorer.md        # Read-only project exploration
-│   ├── implementer.md      # Full-capability implementation — writes code, runs commands
-│   ├── planner.md         # Analysis and planning — designs solutions, creates plans
-│   ├── reviewer.md         # Read-only code review — quality, security, performance
-│   └── tester.md          # Test engineering — writes and runs tests
+│   ├── implementer.md     # Full implementation — writes code, runs commands
+│   ├── planner.md         # Analysis and planning
+│   ├── reviewer.md        # Code review — quality, security, performance
+│   └── tester.md          # Test engineering
 ├── commands/              # Slash commands
-│   ├── refactor.md        # /refactor — readability, safety, performance, maintainability
-│   ├── spdd-workflow.md   # /spdd-workflow — run the full SPDD workflow
-│   └── verify-project.md  # /verify-project — format, lint, vulnerability scan, tests
-└── skills/                # Conditional skill modules loaded by context
-    ├── abstraction-first/ # Design before you generate — entities, boundaries, collaboration
-    ├── alignment/         # Lock intent before writing code — explicit scope, constraints, DoD
+│   ├── refactor.md        # /refactor
+│   ├── vb-review.md       # /vb-review — mobile backend checklist
+│   └── verify-project.md  # /verify-project — format, lint, scan, test
+└── skills/                # Conditional modules loaded by context
     ├── code-quality/      # Readability, clean code, naming
-    ├── context-management/ # Long sessions, context limits, compaction, quality maintenance
-    ├── iterative-review/  # Controlled review loop — fix prompt first, then code
-    ├── naming-conventions/ # Language-agnostic naming conventions
-    ├── performance/       # Language-agnostic performance optimization
-    ├── self-organizing-coder/ # Task decomposition, subagent delegation, iterative delivery
+    ├── context-management/ # Context limits, compaction, quality
+    ├── naming-conventions/ # Language-agnostic naming
+    ├── performance/       # Optimization patterns
+    ├── self-organizing-coder/ # Task decomposition, delegation
     └── spec-driven/       # Spec-driven development workflow
 ```
 
 ## Supported Tools
 
-| Tool | Config dir | Agent file |
-|------|-----------|------------|
+| Tool | Config Location | Agent File |
+|------|-----------------|------------|
 | Claude Code | `~/.claude/` | `CLAUDE.md` |
 | Gemini | `~/.gemini/` | `GEMINI.md` |
-| OpenCode | `~/.config/opencode/` | `AGENTS.md` |
 | Kilo | `~/.config/kilo/` | `AGENTS.md` |
+| OpenCode | `~/.config/opencode/` | `AGENTS.md` |
 | Qwen | `~/.qwen/` | `AGENTS.md` |
 
-The `link.sh` script creates symlinks for `AGENTS.md`, `commands/`, `skills/`, and `agents/` directories where the tool supports them.
+The `link.sh` script symlinks `AGENTS.md`, `commands/`, `skills/`, and `agents/` to each tool's directory.
 
-## Agent Architecture
+## Agents
 
-### AGENTS.md — Top-Level Instructions
+Delegatable agents available via the `task` tool:
 
-Defines the core execution loop and coding standards:
-
-- **Workflow** — Specify → Plan → Delegate → Validate → Iterate
-- **Code Quality** — Readability, safe defaults, error wrapping, no mutable globals, decoupled from environment
-- **Performance** — Preallocation, object reuse, batched I/O, minimized copies, lazy initialization
-- **Architecture** — Modular by default, test first, simple (≤3 top-level modules), no speculative features
-
-### Named Agents
-
-Agents available for delegation via the `task` tool. All agents are language-agnostic and operate on generic code structures (files, functions, classes, modules, interfaces, data structures, collections).
-
-| Agent | Mode | Purpose | Permissions |
+| Agent | Role | Purpose | Permissions |
 |-------|------|---------|-------------|
-| `conductor` | primary | Master orchestrator — decomposes tasks, delegates to subagents, validates outputs | No edits, no shell commands |
-| `explorer` | subagent | Read-only project exploration — finds files, searches content, maps architecture | No edits, no shell commands |
-| `implementer` | subagent | Full-capability implementation — writes code, edits files, runs commands | Full edit, write, shell commands |
-| `planner` | subagent | Analysis and planning — designs solutions, creates implementation plans, estimates scope | Read-only for production code; can write plan files to `plans/` |
-| `reviewer` | subagent | Code review — quality, security, performance, best practices | Read-only (+ git diff/log) |
-| `tester` | subagent | Test engineering — writes and runs tests, validates against acceptance criteria | Edit/write (test files), full shell access |
+| `conductor` | primary | Orchestrates — decomposes tasks, delegates, validates | read-only |
+| `explorer` | subagent | Project exploration — finds files, maps architecture | read-only |
+| `implementer` | subagent | Implementation — writes code, edits, runs commands | full access |
+| `planner` | subagent | Analysis — designs solutions, estimates scope | read-only |
+| `reviewer` | subagent | Code review — quality, security, performance | read-only |
+| `tester` | subagent | Test engineering — writes and runs tests | test files + shell |
 
-All agents operate within the SPDD framework — prompts are first-class artifacts, and the REASONS Canvas in `plans/` governs implementation for complex tasks.
-
-### Slash Commands
+## Slash Commands
 
 | Command | Description |
 |---------|-------------|
-| `/refactor` | Refactor code for readability, safety, performance, and maintainability |
-| `/spdd-workflow` | Run the full Structured-Prompt-Driven Development workflow — analyze, generate REASONS Canvas, implement, verify, and sync |
-| `/verify-project` | Format, lint (auto-fix), vulnerability scan, static analysis, and run tests |
+| `/refactor` | Refactor for readability, safety, performance |
+| `/vb-review` | Mobile backend review checklist |
+| `/verify-project` | Format, lint, scan, test |
 
-### Skills
+## Skills
 
-Conditional rule modules loaded when context matches. Each skill is a `SKILL.md` file in `skills/<name>/`.
+Conditional modules loaded when context matches:
 
-| Skill | Trigger Context |
-|-------|-----------------|
-| `abstraction-first` | Design before you generate — entities, boundaries, collaboration |
-| `alignment` | Lock intent before writing code — explicit scope, constraints, DoD |
-| `code-quality` | Readability, clean code, naming discussions |
-| `context-management` | Long sessions, context limits, compaction, context quality |
-| `iterative-review` | Controlled review loop — fix prompt first, then code |
-| `naming-conventions` | Writing or reviewing identifier names |
-| `performance` | Performance optimization discussions |
-| `self-organizing-coder` | Task decomposition, subagent delegation, iterative delivery |
-| `spec-driven` | Planning features, writing specs, spec-first workflows; REASONS Canvas for complex tasks |
-
-## Structured-Prompt-Driven Development (SPDD)
-
-SPDD is the governing methodology for agent execution.
-
-- **Prompts are first-class delivery artifacts** — version controlled, reviewed, reused, and improved over time.
-- **The REASONS Canvas** — For complex tasks, agents generate a REASONS Canvas in `plans/` (R-E-A-S-O-N-S) that structures and governs implementation.
-- **Golden rule** — When reality diverges, fix the prompt first — then update the code.
-  - **Logic corrections (behavior changes):** Update the structured prompt first, then generate/update code.
-  - **Refactoring (non-behavior changes):** Refactor code first, then sync back to the prompt.
-
-The three core SPDD skills are `abstraction-first`, `alignment`, and `iterative-review`. Run the full workflow with the `/spdd-workflow` command.
+| Skill | Trigger |
+|-------|---------|
+| `code-quality` | Readability, naming discussions |
+| `context-management` | Long sessions, compaction |
+| `naming-conventions` | Writing identifier names |
+| `performance` | Performance optimization |
+| `self-organizing-coder` | Task decomposition, delegation |
+| `spec-driven` | Planning, spec-first workflows |
 
 ## Context Condensing
 
-For complex projects, context management is critical. Kilo Code provides automatic compaction:
+### Auto-Compaction
 
-- **Auto-compaction** triggers when the conversation approaches the model's token limit (default: ~20K headroom reserved).
-- **Pruning** clears old tool outputs beyond a ~40K recency window between turns.
-- **Manual compaction** via `/compact` slash command (also searchable as `smol` or `condense`).
+- **Triggers** at ~20K token headroom (configurable)
+- **Pruning** clears tool outputs beyond ~40K recency
+- **Manual** via `/compact` command
 
-### Configuration Reference
-
-Kilo `kilo.jsonc` settings:
+### Configuration
 
 ```jsonc
 {
   "compaction": {
-    "auto": true,      // Enable/disable automatic compaction
-    "prune": true,     // Clear old tool outputs beyond recency window
-    "reserved": 20000  // Token buffer for next turn
+    "auto": true,
+    "prune": true,
+    "reserved": 20000
   }
 }
 ```
 
-Optional dedicated compaction agent:
-
-```jsonc
-{
-  "agent": {
-    "compaction": {
-      "model": "anthropic/claude-haiku-4-5"
-    }
-  }
-}
-```
-
-Environment overrides:
+### Environment Overrides
 
 | Variable | Effect |
 |----------|--------|
-| `KILO_DISABLE_AUTOCOMPACT=1` | Forces `compaction.auto = false` |
-| `KILO_DISABLE_PRUNE=1` | Forces `compaction.prune = false` |
+| `KILO_DISABLE_AUTOCOMPACT=1` | Disable auto-compaction |
+| `KILO_DISABLE_PRUNE=1` | Disable pruning |
 
 ### Best Practices
 
-- Compact **before major transitions** (exploration → planning → implementation → validation).
-- Compact **after completing significant milestones**.
-- Be **specific in initial task descriptions** — this feeds better summaries.
-- Use **subdirectory `AGENTS.md`** for domain-specific context that doesn't need to be compacted.
-- After compaction, **re-read modified files** to avoid stale assumptions.
-- Use **`todowrite`** for progress tracking — external tracking survives context compaction.
-- Preserve **REASONS Canvas state** during compaction — plan files are the SPDD source of truth.
+- Compact before major transitions
+- Compact after milestones
+- Be specific in task descriptions
+- Use `todowrite` for external progress tracking
+- Re-read modified files after compaction
 
 ## Large Project Strategies
 
-When working with large, complex projects:
+- **Navigate** with `glob` and `grep` — find files, locate patterns, build mental model of boundaries
+- **Change incrementally** — work within modular boundaries, ship each step
+- **Be context-efficient** — reference specific files, break tasks into subtasks, summarize large code
+- **Understand unfamiliar code** — read public interface first, trace call chains, find tests
 
-- **Navigation** — Use `glob` and `grep` to find files by pattern, locate patterns across the project. Build mental model of module boundaries before making changes.
-- **Incremental Changes** — Work within modular boundaries. Small, verifiable changes over broad refactoring. Ship each step. Update shared interfaces across all callers together.
-- **Context Efficiency** — Reference specific files with paths. Break large tasks into smaller subtasks. Summarize large code sections in prompts rather than including full content. Use `/compact` manually before major transitions.
-- **Working with Unfamiliar Code** — Read the module's public interface first. Trace call chains to understand data flow. Identify core domain types and relationships. Look for tests to understand expected behavior.
-- **Generate REASONS Canvas before implementation** — It serves as the governed blueprint for complex changes.
-- **Reference the Canvas in subagent prompts** — Rather than duplicating intent, point subagents to the relevant section of the plan.
-
-## Planned Skills (Not Yet Implemented)
-
-The following skills are described in the desired-state but not yet implemented:
+## Planned Skills
 
 | Skill | Purpose |
 |-------|---------|
 | `error-design` | Error types, wrapping, actionable messages |
-| `incremental-delivery` | Feature flags, small PRs, progressive rollout |
-| `library-first` | Architecture design, new feature structure |
-| `security-by-default` | Input handling, auth, file access, secrets |
-| `simplify` | Refactoring, reducing technical debt, unnecessary complexity |
-| `test-first` | TDD workflow, writing tests before implementation |
+| `incremental-delivery` | Feature flags, small PRs, rollout |
+| `library-first` | Architecture design, new features |
+| `security-by-default` | Input handling, auth, secrets |
+| `simplify` | Refactoring, technical debt |
+| `test-first` | TDD workflow |
 
 ## References
 
-- Kilo customize: https://kilo.ai/docs/customize
-- Kilo context condensing: https://kilo.ai/docs/customize/context/context-condensing
-- OpenCode tools: https://opencode.ai/docs/tools/
+- [Kilo Docs](https://kilo.ai/docs/)
+- [OpenCode Tools](https://opencode.ai/docs/tools/)
+- [Structured Prompt Driven](https://martinfowler.com/articles/structured-prompt-driven/)
