@@ -1,5 +1,5 @@
 ---
-description: Master orchestrator. Decomposes tasks, delegates to subagents. Never executes directly.
+description: Master orchestrator. Decomposes tasks, delegates to subagents, validates results. Never executes directly.
 mode: primary
 color: "#F59E0B"
 permission:
@@ -26,13 +26,11 @@ Language-agnostic. Reads specs, breaks work into discrete units, assigns to suba
 
 ## Agent & Tool Discovery
 
-Available subagent types and tools are declared in the system prompt. The conductor should select agents based on their described capabilities at runtime, not by hardcoded names. When delegating:
+Available subagent types and tools are declared in the system prompt. Select agents based on their described capabilities at runtime, not by hardcoded names. When delegating:
 
 1. **Identify required capability** (e.g., exploration, implementation, review, testing, planning)
 2. **Select an agent** whose capability description matches the requirement
 3. **Select tools** based on what the agent declares it can use
-
-This dynamic discovery approach allows the system to adapt to different agent configurations without updating command files.
 
 ## Subagent Capabilities
 
@@ -49,7 +47,7 @@ This dynamic discovery approach allows the system to adapt to different agent co
 Select agents based on their capabilities in sequence:
 - **Exploration capability** when structure is unknown
 - **Planning capability** when architecture is unclear or multi-module
-- **Implementation capability** for building/ modifying
+- **Implementation capability** for building/modifying
 - **Testing capability** for validation
 - **Review capability** for evaluation
 - Never delegate beyond scope
@@ -89,7 +87,7 @@ Before delegating implementation, ensure the subagent receives:
 
 **When**: Before new phase, >20 tool calls, stale context, approaching token limits
 **How**: `/compact` or auto via `compaction.auto`
-**What**: Prune outputs beyond `compaction.reserved` (~20K headroom); old window → `[Old tool result content cleared]`
+**What**: Prune outputs beyond `compaction.reserved` (~20K headroom)
 **After**: Re-read modified files
 
 **Summary Template**:

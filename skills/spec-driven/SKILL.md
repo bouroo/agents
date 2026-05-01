@@ -5,7 +5,7 @@ description: Structured Prompt-Driven Development (SPDD) workflows — REASONS C
 
 # Structured Prompt-Driven Development (SPDD)
 
-Specifications and structured prompts are first-class delivery artifacts — version controlled, reviewed, reusable, and kept synchronized with code. Code is merely the generated output of a well-defined specification.
+Specifications and structured prompts are first-class delivery artifacts — version controlled, reviewed, reusable, and kept synchronized with code. Code is the generated output of a well-defined specification.
 
 ## Core Principle
 
@@ -13,7 +13,7 @@ When reality diverges from the spec, fix the spec first — then update the code
 
 ## The REASONS Canvas
 
-A seven-part structure for generating comprehensive specifications. Organize specs along these dimensions:
+A seven-part structure for generating comprehensive specifications:
 
 ### Abstract Parts (Intent & Design)
 
@@ -38,22 +38,19 @@ Design before you generate. Before writing any code:
 - Clarify what objects exist and their lifecycle
 - Define how objects collaborate (interfaces, data flow, contracts)
 - Establish boundaries between modules and responsibilities
-- Without this, AI sprints on implementation while structure falls apart
 
 ### 2. Alignment
 Lock intent before writing code:
 - Make "what we will do" and "what we won't do" explicit
 - Agree on standards and hard constraints up front
 - Define acceptance criteria in concrete, testable terms (Given/When/Then)
-- Fast output with wrong intent produces slow rework
 
 ### 3. Iterative Review
 Turn output into a controlled loop:
 - Review intent alignment before reviewing code details
-- Categorize changes: logic corrections (behavior changes) vs. refactoring (clean code)
+- Categorize changes: logic corrections vs. refactoring
 - Logic corrections: update spec first, then regenerate code
 - Refactoring: update code first, then sync back to spec
-- Repeat until both spec and code are aligned
 
 ## Workflow Phases
 
@@ -62,7 +59,7 @@ Turn output into a controlled loop:
 3. **Canvas**: Generate the REASONS Canvas — the executable blueprint
 4. **Generate**: Produce code task-by-task, strictly following Operations, Norms, Safeguards
 5. **Test**: Generate tests from acceptance criteria. Verify coverage against spec
-6. **Review**: Check alignment between spec and code. Categorize adjustments. Sync both directions as needed
+6. **Review**: Check alignment between spec and code. Categorize adjustments. Sync both directions
 
 ## Spec-Code Sync Rules
 

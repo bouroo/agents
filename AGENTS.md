@@ -1,6 +1,6 @@
 # Agent Configuration
 
-Specifications drive implementation; code serves specifications.
+Specifications drive implementation; code serves specifications. The spec is the primary artifact; code is its expression in a particular language and framework.
 
 ## Agent & Tool Discovery
 
@@ -33,7 +33,53 @@ Available subagent types and tools are declared in each agent's system prompt. W
 |-------------|----------|
 | New feature | Spec → Code |
 | Logic correction | Spec → Code (fix spec first) |
+| Bug fix (behavior change) | Spec → Code (fix spec first) |
 | Refactoring | Code → Spec (refactor first, then sync) |
+| Performance optimization | Code → Spec (optimize, update spec) |
+
+## Constitutional Principles
+
+### Library-First
+Every feature begins as a standalone, reusable module. No feature is implemented directly within application code without first being abstracted into a reusable component with clear boundaries and minimal dependencies.
+
+### Test-First Imperative
+No implementation code before tests. Tests define behavior, get approved, confirm they fail (Red phase), then implementation makes them pass (Green phase).
+
+### Simplicity
+Maximum 3 projects/modules for initial implementation. Additional modules require documented justification. No future-proofing. No speculative features.
+
+### Anti-Abstraction
+Use framework features directly rather than wrapping them. Single model representation. Don't create abstraction layers until complexity justifies them.
+
+### Integration-First Testing
+Prefer real databases over mocks. Use actual service instances over stubs. Contract tests mandatory before implementation.
+
+## Safe by Default
+
+- Use "always valid values" — design types so invalid states are unrepresentable
+- Use named constants instead of magic values
+- Validate all inputs at boundaries; reject early
+- Never require elevated privileges; let users configure minimal permissions
+- Use `os.Root` or equivalent sandboxed file access to prevent path traversal
+- Never log secrets or personal data
+
+## Error Design
+
+- Always check errors. Handle when possible, retry when appropriate, report otherwise
+- Wrap errors with context; don't flatten them into strings
+- Define named sentinel errors users can match against
+- Use structured error types that preserve the error chain
+- Reserve panics for internal program errors only
+- Show usage hints for incorrect arguments; don't crash
+
+## Code Quality
+
+- Write code for reading, not writing. Flatten cognitive speed-bumps
+- Use consistent, conventional names: `err` for errors, `ctx` for contexts, `req`/`resp` for requests/responses
+- Simplify wordy functions by extracting low-level paperwork into named helpers
+- Decouple code from environment — only entry points access env vars, CLI args, or OS details
+- Avoid mutable global state; use explicit dependency injection
+- Use concurrency sparingly and keep it strictly confined
 
 ## Context Condensing
 

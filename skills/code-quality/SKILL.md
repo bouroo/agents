@@ -2,60 +2,50 @@
 name: code-quality
 description: Language-agnostic code quality principles for writing, reviewing, and refactoring code. Focus on readability, maintainability, and safety.
 ---
-# Code Quality Guidelines
 
-Language-agnostic code quality principles for writing, reviewing, and refactoring code. Focus on readability, maintainability, and safety.
+# Code Quality
 
-## 1. Modular Architecture
-- **Write libraries, not just programs**: Design reusable components with clear boundaries.
-- **Isolate entry points**: The main entry point should only parse configurations, handle setup/teardown, and inject dependencies.
+## Write Code for Reading
 
-## 2. Test Everything
-- **Dogfooding**: Write tests to use your own APIs and discover awkward design choices.
-- **Comprehensive testing**: Focus on unit tests for small behaviors and integration tests for end-to-end scenarios.
+- Use consistent, conventional names: `err` for errors, `ctx` for contexts, `req`/`resp` for requests/responses
+- Good names make code read naturally. Design the architecture, name the components, document the details
+- Simplify wordy functions by extracting low-level paperwork into named helpers (`createRequest`, `parseResponse`)
+- Ask a co-worker to read your code line by line — their stumbles reveal speed-bumps to flatten
 
-## 3. Write Code for Reading
-- **Minimize cognitive load**: Flatten nested logic, extract complex paperwork into smaller functions.
-- **Glanceability**: Ask yourself if a reviewer can understand what the code does by reading it line-by-line.
+## Function Design
 
-## 4. Be Safe by Default
-- **Always valid states**: Ensure objects and data structures are initialized in a valid state.
-- **Useful defaults**: Make the zero or default value of a type useful and safe.
-- **Named constants**: Avoid magic numbers or strings; use named constants to prevent typos.
+- Each function should do one thing. If you need "and" in the description, split it
+- Keep functions short enough to understand at a glance
+- Extract complex conditionals into named helper functions
+- Avoid deep nesting — use early returns and guard clauses
 
-## 5. Structured Error Handling
-- **Wrap errors**: Add contextual information to errors instead of flattening them into generic strings.
-- **Sentinel errors**: Use defined error values or types so callers can match and handle specific failure conditions gracefully.
-- **Don't ignore errors**: Never silently swallow errors. Handle them or return them.
+## Error Handling
 
-## 6. Avoid Mutable Global State
-- **Prevent data races**: Do not use module-level or global mutable variables.
-- **Encapsulation**: Encapsulate state within objects and pass them explicitly, or use proper synchronization mechanisms.
+- Always check errors. Handle when possible, retry when appropriate, report otherwise
+- Wrap errors with context; don't flatten them into strings
+- Define named sentinel errors users can match against
+- Reserve panics/exceptions for internal program errors only
+- Show usage hints for incorrect arguments; don't crash
 
-## 7. Manage Concurrency Carefully
-- **Structured concurrency**: Ensure that all asynchronous tasks or threads terminate cleanly before their parent scope exits.
-- **Avoid leaks**: Tie asynchronous operations to cancellation contexts or timeouts.
-- **Directional data flow**: When using channels or queues, clearly define producers and consumers to avoid deadlocks.
+## State Management
 
-## 8. Decouple Code from Environment
-- **Inject configurations**: Do not hardcode environmental paths or read environment variables deep inside your logic. Pass them down.
-- **No storage assumptions**: Do not assume the local disk is writable or permanent.
+- Avoid mutable global state; use explicit dependency injection
+- Prefer immutability — return new values rather than modifying in place
+- Keep state transitions explicit and traceable
+- Use concurrency sparingly and keep it strictly confined
 
-## 9. Design for Errors
-- **Graceful degradation**: Anticipate failures and handle them safely rather than crashing the program.
-- **Fail fast on internal bugs**: Reserve fatal crashes only for unrecoverable internal logic errors, not user inputs or network issues.
+## Dependency Management
 
-## 10. Log Actionable Information
-- **No logorrhea**: Do not spam logs with trivia. Log only actionable errors that need fixing.
-- **Structured logging**: Emit machine-readable formats (e.g., JSON) instead of plain text.
-- **Data privacy**: Never log secrets, credentials, or sensitive personal data.
+- Decouple code from environment — only entry points access env vars, CLI args, or OS details
+- Depend on abstractions (interfaces), not concrete implementations
+- Keep external dependencies minimal and pinned
+- Use framework features directly rather than wrapping them
 
-## 11. Alignment and Scope Discipline
-- **Stay in scope**: Implement only what the specification defines. No speculative features or improvements beyond the stated requirements.
-- **Spec-code consistency**: If the code and specification diverge, flag it. Logic corrections should update the spec first; refactoring should sync back to the spec.
-- **Review intent before details**: When reviewing code, check alignment with specification before checking naming or formatting.
+## Review Checklist
 
-## 12. Large Project Quality
-- **Review module boundaries**: Ensure each module exposes a clear contract. Changes within a module should not break consumers.
-- **Actionable errors at every layer**: Error messages must indicate what failed and why, not just "error occurred." Include operation identifiers for tracing.
-- **Log context for tracing**: Include request/operation identifiers in log entries to trace behavior across module boundaries.
+- [ ] Names are consistent and self-explanatory
+- [ ] Functions are short and single-purpose
+- [ ] Errors are checked, wrapped, and propagated
+- [ ] No mutable global state
+- [ ] No unnecessary abstractions
+- [ ] Code reads top-to-bottom without jumping around

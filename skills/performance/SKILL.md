@@ -2,37 +2,52 @@
 name: performance
 description: Language-agnostic performance optimization patterns for reducing latency, improving memory efficiency, and maximizing throughput.
 ---
+
 # Performance Optimization Patterns
 
-Language-agnostic performance optimization patterns for reducing latency, improving memory efficiency, and maximizing throughput.
-
 ## 1. Memory Management & Efficiency
-- **Memory Preallocation**: Allocate collections with known capacities upfront to avoid costly dynamic resizing and reallocation.
-- **Object Pooling**: Reuse frequently allocated and deallocated objects to reduce allocation pressure and memory churn.
-- **Data Structure Alignment**: Organize fields within structures to minimize padding and improve CPU cache locality.
-- **Avoid Abstraction Overhead**: Prevent hidden allocations by avoiding unnecessary dynamic dispatch, interface boxing, or type casting in performance-critical paths.
-- **Zero-Copy Techniques**: Minimize data copying by using views, buffers, or sharing techniques when passing data between layers.
-- **Stack vs. Heap semantics**: Keep short-lived values on the stack when the language supports it. Avoid returning references to local variables unnecessarily.
+
+- **Memory Preallocation**: Allocate collections with known capacities upfront to avoid dynamic resizing.
+- **Object Pooling**: Reuse frequently allocated/deallocated objects to reduce allocation pressure.
+- **Data Structure Alignment**: Organize fields to minimize padding and improve CPU cache locality.
+- **Avoid Abstraction Overhead**: Prevent hidden allocations from dynamic dispatch, interface boxing, or type casting in hot paths.
+- **Zero-Copy Techniques**: Minimize data copying using views, buffers, or sharing between layers.
+- **Stack over Heap**: Keep short-lived values on the stack when the language supports it.
 
 ## 2. Concurrency & Synchronization
-- **Worker Pools**: Control concurrency levels using a fixed-size pool of workers to prevent resource exhaustion and limit context switching.
-- **Atomic Operations**: Use lightweight atomic operations instead of heavy locking mechanisms for simple shared state counters or flags.
-- **Lazy Initialization**: Delay expensive setup or resource allocation until the exact moment it is actually needed.
-- **Immutable Data Sharing**: Share data safely between concurrent tasks without locks by making data structures immutable.
-- **Cancellation Propagation**: Efficiently propagate timeouts and cancellation signals across concurrent workflows to abort early and save resources.
 
-## 3. I/O Optimization & Throughput
-- **Efficient Buffering**: Use buffered readers and writers to minimize the frequency of expensive system calls when interacting with files or networks.
-- **Batching Operations**: Combine multiple small operations (e.g., database inserts, network requests) into a single batch to reduce round-trip latency.
-- **Non-blocking I/O**: Do not block threads on I/O operations; use asynchronous paradigms or non-blocking sockets.
+- **Worker Pools**: Control concurrency with fixed-size pools to prevent resource exhaustion.
+- **Lock-Free Patterns**: Use atomic operations for simple shared state instead of heavy locking.
+- **Batching**: Group operations to amortize overhead (network round-trips, disk I/O, lock acquisition).
+- **Sharding**: Partition data by key to reduce contention on shared resources.
+- **Read-Write Locks**: Allow concurrent reads when writes are infrequent.
 
-## 4. Build-Level Optimization
-- **Optimized Builds**: Leverage release builds and optimization flags (e.g., inlining, link-time optimization) for production environments.
-- **Profile-Guided Optimization**: Rely on profiling and benchmarking data before applying optimizations. Do not guess where bottlenecks are.
+## 3. I/O & Network
 
-## 5. Large Project Performance
-- **Profile at module boundaries**: Identify cross-module bottlenecks by measuring interface-level latency. A slow module interface can cascade into overall system slowdown.
-- **Minimize data transfer**: Reduce the volume of data passed between modules or services. Serialize only what is needed; use pagination for large result sets.
-- **Cache at the right layer**: Cache expensive computations or remote lookups at the appropriate layer — close to where the data is consumed, not so deep that cache invalidation becomes complex.
-- **Monitor in CI/CD**: Track performance metrics in CI/CD pipelines. Fail builds on regressions beyond defined thresholds.
-- **Benchmark against spec safeguards**: When the specification defines performance safeguards (latency limits, throughput requirements), validate against these in CI/CD. Fail builds on safeguard violations.
+- **Connection Pooling**: Reuse connections rather than creating new ones per request.
+- **Streaming**: Process data in chunks rather than loading entire payloads into memory.
+- **Compression**: Compress large payloads for network transfer; skip for small or already-compressed data.
+- **Caching**: Cache computed results with explicit invalidation. Prefer cache-aside pattern.
+- **Lazy Loading**: Defer expensive computations until their results are actually needed.
+
+## 4. Algorithmic Efficiency
+
+- **Appropriate Data Structures**: Hash maps for lookups, sorted structures for range queries, graphs for relationships.
+- **Early Termination**: Break loops and pipelines as soon as the answer is known.
+- **Memoization**: Cache results of pure functions to avoid recomputation.
+- **Indexing**: Add indexes for frequent query patterns; measure before and after.
+
+## 5. Measurement & Profiling
+
+- **Benchmark before optimizing**: Measure actual performance before and after each change.
+- **Profile hot paths**: Use profiling tools to identify actual bottlenecks, not assumed ones.
+- **Load test realistically**: Test with production-like data volumes and concurrency.
+- **Track regressions**: Establish baselines and alert on degradation.
+
+## Anti-patterns
+
+- Premature optimization without measurement
+- Optimizing code that isn't in a hot path
+- Adding caches without eviction policies
+- Complex lock hierarchies that cause deadlocks
+- Guessing at bottlenecks instead of profiling

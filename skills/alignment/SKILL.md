@@ -2,6 +2,7 @@
 name: alignment
 description: Lock intent before you write code. Make what we will do and won't do explicit, and agree on standards and constraints up front.
 ---
+
 # Alignment
 
 Lock intent before you write code. Make what we will do and won't do explicit, and agree on standards and constraints up front.

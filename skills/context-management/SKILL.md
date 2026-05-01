@@ -3,138 +3,70 @@ name: context-management
 description: Strategies for managing AI context in long sessions, handling context limits, compaction, and maintaining context quality for large projects.
 ---
 
-# Context Management Skill
+# Context Management
 
-Strategies for managing AI context in long sessions, handling context limits, compaction, and maintaining context quality for large projects.
+## Auto-Compaction
 
-## Context Window Awareness
+- Triggers at ~20K token headroom via `compaction.auto`
+- Produces anchored summary: goal, constraints, progress, decisions, modified files
+- Keeps most recent turns verbatim when they fit
+- Updates previous summary rather than starting over
 
-- Every AI model has a context window limit — a maximum amount of text it can process at once
-- As conversations grow with file contents, code snippets, and discussion history, responses slow down and eventually hit limits
-- The agent should proactively manage context before limits are reached to maintain responsiveness and avoid session interruption
+## Pruning
 
-## The Compaction System
+- Old tool outputs beyond ~40K recency → `[Old tool result content cleared]`
+- Runs incrementally between turns
+- `compaction.prune` enabled by default
 
-Kilo Code uses an automatic compaction system to manage context efficiently:
+## Reserved Buffer
 
-### Auto-Compaction Triggers
-
-- **Trigger point**: Compaction runs when total token count fills the window minus a reserved buffer (~20K tokens by default)
-- **Buffer rationale**: The reserved buffer ensures there's always room for the next response without overflow
-- **Trackable models**: Auto-compaction only runs for models that declare a context window; custom models without declarations are not tracked
-- **Configuration**: Adjust via `compaction.auto` in kilo.jsonc (default: true)
-
-### Context Pruning
-
-- **Recency window**: Old tool outputs beyond ~40K tokens are pruned and replaced with `"[Old tool result content cleared]"`
-- **Incremental behavior**: Pruning runs between turns so large outputs don't accumulate space indefinitely, even before full compaction triggers
-- **Configuration**: Toggle via `compaction.prune` in kilo.jsonc (default: true)
-
-### Reserved Buffer Configuration
-
-| Setting | Default | Effect |
-|---------|---------|--------|
-| `compaction.reserved` | `min(20,000, model_max_output)` | Token headroom for next turn; smaller = later trigger, larger = earlier trigger |
-| `compaction.tail_turns` | `2` | Recent user turns to keep verbatim during compaction |
-| `compaction.preserve_recent_tokens` | 25% of usable context, clamped 2K–8K | Token budget for the verbatim recent tail |
-
-**Trade-off guidance**: Lower values (e.g., 10K) give more raw window turns but risk mid-turn overflow on large responses. Higher values (e.g., 40K) trigger earlier with fewer overflow errors but shorter effective conversations between summaries.
+- `compaction.reserved` tokens kept free for next turn
+- Default: `min(20,000, model_max_output_tokens)`
+- Lower value → compaction triggers later, risk of overflow
+- Higher value → compaction triggers earlier, fewer overflow errors
 
 ## Manual Compaction
 
-Trigger compaction at any time using:
-- **Slash command**: type `/compact` in chat (searchable by typing `smol` or `condense`)
-- **Task header button**: click the compact icon in the active task header
-- **Settings**: toggle auto-compaction in **Settings → Context**
+- `/compact` slash command
+- Use before major transitions or phase changes
+- Use after reaching significant milestones
 
-## When to Compact Manually
+## Post-Compaction Recovery
 
-- **Before major phase transitions**: exploration → planning → implementation → validation
-- **After completing significant milestones**: When a meaningful chunk of work is done
-- **When context feels unwieldy**: Conversation has grown long and hard to follow
-- **At ~70-80% estimated context usage**: Proactively, before automatic trigger
+After compaction fires, re-read modified files to avoid stale assumptions. The summary may omit details from earlier turns.
 
-## Writing Effective Summaries
-
-A good summary preserves all of the following:
-
-- **Goal**: What the user originally asked for
-- **Decisions**: Key design choices and their rationale
-- **Discoveries**: Important findings about the codebase or requirements
-- **Accomplished**: What has been completed, including file paths
-- **Modified Files**: List of files changed with brief descriptions
-- **Remaining**: Outstanding tasks and their status
-
-A bad summary is vague, omits rationale, or loses file references.
-
-**Quality criteria**: Summaries must be specific — "refactored auth module in src/auth/" not "did some refactoring". Include actual file paths and concrete outcomes, not abstract descriptions.
-
-## Using Subdirectory AGENTS.md
-
-For domain-specific context that applies to particular areas:
-
-- Place an `AGENTS.md` file in relevant subdirectories
-- It loads alongside the root AGENTS.md, with subdirectory version taking precedence
-- Use this for module-specific conventions, architectural decisions, or team-specific workflows
-- Keeps main context focused while ensuring domain knowledge is available when working in that area
-
-## Context Quality Best Practices
-
-- **Be specific in initial task descriptions**: This feeds better summaries when compaction occurs
-- **Reference specific file paths**: Not vague descriptions — "examine src/auth/" not "look at the auth code"
-- **Break large tasks into smaller subtasks**: Keeps context focused and boundaries clear
-- **After compaction, re-read modified files**: Verify assumptions haven't become stale
-- **Use todowrite for progress tracking**: External tracking survives context compaction
-
-## Large Project Context Management
-
-- **Read only what's needed**: Don't load entire modules into context
-- **Use exploration agents to map boundaries**: Before deep diving into complex areas
-- **Keep subagent prompts bounded**: Specify exact files, clear acceptance criteria, expected deliverables
-- **Use grep and glob strategically**: Instead of reading everything to find patterns
-- **Maintain mental map of relationships**: Between modules, not individual implementations
-- **Verify assumptions after condensing**: Module boundary assumptions may change during context condensation
-
-## Tool-Specific Context Tips
-
-- **File reading**: Read specific line ranges for large files, not entire files
-- **Content search**: Use targeted patterns, not broad searches that return thousands of results
-- **File search**: Map directory structure first, then drill down
-- **Task tracking**: Track progress externally so it survives context compaction
-- **Skill loading**: Load skills on-demand rather than keeping all context loaded
-
-## Configuration Reference
-
-Compaction settings in kilo.jsonc:
+## Configuration
 
 ```jsonc
 {
   "compaction": {
-    "auto": true,              // Enable/disable automatic compaction
-    "prune": true,             // Clear old tool outputs beyond recency window
-    "reserved": 20000,         // Token buffer for next turn
-    "tail_turns": 2,           // Recent turns to keep verbatim
-    "preserve_recent_tokens": 8000  // Token budget for verbatim tail
+    "auto": true,
+    "prune": true,
+    "tail_turns": 2,
+    "preserve_recent_tokens": 8000,
+    "reserved": 20000
   }
 }
 ```
 
-Dedicated compaction agent (optional):
-
-```jsonc
-{
-  "agent": {
-    "compaction": {
-      "model": "anthropic/claude-haiku-4-5"  // Use cheaper/larger-context model for summarization
-    }
-  }
-}
-```
-
-Environment overrides:
+## Environment Overrides
 
 | Variable | Effect |
 |----------|--------|
-| `KILO_DISABLE_AUTOCOMPACT=1` | Forces `compaction.auto = false` |
-| `KILO_DISABLE_PRUNE=1` | Forces `compaction.prune = false` |
-| `KILO_EXPERIMENTAL_OUTPUT_TOKEN_MAX` | Overrides the 32,000 default output-token ceiling |
+| `KILO_DISABLE_AUTOCOMPACT=1` | Disable auto-compaction |
+| `KILO_DISABLE_PRUNE=1` | Disable pruning |
+
+## Best Practices
+
+- Be specific in initial task descriptions for better summaries
+- Use `AGENTS.md` for persistent project context that doesn't need compaction
+- Use `todowrite` for external progress tracking that survives compaction
+- Compact before switching to a different aspect of the project
+- Review the summary after compaction for accuracy
+
+## Large Project Strategies
+
+- Navigate with `glob` and `grep` — find files, locate patterns, build mental model
+- Change incrementally — work within modular boundaries
+- Be context-efficient — reference specific files, break tasks into subtasks
+- Understand unfamiliar code by reading public interfaces first, then tracing call chains

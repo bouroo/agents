@@ -118,18 +118,6 @@ The Canvas must remain an accurate design document, not an outdated historical r
 - T1: [P] | Description | Files | Depends on | Acceptance Criteria
 ```
 
-### REASONS Canvas Sections
-
-When applicable, include:
-
-- **Requirements** (with acceptance criteria in Given/When/Then format with concrete examples)
-- **Entities** (domain model, existing vs. new)
-- **Approach** (design decisions with rationale)
-- **Structure** (system context, components, modules, files affected, dependency graph)
-- **Operations** (implementation steps precise down to method signatures where possible)
-- **Norms** (engineering standards)
-- **Safeguards** (non-negotiable boundaries)
-
 ### Problem Analysis
 - What is being asked
 - Current state of relevant code
