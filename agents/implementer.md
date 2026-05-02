@@ -4,7 +4,6 @@ mode: subagent
 color: "#10B981"
 permission:
   edit: allow
-  write: allow
   bash:
     "*": allow
   webfetch: allow

@@ -1,5 +1,6 @@
 ---
 description: Format, lint, type-check, scan, and test the project
+agent: implementer
 ---
 
 Run full project verification. Execute all steps autonomously without stopping for confirmation between steps.

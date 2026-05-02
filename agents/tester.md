@@ -5,7 +5,6 @@ color: "#EF4444"
 permission:
   read: allow
   edit: allow
-  write: allow
   bash:
     "*": allow
   webfetch: deny

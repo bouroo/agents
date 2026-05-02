@@ -1,5 +1,6 @@
 ---
 description: Generate or update AGENTS.md for a project
+agent: explorer
 ---
 
 Generate or update an `AGENTS.md` file for this project. Execute the full workflow without stopping for confirmation.

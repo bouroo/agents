@@ -5,7 +5,6 @@ color: "#F59E0B"
 permission:
   edit: deny
   bash: deny
-  write: deny
   task:
     "*": allow
 ---

@@ -6,7 +6,6 @@ permission:
   read: allow
   external_directory: allow
   edit: allow
-  write: allow
   bash: deny
 ---
 

@@ -4,7 +4,6 @@ mode: subagent
 color: "#8B5CF6"
 permission:
   edit: deny
-  write: deny
   bash:
     "*": deny
     "git diff*": allow

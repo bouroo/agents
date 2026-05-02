@@ -1,5 +1,6 @@
 ---
 description: Refactor and optimize code — measure, analyze, refactor, verify, sync
+agent: implementer
 ---
 
 Refactor and optimize the specified code. Execute the full workflow below without stopping for confirmation between steps.
