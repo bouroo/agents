@@ -28,6 +28,7 @@ Based on [Structured Prompt-Driven Development (SPDD)](https://martinfowler.com/
 │   └── tester.md          # Test engineering
 ├── commands/              # Slash commands
 │   ├── refactor.md        # /refactor — refactor and optimize code
+│   ├── generate-agents-md.md # /generate-agents-md — generate AGENTS.md for project
 │   └── verify-project.md  # /verify-project — format, lint, scan, test
 └── skills/                # Conditional modules loaded by context
     ├── abstraction-first/ # Design before you generate
@@ -71,6 +72,7 @@ Based on [Structured Prompt-Driven Development (SPDD)](https://martinfowler.com/
 | Command | Description |
 |---------|-------------|
 | `/refactor` | Refactor and optimize — measure, refactor, optimize, sync |
+| `/generate-agents-md` | Generate AGENTS.md — codebase analysis (no args) or from brief (with args) |
 | `/verify-project` | Format, lint, type-check, scan, test |
 
 ## Skills
@@ -121,4 +123,5 @@ Agents apply SPDD automatically when tasks match the methodology's fitness crite
 - [Kilo Docs — Custom Subagents](https://kilo.ai/docs/customize/custom-subagents)
 - [Kilo Docs — Context Condensing](https://kilo.ai/docs/customize/context/context-condensing)
 - [OpenCode Tools](https://opencode.ai/docs/tools/)
+- [OpenCode Docs — Commands](https://opencode.ai/docs/commands/)
 - [Agent Skills Specification](https://agentskills.io/home)
