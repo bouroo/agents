@@ -7,58 +7,47 @@ description: Test-Driven Development workflow — write tests before implementat
 
 ## Core Principle
 
-No implementation code before tests. Tests define behavior, get approved, confirm they fail (Red phase), then implementation makes them pass (Green phase).
+No implementation code before tests. Tests define behavior, get approved, confirm they fail (Red), then implementation makes them pass (Green).
 
-## Red-Green-Refactor Cycle
+## Red-Green-Refactor
 
-1. **Red**: Write a failing test that defines the desired behavior
-2. **Green**: Write the minimal code to make the test pass
-3. **Refactor**: Clean up while keeping tests green
-4. **Repeat**: Move to the next behavior
+1. **Red** — Write a failing test defining desired behavior
+2. **Green** — Write minimal code to make it pass
+3. **Refactor** — Clean up while keeping tests green
+4. **Repeat** — Next behavior
 
 ## Test Naming
 
-Test names should be sentences describing the expected behavior:
-
+Names should be sentences describing expected behavior:
 - `testCalculateBill_withOverage_chargesModelSpecificRate`
 - `testValidateInput_missingModelId_returns400`
-- `testAuthenticate_expiredToken_throwsUnauthorized`
 
-A reader should understand what's tested without reading the test body.
+Reader understands what's tested without reading the body.
 
 ## What to Test
 
-- **Happy path**: The normal flow that works
-- **Edge cases**: Boundary values, empty inputs, maximum sizes
-- **Error paths**: Invalid inputs, missing fields, unauthorized access
+- **Happy path**: Normal flow
+- **Edge cases**: Boundaries, empty inputs, maximum sizes
+- **Error paths**: Invalid inputs, missing fields, unauthorized
 - **Integration points**: Contracts between modules and services
 
 ## Test Priority
 
-1. **Contract tests** — Verify module boundaries and API contracts
-2. **Integration tests** — Verify components work together correctly
-3. **Unit tests** — Verify individual functions and methods
-4. **End-to-end tests** — Verify complete user workflows
+1. Contract tests — module boundaries and API contracts
+2. Integration tests — components working together
+3. Unit tests — individual functions and methods
+4. End-to-end tests — complete user workflows
 
-## Integration-First Testing
+## Integration-First
 
 - Prefer real databases over mocks
 - Use actual service instances over stubs
-- Contract tests are mandatory before implementation
+- Contract tests mandatory before implementation
 - Only mock external systems you don't control
-
-## Test Organization
-
-- Place tests alongside the code they test (language convention)
-- Group related tests in describe/context blocks
-- Use test fixtures and factories for test data
-- Keep tests independent — no ordering dependencies
 
 ## Anti-patterns
 
-- Writing tests after implementation (loses the design benefit)
+- Tests after implementation (loses design benefit)
 - Testing implementation details instead of behavior
-- Over-mocking to the point tests are fragile
-- Skipping tests "for now" (they never come back)
-- Tests that depend on execution order
-- Ignoring failing tests instead of fixing them
+- Over-mocking making tests fragile
+- Skipping tests "for now"

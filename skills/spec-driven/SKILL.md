@@ -5,7 +5,7 @@ description: Structured Prompt-Driven Development (SPDD) workflows — REASONS C
 
 # Structured Prompt-Driven Development (SPDD)
 
-Specifications and structured prompts are first-class delivery artifacts — version controlled, reviewed, reusable, and kept synchronized with code. Code is the generated output of a well-defined specification.
+Specifications and structured prompts are first-class delivery artifacts — version controlled, reviewed, reusable, and kept synchronized with code.
 
 ## Core Principle
 
@@ -13,73 +13,45 @@ When reality diverges from the spec, fix the spec first — then update the code
 
 ## The REASONS Canvas
 
-A seven-part structure for generating comprehensive specifications:
-
 ### Abstract Parts (Intent & Design)
-
-- **R — Requirements**: What problem are we solving? What is the definition of done?
-- **E — Entities**: Domain objects, their attributes, and relationships.
-- **A — Approach**: The strategy for meeting requirements. Design decisions and rationale.
-- **S — Structure**: Where the change fits in the system. Components and dependencies.
+- **R — Requirements**: Problem and definition of done
+- **E — Entities**: Domain objects, attributes, relationships
+- **A — Approach**: Strategy, design decisions, rationale
+- **S — Structure**: Where change fits; components and dependencies
 
 ### Specific Part (Execution)
-
-- **O — Operations**: Concrete, ordered, testable implementation steps. Precise down to method signatures and parameter types.
+- **O — Operations**: Ordered, testable steps down to method signatures
 
 ### Governance Parts
-
-- **N — Norms**: Cross-cutting engineering standards (naming, error handling, observability, patterns).
-- **S — Safeguards**: Non-negotiable boundaries (invariants, performance limits, security rules, backward compatibility constraints).
+- **N — Norms**: Cross-cutting standards (naming, error handling, observability)
+- **S — Safeguards**: Non-negotiable boundaries (invariants, limits, security)
 
 ## Three Core Skills
 
-### 1. Abstraction First
-Design before you generate. Before writing any code:
-- Clarify what objects exist and their lifecycle
-- Define how objects collaborate (interfaces, data flow, contracts)
-- Establish boundaries between modules and responsibilities
-
-### 2. Alignment
-Lock intent before writing code:
-- Make "what we will do" and "what we won't do" explicit
-- Agree on standards and hard constraints up front
-- Define acceptance criteria in concrete, testable terms (Given/When/Then)
-
-### 3. Iterative Review
-Turn output into a controlled loop:
-- Review intent alignment before reviewing code details
-- Categorize changes: logic corrections vs. refactoring
-- Logic corrections: update spec first, then regenerate code
-- Refactoring: update code first, then sync back to spec
+1. **Abstraction First** — Design before you generate
+2. **Alignment** — Lock intent before writing code
+3. **Iterative Review** — Controlled review-and-iterate loop
 
 ## Workflow Phases
 
-1. **Story**: Break requirements into independent, deliverable user stories (INVEST principle)
-2. **Analysis**: Extract domain keywords, scan codebase, identify risks and gaps
-3. **Canvas**: Generate the REASONS Canvas — the executable blueprint
-4. **Generate**: Produce code task-by-task, strictly following Operations, Norms, Safeguards
-5. **Test**: Generate tests from acceptance criteria. Verify coverage against spec
-6. **Review**: Check alignment between spec and code. Categorize adjustments. Sync both directions
+1. **Story** → Independent, deliverable user stories (INVEST)
+2. **Analysis** → Domain keywords, codebase scan, risks and gaps
+3. **Canvas** → Generate the REASONS Canvas (executable blueprint)
+4. **Generate** → Code task-by-task following Operations, Norms, Safeguards
+5. **Test** → Tests from acceptance criteria. Verify coverage against spec
+6. **Review** → Check alignment. Categorize adjustments. Sync both directions
 
-## Spec-Code Sync Rules
+## Spec-Code Sync
 
-| Change Type | Direction | Strategy |
-|---|---|---|
-| New feature | Spec → Code | Write spec first, generate code from it |
-| Logic correction | Spec → Code | Fix spec first, then regenerate affected code |
-| Bug fix (behavior change) | Spec → Code | Update spec with correct behavior, then fix code |
-| Refactoring (no behavior change) | Code → Spec | Refactor code, then sync changes back to spec |
-| Performance optimization | Code → Spec | Optimize code, update spec with new constraints |
+| Change Type | Direction |
+|-------------|-----------|
+| New feature | Spec → Code |
+| Logic correction | Spec → Code (fix spec first) |
+| Bug fix | Spec → Code (fix spec first) |
+| Refactoring | Code → Spec (refactor first) |
+| Performance | Code → Spec (optimize first) |
 
-## Fitness Assessment
+## Fitness
 
-SPDD pays off most for:
-- ★★★★★ Scaled, standardized delivery with high-repeat business logic
-- ★★★★★ High compliance environments with hard constraints
-- ★★★★☆ Team collaboration requiring auditability
-- ★★★★☆ Cross-cutting consistency work across services
-
-SPDD overhead may not be worth it for:
-- ★★☆☆☆ Firefighting hotfixes where speed matters most
-- ★★☆☆☆ Exploratory spikes validating ideas quickly
-- ★★☆☆☆ One-off scripts with low reuse potential
+SPDD best for: scaled delivery, high compliance, team auditability, cross-cutting consistency.
+SPDD overhead for: hotfixes, exploratory spikes, one-off scripts.

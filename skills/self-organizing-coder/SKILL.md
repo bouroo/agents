@@ -17,68 +17,49 @@ description: Autonomous workflow for building complex features, refactoring code
 
 ## 1. Decompose and Plan
 
-- **Analyze Goal**: Understand specification. No speculative features.
-- **Abstraction First**: Clarify objects, collaborations, boundaries before tasks
-- **Task Breakdown**: Small, actionable, testable tasks. Explicit implementation plan.
-- **Parallel Execution**: Identify independent tasks, execute concurrently.
+- Analyze goal, understand spec, no speculative features
+- Abstraction first: objects, collaborations, boundaries before tasks
+- Task breakdown: small, actionable, testable tasks with explicit plan
+- Parallel execution: identify independent tasks, execute concurrently
 
 ## 2. Align Intent
 
-- **Lock Intent**: Confirm what/not done. Explicit scope boundaries.
-- **Standards Up Front**: Naming, error handling, coding standards agreed before coding.
-- **Acceptance Criteria**: Concrete, testable. Given/When/Then format when possible.
-- **Explicit Uncertainty**: Vague requirement → halt, ask user, mark `[NEEDS CLARIFICATION]`.
+- Lock intent: confirm what/not done. Explicit scope boundaries
+- Standards up front: naming, error handling, coding standards before coding
+- Acceptance criteria: concrete, testable. Given/When/Then when possible
+- Explicit uncertainty: vague requirement → halt, ask, mark `[NEEDS CLARIFICATION]`
 
-## 3. Manage Context and Focus
+## 3. Manage Context
 
-- **Context Condensing**: Proactively summarize progress, discoveries, modified files.
-  - **When**: Before delegating new subtasks, when approaching token limits
-  - **What**: Goal, discoveries, accomplishments, modified files, remaining tasks
-- **Bounded Subagent Prompts**: Tight scope, exact files, clear acceptance criteria, defined deliverables.
+- Proactively summarize progress, discoveries, modified files
+- Before delegating new subtasks or when approaching token limits
+- Bounded subagent prompts: tight scope, exact files, clear deliverables
 
 ## 4. Implement and Iterate
 
-- **Test-First**: Write tests validating spec before functional code. Tests fail first.
-- **Incremental Delivery**: Working slices, one step at a time.
-- **Anti-Abstraction**: Use existing frameworks directly. No unnecessary layers.
+- Test-first: tests validating spec before functional code
+- Incremental delivery: working slices, one step at a time
+- Anti-abstraction: use existing frameworks directly
 
 ## 5. Iterative Review
 
-- **Intent before details**: Output matches spec before code quality review.
-- **Categorize changes**: Logic correction (behavior change) vs refactoring (structural). Apply correct sync.
-- **Controlled loops**: Each iteration deliberate. Drift = realign spec before regenerating.
-- **Review and Refine**: Run validators, linters, tests. Fix autonomously before proceeding.
+- Intent before details: output matches spec before code quality review
+- Categorize: logic correction (behavior) vs refactoring (structural)
+- Controlled loops: drift = realign spec before regenerating
 
 ## 6. Large Project Workflow
 
-| Phase | Subagent | Output |
-|-------|----------|--------|
-| 1. Explore | explorer | Project structure, module boundaries, entry points |
-| 2. Plan | planner | REASONS Canvas, task breakdown, dependencies |
-| 3. Implement | implementer (parallel) | Modified files per module |
-| 4. Validate | tester | Full test suite, regression check |
-| 5. Sync | — | Spec↔code aligned |
-
-## Tools
-
-| Purpose | Tool |
-|---------|------|
-| File discovery | `glob` |
-| Content search | `grep`, `semantic_search` |
-| Read files | `read` |
-| Edit files | `edit`, `write`, `apply_patch` |
-| Execute | `bash` |
-| Analyze | `lsp` |
-| Track progress | `todowrite` |
-| Fetch URLs | `webfetch` |
-| Web search | `websearch` |
-| Load skill | `skill` |
-| Ask user | `question` |
+| Phase | Agent | Output |
+|-------|-------|--------|
+| Explore | explorer | Structure, boundaries, entry points |
+| Plan | planner | REASONS Canvas, task breakdown |
+| Implement | implementer (parallel) | Modified files per module |
+| Validate | tester | Full test suite, regression check |
+| Sync | — | Spec↔code aligned |
 
 ## Context Condensing
 
-- **Auto-compaction**: Enabled via `compaction.auto`. Triggers at ~20K token headroom.
-- **Pruning**: `compaction.prune` removes old outputs beyond recency window
-- **Reserved**: `compaction.reserved` buffer preserved for continuity
-- **Manual**: `/compact` command
-- **Post-compaction**: Re-read modified files to avoid stale assumptions.
+- Auto-compaction: `compaction.auto`, triggers at ~20K token headroom
+- Pruning: `compaction.prune` removes old outputs
+- Reserved: `compaction.reserved` buffer for continuity
+- Post-compaction: re-read modified files

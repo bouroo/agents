@@ -4,7 +4,7 @@ Specifications drive implementation; code serves specifications. The spec is the
 
 ## Agent & Tool Discovery
 
-Available subagent types and tools are declared in each agent's system prompt. When delegating tasks, select agents and tools based on their described capabilities at runtime rather than relying on hardcoded names. Each agent definition specifies what it can do and what tools it has available.
+Available subagent types and tools are declared in each agent's system prompt. When delegating tasks, select agents and tools based on their described capabilities at runtime rather than relying on hardcoded names.
 
 ## SPDD Core Loop
 
@@ -40,19 +40,19 @@ Available subagent types and tools are declared in each agent's system prompt. W
 ## Constitutional Principles
 
 ### Library-First
-Every feature begins as a standalone, reusable module. No feature is implemented directly within application code without first being abstracted into a reusable component with clear boundaries and minimal dependencies.
+Every feature begins as a standalone, reusable module with clear boundaries and minimal dependencies.
 
 ### Test-First Imperative
-No implementation code before tests. Tests define behavior, get approved, confirm they fail (Red phase), then implementation makes them pass (Green phase).
+No implementation code before tests. Red → Green → Refactor.
 
 ### Simplicity
-Maximum 3 projects/modules for initial implementation. Additional modules require documented justification. No future-proofing. No speculative features.
+Max 3 projects/modules for initial implementation. No future-proofing. No speculative features.
 
 ### Anti-Abstraction
-Use framework features directly rather than wrapping them. Single model representation. Don't create abstraction layers until complexity justifies them.
+Use framework features directly. Single model representation. No abstraction layers until complexity justifies them.
 
 ### Integration-First Testing
-Prefer real databases over mocks. Use actual service instances over stubs. Contract tests mandatory before implementation.
+Prefer real databases over mocks. Use actual service instances over stubs. Contract tests mandatory.
 
 ## Safe by Default
 
@@ -60,7 +60,7 @@ Prefer real databases over mocks. Use actual service instances over stubs. Contr
 - Use named constants instead of magic values
 - Validate all inputs at boundaries; reject early
 - Never require elevated privileges; let users configure minimal permissions
-- Use `os.Root` or equivalent sandboxed file access to prevent path traversal
+- Use sandboxed file access to prevent path traversal
 - Never log secrets or personal data
 
 ## Error Design
@@ -80,6 +80,7 @@ Prefer real databases over mocks. Use actual service instances over stubs. Contr
 - Decouple code from environment — only entry points access env vars, CLI args, or OS details
 - Avoid mutable global state; use explicit dependency injection
 - Use concurrency sparingly and keep it strictly confined
+- Write packages, not programs — keep `main` thin, push logic into importable packages
 
 ## Context Condensing
 
@@ -98,13 +99,9 @@ Prefer real databases over mocks. Use actual service instances over stubs. Contr
 5. Sync: fix spec first for logic changes
 6. Track: `pending` → `in_progress` → `completed`
 
-Decomposition output feeds into the **Operations** section of the REASONS Canvas.
-
 ## Large Project Workflow
 
 1. **Explore** — Map structure, identify boundaries, locate entry points
 2. **Plan** — Design via REASONS Canvas. Identify affected modules
 3. **Implement** — Delegate bounded tasks. Validate each independently
 4. **Validate** — Run full test suite. Verify no regressions
-
-Context efficiency: reference specific files, break into subtasks, use `/compact` before major transitions.

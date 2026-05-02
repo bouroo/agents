@@ -7,26 +7,22 @@ description: Design before you generate. Clarify what objects exist, how they co
 
 Design before you generate. Clarify what objects exist, how they collaborate, and where boundaries are before implementation.
 
-## 1. Purpose
+## Principles
 
-Without clear abstractions, AI sprints on implementation details while structure falls apart. Unclear responsibilities, duplicated logic, inconsistent interfaces — the cost shows up later in review and rework.
+- **Define domain entities first**: Core objects, attributes, relationships before any code.
+- **Clarify collaboration**: Who calls whom, data flow, where state lives.
+- **Establish boundaries**: Module boundaries with minimal, stable interfaces.
+- **Choose patterns deliberately**: Apply design patterns only when they reduce complexity.
 
-## 2. Principles
+## Practices
 
-- **Define domain entities first**: Identify core objects, their attributes, and relationships before writing any code.
-- **Clarify collaboration**: Map who calls whom, how data flows between components, and where state lives.
-- **Establish boundaries**: Draw module boundaries and expose minimal, stable interfaces.
-- **Choose patterns deliberately**: Apply design patterns (Strategy, Factory, Adapter, etc.) only when they reduce complexity, not for ceremony.
+- Start with Entities (E) and Structure (S) of the REASONS Canvas.
+- Sketch interfaces early: method signatures and type contracts before implementations.
+- Validate against Requirements (R): map abstractions back to stated problem.
+- Review coupling and cohesion: highly cohesive, loosely coupled modules.
 
-## 3. Practices
+## Anti-patterns
 
-- **Start with Entities and Structure**: Begin with the Entities (E) and Structure (S) sections of the REASONS Canvas.
-- **Sketch interfaces early**: Write method signatures and type contracts before implementations.
-- **Validate against Requirements**: Check that proposed abstractions solve the stated problem by mapping back to Requirements (R).
-- **Review coupling and cohesion**: Ensure modules are highly cohesive and loosely coupled before generating code.
-
-## 4. Anti-patterns
-
-- **Jumping to implementation**: Writing code before defining what it is supposed to model.
-- **Unclear responsibilities**: Multiple modules doing similar work, leading to duplicated logic and drift.
-- **Inconsistent interfaces**: Each module inventing its own calling conventions, making the system hard to compose.
+- Jumping to implementation before defining what it models.
+- Unclear responsibilities causing duplicated logic and drift.
+- Inconsistent interfaces making the system hard to compose.

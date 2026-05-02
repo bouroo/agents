@@ -1,51 +1,26 @@
 ---
-description: Refactor and optimize code — improve readability, performance, safety, and maintainability
+description: Refactor and optimize code — measure, refactor, optimize, sync
 ---
 
-# Refactor & Optimize
+Refactor and optimize the specified code.
 
-Improve code for readability, performance, maintainability, and safety.
+$ARGUMENTS
 
-## Phase 1: Measure
+## Workflow
 
-1. **Profile** — run existing benchmarks or write new ones to establish baselines
-2. **Identify bottlenecks** — use profiling tools or instrumentation to find hot paths
-3. **Read the code** — understand current behavior, tests, and architecture
-
-## Phase 2: Refactor (no behavior change)
-
-4. **Identify improvement areas**:
-   - Long functions that need extraction
-   - Duplicated logic across files
-   - Magic values that need named constants
-   - Unclear names that need renaming
-   - Deep nesting that needs flattening
-   - Missing error handling
-5. **Refactor incrementally** — one change at a time, verify after each:
-   - Run tests after each change
-   - Keep changes small and reviewable
-
-## Phase 3: Optimize (may change internal behavior, preserve external behavior)
-
-6. **Apply optimization patterns**:
-   - Memory preallocation and object pooling
-   - Avoiding unnecessary allocations
-   - Algorithmic improvements (better data structures, early termination)
-   - I/O reduction (batching, connection pooling, streaming)
-   - Concurrency (worker pools, lock-free patterns) — only when justified by profiling
-   - Caching with explicit invalidation
-7. **Benchmark after each optimization** — compare against baselines
-8. **Verify** — all existing tests still pass; no regressions
-
-## Phase 4: Sync
-
-9. **Update spec** — if a Canvas exists in `plans/`, sync structural and performance changes back (Code → Spec)
+1. **Measure** — Run benchmarks or identify performance characteristics of the current code
+2. **Analyze** — Identify specific bottlenecks, code smells, unnessesary allocations, or structural issues
+3. **Plan** — Describe the refactoring or optimization approach before making changes
+4. **Refactor** — Make small, incremental changes. Verify each step
+5. **Verify** — Re-run benchmarks/tests after each change to confirm improvement without regressions
+6. **Sync** — Update spec/plan to reflect structural changes (Code → Spec sync)
 
 ## Rules
 
-- **External behavior preservation**: Observable external behavior must not change
-- **Benchmark first**: Never optimize without measuring — guesswork wastes time
-- **Small steps**: Each change independently verifiable
-- **Test between steps**: Run tests after each change
-- **No new features**: Don't add functionality during refactoring
-- **Document trade-offs**: Note what was optimized and what was sacrificed (readability, memory, etc.)
+- One change at a time. Verify before proceeding.
+- Never change observable behavior during refactoring — only structure.
+- If a refactoring requires behavior change, treat it as a logic correction (fix spec first).
+- Always run tests before and after each change.
+- If no tests or benchmarks exist, write them first.
+- Never break existing public APIs.
+- Summary of changes and verification results should be included in the report.

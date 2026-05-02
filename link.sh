@@ -77,6 +77,32 @@ status_configs() {
     else
         echo "  --  $base (not linked)"
     fi
+
+    for name in commands skills; do
+        local p="$target_dir/$name"
+        if [[ -L "$p" && "$(readlink "$p")" == "$REPO_DIR/$name" ]]; then
+            echo "  OK  $p"
+        elif [[ -L "$p" ]]; then
+            echo "  ??  $p -> $(readlink "$p")"
+        elif [[ -e "$p" ]]; then
+            echo "  !!  $p exists but is not a symlink"
+        else
+            echo "  --  $p (not linked)"
+        fi
+    done
+
+    if [[ -n "$agents_dir" ]]; then
+        local a="$target_dir/$agents_dir"
+        if [[ -L "$a" && "$(readlink "$a")" == "$REPO_DIR/agents" ]]; then
+            echo "  OK  $a"
+        elif [[ -L "$a" ]]; then
+            echo "  ??  $a -> $(readlink "$a")"
+        elif [[ -e "$a" ]]; then
+            echo "  !!  $a exists but is not a symlink"
+        else
+            echo "  --  $a (not linked)"
+        fi
+    fi
 }
 
 TARGETS=(
@@ -85,17 +111,26 @@ TARGETS=(
     "$HOME/.config/opencode:AGENTS.md:agents"
     "$HOME/.config/kilo:AGENTS.md:agent"
     "$HOME/.qwen:AGENTS.md:"
+    "$HOME/.codex:AGENTS.md:"
+    "$HOME/.cursor:CURSOR.md:"
 )
 
 ACTION="${1:-link}"
 
 for target in "${TARGETS[@]}"; do
     IFS=':' read -r dir agent_file agents_dir <<< "$target"
+    if [[ ! -d "$dir" ]]; then
+        if [[ "$ACTION" == "link" ]]; then
+            info "skipping $dir (directory does not exist)"
+        fi
+        continue
+    fi
     case "$ACTION" in
         unlink)
             unlink_configs "$dir" "$agent_file" "$agents_dir"
             ;;
         status)
+            echo "[$dir]"
             status_configs "$dir" "$agent_file" "$agents_dir"
             ;;
         link|"")

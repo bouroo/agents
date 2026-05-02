@@ -7,25 +7,17 @@ description: Language-agnostic code quality principles for writing, reviewing, a
 
 ## Write Code for Reading
 
-- Use consistent, conventional names: `err` for errors, `ctx` for contexts, `req`/`resp` for requests/responses
+- Consistent names: `err` for errors, `ctx` for contexts, `req`/`resp` for requests/responses
 - Good names make code read naturally. Design the architecture, name the components, document the details
-- Simplify wordy functions by extracting low-level paperwork into named helpers (`createRequest`, `parseResponse`)
-- Ask a co-worker to read your code line by line — their stumbles reveal speed-bumps to flatten
+- Simplify wordy functions by extracting low-level paperwork into named helpers
+- Flatten cognitive speed-bumps — ask a reader where they stumble
 
 ## Function Design
 
-- Each function should do one thing. If you need "and" in the description, split it
+- One thing per function. If you need "and" in the description, split it
 - Keep functions short enough to understand at a glance
-- Extract complex conditionals into named helper functions
-- Avoid deep nesting — use early returns and guard clauses
-
-## Error Handling
-
-- Always check errors. Handle when possible, retry when appropriate, report otherwise
-- Wrap errors with context; don't flatten them into strings
-- Define named sentinel errors users can match against
-- Reserve panics/exceptions for internal program errors only
-- Show usage hints for incorrect arguments; don't crash
+- Extract complex conditionals into named helpers
+- Use early returns and guard clauses over deep nesting
 
 ## State Management
 
@@ -34,7 +26,7 @@ description: Language-agnostic code quality principles for writing, reviewing, a
 - Keep state transitions explicit and traceable
 - Use concurrency sparingly and keep it strictly confined
 
-## Dependency Management
+## Dependencies
 
 - Decouple code from environment — only entry points access env vars, CLI args, or OS details
 - Depend on abstractions (interfaces), not concrete implementations
@@ -43,9 +35,9 @@ description: Language-agnostic code quality principles for writing, reviewing, a
 
 ## Review Checklist
 
-- [ ] Names are consistent and self-explanatory
-- [ ] Functions are short and single-purpose
-- [ ] Errors are checked, wrapped, and propagated
+- [ ] Names consistent and self-explanatory
+- [ ] Functions short and single-purpose
+- [ ] Errors checked, wrapped, propagated
 - [ ] No mutable global state
 - [ ] No unnecessary abstractions
-- [ ] Code reads top-to-bottom without jumping around
+- [ ] Code reads top-to-bottom without jumping
