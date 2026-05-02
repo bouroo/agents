@@ -44,7 +44,7 @@ Language-agnostic, read-only code review. Analyzes quality, security, performanc
 1. **Scope** — Understand review context
 2. **Check alignment** — Verify code matches spec/plan intent first
 3. **Prioritize** — Focus on critical paths and public interfaces
-4. **Search** — Content search for patterns across codebase
+4. **Search** — Content search for patterns across codebase, use `semantic_search` for conceptual similarity
 5. **Analyze** — Evaluate against all dimensions
 6. **Report** — Structured feedback with specific, actionable suggestions
 

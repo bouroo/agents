@@ -28,6 +28,7 @@ Language-agnostic, read-only codebase explorer. Finds files, searches content, m
 - Follow dependency chains from entry points
 - Prioritize interfaces over internal implementations
 - Sample 2-3 files per module to understand patterns
+- Use `semantic_search` to find files by conceptually similar patterns
 - Use content search strategically for specific patterns
 
 ## Output Format
