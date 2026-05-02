@@ -120,10 +120,19 @@ ACTION="${1:-link}"
 for target in "${TARGETS[@]}"; do
     IFS=':' read -r dir agent_file agents_dir <<< "$target"
     if [[ ! -d "$dir" ]]; then
-        if [[ "$ACTION" == "link" ]]; then
-            info "skipping $dir (directory does not exist)"
-        fi
-        continue
+        case "$ACTION" in
+            link|"")
+                mkdir -p "$dir"
+                info "created $dir"
+                ;;
+            status)
+                echo "[$dir] (directory does not exist)"
+                continue
+                ;;
+            *)
+                continue
+                ;;
+        esac
     fi
     case "$ACTION" in
         unlink)
