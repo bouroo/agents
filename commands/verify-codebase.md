@@ -22,10 +22,15 @@ Check for common tool configurations:
 - **Rust**: `cargo fmt`, `cargo clippy`, `cargo test`
 - **Java**: Check for Maven/Gradle configs, use appropriate commands.
 
+## Context Management
+
+- If verification involves multiple tools with large output, summarize failures with file:line references rather than echoing full output.
+- Use `/compact` between heavy steps (e.g., after security scan before test run) if context is getting large.
+
 ## Rules
 
 - Use the exact commands the project is configured with. Don't invent new toolchains.
 - If a tool is not installed, note it and move on. Don't fail the whole pipeline.
 - Report each step's outcome clearly: PASS / FAIL / SKIP (reason).
 - If tests fail, include the failure output with file:line references.
-- Fix issues automatically. Do NOT break the public API — all exported symbols, types, and signatures must remain backward-compatible. If a fix requires an API change, report it instead.
+- Fix issues automatically. Do NOT break the public API. If a fix requires an API change, report it instead.
