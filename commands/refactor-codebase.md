@@ -6,47 +6,42 @@ You are performing a structured refactoring and optimization pass on the specifi
 
 ## Steps
 
-1. **Identify target**: Determine the specific file, module, or area to refactor from the user's request if `$ARGUMENTS` is not set or is empty use current working directory.
+1. **Identify target**: Determine the file, module, or area from the user's request. If `$ARGUMENTS` is empty, use the current working directory.
 
-2. **Lock tests first**: Before touching any code, ensure a safety net exists:
-   - Run existing tests — they must be green. If no tests exist, write integration tests covering the target's observable behavior first.
-   - Identify untested code paths. Add tests for any path the refactoring will touch.
-   - If optimizing performance, write benchmarks that exercise the hot path. Capture a baseline measurement.
-   - Record the test count, pass/fail status, and benchmark numbers. This is your regression guard.
+2. **Lock tests first**:
+   - Run existing tests — must be green. If none exist, write integration tests covering observable behavior.
+   - Add tests for any untested path the refactoring will touch.
+   - **Write benchmarks** for hot paths (loop bodies, allocation-heavy functions, serialization, I/O). Capture baseline measurements. Benchmarks are mandatory, not optional.
+   - Record test count, pass/fail, and benchmark numbers as the regression guard.
 
-3. **Analyze issues**: Read the target code and flag problems in these categories:
+3. **Profile and measure performance** (do this BEFORE readability analysis):
+   - Run the language's escape analysis or allocation profiler to identify heap allocations in hot paths.
+   - Run benchmarks capturing memory allocations per operation and latency baselines.
+   - Use a CPU and memory profiler (pprof, perf, VTune, etc.) to find hot spots.
+   - Identify concrete perf opportunities:
+     - Collection/map pre-allocation where size is known or estimable
+     - StringBuilder or equivalent instead of string concatenation / formatting in hot paths
+     - Object pools for frequently allocated short-lived objects
+     - Struct/record field reordering for cache locality (group by size: pointers, then 8-byte, 4-byte, 1-byte)
+     - Reducing interface/dynamic dispatch or boxing in hot paths
+     - Buffer reuse across function calls instead of per-call allocation
+     - Batched I/O instead of per-element reads/writes
+     - Removing unnecessary deferred cleanup in hot loops (defer/try-with-resources has overhead per call)
+     - Replacing reflection/dynamic dispatch with concrete types or code generation
+     - Inlining small functions called in tight loops (check compiler decisions)
 
-   **Readability**
-   - Long functions that mix high-level intent with low-level paperwork
-   - Duplicated logic or unclear names that break glanceability
-   - Missing or misleading documentation on exported symbols
-   - Magic values instead of named constants
+4. **Analyze maintainability issues**:
+   - **Readability**: Long mixed-abstraction functions, duplicated logic, unclear names, magic values, missing docs on exported symbols
+   - **Structure**: Tight coupling, env-dependent code outside entry point, mutable global state, unstructured concurrency
+   - **Error handling**: Ignored errors, string comparisons on errors, missing error wrapping, missing context in error chains
 
-   **Structure**
-   - Tight coupling, missing abstractions, or wrong responsibility boundaries
-   - Environment-dependent code (env vars, CLI args, file paths) outside the entry point
-   - Mutable global state; implicit shared objects that invite data races
-   - Concurrency that escapes its creation scope or lacks structured termination
+5. **Plan changes**: List specific changes in order. Each must be small, preserve behavior, and have clear before/after. Prioritize: performance > structure > readability > error handling. Performance changes must include expected alloc/latency improvement.
 
-   **Performance**
-   - Unnecessary allocations — missing pre-allocation on slices/maps, hidden interface boxing
-   - Unbuffered or unbatched I/O where buffering/batching would help
-   - Objects churned on the heap that could be reused (pooling) or kept on the stack
-   - Values escaping to the heap that could stay on the stack — use escape analysis (e.g., `go build -gcflags="-m"`) to find them
-   - Missing field-order optimization for struct layout / cache locality
+6. **Refactor incrementally**: Apply one change at a time. Run tests after each. If tests fail, revert immediately.
 
-   **Error handling**
-   - Ignored errors (`_`), string comparison on errors, or missing context in error chains
-   - Flattened errors instead of wrapped ones — sentinel errors should be matchable
-   - Missing graceful degradation — crashes where retry or fallback is appropriate
+7. **Verify**: Run full test suite, lint, typecheck, and benchmarks. Compare benchmark results against baseline — there must be measurable improvement in allocs or latency. If no performance change was possible, explain why in the summary.
 
-4. **Plan refactoring**: List specific changes in order. Each change must be small, preserve behavior, and have a clear before/after description.
-
-5. **Refactor incrementally**: Apply one change at a time. Run tests after each change. If tests fail, revert immediately and try a different approach.
-
-6. **Verify**: Run full test suite, lint, and typecheck. If benchmarks exist, run them and compare against baseline. Confirm no regressions.
-
-7. **Summarize improvements**: Produce a concise report of what changed and why:
+8. **Summarize**:
 
    ```
    ## Refactoring Summary
@@ -55,34 +50,34 @@ You are performing a structured refactoring and optimization pass on the specifi
 
    | # | Change | Category | Before | After |
    |---|--------|----------|--------|-------|
-   | 1 | <description> | readability/structure/performance/errors | <what existed> | <what replaced it> |
+   | 1 | <description> | performance/readability/structure/errors | <what existed> | <what replaced it> |
 
    **Test results**: <count> tests, all green
-   **Benchmark delta**: <e.g., -12% allocs, -8% latency, or "N/A">
+   **Benchmark delta**: <e.g., -12% allocs, -8% latency>
+   **Allocation changes**: <e.g., "XYZ argument moved to stack, eliminated 2 heap allocs"> or "none possible"
    **API changes**: None / <list any flagged changes>
    ```
 
-8. **Sync**: If specs or structured prompts exist, sync refactored code back to them.
+9. **Sync**: If specs or structured prompts exist, sync refactored code back to them.
 
 ## Rules
 
-- Refactoring does NOT change observable behavior. If behavior changes, that's a fix, not a refactor.
-- **No tests = no refactor.** If the target lacks tests, write them first. Tests are the regression safety net.
-- One change at a time. Test after each. If tests fail, revert and try a different approach.
-- Extract functions with informative names (`createRequest`, `parseResponse`). Don't just move code around.
+- Refactoring does NOT change observable behavior. Behavior changes = fix, not refactor.
+- **No tests = no refactor.** No benchmarks = no perf optimization.
+- One change at a time. Test after each. Fail → revert.
+- Extract functions with informative names. Don't just move code.
 - Remove dead code. Don't comment it out.
-- Profile before optimizing performance. Measure before and after. Optimise for clarity first, speed second.
-- Do NOT break the public API. All exported symbols, types, function signatures, and protocol contracts must remain backward-compatible. If a refactoring requires an API change, flag it explicitly and get confirmation first.
-- Keep concurrency confined to its creation scope. Use structured patterns (waitgroups, errgroups, cancellable contexts). Ensure all spawned tasks terminate before the enclosing function exits.
-- Decouple from environment. Only the entry point should read env vars, CLI args, or file paths. Keep configuration injectable.
-- Use always-valid values. Design types so invalid states are unrepresentable. Prefer named constants over magic values.
-- Wrap errors with context (`%w` / equivalent), don't flatten. Define named sentinel errors users can match against. Never compare error strings.
+- **Performance changes must be measured.** Never claim improvement without benchmark numbers. If benchmarks show regression, revert.
+- Do NOT break the public API. All exported symbols, types, function signatures must remain backward-compatible. Flag any required API change for confirmation.
+- Keep concurrency confined to creation scope. Use structured patterns (wait groups, cancellation tokens, scoped tasks).
+- Decouple from environment. Only entry point reads env vars, CLI args, file paths.
+- Use always-valid values. Named constants over magic values.
+- Wrap errors with context. Define named sentinel errors users can match against. Never compare error strings.
 
 ## When to Stop
 
 - All identified issues addressed
 - Tests green
 - Lint and typecheck pass
-- No regressions in benchmarks
+- Benchmarks show improvement or improvement is provably impossible (documented why)
 - Improvement summary produced
-- No further improvements without changing behavior
