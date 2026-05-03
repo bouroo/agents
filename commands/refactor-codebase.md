@@ -32,6 +32,7 @@ You are performing a structured refactoring and optimization pass on the specifi
    - Unnecessary allocations — missing pre-allocation on slices/maps, hidden interface boxing
    - Unbuffered or unbatched I/O where buffering/batching would help
    - Objects churned on the heap that could be reused (pooling) or kept on the stack
+   - Values escaping to the heap that could stay on the stack — use escape analysis (e.g., `go build -gcflags="-m"`) to find them
    - Missing field-order optimization for struct layout / cache locality
 
    **Error handling**
