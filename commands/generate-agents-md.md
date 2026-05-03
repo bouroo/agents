@@ -1,6 +1,5 @@
 ---
 description: Generate or update AGENTS.md for a project from codebase analysis or a brief
-subtask: true
 ---
 
 You are generating an AGENTS.md file for the current project. This file serves as the primary context document for AI coding agents working on this codebase.

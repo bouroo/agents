@@ -1,6 +1,5 @@
 ---
 description: Refactor and optimize code — test, measure, analyze, refactor, verify, sync
-subtask: true
 ---
 
 You are performing a structured refactoring and optimization pass on the specified code.
