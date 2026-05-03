@@ -1,31 +1,45 @@
 ---
 name: abstraction-first
 description: Design before you generate. Clarify what objects exist, how they collaborate, and where boundaries are before implementation.
+version: 1.0.0
+triggers:
+  - designing before implementing
+  - creating new modules or packages
+  - architectural decisions
+  - greenfield features
 ---
-# Abstraction-First
 
-Design before you generate. Clarify what objects exist, how they collaborate, and where boundaries are before implementation.
+# Abstraction First
 
-## 1. Purpose
+Design the structure before generating code. Clarify objects, collaborations, and boundaries first.
 
-Without clear abstractions, AI sprints on implementation details while structure falls apart. Invest in design up front so generated code aligns with the intended architecture.
+## When to Use
 
-## 2. Principles
+- Starting a new feature or module
+- Before generating any significant code
+- When responsibilities are unclear
+- During architectural decisions
 
-- **Define domain entities first**: Identify the core objects, their attributes, and relationships before writing any code.
-- **Clarify collaboration**: Map who calls whom, how data flows between components, and where state lives.
-- **Establish boundaries**: Draw module boundaries and expose minimal, stable interfaces.
-- **Choose patterns deliberately**: Apply design patterns (Strategy, Factory, Adapter, etc.) only when they reduce complexity, not for ceremony.
+## Steps
 
-## 3. Practices
+1. **Identify Objects**: List the core domain objects and their responsibilities.
+2. **Define Collaborations**: Map how objects interact — messages, data flow, dependencies.
+3. **Draw Boundaries**: Establish clear interfaces between components. What's internal vs. public.
+4. **Name Components**: Give every object a precise, intention-revealing name.
+5. **Validate**: Walk through the design with a concrete scenario before writing code.
 
-- **Start with Entities and Structure**: Begin with the Entities (E) and Structure (S) sections of the REASONS Canvas.
-- **Sketch interfaces early**: Write method signatures and type contracts before implementations.
-- **Validate against Requirements**: Check that the proposed abstractions solve the stated problem by mapping back to Requirements (R).
-- **Review coupling and cohesion**: Ensure modules are highly cohesive and loosely coupled before generating code.
+## Rules
 
-## 4. Anti-patterns
+- No implementation code until the design is reviewed and approved.
+- Every object must have a single, clear responsibility.
+- Dependencies point inward (domain has no external deps).
+- If you can't name it clearly, the abstraction is wrong.
 
-- **Jumping to implementation**: Writing code before defining what it is supposed to model.
-- **Unclear responsibilities**: Multiple modules doing similar work, leading to duplicated logic and drift.
-- **Inconsistent interfaces**: Each module inventing its own calling conventions, making the system hard to compose.
+## Checklist
+
+- [ ] Core objects identified and named
+- [ ] Responsibilities assigned (one per object)
+- [ ] Interfaces defined between components
+- [ ] Data flow documented
+- [ ] Edge cases considered in design
+- [ ] Design reviewed before code generation

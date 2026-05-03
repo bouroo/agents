@@ -1,34 +1,54 @@
 ---
 name: iterative-review
 description: Turn AI output into a controlled loop. Review output against intent, fix the prompt first, then regenerate.
+version: 1.0.0
+triggers:
+  - review loops
+  - spec-code alignment
+  - quality gates
+  - output not matching intent
 ---
+
 # Iterative Review
 
-Turn AI output into a controlled loop. Review output against intent, fix the prompt first, then regenerate.
+Turn AI output into a controlled review-and-iterate loop.
 
-## 1. Purpose
+## Core Rule
 
-Without disciplined review-and-iterate, teams either force patches until solutions drift, or restart repeatedly and lose control. A structured loop keeps intent and output aligned.
+When output doesn't match intent, fix the prompt or plan first — then regenerate. Never patch endlessly against a drifting solution.
 
-## 2. Principles
+## Workflow
 
-- **Prompt captures intent**: The structured prompt is the source of truth; code is its implementation.
-- **Fix the prompt first**: When behavior diverges from intent, update the prompt before regenerating code.
-- **Sync after refactoring**: When refactoring (no behavior change), refactor the code first, then sync back to the prompt.
-- **Review intent, not just bugs**: Reviews shift from spotting individual bugs to verifying that the code matches the stated intent.
+1. **Generate**: Produce output from the spec or prompt.
+2. **Review**: Compare output against intent, not just correctness.
+3. **Classify**: Is the gap a logic issue or a refactoring issue?
+4. **Fix the source**:
+   - Logic mismatch → update the spec/prompt, then regenerate code.
+   - Style/cleanup → refactor code directly, then sync back to spec.
+5. **Verify**: Run tests. Confirm behavior matches acceptance criteria.
+6. **Sync**: Keep spec and code aligned. Neither side silently diverges.
 
-## 3. Practices
+## Classification Guide
 
-- **Map to Operations**: After generating code, verify it maps one-to-one to Operations (O) in the REASONS Canvas.
-- **Logic corrections**: Identify the gap, input new intent into the prompt, update the Canvas, and regenerate targeted code.
-- **Refactoring sync**: Refactor code, then use a sync command to update the Canvas so it remains accurate.
-- **Regression tests after every iteration**: Run tests after each cycle to catch unintended side effects.
+| Issue Type | Strategy | Direction |
+|-----------|----------|-----------|
+| Wrong business logic | Update prompt, regenerate | Spec → Code |
+| Missing feature | Update scope, regenerate | Spec → Code |
+| Code smell | Refactor code, sync back | Code → Spec |
+| Magic numbers | Extract constants, sync | Code → Spec |
+| Naming issue | Rename in code, sync | Code → Spec |
 
-## 4. Workflow
+## Rules
 
-1. Review generated code against the Canvas.
-2. Categorize issues: logic mismatch vs. structural or style concerns.
-3. Logic mismatch → update the prompt → regenerate.
-4. Structural or style → refactor code → sync prompt.
-5. Re-run tests.
-6. Repeat until aligned.
+- Never manually edit generated code to fix logic — fix the prompt.
+- Never manually edit the spec for style — fix the code.
+- Each iteration must have a clear review focus.
+- Stop when output matches intent and tests pass.
+
+## Checklist
+
+- [ ] Output reviewed against intent (not just correctness)
+- [ ] Issues classified as logic vs. style
+- [ ] Source fixed before target
+- [ ] Tests pass after fix
+- [ ] Spec and code synchronized

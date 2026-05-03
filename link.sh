@@ -2,40 +2,176 @@
 
 set -euo pipefail
 
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+info()  { echo "[link] $*"; }
+warn()  { echo "[link] WARNING: $*" >&2; }
+
+symlink() {
+    local src="$1" dst="$2"
+
+    if [[ -L "$dst" && "$(readlink "$dst")" == "$src" ]]; then
+        return 0
+    fi
+
+    if [[ -e "$dst" && ! -L "$dst" ]]; then
+        warn "$dst exists as a real file/directory — skipping to avoid data loss"
+        return 1
+    fi
+
+    rm -f "$dst" 2>/dev/null || true
+    ln -sf "$src" "$dst"
+    info "linked $dst -> $src"
+}
+
 link_configs() {
     local target_dir="$1"
     local agent_file="$2"
-    local agents_dir="$3"
+    local agents_dir="${3:-}"
 
     mkdir -p "$target_dir"
 
-    rm -f "$target_dir/commands"
-    rm -f "$target_dir/skills"
-
-    ln -sf ~/.agents/AGENTS.md "$target_dir/$agent_file"
-    ln -sf ~/.agents/commands "$target_dir/commands"
-    ln -sf ~/.agents/skills "$target_dir/skills"
+    symlink "$REPO_DIR/AGENTS.md" "$target_dir/$agent_file"
+    symlink "$REPO_DIR/commands"  "$target_dir/commands"
+    symlink "$REPO_DIR/skills"    "$target_dir/skills"
 
     if [[ -n "$agents_dir" ]]; then
-        local agents_path="$target_dir/$agents_dir"
-        if [[ -e "$agents_path" && ! -L "$agents_path" ]]; then
-            echo "WARNING: $agents_path exists as a real directory — skipping agents symlink to avoid data loss" >&2
+        symlink "$REPO_DIR/agents" "$target_dir/$agents_dir"
+    fi
+}
+
+unlink_configs() {
+    local target_dir="$1"
+    local agent_file="$2"
+    local agents_dir="${3:-}"
+
+    for path in "$target_dir/$agent_file" "$target_dir/commands" "$target_dir/skills"; do
+        if [[ -L "$path" ]]; then
+            rm -f "$path"
+            info "removed $path"
+        fi
+    done
+
+    if [[ -n "$agents_dir" && -L "$target_dir/$agents_dir" ]]; then
+        rm -f "$target_dir/$agents_dir"
+        info "removed $target_dir/$agents_dir"
+    fi
+}
+
+status_configs() {
+    local target_dir="$1"
+    local agent_file="$2"
+    local agents_dir="${3:-}"
+
+    local base="$target_dir/$agent_file"
+    if [[ -L "$base" ]]; then
+        local dest
+        dest="$(readlink "$base")"
+        if [[ "$dest" == "$REPO_DIR/AGENTS.md" ]]; then
+            echo "  OK  $base"
         else
-            rm -f "$agents_path" 2>/dev/null || true
-            ln -sf ~/.agents/agents "$agents_path"
+            echo "  ??  $base -> $dest (not pointing to $REPO_DIR)"
+        fi
+    elif [[ -e "$base" ]]; then
+        echo "  !!  $base exists but is not a symlink"
+    else
+        echo "  --  $base (not linked)"
+    fi
+
+    for name in commands skills; do
+        local p="$target_dir/$name"
+        if [[ -L "$p" && "$(readlink "$p")" == "$REPO_DIR/$name" ]]; then
+            echo "  OK  $p"
+        elif [[ -L "$p" ]]; then
+            echo "  ??  $p -> $(readlink "$p")"
+        elif [[ -e "$p" ]]; then
+            echo "  !!  $p exists but is not a symlink"
+        else
+            echo "  --  $p (not linked)"
+        fi
+    done
+
+    if [[ -n "$agents_dir" ]]; then
+        local a="$target_dir/$agents_dir"
+        if [[ -L "$a" && "$(readlink "$a")" == "$REPO_DIR/agents" ]]; then
+            echo "  OK  $a"
+        elif [[ -L "$a" ]]; then
+            echo "  ??  $a -> $(readlink "$a")"
+        elif [[ -e "$a" ]]; then
+            echo "  !!  $a exists but is not a symlink"
+        else
+            echo "  --  $a (not linked)"
         fi
     fi
 }
 
-declare -a TARGETS=(
-    "$HOME/.claude:CLAUDE.md:"
-    "$HOME/.gemini:GEMINI.md:"
-    "$HOME/.config/opencode:AGENTS.md:agents"
-    "$HOME/.config/kilo:AGENTS.md:agent"
-    "$HOME/.qwen:AGENTS.md:"
+TARGETS=(
+    "claude:$HOME/.claude:CLAUDE.md:"
+    "cursor:$HOME/.cursor:CURSOR.md:"
+    "copilot:$HOME/.copilot:AGENTS.md:"
+    "gemini:$HOME/.gemini:GEMINI.md:"
+    "kilo:$HOME/.config/kilo:AGENTS.md:agent"
+    "opencode:$HOME/.config/opencode:AGENTS.md:agents"
+    "qwen:$HOME/.qwen:AGENTS.md:"
+    "codex:$HOME/.codex:AGENTS.md:"
+    "windsurf:$HOME/.windsurf:AGENTS.md:"
+    "aider:$HOME/.aider:CONVENTIONS.md:"
+    "cline:$HOME/.cline:AGENTS.md:"
 )
 
+ACTION="${1:-link}"
+FILTER="${2:-}"
+
 for target in "${TARGETS[@]}"; do
-    IFS=':' read -r dir agent_file agents_dir <<< "$target"
-    link_configs "$dir" "$agent_file" "$agents_dir"
+    IFS=':' read -r name dir agent_file agents_dir <<< "$target"
+
+    if [[ -n "$FILTER" && "$name" != "$FILTER" ]]; then
+        continue
+    fi
+
+    if [[ ! -d "$dir" ]]; then
+        case "$ACTION" in
+            link|"")
+                info "$dir does not exist — skipping $name"
+                continue
+                ;;
+            status)
+                echo "[$name] $dir (directory does not exist)"
+                continue
+                ;;
+            *)
+                continue
+                ;;
+        esac
+    fi
+    case "$ACTION" in
+        unlink)
+            echo "[$name]"
+            unlink_configs "$dir" "$agent_file" "$agents_dir"
+            ;;
+        status)
+            echo "[$name]"
+            status_configs "$dir" "$agent_file" "$agents_dir"
+            ;;
+        link|"")
+            echo "[$name]"
+            link_configs "$dir" "$agent_file" "$agents_dir"
+            ;;
+        *)
+            echo "Usage: $0 [link|unlink|status] [filter]"
+            echo ""
+            echo "Actions:"
+            echo "  link    Create symlinks for all supported tools (default)"
+            echo "  unlink  Remove all symlinks"
+            echo "  status  Show symlink status"
+            echo ""
+            echo "Filter:"
+            echo "  Tool name to target a single tool (e.g., 'claude', 'opencode')"
+            exit 1
+            ;;
+    esac
 done
+
+if [[ "$ACTION" != "status" ]]; then
+    info "Done. Use '$0 status' to verify, '$0 unlink' to remove."
+fi

@@ -1,32 +1,46 @@
 ---
 name: alignment
 description: Lock intent before you write code. Make what we will do and won't do explicit, and agree on standards and constraints up front.
+version: 1.0.0
+triggers:
+  - locking intent before coding
+  - scoping features
+  - resolving ambiguity in requirements
+  - starting a new iteration or story
 ---
+
 # Alignment
 
-Lock intent before you write code. Make what we will do and won't do explicit, and agree on standards and constraints up front.
+Lock intent before implementation. Make scope, standards, and constraints explicit.
 
-## 1. Purpose
+## When to Use
 
-Without explicit alignment, fast output leads to slow rework. Clarifying intent early prevents thrashing and ensures the generated code matches expectations.
+- Starting a new feature or story
+- Requirements are ambiguous or incomplete
+- Before committing to an implementation approach
+- When team members have different understandings
 
-## 2. Principles
+## Steps
 
-- **Clear, testable requirements**: Requirements must be precise and agreed upon before implementation begins.
-- **Explicit scope boundaries**: Define Scope In and Scope Out so the team knows exactly what is being built.
-- **Definition of Done**: Establish the DoD upfront so everyone agrees when work is complete.
-- **Non-negotiable constraints**: Engineering norms and safeguards are treated as hard constraints, not suggestions.
+1. **Capture Requirements**: Write what the system should do in business language.
+2. **Define Scope In**: List exactly what is included — features, endpoints, behaviors.
+3. **Define Scope Out**: List explicitly what is NOT included. This prevents scope creep.
+4. **Set Acceptance Criteria**: Given/When/Then format with concrete examples.
+5. **Identify Constraints**: Non-functional requirements, performance limits, security rules.
+6. **Confirm Alignment**: Review with stakeholders. No implementation until intent is locked.
 
-## 3. Practices
+## Rules
 
-- **Write R and S first**: Complete the Requirements (R) and Safeguards (S) sections of the REASONS Canvas before any code is generated.
-- **Given/When/Then criteria**: Use concrete acceptance criteria with explicit examples to remove ambiguity.
-- **Mark gaps, don't guess**: Identify ambiguities and mark them `[NEEDS CLARIFICATION]` rather than assuming.
-- **Review the prompt for intent**: Before generating code, re-read the structured prompt to confirm alignment.
+- Never implement without explicit scope in/out.
+- Acceptance criteria must be testable with concrete values.
+- Ambiguity is resolved before code, not during.
+- When reality diverges, fix the spec first — then the code.
 
-## 4. Checklist
+## Checklist
 
-- Are requirements precise enough to generate tests?
-- Are scope boundaries (in and out) explicit?
-- Are all acceptance criteria testable?
-- Are norms and safeguards defined and agreed upon?
+- [ ] Scope In defined
+- [ ] Scope Out defined
+- [ ] Acceptance criteria written (Given/When/Then)
+- [ ] Constraints identified
+- [ ] Edge cases listed
+- [ ] Intent locked and reviewed

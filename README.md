@@ -1,143 +1,118 @@
-# Agent Configuration
+# Self-Organized Agent Configuration
 
-Shared agent instructions for AI coding assistants. Language-agnostic, tool-agnostic configuration symlinked to each tool's expected location.
+Shared, language-agnostic agent configuration for AI coding assistants. Symlinked to each tool's expected location via `link.sh`.
+
+Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [GitHub Spec-Kit](https://github.com/github/spec-kit), [10x Commandments of Highly Effective Go](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/), [Go Performance Patterns](https://goperf.dev/01-common-patterns/), [Kilo Docs](https://kilo.ai/docs/customize/), and [OpenCode Docs](https://opencode.ai/docs/).
 
 ## Quick Start
 
 ```bash
-~/.agents/link.sh
+~/.agents/link.sh              # Create symlinks for all supported tools
+~/.agents/link.sh status       # Check symlink status
+~/.agents/link.sh unlink       # Remove all symlinks
+~/.agents/link.sh link opencode # Link only OpenCode
 ```
-
-Creates symlinks for all supported tools. Run once after cloning or updating.
 
 ## Directory Structure
 
 ```
 ~/.agents/
-├── AGENTS.md              # Core agent instructions (symlinked)
+├── AGENTS.md              # Core agent instructions (symlinked to each tool)
 ├── README.md              # This file
-├── link.sh                # Bootstrap script
+├── link.sh                # Symlink manager (link/unlink/status)
 ├── agents/                # Named agent modes for delegation
-│   ├── conductor.md       # Master orchestrator — decomposes and delegates tasks
+│   ├── conductor.md       # Orchestrator — decomposes and delegates tasks
 │   ├── explorer.md        # Read-only project exploration
 │   ├── implementer.md     # Full implementation — writes code, runs commands
-│   ├── planner.md         # Analysis and planning
+│   ├── planner.md         # Analysis and planning with REASONS Canvas
 │   ├── reviewer.md        # Code review — quality, security, performance
 │   └── tester.md          # Test engineering
 ├── commands/              # Slash commands
-│   ├── refactor.md        # /refactor
-│   ├── vb-review.md       # /vb-review — mobile backend checklist
-│   └── verify-project.md  # /verify-project — format, lint, scan, test
+│   ├── generate-agents-md.md  # Generate AGENTS.md for a project
+│   ├── refactor-codebase.md   # Refactor and optimize code
+│   └── verify-codebase.md     # Format, lint, scan, test
 └── skills/                # Conditional modules loaded by context
-    ├── code-quality/      # Readability, clean code, naming
-    ├── context-management/ # Context limits, compaction, quality
-    ├── naming-conventions/ # Language-agnostic naming
-    ├── performance/       # Optimization patterns
-    ├── self-organizing-coder/ # Task decomposition, delegation
-    └── spec-driven/       # Spec-driven development workflow
+    ├── abstraction-first/     # Design before you generate
+    ├── alignment/             # Lock intent before coding
+    ├── code-quality/          # Readability, clean code, naming
+    ├── context-management/    # Context limits, compaction, quality
+    ├── error-design/          # Error types, wrapping, actionable messages
+    ├── incremental-delivery/  # Feature flags, small PRs, rollout
+    ├── iterative-review/      # Controlled review-and-iterate loops
+    ├── naming-conventions/    # Language-agnostic naming
+    ├── performance/           # Optimization patterns
+    ├── safe-by-default/       # Always-valid values, input validation, security
+    ├── self-organizing-coder/ # Task decomposition, delegation, SPDD workflow
+    ├── spec-driven/           # SPDD methodology and REASONS Canvas
+    └── test-first/            # TDD workflow, Red-Green-Refactor
 ```
 
 ## Supported Tools
 
-| Tool | Config Location | Agent File |
-|------|-----------------|------------|
-| Claude Code | `~/.claude/` | `CLAUDE.md` |
-| Gemini | `~/.gemini/` | `GEMINI.md` |
-| Kilo | `~/.config/kilo/` | `AGENTS.md` |
-| OpenCode | `~/.config/opencode/` | `AGENTS.md` |
-| Qwen | `~/.qwen/` | `AGENTS.md` |
-
-The `link.sh` script symlinks `AGENTS.md`, `commands/`, `skills/`, and `agents/` to each tool's directory.
+| Tool | Config Location | Agent File | Agents Dir |
+|------|-----------------|------------|------------|
+| Aider | `~/.aider/` | `CONVENTIONS.md` | — |
+| Claude Code | `~/.claude/` | `CLAUDE.md` | — |
+| Cline | `~/.cline/` | `AGENTS.md` | — |
+| Codex | `~/.codex/` | `AGENTS.md` | — |
+| Copilot | `~/.copilot/` | `AGENTS.md` | — |
+| Cursor | `~/.cursor/` | `CURSOR.md` | — |
+| Gemini | `~/.gemini/` | `GEMINI.md` | — |
+| Kilo | `~/.config/kilo/` | `AGENTS.md` | `agent/` |
+| OpenCode | `~/.config/opencode/` | `AGENTS.md` | `agents/` |
+| Qwen | `~/.qwen/` | `AGENTS.md` | — |
+| Windsurf | `~/.windsurf/` | `AGENTS.md` | — |
 
 ## Agents
 
-Delegatable agents available via the `task` tool:
-
-| Agent | Role | Purpose | Permissions |
+| Agent | Mode | Purpose | Permissions |
 |-------|------|---------|-------------|
-| `conductor` | primary | Orchestrates — decomposes tasks, delegates, validates | read-only |
-| `explorer` | subagent | Project exploration — finds files, maps architecture | read-only |
-| `implementer` | subagent | Implementation — writes code, edits, runs commands | full access |
-| `planner` | subagent | Analysis — designs solutions, estimates scope | read-only |
-| `reviewer` | subagent | Code review — quality, security, performance | read-only |
+| `conductor` | primary | Orchestrates — decomposes, delegates, validates | task only |
+| `explorer` | subagent | Read-only exploration — files, architecture | read-only |
+| `implementer` | subagent | Implementation — writes code, runs commands | full access |
+| `planner` | subagent | Planning — REASONS Canvas, implementation plans | read + write plans |
+| `reviewer` | subagent | Code review — quality, security, performance | read + read-only git |
 | `tester` | subagent | Test engineering — writes and runs tests | test files + shell |
 
 ## Slash Commands
 
 | Command | Description |
 |---------|-------------|
-| `/refactor` | Refactor for readability, safety, performance |
-| `/vb-review` | Mobile backend review checklist |
-| `/verify-project` | Format, lint, scan, test |
+| `/generate-agents-md` | Generate AGENTS.md — codebase analysis or from brief |
+| `/refactor-codebase` | Refactor and optimize — measure, refactor, verify, sync |
+| `/verify-codebase` | Format, lint, type-check, scan, test |
 
 ## Skills
 
-Conditional modules loaded when context matches:
-
 | Skill | Trigger |
 |-------|---------|
-| `code-quality` | Readability, naming discussions |
-| `context-management` | Long sessions, compaction |
+| `abstraction-first` | Designing before implementing |
+| `alignment` | Locking intent, scoping features |
+| `code-quality` | Code quality discussions, reviews |
+| `context-management` | Long sessions, compaction, context limits |
+| `error-design` | Error handling, error types |
+| `incremental-delivery` | Shipping incrementally, feature flags |
+| `iterative-review` | Review loops, spec-code alignment |
 | `naming-conventions` | Writing identifier names |
 | `performance` | Performance optimization |
-| `self-organizing-coder` | Task decomposition, delegation |
-| `spec-driven` | Planning, spec-first workflows |
+| `safe-by-default` | Safety patterns, input validation, security |
+| `self-organizing-coder` | Autonomous multi-step workflows |
+| `spec-driven` | SPDD methodology, REASONS Canvas |
+| `test-first` | TDD, test writing |
 
-## Context Condensing
+## SPDD Methodology
 
-### Auto-Compaction
-
-- **Triggers** at ~20K token headroom (configurable)
-- **Pruning** clears tool outputs beyond ~40K recency
-- **Manual** via `/compact` command
-
-### Configuration
-
-```jsonc
-{
-  "compaction": {
-    "auto": true,
-    "prune": true,
-    "reserved": 20000
-  }
-}
 ```
-
-### Environment Overrides
-
-| Variable | Effect |
-|----------|--------|
-| `KILO_DISABLE_AUTOCOMPACT=1` | Disable auto-compaction |
-| `KILO_DISABLE_PRUNE=1` | Disable pruning |
-
-### Best Practices
-
-- Compact before major transitions
-- Compact after milestones
-- Be specific in task descriptions
-- Use `todowrite` for external progress tracking
-- Re-read modified files after compaction
-
-## Large Project Strategies
-
-- **Navigate** with `glob` and `grep` — find files, locate patterns, build mental model of boundaries
-- **Change incrementally** — work within modular boundaries, ship each step
-- **Be context-efficient** — reference specific files, break tasks into subtasks, summarize large code
-- **Understand unfamiliar code** — read public interface first, trace call chains, find tests
-
-## Planned Skills
-
-| Skill | Purpose |
-|-------|---------|
-| `error-design` | Error types, wrapping, actionable messages |
-| `incremental-delivery` | Feature flags, small PRs, rollout |
-| `library-first` | Architecture design, new features |
-| `security-by-default` | Input handling, auth, secrets |
-| `simplify` | Refactoring, technical debt |
-| `test-first` | TDD workflow |
+Story → Analysis → Canvas → Generate → Test → Review → Sync
+  ↑                                                      |
+  └────────────── repeat until aligned ──────────────────┘
+```
 
 ## References
 
-- [Kilo Docs](https://kilo.ai/docs/)
-- [OpenCode Tools](https://opencode.ai/docs/tools/)
-- [Structured Prompt Driven](https://martinfowler.com/articles/structured-prompt-driven/)
+- [Structured Prompt-Driven Development (SPDD)](https://martinfowler.com/articles/structured-prompt-driven/) — REASONS Canvas, prompt-code bidirectional sync
+- [GitHub Spec-Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md) — Spec-driven development methodology
+- [10x Commandments of Highly Effective Go](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/) — Code quality and readability principles
+- [Go Performance Patterns](https://goperf.dev/01-common-patterns/) — Performance optimization patterns
+- [Kilo Docs — Customize](https://kilo.ai/docs/customize/) — Agent config structure
+- [OpenCode Docs](https://opencode.ai/docs/) — OpenCode config format
