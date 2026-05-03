@@ -4,6 +4,14 @@ description: Format, lint, type-check, scan, and test the project
 
 You are running a full verification pass on the project. Execute each step in order and report results.
 
+## Context
+
+Detected project files:
+!`ls package.json Cargo.toml go.mod pyproject.toml Makefile build.gradle pom.xml 2>/dev/null | head -10`
+
+Current git status:
+!`git status --short 2>/dev/null || echo "Not a git repo"`
+
 ## Steps
 
 1. **Format**: Run the project's formatter. If no formatter is configured, skip with a note.
@@ -15,7 +23,7 @@ You are running a full verification pass on the project. Execute each step in or
 
 ## Detection
 
-Check for common tool configurations:
+Check for common tool configurations based on detected project files above:
 - **Go**: `gofmt`, `go vet`, `golangci-lint`, `go test ./...`
 - **TypeScript/JS**: `prettier`, `eslint`, `tsc --noEmit`, `npm test`
 - **Python**: `black`/`ruff format`, `ruff`/`flake8`/`pylint`, `mypy`, `pytest`

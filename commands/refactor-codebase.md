@@ -1,12 +1,22 @@
 ---
 description: Refactor and optimize code — test, measure, analyze, refactor, verify, sync
+subtask: true
 ---
 
 You are performing a structured refactoring and optimization pass on the specified code.
 
+## Target
+
+$ARGUMENTS
+
+## Context
+
+Working tree status:
+!`git diff --stat HEAD 2>/dev/null || echo "No git repo or clean working tree"`
+
 ## Steps
 
-1. **Identify target**: Determine the file, module, or area from the user's request. If `$ARGUMENTS` is empty, use the current working directory.
+1. **Identify target**: Determine the file, module, or area from the user's request above. If no target is specified, use the current working directory.
 
 2. **Lock tests first**:
    - Run existing tests — must be green. If none exist, write integration tests covering observable behavior.
