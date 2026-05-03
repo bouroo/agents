@@ -103,13 +103,9 @@ Story → Analysis → Plan → Implement → Test → Review → Sync
 
 ## Agent Delegation
 
-When using subagents:
-- **explorer**: For codebase search, file finding, architecture questions.
-- **planner**: For REASONS Canvas, implementation plans, spec creation.
-- **implementer**: For writing code, editing files, running commands.
-- **reviewer**: For code review of quality, security, performance.
-- **tester**: For writing and running tests, validation against criteria.
-- **conductor**: For orchestrating multi-step workflows across subagents.
+Agents with full tool access can delegate to subagents using the `task` tool. Built-in subagents are:
+- `explore`: Read-only codebase search, file finding, architecture questions.
+- `general`: General-purpose autonomous work — implementation, review, testing, research, multi-step tasks.
 
 ## Skills
 
