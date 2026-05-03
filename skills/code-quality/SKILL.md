@@ -1,43 +1,48 @@
 ---
 name: code-quality
 description: Language-agnostic code quality principles for writing, reviewing, and refactoring code. Focus on readability, maintainability, and safety.
+version: 1.0.0
+triggers:
+  - code quality discussions
+  - code reviews
+  - refactoring
+  - writing new code
 ---
 
 # Code Quality
 
-## Write Code for Reading
+Language-agnostic principles for writing readable, maintainable, and safe code.
 
-- Consistent names: `err` for errors, `ctx` for contexts, `req`/`resp` for requests/responses
-- Good names make code read naturally. Design the architecture, name the components, document the details
-- Simplify wordy functions by extracting low-level paperwork into named helpers
-- Flatten cognitive speed-bumps — ask a reader where they stumble
+## Principles
 
-## Function Design
+### Readability
+- Write code for reading, not writing. Co-workers must understand it line by line.
+- Use consistent naming: `err` for errors, `ctx` for contexts, `req`/`resp` for requests/responses.
+- Design the architecture, name the components, document the details.
+- Extract low-level paperwork into small functions with informative names.
+- Functions should do one thing. If you need "and" in the name, split it.
 
-- One thing per function. If you need "and" in the description, split it
-- Keep functions short enough to understand at a glance
-- Extract complex conditionals into named helpers
-- Use early returns and guard clauses over deep nesting
+### Structure
+- Keep functions short. If it doesn't fit on screen, it's too long.
+- Limit function parameters. Group related params into a struct or object.
+- Avoid deep nesting. Guard clauses return early.
+- Organize code by abstraction level. High-level intent at top, details below.
 
-## State Management
+### Consistency
+- Follow the conventions already established in the codebase.
+- Same pattern for same problem. Don't invent new approaches without reason.
+- Imports grouped: stdlib, third-party, internal.
 
-- Avoid mutable global state; use explicit dependency injection
-- Prefer immutability — return new values rather than modifying in place
-- Keep state transitions explicit and traceable
-- Use concurrency sparingly and keep it strictly confined
-
-## Dependencies
-
-- Decouple code from environment — only entry points access env vars, CLI args, or OS details
-- Depend on abstractions (interfaces), not concrete implementations
-- Keep external dependencies minimal and pinned
-- Use framework features directly rather than wrapping them
+### Comments
+- Comments explain WHY, not WHAT. Code explains what.
+- Remove commented-out code. Version control remembers.
+- No TODO comments without a ticket reference.
 
 ## Review Checklist
 
-- [ ] Names consistent and self-explanatory
-- [ ] Functions short and single-purpose
-- [ ] Errors checked, wrapped, propagated
-- [ ] No mutable global state
-- [ ] No unnecessary abstractions
-- [ ] Code reads top-to-bottom without jumping
+- [ ] Readable top-to-bottom without jumping between files
+- [ ] Consistent naming with the rest of the codebase
+- [ ] No magic numbers or strings
+- [ ] Functions have single responsibility
+- [ ] No unnecessary complexity
+- [ ] Error paths are handled explicitly

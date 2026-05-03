@@ -1,42 +1,47 @@
 ---
 name: context-management
 description: Strategies for managing AI context in long sessions, handling context limits, compaction, and maintaining context quality for large projects.
+version: 1.0.0
+triggers:
+  - long sessions
+  - context limits
+  - large codebase work
+  - context quality degradation
 ---
 
 # Context Management
 
-## Auto-Compaction
+Strategies for maintaining high-quality context throughout long AI sessions.
 
-- Triggers at ~20K token headroom via `compaction.auto`
-- Produces anchored summary: goal, constraints, progress, decisions, modified files
-- Updates previous summary rather than starting over
+## Principles
 
-## Pruning
+### Context Hygiene
+- Summarize completed work before moving to the next task.
+- Remove resolved context that is no longer relevant.
+- Keep active context focused on the current task.
+- Document decisions made so you don't re-derive them.
 
-- Old tool outputs beyond ~40K recency → `[Old tool result content cleared]`
-- `compaction.prune` enabled by default
+### Progressive Detail
+- Start with high-level understanding before diving into details.
+- Load file content only when needed, not preemptively.
+- Use search tools first, read files second, edit files third.
+- Batch related reads together to minimize context switches.
 
-## Reserved Buffer
+### Session Management
+- Break large tasks into sessions with clear boundaries.
+- At session start: load project context, review recent changes.
+- At session end: summarize progress, note next steps in AGENTS.md.
+- Use git history to reconstruct context across sessions.
 
-- `compaction.reserved` tokens kept free for next turn
-- Lower value → compaction triggers later, risk of overflow
-- Higher value → compaction triggers earlier, fewer overflow errors
+### Context Window Budget
+- Reserve 20% of context for tool output during implementation.
+- If context exceeds 70%, summarize before continuing.
+- Prefer targeted searches over reading entire files.
+- Use file references (path:line) instead of quoting large blocks.
 
-## Post-Compaction Recovery
+## Checklist
 
-Re-read modified files to avoid stale assumptions. The summary may omit details from earlier turns.
-
-## Best Practices
-
-- Be specific in initial task descriptions for better summaries
-- Use `AGENTS.md` for persistent project context that survives compaction
-- Use `todowrite` for external progress tracking
-- Compact before switching to a different project aspect
-- Review the summary after compaction for accuracy
-
-## Large Project Strategies
-
-- Navigate with `glob` and `grep` — find files, locate patterns, build mental model
-- Change incrementally — work within modular boundaries
-- Be context-efficient — reference specific files, break tasks into subtasks
-- Understand unfamiliar code by reading public interfaces first, then tracing call chains
+- [ ] Active context is relevant to current task
+- [ ] Stale context summarized or removed
+- [ ] Decisions documented for future reference
+- [ ] Context budget monitored

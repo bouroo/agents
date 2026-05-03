@@ -1,47 +1,58 @@
 ---
 name: naming-conventions
 description: Language-agnostic naming conventions for writing clear, predictable, and maintainable code.
+version: 1.0.0
+triggers:
+  - writing identifier names
+  - naming variables, functions, types
+  - consistent naming across codebase
 ---
 
 # Naming Conventions
 
-## General Principles
+Language-agnostic rules for writing clear, predictable names.
 
-- Names reveal intent. Understand purpose without comments.
-- Avoid abbreviations except widely accepted ones (`id`, `url`, `http`, `sql`).
-- Consistent naming across the entire codebase.
+## Variables
 
-## Variable Names
+| Pattern | Use For | Examples |
+|---------|---------|---------|
+| `err` | Error values | `err`, `connErr` |
+| `ctx` | Context objects | `ctx`, `reqCtx` |
+| `req`/`resp` | Request/Response pairs | `req`, `resp`, `httpResp` |
+| `buf` | Byte/string buffers | `buf`, `readBuf` |
+| `data` | Arbitrary byte slices | `data`, `rawData` |
+| `ok` | Boolean success | `ok`, `found` |
+| `i`, `j` | Loop indices | `i`, `j`, `idx` |
+| `n` | Counts/sizes | `n`, `count`, `len` |
 
-| Context | Convention | Example |
-|---------|-----------|---------|
-| Loop counter | Single letter | `i`, `j`, `k` |
-| Error | `err` | `err`, `connErr` |
-| Boolean | `is`/`has`/`can`/`should` | `isValid`, `hasPermission` |
-| Collection | Plural | `users`, `items` |
-| Map/dict | `keyToValue` | `idToName` |
-| Buffer | `buf` | `readBuf` |
-| Context | `ctx` | `ctx`, `requestCtx` |
+## Functions
 
-## Function/Method Names
+- **Names are verbs or verb phrases**: `calculateTotal`, `validateInput`, `parseResponse`.
+- **Test names are sentences**: `TestCalculateTotalReturnsZeroForEmptyCart`.
+- **Boolean functions use is/has/can/should**: `isValid`, `hasPermission`, `canRetry`.
 
-- Verb phrases: `calculateTotal`, `validateInput`, `parseResponse`
-- Booleans: `isValid`, `hasPermission`, `canRetry`
-- Constructors: `NewType`, `createType`, or language convention
+## Types/Interfaces
 
-## Type/Class Names
-
-- Noun phrases: `UserService`, `BillingEngine`, `TokenValidator`
-- Avoid generic names: `Manager`, `Handler`, `Helper`, `Util`
-- Interfaces: describe behavior — `Reader`, `Writer`, `Stringer`
+- **Nouns**: `Customer`, `OrderProcessor`, `PaymentGateway`.
+- **Interfaces describe behavior**: `Reader`, `Formatter`, `Validator`.
+- **Avoid generic names**: `Manager`, `Handler`, `Helper`, `Util`.
 
 ## Constants
 
-- Named constants, never magic values: `MaxRetries`, `DefaultTimeout`
-- Group related constants using enum/iota patterns
+- Named constants, never magic values.
+- `MaxRetryCount`, `DefaultTimeout`, `StatusOK`.
 
-## Anti-patterns
+## Rules
 
-- Naming based on implementation (`HashMapWrapper`) → name by purpose
-- Over-abbreviation (`usrMgmtSvc`) → `userService`
-- Numbered variables (`result1`, `result2`) → descriptive names
+- Short names for short-lived variables (loop counters).
+- Longer names for longer-lived and broader-scope variables.
+- Consistent naming within the same codebase — follow existing patterns.
+- No abbreviations unless universally understood (`HTTP`, `URL`, `ID`).
+
+## Checklist
+
+- [ ] Consistent with existing codebase conventions
+- [ ] Names reveal intent without comments
+- [ ] No single-letter names outside loops
+- [ ] No ambiguous abbreviations
+- [ ] Test names read as sentences

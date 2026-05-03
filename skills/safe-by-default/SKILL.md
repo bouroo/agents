@@ -1,48 +1,65 @@
 ---
 name: safe-by-default
 description: Language-agnostic safety patterns — always-valid values, input validation, sandboxed access, minimal permissions, and secure defaults.
+version: 1.0.0
+triggers:
+  - safety patterns
+  - input validation
+  - security defaults
+  - designing safe APIs
 ---
 
 # Safe by Default
 
-## Always Valid Values
+Language-agnostic patterns for writing secure, safe code.
 
-- Design types so invalid states are unrepresentable
-- Make the zero value useful, or write a validating constructor
-- Use `WithX` methods for optional configuration
-- Prefer sum types/enums over raw strings for finite options
+## Always-Valid Values
 
-## Named Constants
+Design types so users cannot accidentally create invalid states:
 
-- `http.StatusOK` is self-explanatory; `200` is not
-- Define constants so IDEs can auto-complete and prevent typos
-- Group related constants using enum/iota patterns
+- Use validating constructors. The zero value should be unusable or safe.
+- Make invalid states unrepresentable. Use enums, sum types, or marker interfaces.
+- Configuration via `WithX` methods that return a new instance.
+
+```
+server := NewServer().WithTimeout(30 * time.Second).WithTLS(cert)
+```
 
 ## Input Validation
 
-- Validate all inputs at system boundaries; reject early
-- Never trust external data — validate, sanitize, encode
-- Use parameterized queries for database access
-- Prevent path traversal with sandboxed file access
+Validate all inputs at system boundaries. Never trust external data:
+
+- Validate at the edge (API handlers, CLI args, file readers).
+- Internal code trusts validated data. No re-validation deep in packages.
+- Fail fast with clear error messages on invalid input.
+- Sanitize for the context: HTML, SQL, shell, path.
 
 ## Minimal Permissions
 
-- Never require elevated privileges (root, admin)
-- Let users configure minimal permissions needed
-- Least-privilege principle for all resource access
-- Sandbox file operations to prevent directory traversal
+- Request the minimum permissions needed. Never run as root/admin.
+- File access scoped to required directories only.
+- Network access restricted to needed endpoints.
+- Docker containers run as non-root user.
 
 ## Secure Defaults
 
-- Default to deny; require explicit allow
-- Default configurations secure, not convenient
-- Never log secrets or personal data
-- Use TLS for network communication by default
+- TLS on by default. Opt-out, not opt-in.
+- Timeouts on all network operations. No infinite waits.
+- Rate limiting on public endpoints.
+- Secrets from environment/secret manager, never hardcoded.
+
+## Rules
+
+- If a type can be in an invalid state, the API is wrong.
+- Every external input is hostile until validated.
+- Default-deny for permissions and access.
+- Security errors are logged, never silently swallowed.
 
 ## Checklist
 
-- [ ] Invalid states unrepresentable in type design
-- [ ] All magic values replaced with named constants
-- [ ] All external inputs validated at boundaries
-- [ ] File access sandboxed
-- [ ] No secrets in logs or error messages
+- [ ] Types prevent invalid states by construction
+- [ ] Input validated at system boundaries
+- [ ] Timeouts set on all I/O operations
+- [ ] Minimal permissions requested
+- [ ] No secrets in code or logs
+- [ ] Defaults are secure

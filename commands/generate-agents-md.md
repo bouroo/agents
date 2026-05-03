@@ -1,53 +1,32 @@
 ---
-description: Generate or update AGENTS.md for a project
+description: Generate or update AGENTS.md for a project from codebase analysis or a brief
 ---
 
-# Generate Agents Workflow
+You are generating an AGENTS.md file for the current project. This file serves as the primary context document for AI coding agents working on this codebase.
 
-Generate or update an `AGENTS.md` file for this project. Execute the full workflow without stopping for confirmation.
+## Steps
 
-$ARGUMENTS
-
-## Instructions
-
-If `$ARGUMENTS` is empty:
-1. Scan the project structure: directories, key files, config files
-2. Identify the language, framework, build system, test runner, linter
-3. Read existing instruction files (CONTRIBUTING.md, .cursor/rules, etc.)
-4. Generate the `AGENTS.md` file
-
-If `$ARGUMENTS` is provided:
-1. Use the provided brief as the basis for the AGENTS.md
-2. Still scan the project to validate and supplement the brief
-3. Generate the AGENTS.md following the same structure
-
-**Do not stop to ask what to include.** Scan, analyze, and write the file autonomously.
-
-## AGENTS.md Structure
-
-```markdown
-# Project Name
-
-One-line description.
-
-## Project Structure
-- `dir/` — purpose
-
-## Commands
-- Build: `cmd`
-- Test: `cmd`
-- Lint: `cmd`
-
-## Conventions
-- Pattern 1
-- Pattern 2
-```
-
-Keep it concise — AGENTS.md should be scannable in under 2 minutes. Focus on what an AI agent needs to be effective.
+1. **Analyze the codebase**: Identify language, framework, build system, test runner, lint tools, and project structure.
+2. **Detect conventions**: Read existing config files (package.json, Cargo.toml, go.mod, pyproject.toml, Makefile, etc.). Extract lint commands, test commands, build commands.
+3. **Understand architecture**: Map the directory structure. Identify entry points, core modules, test directories, config locations.
+4. **Generate AGENTS.md**: Write a concise document covering:
+   - Project overview (what it does)
+   - Tech stack and versions
+   - Directory structure
+   - Commands: build, test, lint, typecheck, dev server
+   - Coding conventions observed in the codebase
+   - Architecture decisions and patterns
+   - Any project-specific rules or constraints
+5. **Review**: Ensure the file is accurate, concise, and actionable.
 
 ## Rules
 
-- Write the file. Do not output the content and ask for approval.
-- If an AGENTS.md already exists, update it — do not create a second file.
-- Preserve any existing sections that are still accurate.
-- Remove sections that no longer apply after scanning.
+- Keep it under 150 lines. Be concise.
+- Only include commands that actually work. Verify if uncertain.
+- Follow conventions already present in the codebase.
+- If an existing AGENTS.md exists, update it — don't overwrite from scratch unless the brief says so.
+- No speculative content. Only document what exists.
+
+## Output
+
+Write the AGENTS.md to the project root. Confirm what was generated.

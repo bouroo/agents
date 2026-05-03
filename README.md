@@ -7,9 +7,10 @@ Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [G
 ## Quick Start
 
 ```bash
-~/.agents/link.sh          # Create symlinks for all supported tools
-~/.agents/link.sh status   # Check symlink status
-~/.agents/link.sh unlink   # Remove all symlinks
+~/.agents/link.sh              # Create symlinks for all supported tools
+~/.agents/link.sh status       # Check symlink status
+~/.agents/link.sh unlink       # Remove all symlinks
+~/.agents/link.sh link opencode # Link only OpenCode
 ```
 
 ## Directory Structure
@@ -27,9 +28,9 @@ Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [G
 │   ├── reviewer.md        # Code review — quality, security, performance
 │   └── tester.md          # Test engineering
 ├── commands/              # Slash commands
-│   ├── generate-agents-md.md  # /generate-agents-md — generate AGENTS.md for project
-│   ├── refactor-optimize.md   # /refactor-optimize — refactor and optimize code
-│   └── verify-project.md      # /verify-project — format, lint, scan, test
+│   ├── generate-agents-md.md  # Generate AGENTS.md for a project
+│   ├── refactor-codebase.md   # Refactor and optimize code
+│   └── verify-codebase.md     # Format, lint, scan, test
 └── skills/                # Conditional modules loaded by context
     ├── abstraction-first/     # Design before you generate
     ├── alignment/             # Lock intent before coding
@@ -50,13 +51,17 @@ Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [G
 
 | Tool | Config Location | Agent File | Agents Dir |
 |------|-----------------|------------|------------|
+| Aider | `~/.aider/` | `CONVENTIONS.md` | — |
 | Claude Code | `~/.claude/` | `CLAUDE.md` | — |
+| Cline | `~/.cline/` | `AGENTS.md` | — |
+| Codex | `~/.codex/` | `AGENTS.md` | — |
+| Copilot | `~/.copilot/` | `AGENTS.md` | — |
 | Cursor | `~/.cursor/` | `CURSOR.md` | — |
 | Gemini | `~/.gemini/` | `GEMINI.md` | — |
 | Kilo | `~/.config/kilo/` | `AGENTS.md` | `agent/` |
 | OpenCode | `~/.config/opencode/` | `AGENTS.md` | `agents/` |
 | Qwen | `~/.qwen/` | `AGENTS.md` | — |
-| Codex | `~/.codex/` | `AGENTS.md` | — |
+| Windsurf | `~/.windsurf/` | `AGENTS.md` | — |
 
 ## Agents
 
@@ -65,8 +70,8 @@ Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [G
 | `conductor` | primary | Orchestrates — decomposes, delegates, validates | task only |
 | `explorer` | subagent | Read-only exploration — files, architecture | read-only |
 | `implementer` | subagent | Implementation — writes code, runs commands | full access |
-| `planner` | subagent | Planning — REASONS Canvas, implementation plans | read + plans/ |
-| `reviewer` | subagent | Code review — quality, security, performance | read + git |
+| `planner` | subagent | Planning — REASONS Canvas, implementation plans | read + write plans |
+| `reviewer` | subagent | Code review — quality, security, performance | read + read-only git |
 | `tester` | subagent | Test engineering — writes and runs tests | test files + shell |
 
 ## Slash Commands
@@ -74,8 +79,8 @@ Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [G
 | Command | Description |
 |---------|-------------|
 | `/generate-agents-md` | Generate AGENTS.md — codebase analysis or from brief |
-| `/refactor-optimize` | Refactor and optimize — measure, refactor, optimize, sync |
-| `/verify-project` | Format, lint, type-check, scan, test |
+| `/refactor-codebase` | Refactor and optimize — measure, refactor, verify, sync |
+| `/verify-codebase` | Format, lint, type-check, scan, test |
 
 ## Skills
 
@@ -99,15 +104,15 @@ Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [G
 
 ```
 Story → Analysis → Canvas → Generate → Test → Review → Sync
-  ↑                                                    |
-  └────────────── repeat until aligned ────────────────┘
+  ↑                                                      |
+  └────────────── repeat until aligned ──────────────────┘
 ```
 
 ## References
 
-- [Structured Prompt-Driven Development (SPDD)](https://martinfowler.com/articles/structured-prompt-driven/)
-- [GitHub Spec-Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md)
-- [10x Commandments of Highly Effective Go](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/)
-- [Go Performance Patterns](https://goperf.dev/01-common-patterns/)
-- [Kilo Docs — Customize](https://kilo.ai/docs/customize/)
-- [OpenCode Docs](https://opencode.ai/docs/)
+- [Structured Prompt-Driven Development (SPDD)](https://martinfowler.com/articles/structured-prompt-driven/) — REASONS Canvas, prompt-code bidirectional sync
+- [GitHub Spec-Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md) — Spec-driven development methodology
+- [10x Commandments of Highly Effective Go](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/) — Code quality and readability principles
+- [Go Performance Patterns](https://goperf.dev/01-common-patterns/) — Performance optimization patterns
+- [Kilo Docs — Customize](https://kilo.ai/docs/customize/) — Agent config structure
+- [OpenCode Docs](https://opencode.ai/docs/) — OpenCode config format

@@ -106,19 +106,29 @@ status_configs() {
 }
 
 TARGETS=(
-    "$HOME/.claude:CLAUDE.md:"
-    "$HOME/.gemini:GEMINI.md:"
-    "$HOME/.config/opencode:AGENTS.md:agents"
-    "$HOME/.config/kilo:AGENTS.md:agent"
-    "$HOME/.qwen:AGENTS.md:"
-    "$HOME/.codex:AGENTS.md:"
-    "$HOME/.cursor:CURSOR.md:"
+    "claude:$HOME/.claude:CLAUDE.md:"
+    "cursor:$HOME/.cursor:CURSOR.md:"
+    "copilot:$HOME/.copilot:AGENTS.md:"
+    "gemini:$HOME/.gemini:GEMINI.md:"
+    "kilo:$HOME/.config/kilo:AGENTS.md:agent"
+    "opencode:$HOME/.config/opencode:AGENTS.md:agents"
+    "qwen:$HOME/.qwen:AGENTS.md:"
+    "codex:$HOME/.codex:AGENTS.md:"
+    "windsurf:$HOME/.windsurf:AGENTS.md:"
+    "aider:$HOME/.aider:CONVENTIONS.md:"
+    "cline:$HOME/.cline:AGENTS.md:"
 )
 
 ACTION="${1:-link}"
+FILTER="${2:-}"
 
 for target in "${TARGETS[@]}"; do
-    IFS=':' read -r dir agent_file agents_dir <<< "$target"
+    IFS=':' read -r name dir agent_file agents_dir <<< "$target"
+
+    if [[ -n "$FILTER" && "$name" != "$FILTER" ]]; then
+        continue
+    fi
+
     if [[ ! -d "$dir" ]]; then
         case "$ACTION" in
             link|"")
@@ -126,7 +136,7 @@ for target in "${TARGETS[@]}"; do
                 info "created $dir"
                 ;;
             status)
-                echo "[$dir] (directory does not exist)"
+                echo "[$name] $dir (directory does not exist)"
                 continue
                 ;;
             *)
@@ -136,17 +146,27 @@ for target in "${TARGETS[@]}"; do
     fi
     case "$ACTION" in
         unlink)
+            echo "[$name]"
             unlink_configs "$dir" "$agent_file" "$agents_dir"
             ;;
         status)
-            echo "[$dir]"
+            echo "[$name]"
             status_configs "$dir" "$agent_file" "$agents_dir"
             ;;
         link|"")
+            echo "[$name]"
             link_configs "$dir" "$agent_file" "$agents_dir"
             ;;
         *)
-            echo "Usage: $0 [link|unlink|status]"
+            echo "Usage: $0 [link|unlink|status] [filter]"
+            echo ""
+            echo "Actions:"
+            echo "  link    Create symlinks for all supported tools (default)"
+            echo "  unlink  Remove all symlinks"
+            echo "  status  Show symlink status"
+            echo ""
+            echo "Filter:"
+            echo "  Tool name to target a single tool (e.g., 'claude', 'opencode')"
             exit 1
             ;;
     esac

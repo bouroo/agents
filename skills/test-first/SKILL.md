@@ -1,53 +1,67 @@
 ---
 name: test-first
 description: Test-Driven Development workflow — write tests before implementation, Red-Green-Refactor cycle, test naming as sentences, integration-first testing.
+version: 1.0.0
+triggers:
+  - TDD workflow
+  - test writing
+  - writing tests before implementation
+  - Red-Green-Refactor
 ---
 
 # Test-First Development
 
-## Core Principle
+Test-Driven Development: write tests before implementation.
 
-No implementation code before tests. Tests define behavior, get approved, confirm they fail (Red), then implementation makes them pass (Green).
+## Red-Green-Refactor Cycle
 
-## Red-Green-Refactor
-
-1. **Red** — Write a failing test defining desired behavior
-2. **Green** — Write minimal code to make it pass
-3. **Refactor** — Clean up while keeping tests green
-4. **Repeat** — Next behavior
+1. **Red**: Write a failing test that describes the desired behavior.
+2. **Green**: Write the minimum code to make the test pass.
+3. **Refactor**: Clean up the code while keeping tests green.
+4. **Repeat**: Move to the next behavior.
 
 ## Test Naming
 
-Names should be sentences describing expected behavior:
-- `testCalculateBill_withOverage_chargesModelSpecificRate`
-- `testValidateInput_missingModelId_returns400`
+Test names are sentences describing user-visible behavior:
 
-Reader understands what's tested without reading the body.
-
-## What to Test
-
-- **Happy path**: Normal flow
-- **Edge cases**: Boundaries, empty inputs, maximum sizes
-- **Error paths**: Invalid inputs, missing fields, unauthorized
-- **Integration points**: Contracts between modules and services
+```
+TestCalculateTotalReturnsZeroForEmptyCart
+TestProcessOrderReturnsErrorWhenItemOutOfStock
+TestCreateUserSendsWelcomeEmailOnSuccess
+```
 
 ## Test Priority
 
-1. Contract tests — module boundaries and API contracts
-2. Integration tests — components working together
-3. Unit tests — individual functions and methods
-4. End-to-end tests — complete user workflows
+1. **Integration tests** — verify real behavior with real dependencies.
+2. **Contract tests** — verify API contracts and interfaces.
+3. **Unit tests** — verify isolated logic in pure functions.
+4. **E2E tests** — verify complete user workflows.
 
-## Integration-First
+Prefer integration tests over isolated unit tests. Use real databases over mocks. Use actual service instances over stubs.
 
-- Prefer real databases over mocks
-- Use actual service instances over stubs
-- Contract tests mandatory before implementation
-- Only mock external systems you don't control
+## Structure
 
-## Anti-patterns
+```
+func TestXxx(t *testing.T) {
+    // Arrange: set up test data and preconditions
+    // Act: execute the behavior under test
+    // Assert: verify the expected outcome
+}
+```
 
-- Tests after implementation (loses design benefit)
-- Testing implementation details instead of behavior
-- Over-mocking making tests fragile
-- Skipping tests "for now"
+## Rules
+
+- No implementation code without a failing test first.
+- Tests are committed before the implementation they test.
+- Test files live alongside source files, not in a separate tree.
+- Mock only external services you don't control. Use real implementations for everything else.
+- Every bug gets a regression test before the fix.
+
+## Checklist
+
+- [ ] Test written and failing (Red) before implementation
+- [ ] Minimum code to pass (Green)
+- [ ] Code refactored while tests stay green
+- [ ] Test names read as sentences
+- [ ] Integration tests preferred over mocks
+- [ ] Bug has regression test

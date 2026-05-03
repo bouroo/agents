@@ -1,41 +1,46 @@
 ---
 name: incremental-delivery
 description: Patterns for shipping software incrementally — feature flags, small PRs, phased rollouts, and backward-compatible deployments.
+version: 1.0.0
+triggers:
+  - shipping incrementally
+  - feature flag design
+  - phased rollouts
+  - breaking changes
 ---
 
 # Incremental Delivery
 
-## Core Principle
+Patterns for shipping software in small, safe increments.
 
-Ship working slices, one step at a time. Each increment independently verifiable and deployable.
+## Principles
 
-## Practices
-
-### Small Batches
-- Reviewable in under 15 minutes
-- One concern per PR/commit
-- >10 files → split it
+### Small PRs
+- Each PR does one thing. If you need "and" to describe it, split it.
+- PRs should be reviewable in under 30 minutes.
+- Prefer 5 small PRs over 1 large one.
+- Every PR must leave the codebase in a working state.
 
 ### Feature Flags
-- Simple booleans, not complex conditional trees
-- Remove promptly after rollout completes
-- Never use flags for authorization logic
+- Gate new features behind flags. Deploy disabled, enable incrementally.
+- Flags are temporary. Remove them once the feature is fully rolled out.
+- Flag names describe the feature, not the implementation.
 
 ### Backward Compatibility
-- Additive changes first: new fields, endpoints, parameters
-- Deprecation period for removals
-- Dual-write during migrations
+- Additive changes first. Deprecation second. Removal last.
+- Never break the public API in a single commit.
+- Provide migration paths with versioned endpoints or adapters.
 
 ### Phased Rollout
-1. **Implement** behind flag
-2. **Internal testing** — enable for team
-3. **Beta** — enable for subset
-4. **GA** — enable for all
-5. **Cleanup** — remove flag and old code path
+1. **Develop**: Behind a flag, in a feature branch.
+2. **Test**: Integration tests pass. Staging validated.
+3. **Release**: Deploy to production, flag disabled.
+4. **Enable**: Turn on for internal users, then percentage, then all.
+5. **Clean up**: Remove the flag and old code paths.
 
-## Anti-patterns
+## Checklist
 
-- Big-bang releases requiring coordinated deployment
-- Long-lived feature branches diverging from main
-- Flags that stay in the codebase indefinitely
-- Skipping rollback planning
+- [ ] Change broken into smallest reviewable units
+- [ ] Feature flag used for risky or incomplete changes
+- [ ] Backward compatibility maintained
+- [ ] Rollback plan defined

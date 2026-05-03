@@ -1,65 +1,65 @@
 ---
 name: self-organizing-coder
-description: Autonomous workflow for building complex features, refactoring codebases, multi-step planning. Integrates abstraction-first design, intent alignment, iterative review from SPDD methodology.
+description: Autonomous workflow for building complex features, refactoring codebases, multi-step planning. Integrates abstraction-first design, intent alignment, and iterative review from the SPDD methodology.
+version: 1.0.0
+triggers:
+  - complex multi-step tasks
+  - autonomous feature building
+  - codebase refactoring
+  - multi-agent orchestration
 ---
 
 # Self-Organizing Coder
 
-## SPDD Workflow
+Autonomous workflow for complex, multi-step engineering tasks.
 
-| Phase | Activity |
-|-------|----------|
-| **Analysis** | Understand specification comprehensively |
-| **REASONS Canvas** | Clarify objects, collaborations, boundaries |
-| **Generate** | Implement based on plan |
-| **Test** | Validate against acceptance criteria |
-| **Prompt Update/Sync** | Logic correction: spec→code. Refactoring: code→spec |
+## Workflow
 
-## 1. Decompose and Plan
+### 1. Understand
+- Read the task. Identify ambiguity. Ask clarifying questions if needed.
+- Explore the codebase: structure, conventions, patterns, dependencies.
+- Identify the scope: what's changing, what's affected, what's out of scope.
 
-- Analyze goal, understand spec, no speculative features
-- Abstraction first: objects, collaborations, boundaries before tasks
-- Task breakdown: small, actionable, testable tasks with explicit plan
-- Parallel execution: identify independent tasks, execute concurrently
+### 2. Plan
+- Apply **alignment**: define scope in/out, acceptance criteria, constraints.
+- Apply **abstraction-first**: identify objects, collaborations, boundaries.
+- Break the task into ordered, testable steps.
+- Use the todo list for 3+ steps. Mark in_progress one at a time.
 
-## 2. Align Intent
+### 3. Implement
+- Follow the plan step-by-step. One task at a time.
+- For each step:
+  1. Write/edit code following the plan.
+  2. Run relevant tests.
+  3. Verify the step is complete before moving on.
+- Delegate to subagents when appropriate:
+  - **explorer**: search and understand code
+  - **implementer**: write code, run commands
+  - **tester**: write and run tests
 
-- Lock intent: confirm what/not done. Explicit scope boundaries
-- Standards up front: naming, error handling, coding standards before coding
-- Acceptance criteria: concrete, testable. Given/When/Then when possible
-- Explicit uncertainty: vague requirement → halt, ask, mark `[NEEDS CLARIFICATION]`
+### 4. Review
+- Apply **iterative-review**: compare output against intent.
+- Run lint, typecheck, and tests.
+- If reality diverged from the plan, update the plan first.
+- Classify fixes: logic → fix spec then code; style → fix code then sync.
 
-## 3. Manage Context
+### 5. Deliver
+- Verify all acceptance criteria pass.
+- Run final lint, typecheck, and test suite.
+- Summarize changes. Note anything deferred or noteworthy.
 
-- Proactively summarize progress, discoveries, modified files
-- Before delegating new subtasks or when approaching token limits
-- Bounded subagent prompts: tight scope, exact files, clear deliverables
+## Rules
 
-## 4. Implement and Iterate
+- Never skip the plan. Even a 30-second plan prevents rework.
+- Never implement more than one task at a time.
+- When stuck, re-read the plan. If the plan is wrong, fix the plan.
+- After each task, verify before starting the next.
 
-- Test-first: tests validating spec before functional code
-- Incremental delivery: working slices, one step at a time
-- Anti-abstraction: use existing frameworks directly
+## Checklist
 
-## 5. Iterative Review
-
-- Intent before details: output matches spec before code quality review
-- Categorize: logic correction (behavior) vs refactoring (structural)
-- Controlled loops: drift = realign spec before regenerating
-
-## 6. Large Project Workflow
-
-| Phase | Agent | Output |
-|-------|-------|--------|
-| Explore | explorer | Structure, boundaries, entry points |
-| Plan | planner | REASONS Canvas, task breakdown |
-| Implement | implementer (parallel) | Modified files per module |
-| Validate | tester | Full test suite, regression check |
-| Sync | — | Spec↔code aligned |
-
-## Context Condensing
-
-- Auto-compaction: `compaction.auto`, triggers at ~20K token headroom
-- Pruning: `compaction.prune` removes old outputs
-- Reserved: `compaction.reserved` buffer for continuity
-- Post-compaction: re-read modified files
+- [ ] Task understood, ambiguity resolved
+- [ ] Plan created with scope and acceptance criteria
+- [ ] Tasks decomposed and ordered
+- [ ] Each task implemented and verified individually
+- [ ] Final review against acceptance criteria
+- [ ] Lint, typecheck, and tests pass

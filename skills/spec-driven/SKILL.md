@@ -1,57 +1,71 @@
 ---
 name: spec-driven
-description: Structured Prompt-Driven Development (SPDD) workflows — REASONS Canvas for spec creation, prompt-code bidirectional sync, alignment before implementation, and iterative review. Use for planning features, writing specs, or any task where specifications drive code generation.
+description: Structured Prompt-Driven Development (SPDD) workflows — REASONS Canvas for spec creation, prompt-code bidirectional sync, alignment before implementation, and iterative review.
+version: 1.0.0
+triggers:
+  - SPDD methodology
+  - REASONS Canvas
+  - creating specifications
+  - structured prompt development
 ---
 
-# Structured Prompt-Driven Development (SPDD)
+# Spec-Driven Development (SPDD)
 
-Specifications and structured prompts are first-class delivery artifacts — version controlled, reviewed, reusable, and kept synchronized with code.
-
-## Core Principle
-
-When reality diverges from the spec, fix the spec first — then update the code. Never let spec and code silently diverge.
+Structured Prompt-Driven Development: treat specs as first-class delivery artifacts.
 
 ## The REASONS Canvas
 
+A seven-part structure that guides intent → design → execution → governance.
+
 ### Abstract Parts (Intent & Design)
-- **R — Requirements**: Problem and definition of done
-- **E — Entities**: Domain objects, attributes, relationships
-- **A — Approach**: Strategy, design decisions, rationale
-- **S — Structure**: Where change fits; components and dependencies
+- **R — Requirements**: What problem are we solving? Definition of Done.
+- **E — Entities**: Domain entities and their relationships.
+- **A — Approach**: The strategy for meeting the requirements.
+- **S — Structure**: Where the change fits in the system. Components and dependencies.
 
 ### Specific Part (Execution)
-- **O — Operations**: Ordered, testable steps down to method signatures
+- **O — Operations**: Concrete, testable implementation steps in order.
 
-### Governance Parts
-- **N — Norms**: Cross-cutting standards (naming, error handling, observability)
-- **S — Safeguards**: Non-negotiable boundaries (invariants, limits, security)
+### Governance Parts (Standards)
+- **N — Norms**: Cross-cutting engineering norms (naming, observability, defensive coding).
+- **S — Safeguards**: Non-negotiable boundaries (invariants, performance limits, security rules).
 
-## Three Core Skills
+## Workflow
 
-1. **Abstraction First** — Design before you generate
-2. **Alignment** — Lock intent before writing code
-3. **Iterative Review** — Controlled review-and-iterate loop
+```
+Story → Analysis → Canvas → Generate → Test → Review → Sync
+  ↑                                                      |
+  └────────────── repeat until aligned ──────────────────┘
+```
 
-## Workflow Phases
+1. **Story**: Break requirements into independent, deliverable user stories (INVEST).
+2. **Analysis**: Extract domain keywords, scan codebase, produce strategic analysis.
+3. **Canvas**: Generate the full REASONS Canvas from analysis.
+4. **Generate**: Produce code task-by-task, following Operations, Norms, Safeguards.
+5. **Test**: Generate functional tests, then unit tests.
+6. **Review**: Classify issues. Logic → update prompt then code. Style → refactor code then sync.
+7. **Sync**: Keep Canvas and code synchronized bidirectionally.
 
-1. **Story** → Independent, deliverable user stories (INVEST)
-2. **Analysis** → Domain keywords, codebase scan, risks and gaps
-3. **Canvas** → Generate the REASONS Canvas (executable blueprint)
-4. **Generate** → Code task-by-task following Operations, Norms, Safeguards
-5. **Test** → Tests from acceptance criteria. Verify coverage against spec
-6. **Review** → Check alignment. Categorize adjustments. Sync both directions
+## Sync Rules
 
-## Spec-Code Sync
+### Prompt Update (Spec → Code)
+When requirements change, update the Canvas first, then regenerate affected code.
 
-| Change Type | Direction |
-|-------------|-----------|
-| New feature | Spec → Code |
-| Logic correction | Spec → Code (fix spec first) |
-| Bug fix | Spec → Code (fix spec first) |
-| Refactoring | Code → Spec (refactor first) |
-| Performance | Code → Spec (optimize first) |
+### Code Sync (Code → Spec)
+When code is refactored or fixed, sync the changes back into the Canvas.
 
-## Fitness
+## Rules
 
-SPDD best for: scaled delivery, high compliance, team auditability, cross-cutting consistency.
-SPDD overhead for: hotfixes, exploratory spikes, one-off scripts.
+- The Canvas is the source of truth. Never manually edit generated code to fix logic.
+- When output diverges from intent, fix the Canvas first.
+- Never add features beyond what the spec defines.
+- Every change must trace to a Canvas section.
+
+## Checklist
+
+- [ ] REASONS Canvas complete (all 7 parts)
+- [ ] Operations are concrete and testable
+- [ ] Norms and Safeguards defined
+- [ ] Code generated task-by-task from Operations
+- [ ] Tests cover acceptance criteria
+- [ ] Canvas and code synchronized after changes

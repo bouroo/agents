@@ -1,28 +1,45 @@
 ---
 name: abstraction-first
 description: Design before you generate. Clarify what objects exist, how they collaborate, and where boundaries are before implementation.
+version: 1.0.0
+triggers:
+  - designing before implementing
+  - creating new modules or packages
+  - architectural decisions
+  - greenfield features
 ---
 
-# Abstraction-First
+# Abstraction First
 
-Design before you generate. Clarify what objects exist, how they collaborate, and where boundaries are before implementation.
+Design the structure before generating code. Clarify objects, collaborations, and boundaries first.
 
-## Principles
+## When to Use
 
-- **Define domain entities first**: Core objects, attributes, relationships before any code.
-- **Clarify collaboration**: Who calls whom, data flow, where state lives.
-- **Establish boundaries**: Module boundaries with minimal, stable interfaces.
-- **Choose patterns deliberately**: Apply design patterns only when they reduce complexity.
+- Starting a new feature or module
+- Before generating any significant code
+- When responsibilities are unclear
+- During architectural decisions
 
-## Practices
+## Steps
 
-- Start with Entities (E) and Structure (S) of the REASONS Canvas.
-- Sketch interfaces early: method signatures and type contracts before implementations.
-- Validate against Requirements (R): map abstractions back to stated problem.
-- Review coupling and cohesion: highly cohesive, loosely coupled modules.
+1. **Identify Objects**: List the core domain objects and their responsibilities.
+2. **Define Collaborations**: Map how objects interact — messages, data flow, dependencies.
+3. **Draw Boundaries**: Establish clear interfaces between components. What's internal vs. public.
+4. **Name Components**: Give every object a precise, intention-revealing name.
+5. **Validate**: Walk through the design with a concrete scenario before writing code.
 
-## Anti-patterns
+## Rules
 
-- Jumping to implementation before defining what it models.
-- Unclear responsibilities causing duplicated logic and drift.
-- Inconsistent interfaces making the system hard to compose.
+- No implementation code until the design is reviewed and approved.
+- Every object must have a single, clear responsibility.
+- Dependencies point inward (domain has no external deps).
+- If you can't name it clearly, the abstraction is wrong.
+
+## Checklist
+
+- [ ] Core objects identified and named
+- [ ] Responsibilities assigned (one per object)
+- [ ] Interfaces defined between components
+- [ ] Data flow documented
+- [ ] Edge cases considered in design
+- [ ] Design reviewed before code generation
