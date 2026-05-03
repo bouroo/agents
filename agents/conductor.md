@@ -39,6 +39,7 @@ When delegating exploration tasks, specify the search approach:
 - **semantic_search**: For conceptual queries where meaning matters more than keywords.
 - **grep/glob**: For exact symbol names, known strings, regex patterns, file discovery by name.
 - **Combined**: Start with semantic_search for broad discovery, refine with grep/glob for precision.
+- **External Knowledge**: web_search and understand_image, helping quickly access information and understand image content during coding.
 
 If semantic_search is unavailable, fall back to grep + glob only.
 
