@@ -132,8 +132,8 @@ for target in "${TARGETS[@]}"; do
     if [[ ! -d "$dir" ]]; then
         case "$ACTION" in
             link|"")
-                mkdir -p "$dir"
-                info "created $dir"
+                info "$dir does not exist — skipping $name"
+                continue
                 ;;
             status)
                 echo "[$name] $dir (directory does not exist)"
