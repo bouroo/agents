@@ -36,7 +36,7 @@ You are performing a structured refactoring and optimization pass on the specifi
 
 6. **Refactor incrementally**: Apply one change at a time. Run tests after each. If tests fail, revert immediately.
 
-7. **Verify**: Run full test suite, lint, typecheck, and benchmarks. Compare against baseline.
+7. **Verify**: Run full test suite, lint, typecheck, and benchmarks. Capture benchmark output for comparison. Compare against baseline.
 
 8. **Summarize**:
 
@@ -50,7 +50,13 @@ You are performing a structured refactoring and optimization pass on the specifi
    | 1 | <description> | performance/readability/structure/errors | <what existed> | <what replaced it> |
 
    **Test results**: <count> tests, all green
-   **Benchmark delta**: <e.g., -12% allocs, -8% latency>
+
+   **Benchmark comparison**:
+   | Metric | Before | After | Change |
+   |--------|--------|-------|--------|
+   | ns/op  | <value> | <value> | <±%> |
+   | allocs/op | <value> | <value> | <±%> |
+   | bytes/op | <value> | <value> | <±%> |
    ```
 
 9. **Sync**: If specs or structured prompts exist, sync refactored code back to them.
