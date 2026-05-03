@@ -6,7 +6,7 @@ You are performing a structured refactoring and optimization pass on the specifi
 
 ## Steps
 
-1. **Identify target**: Determine the specific file, module, or area to refactor from the user's request.
+1. **Identify target**: Determine the specific file, module, or area to refactor from the user's request if `$ARGUMENTS` is not set or is empty use current working directory.
 
 2. **Lock tests first**: Before touching any code, ensure a safety net exists:
    - Run existing tests — they must be green. If no tests exist, write integration tests covering the target's observable behavior first.
