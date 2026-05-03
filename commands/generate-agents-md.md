@@ -19,6 +19,12 @@ You are generating an AGENTS.md file for the current project. This file serves a
    - Any project-specific rules or constraints
 5. **Review**: Ensure the file is accurate, concise, and actionable.
 
+## Context Management
+
+- AGENTS.md is write-protected and persists across compaction. It's the most reliable place for project context.
+- Keep AGENTS.md concise (under 150 lines). Dense, structured content survives compaction better.
+- Use file:line references in AGENTS.md for large code pointers rather than inlining code.
+
 ## Rules
 
 - Keep it under 150 lines. Be concise.

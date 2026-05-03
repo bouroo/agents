@@ -65,14 +65,14 @@ Based on [SPDD](https://martinfowler.com/articles/structured-prompt-driven/), [G
 
 ## Agents
 
-| Agent | Mode | Purpose | Permissions |
-|-------|------|---------|-------------|
-| `conductor` | primary | Orchestrates — decomposes, delegates, validates | task only |
-| `explorer` | subagent | Read-only exploration — files, architecture | read-only |
-| `implementer` | subagent | Implementation — writes code, runs commands | full access |
-| `planner` | subagent | Planning — REASONS Canvas, implementation plans | read + write plans |
-| `reviewer` | subagent | Code review — quality, security, performance | read + read-only git |
-| `tester` | subagent | Test engineering — writes and runs tests | test files + shell |
+| Agent | Mode | Steps | Hidden | Purpose | Permissions |
+|-------|------|-------|--------|---------|-------------|
+| `conductor` | primary | 30 | no | Orchestrates — decomposes, delegates, validates | task only |
+| `explorer` | subagent | 12 | yes | Read-only exploration — files, architecture | read-only |
+| `implementer` | subagent | 25 | yes | Implementation — writes code, runs commands | full access |
+| `planner` | subagent | 15 | yes | Planning — REASONS Canvas, implementation plans | read + write plans, no delegation |
+| `reviewer` | subagent | 10 | yes | Code review — quality, security, performance | read + read-only git |
+| `tester` | subagent | 20 | yes | Test engineering — writes and runs tests | test files + shell |
 
 ## Slash Commands
 
@@ -115,4 +115,5 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 - [10x Commandments of Highly Effective Go](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/) — Code quality and readability principles
 - [Go Performance Patterns](https://goperf.dev/01-common-patterns/) — Performance optimization patterns
 - [Kilo Docs — Customize](https://kilo.ai/docs/customize/) — Agent config structure
+- [Kilo Docs — Context Condensing](https://kilo.ai/docs/customize/context/context-condensing) — Auto-compaction, pruning, context management
 - [OpenCode Docs](https://opencode.ai/docs/) — OpenCode config format
