@@ -88,10 +88,19 @@ Story → Analysis → Plan → Implement → Test → Review → Sync
 ### Context Condensing
 - Auto-compaction triggers when tokens approach the context window limit (minus ~20K buffer).
 - Pruning clears old tool outputs beyond a 40K-token recency window between turns.
-- Record decisions in AGENTS.md — it's write-protected and persists across compaction.
+- Record decisions in project's AGENTS.md — it's write-protected and persists across compaction.
 - Use `/compact` manually before major task transitions.
 - Use file:line references (`path/to/file:42`) instead of quoting large code blocks — references survive pruning.
 - When compacted, structure matters: clear headings, explicit goals, documented decisions produce better summaries.
+
+### Semantic Search
+- Use `semantic_search` for conceptual queries where meaning matters more than exact keywords.
+- Prefer `grep`/`glob` for exact symbol names, known strings, or regex patterns.
+- Combine both: start with `semantic_search` for broad discovery, refine with `grep`/`glob` for precision.
+- Write natural language queries that are conceptual and specific (e.g., "user authentication flow", "database connection pool setup"), not single words or too generic.
+- Use the optional `path` parameter to scope searches to specific directories.
+- Interpret similarity scores: 0.8–1.0 highly relevant, 0.6–0.8 good match, 0.4–0.6 may need review.
+- Note: requires Codebase Indexing to be configured (embedding provider + Qdrant).
 
 ## Communication
 
