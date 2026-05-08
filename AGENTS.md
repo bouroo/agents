@@ -1,133 +1,63 @@
-# Agent Instructions
+# AGENTS.md
 
-## Identity
+Global coding standards and workflow principles for AI agents.
+Language-agnostic. Environment-independent.
 
-You are an autonomous software engineering agent. You decompose tasks, write and review code, run commands, and iterate until the job is done. You follow a structured workflow: plan, implement, verify, deliver.
+## Specification Before Implementation
 
-## Core Principles
+- **Design before you generate.** Clarify objects, collaborations, and boundaries before writing code.
+- **Lock intent before writing code.** Make "what we will do / what we won't do" explicit up front.
+- **Treat specs as first-class artifacts.** Version-controlled, reviewed, and maintained alongside code.
+- **Sync, don't hand off.** Keep specifications and code synchronized — when either side changes, reflect it back.
 
-### Design Before You Generate
-Clarify what objects exist, how they collaborate, and where boundaries are before writing code.
+## REASONS Canvas
 
-### Lock Intent Before Implementation
-Make "what we will do / what we won't do" explicit. Fast output with slow rework is worse than slow output that is right.
+When approaching any non-trivial task, structure your thinking across these dimensions:
 
-### Review and Iterate
-Treat AI output as a draft. Review against intent, fix the prompt or plan first, then regenerate.
+- **R**equirements — What problem are we solving? What is the definition of done?
+- **E**ntities — Domain objects and their relationships.
+- **A**pproach — The strategy to meet the requirements.
+- **S**tructure — Where the change fits in the system; components and dependencies.
+- **O**perations — Concrete, testable implementation steps.
+- **N**orms — Cross-cutting engineering standards (naming, patterns, defensive coding).
+- **S**afeguards — Non-negotiable constraints (invariants, performance limits, security rules).
 
-### Specifications as Source of Truth
-Treat specs as first-class delivery artifacts — version-controlled, reviewed, reused.
+## Code Craftsmanship
 
-### Test-First Development
-Write tests before implementation. Red-Green-Refactor. Test names should be sentences. Prefer integration tests.
+### Structure for Reuse
+Separate entry-point logic from domain logic. Return data, not side effects. Return errors, don't crash.
 
-## Code Standards
+### Test as You Write
+Name tests as sentences. Cover happy paths, error paths, and edge cases. Tests are living documentation.
 
-### Readability
-- Write code for reading, not writing. A co-worker should understand it line by line.
-- Use consistent naming: `err` for errors, `ctx` for contexts, `req`/`resp` for requests/responses, `buf` for buffers, `data` for byte slices.
-- Extract low-level paperwork into small functions with informative names.
+### Design for Reading
+Consistent naming. Extract boilerplate into named helpers. Document intent at the component level.
 
-### Safety
-- Use always-valid values. Design types so users cannot accidentally create invalid states.
-- Use named constants instead of magic values.
-- Prefer immutable data. Avoid mutable global state.
-- Validate all inputs at system boundaries.
+### Make Invalid States Unrepresentable
+Validate at boundaries. Use constants over magic values. Design types so misuse is hard.
 
-### Error Handling
-- Define named sentinel errors users can match against. Never compare error strings.
-- Wrap errors with context using `%w` to preserve the chain.
-- Always check errors. Never ignore them with `_`.
-- Report actionable errors: what happened, where, what the user should do.
+### Enrich Errors with Context
+Define named sentinel errors. Wrap with context, don't flatten to strings. Preserve error chains.
 
-### Performance
-- Pre-allocate slices and maps when size is known or estimable.
-- Reuse buffers and objects to reduce allocation pressure.
-- Batch I/O operations. Use buffered readers/writers.
-- Profile before optimizing. Measure before and after.
+### Avoid Mutable Global State
+No package-level mutable variables. Use explicit dependency injection over global defaults.
 
-### Concurrency
-- Don't introduce concurrency unless unavoidable.
-- Keep goroutines/green threads confined to their creation scope.
-- Ensure all spawned tasks terminate before the enclosing function exits.
-- Use structured concurrency patterns (errgroups, wait groups, scoped tasks).
+### Use Concurrency Sparingly
+Only when the problem requires it. Keep it localized. Ensure all spawned tasks terminate.
 
-### Environment Decoupling
-- Don't depend on OS or environment-specific details inside packages.
-- Only the entry point should access env vars, CLI args, or file paths.
-- Keep configuration injectable.
+### Decouple from Environment
+Business logic has no knowledge of env vars, CLI args, or filesystem paths. Config flows inward.
 
-## Workflow
+### Handle Errors Deliberately
+Check every error. Handle where possible, retry for transient failures, propagate otherwise. Never silently ignore.
 
-### Delivery Loop
-```
-Story → Analysis → Plan → Implement → Test → Review → Sync
-  ↑                                                      |
-  └───────────── repeat until aligned ───────────────────┘
-```
+### Log Actionable Information Only
+Log only what someone needs to investigate and fix. Structured fields, never secrets. Use tracing for request debugging.
 
-1. **Understand**: Read requirements, explore codebase, clarify ambiguity.
-2. **Plan**: Create implementation plan with scope boundaries and acceptance criteria.
-3. **Implement**: Generate code task-by-task following the plan.
-4. **Test**: Write tests first (Red), implement (Green), refactor (Refactor).
-5. **Review**: Check quality, security, performance. Fix prompt/plan first, then code.
-6. **Sync**: Keep specs and code synchronized.
+## Iterative Review
 
-### Scope Management
-- Define Scope In and Scope Out explicitly before starting.
-- Never add speculative or "might need" features.
-- All changes must trace to a concrete requirement or acceptance criterion.
-- Prefer small, incremental changes over large rewrites.
-
-### Task Execution
-- Use the todo list for tasks with 3+ steps.
-- Mark tasks in_progress one at a time. Complete before starting the next.
-- When reality diverges from the plan, update the plan first, then the code.
-- After completing work, run lint and typecheck commands.
-
-### Context Condensing
-- Auto-compaction triggers when tokens approach the context window limit (minus ~20K buffer).
-- Pruning clears old tool outputs beyond a 40K-token recency window between turns.
-- Record decisions in project's AGENTS.md — it's write-protected and persists across compaction.
-- Use `/compact` manually before major task transitions.
-- Use file:line references (`path/to/file:42`) instead of quoting large code blocks — references survive pruning.
-- When compacted, structure matters: clear headings, explicit goals, documented decisions produce better summaries.
-
-### Semantic Search
-- Use `semantic_search` for conceptual queries where meaning matters more than exact keywords.
-- Prefer `grep`/`glob` for exact symbol names, known strings, or regex patterns.
-- Combine both: start with `semantic_search` for broad discovery, refine with `grep`/`glob` for precision.
-- Write natural language queries that are conceptual and specific (e.g., "user authentication flow", "database connection pool setup"), not single words or too generic.
-- Use the optional `path` parameter to scope searches to specific directories.
-- Interpret similarity scores: 0.8–1.0 highly relevant, 0.6–0.8 good match, 0.4–0.6 may need review.
-- Note: requires Codebase Indexing to be configured (embedding provider + Qdrant).
-
-## Communication
-
-- Be concise. Answer directly without preamble or postamble.
-- Use file:line_number references when pointing to code.
-- When suggesting code review, only do so for substantial, self-initiated implementation work.
-- Never commit unless explicitly asked. Never push unless explicitly asked.
-- Never expose secrets, keys, or credentials in logs or output.
-
-## Agent Delegation
-
-Agents with full tool access can delegate to subagents using the `task` tool. Built-in subagents are:
-- `explore`: Read-only codebase search, file finding, architecture questions.
-- `general`: General-purpose autonomous work — implementation, review, testing, research, multi-step tasks.
-
-## Skills
-
-Load skills when the task matches:
-- `abstraction-first`: Designing before implementing.
-- `alignment`: Locking intent, scoping features.
-- `code-quality`: Code quality discussions, reviews.
-- `context-management`: Long sessions, context limits, compaction.
-- `error-design`: Error handling patterns.
-- `incremental-delivery`: Shipping incrementally, feature flags.
-- `iterative-review`: Review loops, spec-code alignment.
-- `naming-conventions`: Writing identifier names.
-- `performance`: Optimization work.
-- `safe-by-default`: Safety patterns, input validation.
-- `spec-driven`: SPDD methodology, REASONS Canvas.
-- `test-first`: TDD, test writing.
+- Turn output into a controlled loop, not a one-shot draft.
+- For logic corrections: update the spec first, then regenerate code.
+- For refactoring: change the code first, then sync back to the spec.
+- Verify core functionality before optimizing code quality.
+- Make it work, then make it right.
