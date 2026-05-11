@@ -16,7 +16,7 @@ Current git status:
 2. **Lint** — Run project linter. Report warnings/errors.
 3. **Type-check** — Run type checker if available.
 4. **Security scan** — Run configured scanner.
-5. **Test** — Run full test suite. Report pass/fail with file:line refs for failures.
+5. **Test** — Run full test suite, git hooks test. Report pass/fail with file:line refs for failures.
 6. **Fix** — Apply tool auto-fixers first, then fix root cause manually. Do NOT break public API.
 7. **Verify** — Re-run only the failing check to confirm fix before proceeding.
 8. **Summary** — Report each step outcome. List unresolved issues with file:line refs.
