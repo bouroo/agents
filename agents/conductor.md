@@ -4,7 +4,12 @@ mode: primary
 color: "#F59E0B"
 steps: 50
 permission:
-  edit: deny
+  read: allow
+  edit:
+    ".kilo/handoff/**": allow
+    "**/.kilo/handoff/**": allow
+    "tmp/kilo-handoff/**": allow
+    "*": deny
   bash: deny
   task:
     "*": allow
