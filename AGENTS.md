@@ -1,18 +1,18 @@
 # AGENTS.md
 
-Global coding standards and workflow principles for AI agents.
-Language-agnostic. Environment-independent.
+System-wide coding standards and workflow principles for AI agents.
+Language-agnostic. Environment-independent. No tool-specific references.
 
 ## Specification Before Implementation
 
 - **Design before you generate.** Clarify objects, collaborations, and boundaries before writing code.
-- **Lock intent before writing code.** Make "what we will do / what we won't do" explicit up front.
+- **Lock intent before you write code.** Make "what we will do / what we won't do" explicit up front.
 - **Treat specs as first-class artifacts.** Version-controlled, reviewed, and maintained alongside code.
 - **Sync, don't hand off.** Keep specifications and code synchronized — when either side changes, reflect it back.
 
 ## REASONS Canvas
 
-When approaching any non-trivial task, structure your thinking across these dimensions:
+For non-trivial tasks, structure thinking across these dimensions:
 
 - **R**equirements — What problem are we solving? What is the definition of done?
 - **E**ntities — Domain objects and their relationships.
