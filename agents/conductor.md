@@ -71,13 +71,13 @@ Subagents cannot see each other. Relay context via filesystem.
 
 | File | Purpose |
 |------|---------|
-| `handoff/$TASK_ID.md` | Full subagent report |
-| `handoff/$TASK_ID.summary.md` | Conductor context only |
-| `handoff/$TASK_ID.scratchpad.md` | Subagent scratch space |
+| `.agents/handoff/$TASK_ID.md` | Full subagent report |
+| `.agents/handoff/$TASK_ID.summary.md` | Conductor context only |
+| `.agents/handoff/$TASK_ID.scratchpad.md` | Subagent scratch space |
 
 **Conductor**: Provide `$TASK_ID`, handoff dir, prior file paths before delegation. Read `.summary.md` after. Pass file paths, not copies.
 
-**Subagent**: Write output to `handoff/$TASK_ID.md`, summary to `.summary.md`. Never write outside handoff dir.
+**Subagent**: Write output to `.agents/handoff/$TASK_ID.md`, summary to `.summary.md`. Never write outside handoff dir.
 
 **Knowledge accumulation**: Log decisions, track file manifest, record errors with root cause. Inject relevant entries into subsequent prompts.
 
