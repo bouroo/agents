@@ -30,6 +30,7 @@ Writing tests forces you to use your own APIs the way users will. Tests are also
 - Test small, user-visible units — not internal implementation details
 - Cover happy paths, error paths, and edge cases
 - Add end-to-end/integration tests to verify system-level behavior
+- Table-driven tests are easier to read and maintain
 
 ## 3. Design for Reading
 
