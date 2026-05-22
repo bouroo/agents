@@ -61,3 +61,6 @@ Log only what someone needs to investigate and fix. Structured fields, never sec
 - For refactoring: change the code first, then sync back to the spec.
 - Verify core functionality before optimizing code quality.
 - Make it work, then make it right.
+- Use tools effectively.
+- Delegate independent tasks to suitable agents if available.
+- Always review and correct issues in a timely manner.

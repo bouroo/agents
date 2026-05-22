@@ -110,6 +110,7 @@ TARGETS=(
     "cursor:$HOME/.cursor:CURSOR.md:"
     "copilot:$HOME/.copilot:AGENTS.md:"
     "gemini:$HOME/.gemini:GEMINI.md:"
+    "antigravity:$HOME/.gemini/antigravity-cli:AGENTS.md:"
     "kilo:$HOME/.config/kilo:AGENTS.md:agent"
     "opencode:$HOME/.config/opencode:AGENTS.md:agents"
     "qwen:$HOME/.qwen:AGENTS.md:"
