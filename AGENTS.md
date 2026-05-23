@@ -8,7 +8,7 @@ Language-agnostic. Environment-independent. No tool-specific references.
 - **Design before you generate.** Clarify objects, collaborations, and boundaries before writing code.
 - **Lock intent before you write code.** Make "what we will do / what we won't do" explicit up front.
 - **Treat specs as first-class artifacts.** Version-controlled, reviewed, and maintained alongside code.
-- **Sync, don't hand off.** Keep specifications and code synchronized — when either side changes, reflect it back.
+- **Sync, don't hand off.** Keep specifications and code synchronized — when either side changes, reflect it back. Utilize `.agents/plans/` for plan and progress tracker.
 
 ## REASONS Canvas
 

@@ -71,6 +71,8 @@ Subagents cannot see each other. Relay context via filesystem.
 
 | File | Purpose |
 |------|---------|
+| `.agents/plans/` | Project plans and progress tracker |
+| `.agents/handoff/$TASK_ID.md` | Full subagent report |
 | `.agents/handoff/$TASK_ID.md` | Full subagent report |
 | `.agents/handoff/$TASK_ID.summary.md` | Conductor context only |
 | `.agents/handoff/$TASK_ID.scratchpad.md` | Subagent scratch space |
