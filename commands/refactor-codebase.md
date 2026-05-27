@@ -1,12 +1,19 @@
 ---
-description: Refactor and optimize code — test, measure, analyze, refactor, verify, sync
+description: Refactor and optimize code with test-first, measure-first approach
+agent: code
 ---
 
-# Structured Refactoring & Optimization
+You are performing structured refactoring and optimization on the codebase.
 
-**Target**: $ARGUMENTS
+## Context
+Detected project:
+!`ls package.json Cargo.toml go.mod pyproject.toml Makefile 2>/dev/null | head -10`
 
-**Context**: !`git diff --stat HEAD 2>/dev/null || echo "No git repo or clean working tree"`
+Git state:
+!`git diff --stat HEAD 2>/dev/null || echo "No git repo or clean working tree"`
+
+## Target
+$ARGUMENTS
 
 ## Workflow
 

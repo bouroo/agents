@@ -1,5 +1,6 @@
 ---
 description: Generate or update AGENTS.md for a project from codebase analysis or a brief
+agent: plan
 ---
 
 You are generating or updating an AGENTS.md — the primary project context document for AI coding agents.
@@ -13,9 +14,9 @@ $ARGUMENTS
 
 ## Steps
 
-1. **Detect stack**: Identify language, framework, build/test/lint tools from config files (package.json, Cargo.toml, go.mod, pyproject.toml, Makefile, .eslintrc, etc.).
+1. **Detect stack**: Identify language, framework, build/test/lint tools from config files (package.json, Cargo.toml, go.mod, pyproject.toml, Makefile, .eslintrc, etc.)
 2. **Map architecture**: Identify entry points, core modules, test directories, config locations. Build a simple directory tree if non-obvious.
-3. **Extract conventions**: Parse config files for actual commands (not assumed defaults). Note any project-specific rules.
+3. **Extract conventions**: Parse config files for actual commands. Note any project-specific rules.
 4. **Update existing AGENTS.md** — preserve structure, merge changes, do not overwrite unless brief says to.
 5. **Write or update** a concise AGENTS.md (under 150 lines) covering:
    - Project overview and tech stack

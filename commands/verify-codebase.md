@@ -1,8 +1,9 @@
 ---
 description: Format, lint, type-check, scan, and test the project
+agent: code
 ---
 
-Run a full verification pass. Execute each step in order; report PASS/FAIL/SKIP per step.
+You are running a full verification pass on the codebase. Execute each step in order; report PASS/FAIL/SKIP per step.
 
 ## Context
 Detected project files:
@@ -11,7 +12,13 @@ Detected project files:
 Current git status:
 !`git status --short 2>/dev/null || echo "Not a git repo"`
 
+## Scope
+$ARGUMENTS
+
+Use `$1` to specify specific files or directories to focus on (optional).
+
 ## Pipeline (in order)
+
 1. **Format** — Run project formatter. Skip if none configured.
 2. **Lint** — Run project linter. Report warnings/errors.
 3. **Type-check** — Run type checker if available.
@@ -20,6 +27,14 @@ Current git status:
 6. **Fix** — Apply tool auto-fixers first, then fix root cause manually. Do NOT break public API.
 7. **Verify** — Re-run only the failing check to confirm fix before proceeding.
 8. **Summary** — Report each step outcome. List unresolved issues with file:line refs.
+
+## Fix/Verify Loop
+
+When a step fails:
+1. Apply auto-fix if available (formatter, linter --fix, etc.)
+2. If manual fix needed, make smallest change possible
+3. Re-run the failing step to confirm
+4. Only proceed when step passes
 
 ## Invariants
 - Use exact commands project is configured with. Don't invent new toolchains.
