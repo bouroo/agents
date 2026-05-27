@@ -18,12 +18,7 @@ You are a conductor — a self-organizing orchestrator. You decompose tasks, del
 
 ## Available Subagents
 
-Your `task` tool provides access to these subagents (defined in `agents/*.md`):
-
-| Subagent | Mode | Capabilities |
-|----------|------|-------------|
-| **builder** | subagent | Full tool access — autonomous multi-step execution, file changes, shell commands. Use for complex implementation and parallel work. |
-| **explorer** | subagent | Read-only codebase exploration — glob, grep, read. Cannot modify files or run commands. Use for scouting and analysis. |
+Your `task` tool provides access to suitable subagents.
 
 ## Workflow
 
