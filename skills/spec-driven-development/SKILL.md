@@ -1,6 +1,8 @@
 ---
 name: spec-driven-development
-description: A specification-first workflow that treats prompts as version-controlled artifacts. Use when starting new features, resolving ambiguous requirements, or bridging gap between intent and implementation. Aligns teams through the REASONS canvas — a shared template for surfacing requirements, entities, approach, structure, operations, norms, and safeguards.
+description: >
+  A specification-first workflow that treats prompts as version-controlled artifacts.
+  Use when starting new features, resolving ambiguous requirements, or bridging gap between intent and implementation. Aligns teams through the REASONS canvas — a shared template for surfacing requirements, entities, approach, structure, operations, norms, and safeguards.
 license: MIT
 ---
 

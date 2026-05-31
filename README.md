@@ -19,7 +19,9 @@ Shared, language-agnostic agent configuration for AI coding assistants. Symlinke
 ├── README.md                  # This file
 ├── link.sh                    # Symlink manager for all supported tools
 ├── agents/                    # Agent definitions (mode, permissions, system prompts)
-│   └── conductor.md           # Master orchestrator — decomposes, delegates, validates
+│   ├── conductor.md           # Master orchestrator — decomposes, delegates, validates
+│   ├── explorer.md             # Fast read-only codebase explorer (glob, grep, read)
+│   └── builder.md             # General-purpose autonomous agent with full tool access
 ├── commands/                  # Slash commands (reusable prompt workflows)
 │   ├── generate-agents-md.md  # Generate or update project AGENTS.md from codebase analysis
 │   ├── refactor-codebase.md   # Structured refactoring — test, measure, refactor, verify, sync
@@ -49,8 +51,10 @@ Shared, language-agnostic agent configuration for AI coding assistants. Symlinke
 ## Agents
 
 | Agent | Mode | Steps | Permissions | Purpose |
-|------|------|-------|-------------|---------|
-| `conductor` | primary | 30 | edit=deny, bash=deny, task=allow | Master orchestrator — decomposes tasks, delegates to subagents, validates results |
+|------------|----------|-------|----------------------------------------|---------|
+| `conductor` | primary | 30 | edit=limited to handoff only, bash=deny, task=allow | Master orchestrator — decomposes tasks, delegates to subagents, validates results |
+| `explorer` | subagent | — | edit=deny, bash=deny | Fast read-only codebase explorer — glob, grep, read only |
+| `builder` | subagent | — | all tools (full access) | General-purpose autonomous agent — multi-step execution, file changes, shell commands |
 
 ## Slash Commands
 
