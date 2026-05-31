@@ -61,14 +61,7 @@ When the conductor receives a task that is ambiguous or underspecified, use the 
 
 ## Skill Loading
 
-Before delegating, load relevant skills via the `skill` tool:
-
-| Skill | Use for |
-|-------|---------|
-| `effective-code-craft` | Error handling, testing, concurrency, API design, safe defaults |
-| `performance-patterns` | Memory management, concurrency, I/O efficiency, compiler optimizations |
-| `spec-driven-development` | REASONS canvas, spec-first workflows, requirement alignment |
-| `kilo-config` | Kilo configuration, Agent Manager |
+Before delegating, load relevant skills via the `skill` tool.
 
 ## REASONS Canvas
 

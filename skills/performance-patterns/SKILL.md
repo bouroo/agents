@@ -1,6 +1,8 @@
 ---
 name: performance-patterns
-description: Patterns for writing high-performance software across any language. Covers memory management, concurrency, I/O efficiency, and compiler optimizations. Use when optimizing for speed, throughput, latency, or memory usage.
+description: >
+  Patterns for writing high-performance software across any language. Covers memory management, concurrency, I/O efficiency, and compiler optimizations.
+  Use when optimizing for speed, throughput, latency, or memory usage.
 ---
 
 # Performance Patterns
