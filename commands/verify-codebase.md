@@ -1,53 +1,44 @@
 ---
-description: Format, lint, type-check, scan, and test the project
-agent: debug
+description: Full verification pass with fix/review loop — format, lint, type-check, scan, test, and githook gate
 ---
 
-You are running a full verification pass on the codebase. Execute each step in order; report PASS/FAIL/SKIP per step.
+# Verify Codebase
 
-## Context
+Goal: leave the working tree in a state that passes every quality gate, including the repository's githook verify script.
 
-Detected project files:
-!`ls package.json Cargo.toml go.mod pyproject.toml Makefile build.gradle pom.xml 2>/dev/null | head -10`
+## Pipeline
 
-Current git status:
-!`git status --short 2>/dev/null || echo "Not a git repo"`
+Run the following stages in order. If a stage produces findings, attempt **auto-fix**, then **re-verify**. Repeat until the stage is clean or no more auto-fixes are possible. Only then proceed to the next stage.
 
-## Scope
+1. **Format** — apply the project's formatter; fail if files would change after auto-fix.
+2. **Lint** — run the configured linter with warnings-as-errors; auto-fix where the toolchain supports it.
+3. **Type-check** — run the static type checker with strict settings; no auto-fix, so move directly to review if issues remain.
+4. **Scan** — run secret/SAST/vulnerability scanners; fail on any finding above the agreed threshold. Never auto-fix security findings; review and escalate.
+5. **Test** — run the full test suite (unit + integration); require coverage to meet the Safeguards defined in the spec.
 
-$ARGUMENTS (positional: `$1` = specific files or directories to focus on; optional).
+## Fix/Review Loop
 
-## Pipeline (in order)
+After any stage that still has issues:
 
-1. **Format** — run project formatter. Skip if none configured.
-2. **Lint** — run project linter. Report warnings/errors.
-3. **Type-check** — run type checker if available.
-4. **Security scan** — run configured scanner.
-5. **Test** — run full test suite, git hooks test. Report pass/fail with file:line refs for failures.
-6. **Fix** — apply tool auto-fixers first, then fix root cause manually. Do NOT break public API.
-7. **Verify** — re-run only the failing check to confirm fix before proceeding.
-8. **Summary** — report each step outcome. List unresolved issues with file:line refs.
+- **Fix** — apply the safest, narrowest auto-fixes first. Never band-aid; correct the root cause.
+- **Review** — inspect remaining findings. If they are legitimate, patch them and re-run the stage. If they are false positives, document the exception and escalate to the spec's Safeguards section.
+- **Re-verify** — run the stage again. If it still fails, repeat the loop. Stop after a maximum of three iterations to avoid infinite loops; escalate unresolved issues.
 
-## Fix/Verify Loop
+## Githook Gate
 
-When a step fails:
-1. Apply auto-fix if available (formatter, linter --fix, etc.).
-2. If manual fix needed, make smallest change possible.
-3. Re-run the failing step to confirm.
-4. Only proceed when step passes.
+After the pipeline is fully clean, run the repository's githook verify script(s). Look for, in order of preference:
 
-## Invariants
+- `.git/hooks/pre-commit` (if executable)
+- `.git/hooks/pre-push` (if executable)
+- A project-defined verify script (e.g., `scripts/verify.sh`, `npm run githook:verify`, `make githook-verify`, `pnpm verify`, etc.)
 
-- Use exact commands the project is configured with. Don't invent new toolchains.
-- If a tool is not installed, SKIP and continue. Don't abort pipeline.
-- Every failure must include a file:line reference. No dangling issue reports.
-- After manual fixes, always check `git diff` to verify only intended changes.
-- Sync verification findings back to specs if they reveal spec issues.
+Execute the discovered script(s) and enforce a zero exit code. If no githook script exists, note the absence and proceed.
 
-## Rules
+## Reporting
 
-- **Handle errors deliberately**: check every error, handle where possible, propagate otherwise.
-- **Make invalid states unrepresentable**: validate at boundaries.
-- **Test first**: tests are living documentation, not afterthought.
-- **Traceability**: every issue links to a specific file:line.
-- **Measure, don't guess**: if performance is in scope, benchmark before optimizing.
+Produce a concise pass/fail summary for every stage, including:
+- Exact command invoked
+- Exit code
+- Files changed (if any)
+- Any actionable findings still outstanding
+- Final verdict: **CLEAN** or **BLOCKED**

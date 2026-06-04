@@ -1,55 +1,27 @@
 ---
-description: Performance and Architectural Refactor Workflow
-agent: code
+description: Structured refactoring — analyze, plan, execute, and verify with tests
 ---
 
-You are an expert software architect. Your goal is to refactor code to improve its performance, maintainability, and clarity by applying high-efficiency design patterns.
+# Refactor Codebase
 
-## Parameters
+1. **Analyze** — map the target area, dependencies, and call sites. Identify the smell, not just the symptom. Check for mutable global state, tight coupling to environment (env vars, CLI args, filesystem paths deep in packages), and missing error handling.
 
-$ARGUMENTS
+2. **Plan** — write a REASONS canvas (Requirements, Approach, Operations, Safeguards). Lock scope: what we will do, what we will not, what remains open. Tests and benchmarks are part of the plan, not an afterthought.
 
-Positional: `$1` = component/module path to refactor, `$2` = performance targets (optional), `$3` = target architectural style (optional; e.g., Domain-Driven Design, Hexagonal).
+3. **Baseline** — before touching production code, capture or write tests and benchmarks for the target area. The baseline must prove current behavior and, if performance is a goal, current metrics. No refactor proceeds without a reproducible before/after comparison.
 
-If `$1` is not provided, ask the user for the component/module path before proceeding.
+4. **Execute** — make small, atomic commits; keep the build green at every step; preserve public behavior.
+   - **Write packages, not monoliths.** Keep entry points minimal (parse, handle errors, delegate). Domain logic returns data, not side effects; returns errors, never crashes.
+   - **Code for reading.** Use consistent idiomatic naming; keep functions short; extract low-level "paperwork" into well-named helpers.
+   - **Safe by default.** Make invalid states unrepresentable; use validating constructors and named constants instead of magic values. Apply least-privilege to capabilities.
+   - **Wrap errors, don't flatten.** Define sentinel errors; wrap with context while preserving the chain so identity checks still work. Never inspect error strings to identify types.
+   - **Avoid mutable global state.** Inject dependencies explicitly. If shared mutable state is unavoidable, guard with synchronization or isolate behind a single owner.
+   - **Concurrency sparingly.** Introduce concurrency only when required. Confine it to the creating scope; every concurrent task must terminate before its parent exits. Use structured primitives.
+   - **Decouple from environment.** Only the entry point reads env vars, CLI args, or filesystem paths. Stream or chunk large data; reuse buffers.
+   - **Design for errors.** Check every error. Handle where possible, retry transient failures, propagate the rest. Show usage hints for invalid input.
+   - **Optimize deliberately, after correctness.** Preallocate collections when size is known; reuse objects in hot paths; buffer I/O; batch small operations; apply zero-copy and field-alignment where data supports it. Measure before and after; keep only proven improvements.
+   - **Log only actionable information.** Structured fields, never secrets. Use tracing for request debugging and metrics for performance, not logs.
 
-## Step 0: Baseline Validation & Test Coverage
+5. **Verify** — run formatter, linter, type-checker, and full test suite. Re-profile against the baseline to confirm improvement, not regression.
 
-1. **Audit Test Coverage**: identify all critical paths and edge cases. If comprehensive tests are missing, implement them before any code changes.
-2. **Establish Performance Baselines**:
-   - For performance-critical paths, implement **benchmarks** to measure current latency and memory allocations.
-   - Record these metrics to use as a "before" snapshot.
-3. **Verification Gate**: ensure all existing and newly added tests pass 100%. **Refactoring may not proceed until the current state is fully verified and stable.**
-
-## Step 1: Architectural Alignment & Modularity
-
-1. **Evaluate Component Boundaries**: identify "program-like" monolithic blocks. Refactor them into "packages" (modular, reusable components) with a single, well-defined responsibility.
-2. **Interface Simplification**:
-   - Identify over-engineered abstractions.
-   - Replace complex hierarchies with a "minimal interface" approach (define only what is strictly necessary for the consumer).
-3. **Readability Audit**: identify "clever" code that hinders comprehension. Rewrite for clarity, ensuring the intent is obvious without extensive commenting.
-
-## Step 2: Memory & Resource Optimization
-
-1. **Allocation Analysis**:
-   - Find frequently created short-lived objects. Replace them with **Object Pooling** to recycle memory and reduce GC pressure.
-   - Identify unnecessary data copying. Implement **Zero-Copy** techniques (e.g., using slices/views/pointers instead of duplicating buffers).
-2. **Escape Analysis Logic**:
-   - Detect variables that unnecessarily "escape" to the heap. Move them to the stack by limiting their scope or adjusting how they are returned.
-3. **Concurrency Bottlenecks**:
-   - Check for shared state under high contention. Transition from locking mechanisms to **Immutable Data Sharing** or message-passing patterns.
-
-## Step 3: Naming & API Consistency
-
-1. **Identifier Standardisation**:
-   - Ensure consistent casing for acronyms/initialisms (e.g., `HTTPClient` not `HttpClient`).
-   - Remove redundant type information from names (e.g., `user` instead of `userObject`).
-2. **API Surface Refinement**:
-   - Ensure naming follows the "provider's context" (names should make sense when called from outside the package/module).
-   - Audit for "stuttering" (e.g., `user.UserAccount` becomes `user.Account`).
-
-## Step 4: Verification & Safety
-
-1. **Regression Testing**: for every architectural change, execute the existing test suite.
-2. **Performance Baseline**: re-run benchmarks established in Step 0. Compare results to ensure no performance regression occurred and that optimizations were successful.
-3. **Edge Case Validation**: check for potential race conditions introduced by immutable sharing or pooling logic.
+6. **Sync spec** — update or create the spec to match the refactor; never leave the spec describing the old shape.

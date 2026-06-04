@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+#
+# link.sh — symlink this repo's shared agent config into supported AI tools.
+#
+# Research grounding:
+#   - Kilo:    https://kilo.ai/docs/customize/         (config: ~/.config/kilo/AGENTS.md, agents dir: agent/)
+#   - OpenCode: https://opencode.ai/docs/               (config: ~/.config/opencode/AGENTS.md, agents dir: agents/)
+#
+# Other tools use their own conventional config file (CLAUDE.md, GEMINI.md, etc.) and have no agents dir.
+#
 
 set -euo pipefail
 
@@ -106,18 +115,12 @@ status_configs() {
 }
 
 TARGETS=(
-    "claude:$HOME/.claude:CLAUDE.md:"
-    "cursor:$HOME/.cursor:CURSOR.md:"
-    "copilot:$HOME/.copilot:AGENTS.md:"
     "gemini:$HOME/.gemini:GEMINI.md:"
-    "antigravity:$HOME/.gemini/antigravity-cli:AGENTS.md:"
-    "kilo:$HOME/.config/kilo:AGENTS.md:agent"
-    "opencode:$HOME/.config/opencode:AGENTS.md:agents"
-    "qwen:$HOME/.qwen:AGENTS.md:"
     "codex:$HOME/.codex:AGENTS.md:"
-    "windsurf:$HOME/.windsurf:AGENTS.md:"
-    "aider:$HOME/.aider:CONVENTIONS.md:"
-    "cline:$HOME/.cline:AGENTS.md:"
+    "claude:$HOME/.claude:CLAUDE.md:"
+    "qwen:$HOME/.qwen:AGENTS.md:"
+    "opencode:$HOME/.config/opencode:AGENTS.md:agents"
+    "kilo:$HOME/.config/kilo:AGENTS.md:agent"
 )
 
 ACTION="${1:-link}"

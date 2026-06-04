@@ -1,66 +1,86 @@
 # AGENTS.md
 
-System-wide coding standards and workflow principles for AI agents.
-Language-agnostic. Environment-independent. No tool-specific references.
+System-wide instructions for AI coding agents. Language-agnostic, environment-independent, tool-neutral.
 
-## Specification Before Implementation
+## 1. Spec-First (Spec is Truth)
 
-- **Design before you generate.** Clarify objects, collaborations, and boundaries before writing code.
-- **Lock intent before you write code.** Make "what we will do / what we won't do" explicit up front.
-- **Treat specs as first-class artifacts.** Version-controlled, reviewed, and maintained alongside code.
-- **Sync, don't hand off.** Keep specifications and code synchronized — when either side changes, reflect it back. Utilize `.agents/plans/` for plan and progress tracker.
+- Specs precede code, version with it, and drive implementation.
+- When code and spec diverge: fix the spec first, then the code. Never patch code without updating the spec.
+- No speculative features. If it is not in the spec, do not build it.
+- A stale spec is a bug. Treat specs as first-class, reviewable artifacts.
+- Store specs, canvases, and progress trackers under `.agents/plans/`.
+- Ask user questions if any ambiguity is unclear, and clarify if necessary.
 
-## REASONS Canvas
+## 2. Three Core Skills (Structured Prompt-Driven Development)
 
-For non-trivial tasks, structure thinking across these dimensions:
+1. **Abstraction-first** — Design objects, collaborations, and boundaries before generating code. Clarity of intent precedes implementation.
+2. **Alignment** — Lock scope explicitly: what we will do, what we will not, what remains open. Make it visible in the spec.
+3. **Iterative review** — Treat output as a controlled loop, not a one-shot draft: spec → generate → verify → refine → repeat.
 
-- **R**equirements — What problem are we solving? What is the definition of done?
-- **E**ntities — Domain objects and their relationships.
-- **A**pproach — The strategy to meet the requirements.
-- **S**tructure — Where the change fits in the system; components and dependencies.
-- **O**perations — Concrete, testable implementation steps.
-- **N**orms — Cross-cutting engineering standards (naming, patterns, defensive coding).
-- **S**afeguards — Non-negotiable constraints (invariants, performance limits, security rules).
+## 3. REASONS Canvas
 
-## Code Craftsmanship
+For any non-trivial task, structure thinking across these seven dimensions:
 
-### Structure for Reuse
-Separate entry-point logic from domain logic. Return data, not side effects. Return errors, don't crash.
+- **R**equirements — problem statement, definition of done, acceptance criteria.
+- **E**ntities — domain objects and their relationships.
+- **A**pproach — strategy to meet requirements; alternatives considered and rejected.
+- **S**tructure — where the change fits; components, dependencies, interfaces.
+- **O**perations — concrete, testable implementation steps in order.
+- **N**orms — cross-cutting engineering standards (naming, patterns, defensive coding).
+- **S**afeguards — non-negotiable constraints (invariants, performance limits, security rules).
 
-### Test as You Write
-Name tests as sentences. Cover happy paths, error paths, and edge cases. Tests are living documentation.
+Leave no section empty. Mark unknowns explicitly; do not gloss them over.
 
-### Design for Reading
-Consistent naming. Extract boilerplate into named helpers. Document intent at the component level.
+## 4. Workflow Rules
 
-### Make Invalid States Unrepresentable
-Validate at boundaries. Use constants over magic values. Design types so misuse is hard.
+- **Design before generate** — clarify objects, boundaries, and collaborations first.
+- **Lock intent** — state scope, non-goals, and open questions up front.
+- **Sync, don't hand off** — spec and code evolve together; reflect changes both ways.
+- **Verify core before optimize** — make it work, then make it right, then make it fast.
+- **Iterative review** — for logic corrections, update the spec first, then regenerate code; for refactors, change code first, then sync the spec.
+- **Use tools effectively** — read before editing, search before assuming, validate after writing, lint and typecheck after changes.
 
-### Enrich Errors with Context
-Define named sentinel errors. Wrap with context, don't flatten to strings. Preserve error chains.
+## 5. Cross-Cutting Norms (Engineering Commandments)
 
-### Avoid Mutable Global State
-No package-level mutable variables. Use explicit dependency injection over global defaults.
+Apply these across any language or runtime.
 
-### Use Concurrency Sparingly
-Only when the problem requires it. Keep it localized. Ensure all spawned tasks terminate.
+**Structure**
+- Write libraries, not monoliths. Keep entry points minimal; place domain logic in modules with clean public APIs.
+- Return data, not side effects. Return errors, do not crash.
+- Decouple from environment — config flows inward; domain logic has no knowledge of env vars, paths, or CLI args.
 
-### Decouple from Environment
-Business logic has no knowledge of env vars, CLI args, or filesystem paths. Config flows inward.
+**Safety**
+- Make invalid states unrepresentable. Validate at boundaries. Prefer constants over magic values.
+- Design for errors — check every error; retry transient failures; propagate the rest. Never silently ignore.
+- Wrap errors with context and preserve the cause chain. Define sentinel errors; never inspect error strings.
+- Be safe by default — least privilege, sensible defaults, validating constructors.
 
-### Handle Errors Deliberately
-Check every error. Handle where possible, retry for transient failures, propagate otherwise. Never silently ignore.
+**State & Concurrency**
+- Avoid mutable global state. Use explicit dependency injection over global defaults.
+- Use concurrency sparingly. Keep it localized. Ensure every spawned task terminates before its enclosing scope exits.
+- Share immutable data; synchronize only when mutation is unavoidable.
 
-### Log Actionable Information Only
-Log only what someone needs to investigate and fix. Structured fields, never secrets. Use tracing for request debugging.
+**Observability**
+- Log only actionable information. Structured fields, never secrets. Use tracing for request debugging, metrics for performance.
 
-## Iterative Review
+**Reading & Testing**
+- Write code for reading — consistent naming, short functions, named helpers, intent documented at the component level.
+- Test as you write. Test names read as sentences. Cover happy, error, and edge paths. Tests are living documentation.
 
-- Turn output into a controlled loop, not a one-shot draft.
-- For logic corrections: update the spec first, then regenerate code.
-- For refactoring: change the code first, then sync back to the spec.
-- Verify core functionality before optimizing code quality.
-- Make it work, then make it right.
-- Use tools effectively.
-- Delegate independent tasks to suitable agents if available.
-- Always review and correct issues in a timely manner.
+## 6. Performance Patterns (Quick Reference)
+
+Optimize deliberately, after correctness is proven.
+
+- **Memory** — preallocate collections when size is known; pool reusable objects in hot paths; align data structures by size to avoid padding; avoid boxing of value types; prefer zero-copy (slices, views, references) over duplication; keep short-lived values on the stack.
+- **GC pressure** — minimize heap allocations, reuse buffers, prefer value types in hot paths.
+- **Concurrency** — bound work with worker pools; prefer atomics over locks for simple counters and flags; lazy-initialize expensive resources; share immutable data; propagate cancellation and deadlines across all spawned work.
+- **I/O** — buffer streams with workload-tuned sizes; batch small operations to amortize per-request overhead.
+- **Build** — enable release optimization flags (inlining, escape analysis, dead-code elimination); apply profile-guided optimization where available; measure before and after.
+
+## 7. Agent Interaction Protocol
+
+- **Load skills first** — before delegating or executing, load the relevant skill (spec-driven-development, effective-code-craft, performance-patterns) so its guidance is in context.
+- **Use the task tool for subagents** — delegate independent, well-scoped subtasks; do not over-fanout for trivial work.
+- **Filesystem handoffs** — exchange specs, plan trackers, and intermediate artifacts between agents via files under `.agents/plans/`, not via prompt injection.
+- **Synthesize** — after subagents complete, reconcile their outputs against the spec, resolve conflicts, and re-verify against the REASONS canvas before declaring done.
+- **Worktree isolation** — when working in parallel on independent concerns, use a separate worktree per concern to avoid contention.
