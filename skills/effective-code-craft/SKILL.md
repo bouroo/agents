@@ -1,102 +1,85 @@
 ---
 name: effective-code-craft
 description: >
-  Apply language-agnostic software craftsmanship, performance optimization, and architectural best practices derived from engineering principles.
-  Use when writing, reviewing, or refactoring code for clarity, safety, concurrency, testability, or efficiency.
+  Apply language-agnostic software craftsmanship principles. Use when writing, reviewing, or refactoring
+  code for clarity, safety, testability, or efficiency. Grounded in the JetBrains 10x rules and the
+  Google style guide.
 license: MIT
 ---
 
-# High-Performance Engineering Commandments
+# Effective Code Craft
 
-A distilled set of architectural, readability, and performance principles applicable across any language or runtime.
+Ten commandments for high-quality code, distilled from the JetBrains 10x rules and Google style principles.
+
+## Style Priorities
+
+Apply in order; when they conflict, the higher priority wins.
+
+1. **Clarity** — purpose and rationale are obvious to the reader, who sees *what* and *why*, through their lens, not the author's.
+2. **Simplicity** — simplest solution that works; least mechanism: prefer core language → standard library → third-party.
+3. **Concision** — high signal-to-noise; eliminate repetition, opaque names, and unnecessary abstraction.
+4. **Maintainability** — easy for the next programmer to change correctly; APIs grow gracefully with minimal coupling.
+5. **Consistency** — match the surrounding codebase; in a tie, consistency beats personal taste.
 
 ## 1. Write Libraries, Not Monoliths
 
-- Structure code as reusable packages/modules with clean public APIs.
-- Keep the application entry point (`main`) minimal: parse arguments, handle errors, and delegate to domain packages.
-- Return data instead of side effects (e.g., printing); return errors instead of crashing.
-- Prefer flat module structures; one package per concern reduces cognitive overhead.
+- Structure code as reusable packages with clean public APIs; keep the entry point minimal (parse, handle errors, delegate).
+- Return data, not side effects. Return errors, never crash.
+- Apply least mechanism: reach for built-ins before frameworks.
 
 ## 2. Test Everything
 
-- Test names should read as sentences describing behavior.
-- Focus unit tests on small, user-visible behaviors.
-- Add integration tests for end-to-end flows.
-- Use tests to "dogfood" your APIs; awkward APIs reveal themselves when consumed.
+- Test names read as sentences about behavior. Cover happy path, error path, edge cases.
+- Add integration tests for end-to-end flows; use tests to dogfood your own APIs.
+- Prefer runnable examples as living documentation that cannot drift from the code.
 
-## 3. Write Code for Reading
+## 3. Code for Reading
 
-- Choose consistent, idiomatic short names for local/loop variables (e.g., `err`, `buf`, `i`, `req`, `resp`, `ctx`).
-- Use longer, descriptive names for package-level identifiers.
-- Keep functions short; extract low-level "paperwork" into well-named helpers.
-- Avoid naming identifiers after built-in types or keywords.
-- Acronyms and initialisms should have consistent casing within an identifier (e.g., `APIKey`, `userID`).
+- Name length scales with scope: short for locals (`i`, `buf`, `err`), longer at package level. Single-word names first; add words only to disambiguate.
+- Omit type-like words (`users` over `userSlice`) and context the surrounding API already provides (`count`, not `userCount`, inside `UserCount`).
+- Avoid `get`/`Get` prefixes; start with the noun. Don't repeat package names in exported symbols (`widget.New`, not `widget.NewWidget`).
+- Comments explain *why*, not *what*. Doc comments are full sentences beginning with the symbol's name.
 
-## 4. Be Safe by Default
+## 4. Safe by Default
 
-- Design types so that invalid states are unrepresentable ("make illegal states unrepresentable").
-- Provide a useful zero value for literals, or a validating constructor with sensible defaults.
-- Use named constants instead of magic numbers/strings.
-- Apply the principle of least privilege: do not require elevated permissions when configurable minimal permissions suffice.
+- Make invalid states unrepresentable; provide a useful zero value or a validating constructor.
+- Use named constants, not magic values. Apply least-privilege to capabilities and permissions.
+- Avoid in-band errors (sentinel values like `-1`, `null`); use explicit error returns or `ok` booleans.
 
 ## 5. Wrap Errors, Don't Flatten
 
-- Define sentinel error values for consumers to match against.
-- Add context to errors without losing the original cause; preserve the error chain so `errors.Is`-style checks still work.
-- Never inspect error strings to determine error types.
+- Define sentinel errors; wrap with context while preserving the chain (so `Is`/`As` still work).
+- Never inspect error strings to identify error types.
+- Add context only when it conveys new information; don't restate what the underlying error already says.
 
-## 6. Avoid Mutable Global State
+## 6. No Mutable Globals
 
-- Do not rely on package-level mutable variables.
-- Do not use mutable default/global instances; always instantiate and configure your own.
-- If shared mutable state is unavoidable, guard access with synchronization primitives (mutexes) or isolate it behind a single goroutine/thread with a message channel.
+- No package-level mutable variables. Inject dependencies explicitly.
+- If shared mutable state is unavoidable, guard with synchronization or isolate behind a single owner with message passing.
 
-## 7. Use Concurrency Sparingly and Structurally
+## 7. Concurrency Sparingly
 
-- Do not introduce concurrency unless it is unavoidable.
-- Confine goroutines/threads to the scope where they are created; do not let them leak globally.
-- Ensure every concurrent task terminates before its enclosing function exits (use `WaitGroup`, `errgroup`, or structured concurrency primitives).
-- When passing channels, specify directionality (send-only or receive-only) to prevent deadlocks.
+- Introduce concurrency only when required. Confine threads/tasks to the creating scope; never leak globally.
+- Every concurrent task must terminate before its parent exits. Use structured concurrency primitives.
+- Simplicity first: a sequential solution is usually cheaper to read, test, and debug than a parallel one.
 
-## 8. Decouple Code from Environment
+## 8. Decouple from Environment
 
-- Only the application entry point should read environment variables or command-line arguments.
-- Let users configure packages however they want; do not hard-code paths, environment assumptions, or file-system dependencies.
-- Embed static assets into the binary instead of relying on external files.
-- Be frugal with memory: stream or chunk data instead of loading everything at once; reuse buffers.
+- Only the entry point reads env vars, CLI args, or filesystem paths. Business logic stays pure.
+- Embed static assets; stream or chunk large data; reuse buffers.
+- Factor out repeated scaffolding (table-driven patterns) so differences stand out clearly.
 
 ## 9. Design for Errors
 
-- Always check and handle errors; do not silently ignore them.
-- Retry where appropriate; report runtime errors to users and exit gracefully.
-- Reserve fatal crashes/panics for unrecoverable internal program errors, not expected runtime failures.
-- Show usage hints for invalid inputs instead of crashing.
+- Handle errors before continuing with the normal flow — indent error paths, keep the happy path unindented.
+- Check every error. Handle where possible, retry transient failures, propagate the rest.
+- Show usage hints for invalid input. Reserve fatal exits for unrecoverable internal failures.
 
-## 10. Log Only Actionable Information
+## 10. Log Actionable Information Only
 
-- Log only actionable errors that someone must fix.
-- Use structured logging (e.g., JSON) for machine parsing.
-- Never log secrets, credentials, or personal data.
-- Do not use logs for request-scoped debugging (use tracing) or performance data (use metrics).
-
-## 11. Performance & Memory Efficiency
-
-- Preallocate collections (slices, maps, arrays) when the final size is known or predictable.
-- Keep hot-path values on the stack where possible; avoid unnecessary heap allocations.
-- Reuse objects via pooling in high-allocation paths instead of allocating on every iteration.
-- Prefer zero-copy techniques (e.g., slicing, views, references) over duplicating data.
-- Share immutable data across threads safely without locks.
-- Avoid unnecessary interface/indirect boxing in hot loops.
-- Pass lightweight request-scoped values through explicit parameters rather than ambient context maps when possible.
-
-## 12. Naming Conventions
-
-- Use `camelCase` for private identifiers and `PascalCase` for public/exported identifiers.
-- ASCII letters are strongly preferred in identifiers.
-- Getters should use the property name directly (e.g., `owner()`), omitting `get` prefixes.
-- Boolean variables and functions should read as assertions (e.g., `isValid`, `hasPermission`, `canRead`).
-- Loop/range variables are typically one letter (e.g., `i`, `v`, `k`).
+- Log only what someone must investigate and fix. Structured fields, never secrets.
+- Use tracing for request debugging and metrics for performance, not logs.
 
 ## Guru Meditation
 
-Make it work first, then make it right. Draft a walking skeleton with shameless-green implementation, validate it with real users, and then invest the extra effort in refactoring, simplifying, and improving while the code is still fresh in memory.
+Make it work, then make it right — walking skeleton first, real users second, refactor while it is fresh. When in doubt, choose the simpler mechanism and the clearer name.
