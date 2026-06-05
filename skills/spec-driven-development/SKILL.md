@@ -27,27 +27,47 @@ Use this 7-part structure for every spec:
 
 ### Template
 
+Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS CLARIFICATION]`.
+
 ```markdown
 ## R — Requirements
-[Problem. What does "done" mean?]
+- Problem statement
+- Definition of Done (measurable)
+- Acceptance criteria (testable)
 
 ## E — Entities
-[Domain objects and relationships]
+- Domain objects and relationships
+- Existing vs. new boundaries
+- Data flow between entities
 
 ## A — Approach
-[Strategy, alternatives rejected, rationale]
+- Chosen strategy and rationale
+- Alternatives considered and rejected
+- Key trade-offs
 
 ## S — Structure
-[Components, dependencies, interfaces]
+- Where the change fits in the codebase
+- Components, dependencies, interfaces
+- Files to create or modify
 
 ## O — Operations
-[Ordered, testable implementation steps]
+- Ordered, testable implementation steps
+- Each step precise enough for a subagent to execute without ambiguity
+- Include test scenarios (happy path, error path, edge cases)
+- At least one step exercises an end-to-end boundary
 
 ## N — Norms
-[Naming: scope-proportional, no repetition of context/type. Error handling: explicit, guard-clause-first. Documentation: name-first sentences for public symbols. Style: eliminate nesting, omit zero-value noise.]
+- Naming: scope-proportional, no repetition of context/type, no type-in-name
+- Error handling: explicit returns, guard-clause-first, wrap-with-context
+- Documentation: name-first sentences for public symbols
+- Style: eliminate nesting, omit zero-value noise
+- Reference AGENTS.md §5 for the full norm set
 
 ## S — Safeguards
-[Invariants, performance ceilings, security rules]
+- Invariants that must hold
+- Performance ceilings (latency, memory, size limits with numbers)
+- Security rules (no secrets in logs, least privilege)
+- Non-negotiable constraints
 ```
 
 ## Core Skills
@@ -70,6 +90,8 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 
 ## Spec Quality Checklist
 
+Verify before delegation:
+
 - [ ] Every REASONS section is filled — no empty sections.
 - [ ] Requirements have measurable acceptance criteria and a Definition of Done.
 - [ ] Safeguards specify numeric limits (latency, size, error rates, quotas).
@@ -77,7 +99,8 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 - [ ] Norms specify scope-proportional naming and guard-clause control flow.
 - [ ] No in-band error signaling — errors are explicit, not sentinel values.
 - [ ] Public symbols have name-first doc comments (full sentences).
-- [ ] Unknowns are marked explicitly, not glossed over.
+- [ ] Unknowns are marked with `[NEEDS CLARIFICATION]`, not glossed over.
+- [ ] Operations are ordered and testable — a subagent can execute them sequentially.
 - [ ] Generated code has no orphaned features (in code but not in spec).
 - [ ] Generated spec has no orphan requirements (in spec but not in code).
 

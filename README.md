@@ -1,6 +1,6 @@
 # Self-Organized Agent Configuration
 
-Shared, language-agnostic agent configuration for AI coding assistants. Symlinked to each tool's expected location via `link.sh`.
+Shared, language-agnostic agent configuration for AI coding assistants. Contains global coding standards (AGENTS.md), reusable slash commands, domain-specific skills, and an orchestrator agent. Symlinked into each supported tool's config directory via `link.sh`.
 
 ## Quick Start
 
@@ -21,19 +21,28 @@ Shared, language-agnostic agent configuration for AI coding assistants. Symlinke
 ├── agents/                    # Agent definitions (mode, permissions, system prompts)
 │   └── conductor.md           # Master orchestrator — decomposes, delegates, validates
 ├── commands/                  # Slash commands (reusable prompt workflows)
-│   ├── code-review.md         # Structured code review — correctness, safety, performance
-│   ├── refactor-codebase.md   # Structured refactoring — test, measure, refactor, verify, sync
-│   ├── spdd-workflow.md       # SPDD canvas → spec → code → review → sync loop
-│   └── verify-codebase.md     # Full verification pass — format, lint, type-check, scan, test
+│   ├── code-review.md         # Review code for correctness, safety, and performance
+│   ├── refactor-codebase.md   # Performance refactoring — analyze, plan, baseline, execute, verify
+│   ├── spdd-workflow.md       # SPDD end-to-end — canvas → spec → code → sync
+│   └── verify-codebase.md     # Full verification — format, lint, type-check, scan, test, githook
 ├── skills/                    # Domain-specific skill modules
 │   ├── effective-code-craft/      # Clean, maintainable, production-ready code practices
 │   ├── performance-patterns/      # High-performance software patterns (memory, concurrency, I/O)
 │   └── spec-driven-development/   # Specification-first workflow with REASONS canvas
-└── .agents/                   # Internal handoff directory (specs, canvases, progress trackers)
+└── .agents/                   # Runtime directory (created by conductor agent at runtime)
     └── plans/                 # Spec drafts, REASONS canvases, plan trackers
 ```
 
 ## Supported Tools
+
+`link.sh` symlinks four artifacts into each tool's config directory:
+
+| Artifact      | Source            | Linked as         | Notes                          |
+|---------------|-------------------|-------------------|--------------------------------|
+| Config file   | `AGENTS.md`       | Tool-specific name| `GEMINI.md`, `CLAUDE.md`, or `AGENTS.md` |
+| Commands      | `commands/`       | `commands/`       | All tools                      |
+| Skills        | `skills/`         | `skills/`         | All tools                      |
+| Agents        | `agents/`         | Tool-specific dir | Only OpenCode (`agents/`) and Kilo (`agent/`) |
 
 | Tool       | Config Location          | Config File  | Agents Dir  |
 |------------|--------------------------|--------------|-------------|
@@ -48,23 +57,23 @@ Shared, language-agnostic agent configuration for AI coding assistants. Symlinke
 
 | Agent        | Mode    | Purpose                                                  |
 |--------------|---------|----------------------------------------------------------|
-| `conductor`  | primary | Master orchestrator — decomposes tasks, delegates, validates |
+| `conductor`  | primary | Self-organizing orchestrator — decomposes, delegates, senses, self-corrects, steers |
 
 ## Commands
 
 | Command            | Description                                                          |
 |--------------------|----------------------------------------------------------------------|
-| `code-review`        | Review code changes for quality, security, and performance        |
-| `refactor-codebase`  | Structured refactoring — test, measure, refactor, verify, sync    |
-| `spdd-workflow`      | SPDD canvas → spec → code → review → sync loop                    |
-| `verify-codebase`    | Format, lint, type-check, security scan, and test the project      |
+| `code-review`        | Review code changes for correctness, safety, and performance       |
+| `refactor-codebase`  | Performance refactoring — analyze, plan, baseline, execute, verify |
+| `spdd-workflow`      | Structured prompt-driven development — canvas → spec → code → sync |
+| `verify-codebase`    | Full verification pass — format, lint, type-check, scan, test, githook gate |
 
 ## Skills
 
 | Skill                       | Trigger                                                                                  |
 |-----------------------------|------------------------------------------------------------------------------------------|
-| `effective-code-craft`      | Writing modules, designing APIs, handling errors, tests, concurrency, code review        |
-| `performance-patterns`      | Optimizing for speed, throughput, latency, or memory usage                               |
+| `effective-code-craft`      | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
+| `performance-patterns`      | Optimizing for speed, throughput, latency, or memory after correctness is proven          |
 | `spec-driven-development`   | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
 
 ## SPDD Methodology
