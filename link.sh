@@ -2,11 +2,21 @@
 #
 # link.sh — symlink this repo's shared agent config into supported AI tools.
 #
-# Research grounding:
-#   - Kilo:    https://kilo.ai/docs/customize/         (config: ~/.config/kilo/AGENTS.md, agents dir: agent/)
-#   - OpenCode: https://opencode.ai/docs/               (config: ~/.config/opencode/AGENTS.md, agents dir: agents/)
+# What gets linked per tool:
+#   1. AGENTS.md  → tool's config file (GEMINI.md, CLAUDE.md, or AGENTS.md)
+#   2. commands/  → tool's commands/ directory
+#   3. skills/    → tool's skills/ directory
+#   4. agents/    → tool's agents/ directory (only for tools that support it)
 #
-# Other tools use their own conventional config file (CLAUDE.md, GEMINI.md, etc.) and have no agents dir.
+# Supported tools:
+#   gemini   → ~/.gemini/GEMINI.md
+#   codex    → ~/.codex/AGENTS.md
+#   claude   → ~/.claude/CLAUDE.md
+#   qwen     → ~/.qwen/AGENTS.md
+#   opencode → ~/.config/opencode/AGENTS.md   (agents dir: agents/)
+#   kilo     → ~/.config/kilo/AGENTS.md        (agents dir: agent/)
+#
+# Usage: link.sh [link|unlink|status] [tool-name]
 #
 
 set -euo pipefail
