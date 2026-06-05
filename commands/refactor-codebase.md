@@ -22,6 +22,6 @@ description: Structured refactoring — analyze, plan, execute, and verify with 
    - **Optimize deliberately, after correctness.** Preallocate collections when size is known; reuse objects in hot paths; buffer I/O; batch small operations; apply zero-copy and field-alignment where data supports it. Measure before and after; keep only proven improvements.
    - **Log only actionable information.** Structured fields, never secrets. Use tracing for request debugging and metrics for performance, not logs.
 
-5. **Verify** — run formatter, linter, type-checker, and full test suite. Re-profile against the baseline to confirm improvement, not regression.
+5. **Verify** — run formatter, linter, type-checker, and full test suite. Re-profile/benchmark against the baseline to confirm improvement, not regression.
 
 6. **Sync spec** — update or create the spec to match the refactor; never leave the spec describing the old shape.
