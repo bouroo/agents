@@ -4,7 +4,7 @@ description: Structured refactoring — analyze, plan, execute, and verify with 
 
 # Refactor Codebase
 
-1. **Analyze** — map the target area, dependencies, and call sites. Identify the smell, not just the symptom. Check for mutable global state, tight coupling to environment (env vars, CLI args, filesystem paths deep in packages), and missing error handling.
+1. **Analyze** — map the target area, dependencies, and call sites. Identify the smell, not just the symptom. Check for mutable global state, tight coupling to environment (env vars, CLI args, filesystem paths deep in packages), CPU/Memory/IO profilers, Heap escapes, and missing error handling.
 
 2. **Plan** — write a REASONS canvas (Requirements, Approach, Operations, Safeguards). Lock scope: what we will do, what we will not, what remains open. Tests and benchmarks are part of the plan, not an afterthought.
 
