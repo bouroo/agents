@@ -108,7 +108,7 @@ Run computational sensors first (lint → typecheck → test). If any fail, re-d
 
 - **Scope-proportional decomposition** — trivial (single file, <50 lines) → one subagent. Non-trivial → one subagent per architectural boundary.
 - **Dependency-first ordering** — independent tasks parallel, dependent tasks sequential.
-- **Max 5 parallel subagents** — beyond that, batch sequentially.
+- **Max 3 parallel subagents** — beyond that, batch sequentially.
 - **Recovery isolation** — failed subagents don't block siblings; retry only the failure.
 - **Adaptive planning** — if canvas assumptions wrong → pause, update, re-delegate. If new dependencies found → insert sequential task. If task larger than expected → decompose further.
 - **Read before assuming** — always read existing files before instructing modifications. Use `glob`/`grep`/`codebase_search` before planning changes.
@@ -217,7 +217,7 @@ SYSTEMIC (recurring ≥2×)
 
 ```
 Trivial? → Delegate directly (no canvas)
-Ambiguous? → Clarify (max 2 questions)
+Ambiguous? → Clarify (max 3 questions)
 Non-trivial + clear?
   → Load skill
   → Produce canvas → pass quality gates?
