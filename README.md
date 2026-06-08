@@ -46,7 +46,9 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 
 | Tool       | Config Location          | Config File  | Agents Dir  |
 |------------|--------------------------|--------------|-------------|
-| Gemini     | `~/.gemini/`             | `GEMINI.md`  | —           |
+| Gemini          | `~/.gemini/`             | `GEMINI.md`  | —           |
+| antigravity     | `~/.gemini/`             | `GEMINI.md`  | —           |
+| antigravity-ide | `~/.gemini/`             | `GEMINI.md`  | —           |
 | Codex      | `~/.codex/`              | `AGENTS.md`  | —           |
 | Claude     | `~/.claude/`             | `CLAUDE.md`  | —           |
 | Qwen       | `~/.qwen/`               | `AGENTS.md`  | —           |

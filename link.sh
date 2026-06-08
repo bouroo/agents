@@ -9,12 +9,14 @@
 #   4. agents/    → tool's agents/ directory (only for tools that support it)
 #
 # Supported tools:
-#   gemini   → ~/.gemini/GEMINI.md
-#   codex    → ~/.codex/AGENTS.md
-#   claude   → ~/.claude/CLAUDE.md
-#   qwen     → ~/.qwen/AGENTS.md
-#   opencode → ~/.config/opencode/AGENTS.md   (agents dir: agents/)
-#   kilo     → ~/.config/kilo/AGENTS.md        (agents dir: agent/)
+#   gemini          → ~/.gemini/GEMINI.md
+#   antigravity     → ~/.gemini/GEMINI.md      (shares directory with gemini)
+#   antigravity-ide → ~/.gemini/GEMINI.md      (shares directory with gemini)
+#   codex           → ~/.codex/AGENTS.md
+#   claude          → ~/.claude/CLAUDE.md
+#   qwen            → ~/.qwen/AGENTS.md
+#   opencode        → ~/.config/opencode/AGENTS.md   (agents dir: agents/)
+#   kilo            → ~/.config/kilo/AGENTS.md        (agents dir: agent/)
 #
 # Usage: link.sh [link|unlink|status] [tool-name]
 #
@@ -126,6 +128,8 @@ status_configs() {
 
 TARGETS=(
     "gemini:$HOME/.gemini:GEMINI.md:"
+    "antigravity:$HOME/.gemini:GEMINI.md:"
+    "antigravity-ide:$HOME/.gemini:GEMINI.md:"
     "codex:$HOME/.codex:AGENTS.md:"
     "claude:$HOME/.claude:CLAUDE.md:"
     "qwen:$HOME/.qwen:AGENTS.md:"
