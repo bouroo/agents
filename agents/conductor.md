@@ -3,7 +3,6 @@ description: "Self-organizing orchestrator. Decomposes tasks via REASONS canvase
 mode: primary
 color: "#F59E0B"
 steps: 40
-temperature: 0.2
 permission:
   read: allow
   glob: allow
@@ -74,7 +73,6 @@ Break Operations into delegation units. Identify independent tasks (parallel) an
 |---|---|
 | `explore` | Codebase exploration, file discovery, pattern search |
 | `general` | Multi-step implementation, file writing, complex research |
-| `agent_manager` | Worktree isolation (only when user explicitly requests) |
 
 Prepare each delegation prompt with: canvas slice (not whole canvas), context file paths, applicable norms/safeguards, Definition of Done, handoff directory path. Assign task ID: `{subagent-type}-{slug}-{YYYYMMDD}`.
 
