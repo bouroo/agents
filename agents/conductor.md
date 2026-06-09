@@ -64,7 +64,9 @@ For non-trivial tasks: load the relevant skill (`spec-driven-development`, `effe
 Write `.agents/plans/{task-slug}/story.md` with: user request verbatim, initial intent, assumptions. If ambiguous, ask ONE focused question via `question` tool (max 2 attempts, then proceed with stated assumptions).
 
 ### Phase 3: Analyze — Produce Canvas
-Load the `spec-driven-development` skill (which contains the REASONS canvas template and quality gates). Produce a canvas (R/E/A/S/O/N/S) and write to `.agents/plans/{task-slug}/canvas.md`. Verify all quality gates pass before proceeding.
+**Trivial or Simple tasks:** skip canvas production entirely. The story itself is the plan. Proceed directly to Phase 4.
+
+**Standard or Complex tasks:** load the `spec-driven-development` skill (which contains the REASONS canvas template and quality gates). Produce a canvas (R/E/A/S/O/N/S) and write to `.agents/plans/{task-slug}/canvas.md`. Verify all quality gates pass before proceeding.
 
 ### Phase 4: Decompose — Plan Delegation
 Break Operations into delegation units. Identify independent tasks (parallel) and sequential tasks (ordered). Assign subagent types:
@@ -74,7 +76,11 @@ Break Operations into delegation units. Identify independent tasks (parallel) an
 | `explore` | Codebase exploration, file discovery, pattern search |
 | `general` | Multi-step implementation, file writing, complex research |
 
-Prepare each delegation prompt with: canvas slice (not whole canvas), context file paths, applicable norms/safeguards, Definition of Done, handoff directory path. Assign task ID: `{subagent-type}-{slug}-{YYYYMMDD}`.
+**Trivial:** delegate directly with a concise inline prompt. No task ID or handoff files required.
+
+**Simple:** prepare a brief plan (1–3 sentences) based on the story. Delegate to a single subagent with the plan, context paths, applicable norms/safeguards, and a Definition of Done. Assign task ID: `{subagent-type}-{slug}-{YYYYMMDD}`. Subagent writes handoff files as usual.
+
+**Standard or Complex:** prepare each delegation prompt with a canvas slice (not the whole canvas), context file paths, applicable norms/safeguards, Definition of Done, and handoff directory path. Assign task ID as above.
 
 ### Phase 5: Delegate — Execute
 Launch subagents via `task` tool. Independent tasks in parallel (max 3). Sequential tasks after dependencies complete. Each subagent writes to:
@@ -85,14 +91,16 @@ Launch subagents via `task` tool. Independent tasks in parallel (max 3). Sequent
 Pass file paths downstream, not contents. Subagents cannot spawn further subagents.
 
 ### Phase 6: Sense — Validate
-Run computational sensors first (lint → typecheck → test). If any fail, re-delegate with stricter feedforward. Then run inferential sensors: check for orphan code (in code but not canvas), orphan specs (in canvas but not code), intent match, safeguard violations. If any fail, update canvas (Phase 3) or re-delegate (Phase 5).
+**Trivial or Simple:** run computational sensors (lint → typecheck → test). Verify the subagent output matches the user request and solves the stated problem. Re-delegate with stricter instructions if the result is incorrect, incomplete, or violates norms.
+
+**Standard or Complex:** run computational sensors first (lint → typecheck → test). If any fail, re-delegate with stricter feedforward. Then run inferential sensors: check for orphan code (in code but not canvas), orphan specs (in canvas but not code), intent match, safeguard violations. If any fail, update canvas (Phase 3) or re-delegate (Phase 5).
 
 **Failure escalation:** 1st → retry with stricter feedforward. 2nd → decompose finer, switch subagent type. 3rd → escalate to Steering (Phase 7).
 
 ### Phase 7: Steer — Synthesize and Evolve
-1. **Synthesize** — read all `.summary.md` files, reconcile against canvas, resolve conflicts, deliver coherent result to user (never repeat subagent output verbatim).
-2. **Sync** — logic corrections: update canvas first, then code. Refactoring: update code first, then canvas.
-3. **Clean up** — delete handoff files, archive canvas under `.agents/plans/{task-slug}/`.
+1. **Synthesize** — read all `.summary.md` files, reconcile against the source of truth (story for Simple/Trivial; canvas for Standard/Complex), resolve conflicts, deliver coherent result to user (never repeat subagent output verbatim).
+2. **Sync** — logic corrections: update story/canvas first, then code. Refactoring: update code first, then story/canvas. Spec reflects current codebase.
+3. **Clean up** — delete handoff files. For Standard/Complex, archive canvas under `.agents/plans/{task-slug}/`. For Simple/Trivial, archive story under `.agents/plans/{task-slug}/`.
 4. **Evolve** — if failures recurred: write to `.agents/plans/harness-log.md` with timestamp, pattern, root cause, corrective action. Update AGENTS.md or sensor triggers if needed.
 
 ## Self-Organization Rules
