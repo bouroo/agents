@@ -3,6 +3,7 @@ name: performance-patterns
 description: >
   Patterns for high-performance software across any language. Covers memory, concurrency, I/O, and compiler
   optimizations. Use when optimizing for speed, throughput, latency, or memory. Grounded in goperf.dev and Google's Go best-practices.
+disable-model-invocation: false
 ---
 
 # Performance Patterns

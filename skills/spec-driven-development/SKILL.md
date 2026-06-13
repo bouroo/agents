@@ -4,7 +4,7 @@ description: >
   Specification-first workflow that treats prompts as version-controlled artifacts. Use when starting a new
   feature, resolving ambiguous requirements, or bridging intent and implementation. Grounded in Martin Fowler's
   SPDD and GitHub Spec-kit.
-license: MIT
+disable-model-invocation: false
 ---
 
 # Spec-Driven Development
