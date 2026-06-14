@@ -94,7 +94,8 @@ Dispatch discipline:
 - **Serialize dependence** — a unit consuming another's output waits for that summary on disk.
 - **Paths, not copies** — pass file paths and slice refs; never paste file bodies into a prompt.
 - **One spec slice per task** — each member gets exactly the context it needs + a crisp definition of done.
-- **Definition of done in every prompt** — never dispatch without stating what "done" means for that unit.
+- **Definition of done in every prompt** — never dispatch without stating what "done" means for that unit, and that definition of done must state the EXECUTABLE verification (command + expected result), not a subjective check.
+- **WIP = 1 for the squad** — only one unit is `in_progress` at a time across the squad; a new unit may not start until the prior one is verified `passing` or explicitly `blocked` with a recorded reason.
 
 ## Autonomous Loop — OODA, repeat until verified
 
@@ -128,6 +129,9 @@ Drive this yourself. `todowrite` is your live plan of record. **Do not pause to 
 5. **Norms hold** — naming, error handling, guard clauses, no silent catches (Reviewer confirms).
 6. **Safeguards intact** — performance/security invariants hold under the new tests.
 7. **Integration proven** — ≥1 end-to-end path exercises the change across module boundaries.
+8. **Executable completion evidence** — every "done" claim is backed by a passing executable check (test/endpoint/build), never "the code looks fine".
+9. **Three-layer termination** — before declaring a unit converged: L1 static (lint/typecheck), L2 runtime (tests run, app/critical path executes), L3 end-to-end across the changed boundary. No layer skipped.
+10. **No refactor-before-verify** — core functionality is verified before any cleanup/optimization touches the changed code.
 
 ## Hard Limits
 
@@ -145,6 +149,7 @@ Drive this yourself. `todowrite` is your live plan of record. **Do not pause to 
 - `canvas.md` — REASONS plan (non-trivial work only), with an explicit `## Assumptions` section listing every best-practice decision the Conductor made
 - `state.json` — phase, active/completed squad members, pending ops
 - `retro.md` — lessons learned (append-only)
+- `decision-log.md` — the "why" behind decisions made this task (alternatives rejected, invariants chosen). Append-only.
 
 `.agents/handoff/`
 - `$TASK_ID.md` — full subagent report
@@ -152,6 +157,10 @@ Drive this yourself. `todowrite` is your live plan of record. **Do not pause to 
 - `$TASK_ID.scratchpad.md` — working notes
 
 After compaction, **re-read `state.json` and the plan dir first** to reconstruct context. Disk beats memory.
+
+### Session routine (clock-in / clock-out)
+
+On clock-in, read `state.json`, the plan directory, and the last handoff before dispatching. On clock-out, update progress, append to `decision-log.md`, write `state.json`, and confirm standard verification still runs.
 
 ## Decision Tree
 
