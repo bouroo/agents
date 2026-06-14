@@ -33,6 +33,7 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 └── .agents/                   # Runtime + reference directory
     ├── plans/                 # Spec drafts, REASONS canvases, plan trackers
     └── handoff/               # Subagent reports and summaries
+├── scripts/                    # Repo self-checks (validate-agents.sh)
 ```
 
 ## Supported Tools
@@ -81,6 +82,33 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 | `performance-patterns`      | Optimizing for speed, throughput, latency, or memory after correctness is proven          |
 | `spec-driven-development`   | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
 
+## OpenCode Format Mapping
+
+This repo follows the [opencode](https://opencode.ai/docs/) artifact format so it loads natively when `link.sh` symlinks `commands/`, `skills/`, and `agents/` into `~/.config/opencode/`. OpenCode auto-discovers all three directories; no `opencode.json` is required. The table maps each artifact to its opencode frontmatter contract.
+
+| Artifact | File | Recognized frontmatter | Notes |
+|---|---|---|---|
+| Rules | `AGENTS.md` | (none — plain markdown) | Read as global rules from `~/.config/opencode/AGENTS.md`. Keep it a router; load detail from skills. |
+| Agent | `agents/*.md` | `description` (req), `mode`, `temperature`, `steps`, `model`, `prompt`, `permission`, `hidden`, `color`, `top_p` | `permission` keys: `read edit glob grep list bash task external_directory todowrite webfetch websearch lsp skill question doom_loop` — each `allow\|ask\|deny` or a glob→action object. `tools` is deprecated; use `permission`. |
+| Command | `commands/*.md` | `description` (req), `agent`, `subtask`, `model` | Body is the prompt template. Supports `$ARGUMENTS`, `$1`/`$2`/…, `` !`cmd` `` shell injection, `@file` references. |
+| Skill | `skills/<name>/SKILL.md` | `name` (req, must equal dir, `^[a-z0-9]+(-[a-z0-9]+)*$`), `description` (req, 1–1024 chars), `license`, `compatibility`, `metadata` | Unknown fields (e.g. Kilo's `disable-model-invocation`) are ignored by opencode and kept for portability. Loaded on demand via the `skill` tool. |
+
+**Discovery paths (global):** `~/.config/opencode/{AGENTS.md, agents/, commands/, skills/}`. Claude-compatible fallbacks (`CLAUDE.md`, `~/.claude/skills/`, `.agents/skills/`) are also honored. Skills are discovered from `~/.agents/skills/*/SKILL.md` as well.
+
+**Optional `opencode.json`** (not shipped — the repo stays tool-neutral): to pull in extra instruction files or external references without editing `AGENTS.md`, a project can add:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["docs/guidelines.md"],
+  "references": {
+    "sdk": { "repository": "owner/repo", "description": "Use for SDK implementation details" }
+  }
+}
+```
+
+Validate the repo's artifacts at any time with `./scripts/validate-agents.sh`.
+
 ## Harness Engineering
 
 These configs embody the harness-engineering canon, not merely reference it: the repo is the operational record of truth; instructions are split into focused, agent-loadable modules; work in progress is limited to one verified task at a time; completion requires executable evidence; every task runs through static, runtime, and end-to-end verification; and state persists across sessions via explicit clock-in/out checklists.
@@ -108,3 +136,6 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 - [Harness Design for Long-Running Application Development — Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — Worker/checker separation, premature-victory prevention
 - [Learn Harness Engineering (12 lectures)](https://walkinglabs.github.io/learn-harness-engineering/en/) — Synthesized canon these configs are grounded in
 - [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — Why instructions must be split, not bloated
+- [Kilo Docs — Prompt Engineering](https://kilo.ai/docs/customize/prompt-engineering) — Think-then-do loop; clarity, context, output format
+- [Kilo Docs — Context Condensing](https://kilo.ai/docs/customize/context/context-condensing) — Why AGENTS.md must stay a router; compaction discipline
+- [Harness Engineering — Martin Fowler](https://martinfowler.com/articles/harness-engineering.html) — Companion article to the harness canon

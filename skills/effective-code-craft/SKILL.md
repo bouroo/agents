@@ -4,6 +4,7 @@ description: >
   Apply language-agnostic software craftsmanship principles. Use when writing, reviewing, or refactoring
   code for clarity, safety, testability, or efficiency. Grounded in the JetBrains 10x rules and the
   Google style guide.
+compatibility: opencode, kilo
 disable-model-invocation: false
 ---
 

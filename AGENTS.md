@@ -6,6 +6,7 @@ System-wide instructions for AI coding agents. Language-agnostic, environment-in
 
 - Repo is the system of record: state lives in files under `.agents/plans/`, not chat.
 - Split instructions, never bloat the entry file: keep this file a router; load topic docs on demand.
+- Mind the context budget: every line here persists across auto-compaction, so externalize detail into skill docs and load them on demand — see skills/harness-engineering §8.
 - WIP = 1: one active task at a time; finish+verify before starting the next.
 - Completion evidence is executable ("test passes", "endpoint returns 200"), never "the code looks fine".
 - Three-layer termination before declaring done: L1 static, L2 runtime, L3 end-to-end; no layer skipped.

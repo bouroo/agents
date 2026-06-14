@@ -6,6 +6,8 @@ description: Performance refactoring — analyze, plan, execute, and verify with
 
 A language-agnostic refactoring workflow that integrates architectural principles and performance patterns. Apply these after correctness is proven; measure before and after; keep only what the data supports.
 
+Target area (optional): **$ARGUMENTS**. If empty, ask the user which module/package/path to target before analyzing.
+
 ---
 
 ## 1. Analyze

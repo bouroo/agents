@@ -4,6 +4,7 @@ description: >
   Specification-first workflow that treats prompts as version-controlled artifacts. Use when starting a new
   feature, resolving ambiguous requirements, or bridging intent and implementation. Grounded in Martin Fowler's
   SPDD and GitHub Spec-kit.
+compatibility: opencode, kilo
 disable-model-invocation: false
 ---
 
@@ -75,6 +76,19 @@ Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS C
 1. **Abstraction-first** — Design objects, collaborations, and boundaries *before* generating code. Intent precedes implementation.
 2. **Alignment** — Lock scope explicitly: what we will do, what we won't, what remains open. Visible in the spec.
 3. **Iterative review** — Treat output as a controlled loop (spec → generate → verify → refine), not a one-shot draft.
+
+## Prompt Discipline (think → do)
+
+Structure every generation as a controlled loop, not a one-shot:
+
+1. **Analyze** — read the relevant code/state; restate the problem and the change boundary before writing anything.
+2. **Plan** — fill the REASONS canvas; name the ordered, testable steps; mark unknowns explicitly.
+3. **Execute** — implement one step at a time against the canvas, not intuition.
+4. **Review** — verify each step with an executable check before proceeding.
+
+Be specific and concrete in prompts: name files, symbols, and acceptance criteria. Vague prompts produce vague specs; vague specs produce wrong code. When a request is ambiguous, resolve it against best practice and record the assumption — do not silently guess.
+
+**Source:** Kilo — Prompt Engineering (https://kilo.ai/docs/customize/prompt-engineering).
 
 ## Workflow
 

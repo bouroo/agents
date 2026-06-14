@@ -6,6 +6,8 @@ description: Full verification pass with fix/review loop — format, lint, type-
 
 Goal: leave the working tree in a state that passes every quality gate, including the repository's githook verify script.
 
+Scope (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole working tree.
+
 ## Pipeline
 
 Run the following stages in order. If a stage produces findings, attempt **auto-fix**, then **re-verify**. Repeat until the stage is clean or no more auto-fixes are possible. Only then proceed to the next stage.

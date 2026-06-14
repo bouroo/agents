@@ -7,6 +7,7 @@ description: >
   checkpoints, or verification rules, or when an agent risks overreach, premature victory, or
   context loss. Grounded in the OpenAI and Anthropic harness canon and the 12-lecture "Learn
   Harness Engineering" series.
+compatibility: opencode, kilo
 disable-model-invocation: false
 ---
 
@@ -126,6 +127,20 @@ A strong model still fails when the closed-loop working system around it is weak
 
 **Source:** Lecture 12.
 
+## 8. Context Budget & Compaction
+
+**Why:** Every token in `AGENTS.md` and the system prompt persists across auto-compaction; detail buried there is paid for on every turn and is the first thing lost when context pressure rises.
+
+**Rules**
+- Treat `AGENTS.md` as a router: overview, hard constraints, and links to on-demand skill docs. Keep it ≤ ~200 lines.
+- Push detail into skill docs (like this one) that load only when relevant; never inline a skill's body into `AGENTS.md`.
+- Prefer `@file` / `{file:...}` references and lazy on-demand loading over pasting large bodies into the prompt.
+- Run compaction before major transitions, not mid-step: a clean summary at a phase boundary beats lossy compression under deadline pressure.
+- The most recent turns survive compaction; put the next executable action in the latest assistant turn or a tracked file — never rely on mid-history instructions being retained.
+- When context is tight, a clean reset from repo files (clock-in) beats continuing on a lossy, half-remembered thread.
+
+**Source:** Kilo — Context Condensing (https://kilo.ai/docs/customize/context/context-condensing); "Lost in the Middle" (Liu et al., 2023).
+
 ## Quick Checklist (clock-in / clock-out)
 
 **Clock in**
@@ -150,3 +165,5 @@ A strong model still fails when the closed-loop working system around it is weak
 - Anthropic: Harness design for long-running application development — https://www.anthropic.com/engineering/harness-design-long-running-apps
 - Learn Harness Engineering (12 lectures) — https://walkinglabs.github.io/learn-harness-engineering/en/
 - Lost in the Middle (Liu et al., 2023) — https://arxiv.org/abs/2307.03172
+- Kilo — Prompt Engineering — https://kilo.ai/docs/customize/prompt-engineering
+- Kilo — Context Condensing — https://kilo.ai/docs/customize/context/context-condensing

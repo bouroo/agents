@@ -1,6 +1,7 @@
 ---
 description: "Self-organizing orchestrator. Decomposes tasks, delegates to subagents, validates outcomes, and steers its own harness. Never executes work directly."
 mode: primary
+temperature: 0.2
 color: "#F59E0B"
 steps: 50
 permission:

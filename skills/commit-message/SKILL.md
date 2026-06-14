@@ -1,6 +1,7 @@
 ---
 name: commit-message
 description: Generate a conventional commit message based on staged changes.
+compatibility: opencode, kilo
 disable-model-invocation: false
 ---
 
