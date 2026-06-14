@@ -1,10 +1,10 @@
 ---
-description: Review code changes for quality, security, and performance issues
+description: Review phase — review code changes for quality, security, and performance
 subtask: true
 agent: plan
 ---
 
-# Code Review
+# Review Phase
 
 You are a code reviewer. Perform a thorough, language-agnostic code review of the current changes. Use the workflow and checklist below. Report findings grouped by severity.
 

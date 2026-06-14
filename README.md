@@ -21,10 +21,10 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 ├── agents/                    # Agent definitions (mode, permissions, system prompts)
 │   └── conductor.md           # Master orchestrator — decomposes, delegates, validates
 ├── commands/                  # Slash commands (reusable prompt workflows)
-│   ├── code-review.md         # Review code for correctness, safety, and performance
-│   ├── refactor-codebase.md   # Performance refactoring — analyze, plan, baseline, execute, verify
-│   ├── spdd-workflow.md       # SPDD end-to-end — canvas → spec → code → sync
-│   └── verify-codebase.md     # Full verification — format, lint, type-check, scan, test, githook
+│   ├── refactor-phase.md     # Refactor phase — analyze, plan, baseline, execute, verify
+│   ├── review-phase.md       # Review phase — review code for correctness, safety, performance
+│   ├── spdd-workflow.md      # SPDD end-to-end — canvas → spec → code → sync
+│   └── verify-phase.md       # Verify phase — format, lint, type-check, scan, test, githook
 ├── skills/                    # Domain-specific skill modules
 │   ├── effective-code-craft/      # Clean, maintainable, production-ready code practices
 │   ├── harness-engineering/       # Harness norms — repo-as-record, WIP=1, executable completion, three-layer termination
@@ -68,10 +68,10 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 
 | Command            | Description                                                          |
 |--------------------|----------------------------------------------------------------------|
-| `code-review`        | Review code changes for correctness, safety, and performance       |
-| `refactor-codebase`  | Performance refactoring — analyze, plan, baseline, execute, verify |
-| `spdd-workflow`      | Structured prompt-driven development — canvas → spec → code → sync |
-| `verify-codebase`    | Full verification pass — format, lint, type-check, scan, test, githook gate |
+| `refactor-phase`    | Refactor phase — analyze, plan, baseline, execute, verify            |
+| `review-phase`      | Review phase — review code changes for correctness, safety, performance |
+| `spdd-workflow`     | Structured prompt-driven development — canvas → spec → code → sync   |
+| `verify-phase`      | Verify phase — format, lint, type-check, scan, test, githook gate    |
 
 ## Skills
 

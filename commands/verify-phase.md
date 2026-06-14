@@ -1,8 +1,8 @@
 ---
-description: Full verification pass with fix/review loop — format, lint, type-check, scan, test, and githook gate
+description: Verify phase — format, lint, type-check, scan, test, and githook gate with fix/review loop
 ---
 
-# Verify Codebase
+# Verify Phase
 
 Goal: leave the working tree in a state that passes every quality gate, including the repository's githook verify script.
 
