@@ -2,6 +2,24 @@
 
 System-wide instructions for AI coding agents. Language-agnostic, environment-independent, tool-neutral.
 
+## Harness Engineering (behavioral controls)
+
+- Repo is the system of record: state lives in files under `.agents/plans/`, not chat.
+- Split instructions, never bloat the entry file: keep this file a router; load topic docs on demand.
+- Mind the context budget: every line here persists across auto-compaction, so externalize detail into skill docs and load them on demand — see skills/harness-engineering §8.
+- WIP = 1: one active task at a time; finish+verify before starting the next.
+- Completion evidence is executable ("test passes", "endpoint returns 200"), never "the code looks fine".
+- Three-layer termination before declaring done: L1 static, L2 runtime, L3 end-to-end; no layer skipped.
+- Don't declare victory early; don't refactor before core is verified; separate worker from checker.
+- Keep context alive across sessions: clock-in (read progress/decisions/last verification) and clock-out (update them) every session.
+- Every session leaves a clean state: startup + verification still run; no half-finished work unrecorded.
+- Gates enforce; prompts only request: move a standard you care about into an enforced gate (versioned, visible), not an instruction that drifts out of context. This repo's gate is `scripts/validate-agents.sh`.
+- Separate reasoning from computation: deterministic logic (arithmetic, parsing, validation, routing) belongs in tested code, not the model; explanations are not evidence.
+- Grade the tests, not just the code: an agent-authored green suite is one signal, not proof — prefer mutation testing and layered validation.
+- Improve the harness, not the prompt: a recurring failure is a harness problem; catalog failure modes and measure intent, not form.
+
+Detailed norms + clock-in/out checklist: [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) — load when designing workflows, checkpoints, or verification rules.
+
 ## 1. Spec-First (Spec is Truth)
 
 - Specs precede code, version with it, and drive implementation.
@@ -39,6 +57,7 @@ Leave no section empty. Mark unknowns explicitly; do not gloss them over.
 - **Verify core before optimize** — make it work, then make it right, then make it fast.
 - **Iterative review** — for logic corrections, update the spec first, then regenerate code; for refactors, change code first, then sync the spec.
 - **Use tools effectively** — read before editing, search before assuming, validate after writing, lint and typecheck after changes.
+- **Executable completion** — "done" means behavior verified by a passing check, not code that looks right; require a failing test/repro before fixing a bug.
 
 ## 5. Cross-Cutting Norms (Engineering Commandments)
 
@@ -79,8 +98,9 @@ Optimize deliberately, after correctness is proven.
 
 ## 7. Agent Interaction Protocol
 
-- **Load skills first** — before delegating or executing, load the relevant skill (spec-driven-development, effective-code-craft, performance-patterns) so its guidance is in context.
+- **Load skills first** — before delegating or executing, load the relevant skill (harness-engineering, spec-driven-development, effective-code-craft, performance-patterns) so its guidance is in context.
 - **Use the task tool for subagents** — delegate independent, well-scoped subtasks; do not over-fanout for trivial work.
 - **Filesystem handoffs** — exchange specs, plan trackers, and intermediate artifacts between agents via files under `.agents/plans/`, not via prompt injection.
 - **Synthesize** — after subagents complete, reconcile their outputs against the spec, resolve conflicts, and re-verify against the REASONS canvas before declaring done.
 - **Worktree isolation** — when working in parallel on independent concerns, use a separate worktree per concern to avoid contention.
+- **Separate worker from checker** — the agent that produces work must not be the sole judge of it; route verification to an independent reviewer/tester pass.

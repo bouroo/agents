@@ -1,10 +1,12 @@
 ---
-description: Performance refactoring — analyze, plan, execute, and verify with tests
+description: Refactor phase — analyze, plan, baseline, execute, and verify with tests
 ---
 
-# Refactor Codebase
+# Refactor Phase
 
 A language-agnostic refactoring workflow that integrates architectural principles and performance patterns. Apply these after correctness is proven; measure before and after; keep only what the data supports.
+
+Target area (optional): **$ARGUMENTS**. If empty, ask the user which module/package/path to target before analyzing.
 
 ---
 

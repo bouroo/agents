@@ -8,6 +8,8 @@ description: Run the structured prompt-driven development (SPDD) workflow end to
 Story → Analysis → Canvas → Generate → Test → Review → Sync
 ```
 
+Feature / story (from arguments, optional): **$ARGUMENTS**. If empty, ask the user for the one-sentence story before starting.
+
 1. **Story** — capture the user problem in plain language; surface the problem, not the solution.
 2. **Analysis** — identify entities, constraints, risks, and unknowns before writing anything.
 3. **Canvas** — fill the REASONS canvas (R, E, A, S, O, N, S). Leave no section empty; mark unknowns explicitly.
@@ -22,3 +24,5 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 - **Refactor (no behavior change)** → update the code first, then sync the spec to describe the new shape.
 
 Never merge one side without the other.
+
+For the phased-review rationale (cognitive load), test sequencing (API/e2e early, unit tests last), and when *not* to spec (fitness), see [spec-driven-development](../skills/spec-driven-development/SKILL.md).

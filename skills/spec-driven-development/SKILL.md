@@ -4,7 +4,8 @@ description: >
   Specification-first workflow that treats prompts as version-controlled artifacts. Use when starting a new
   feature, resolving ambiguous requirements, or bridging intent and implementation. Grounded in Martin Fowler's
   SPDD and GitHub Spec-kit.
-license: MIT
+compatibility: opencode, kilo
+disable-model-invocation: false
 ---
 
 # Spec-Driven Development
@@ -76,9 +77,26 @@ Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS C
 2. **Alignment** — Lock scope explicitly: what we will do, what we won't, what remains open. Visible in the spec.
 3. **Iterative review** — Treat output as a controlled loop (spec → generate → verify → refine), not a one-shot draft.
 
+## Prompt Discipline (think → do)
+
+Structure every generation as a controlled loop, not a one-shot:
+
+1. **Analyze** — read the relevant code/state; restate the problem and the change boundary before writing anything.
+2. **Plan** — fill the REASONS canvas; name the ordered, testable steps; mark unknowns explicitly.
+3. **Execute** — implement one step at a time against the canvas, not intuition.
+4. **Review** — verify each step with an executable check before proceeding.
+
+Be specific and concrete in prompts: name files, symbols, and acceptance criteria; give examples and specify the output format. Vague prompts produce vague specs; vague specs produce wrong code. When a request is ambiguous, resolve it against best practice and record the assumption — do not silently guess.
+
+**Source:** Kilo — Prompt Engineering (https://kilo.ai/docs/customize/prompt-engineering).
+
 ## Workflow
 
+```
 Story → Analysis → Canvas → Generate → Test → Review → Sync
+  ↑                                                      |
+  └────────────── repeat until aligned ──────────────────┘
+```
 
 1. **Story** — Capture the user problem; surface the problem, not the solution.
 2. **Analysis** — Identify entities, constraints, risks, unknowns.
@@ -87,6 +105,40 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 5. **Test** — Verify code satisfies every section of the spec.
 6. **Review** — Check for orphans (code without spec) and gaps (spec without code).
 7. **Sync** — Update spec and code together; never land one without the other.
+
+### Why the workflow is phased — cognitive load, not ceremony
+
+Intent confirmation is *distributed* across the steps, not compressed into one review after the plan. A single large review overwhelms the reviewer — they skim, defer, or approve by default — and intent drifts even when everything looks correct on paper. Each checkpoint stays small enough to actually engage with: Step 2 pins the *problem*, Step 3 the *why/what*, Step 4 the *design/operations*, Step 5 the *behavior*, Step 6 the *code*. By the time you review code, requirements and design are already signed off, so attention goes to what matters at that stage.
+
+### Test sequencing — a deliberate inversion of TDD
+
+Classic TDD uses tests to shape design through fast feedback. This workflow wants the same outcomes but distributes them differently:
+
+- **API / end-to-end tests come early** — validate behavior at the system boundary so you only review code that actually works. Generated code is cheap; there is little value reviewing implementation that does not satisfy the intended behavior.
+- **Code review then focuses on what only humans can judge** — logic, architecture, trade-offs, non-functional concerns.
+- **Unit tests come last as a regression net** — once intent is explicit in the canvas and the implementation has stabilized through boundary validation and review, generate unit tests to lock behavior in. Generating them earlier means rewriting them after review-driven changes.
+
+Tests are not less important here; intent is just made explicit earlier, so tests apply at the stages where they create the most leverage. Grade the tests themselves (mutation testing) — see [[harness-engineering]] §12.
+
+## Fitness — when to spec, and when not to
+
+SPDD is an investment that pays off in logic-heavy, repeatable, high-constraint work. Decide up front whether to invoke it.
+
+| Fit | Scenario |
+|---|---|
+| ★★★★★ | Scaled, standardized delivery; high-compliance / hard-constraint systems; multi-person traceable changes; cross-cutting consistency refactors. |
+| ★★☆☆☆ | Hotfixes under fire; exploratory spikes; one-off/disposable scripts. |
+| ★☆☆☆☆ | Context black holes (domain rules unclear, no boundaries); pure aesthetic/visual work driven by taste, not logic. |
+
+For the low-fit cases, skip the canvas and note the assumption. For hotfixes specifically: stabilize first, then close the governance loop afterward (update the spec/asset retroactively so production signal feeds back).
+
+## Three Triggers to Tighten a Spec
+
+When output is wrong, the fix is usually a sharper spec, not a louder prompt:
+
+- **Behavioral mismatch** (output deviates from acceptance criteria) → logic-correction case: update the spec first, then regenerate the code.
+- **Overcomplicated logic** (solution more elaborate than the problem warrants) → the **Approach** or **Operations** section is under-specified; tighten the constraints.
+- **Instruction failure** (agent ignores a Norm or Safeguard) → make that constraint more prominent and unambiguous in the spec itself.
 
 ## Spec Quality Checklist
 
@@ -110,6 +162,7 @@ Verify before delegation:
 - **No speculative features** — if it is not in the spec, do not build it.
 - **Immutable principles** — never violate Norms or Safeguards for convenience.
 - **Bidirectional feedback** — production reality informs spec evolution.
+- **Logic change** → update the spec first, then regenerate code; **Refactor (no behavior change)** → change code first, then sync the spec. Never land one side without the other.
 
 ## Constitutional Gates (Spec-kit)
 
@@ -157,3 +210,5 @@ Language-agnostic norms derived from production style guides. Specify these in t
 - Resolving ambiguous or conflicting requirements.
 - Bridging intent and implementation across a team.
 - Refactoring without losing context.
+
+Skip the canvas (and note the assumption) for trivial fixes, spikes, one-off scripts, or pure aesthetic work — see the Fitness table above.
