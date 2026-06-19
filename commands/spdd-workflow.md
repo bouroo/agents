@@ -24,3 +24,5 @@ Feature / story (from arguments, optional): **$ARGUMENTS**. If empty, ask the us
 - **Refactor (no behavior change)** → update the code first, then sync the spec to describe the new shape.
 
 Never merge one side without the other.
+
+For the phased-review rationale (cognitive load), test sequencing (API/e2e early, unit tests last), and when *not* to spec (fitness), see [spec-driven-development](../skills/spec-driven-development/SKILL.md).

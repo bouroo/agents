@@ -33,6 +33,7 @@ Apply in order; when they conflict, the higher priority wins.
 - Test names read as sentences about behavior. Cover happy path, error path, edge cases.
 - Add integration tests for end-to-end flows; use tests to dogfood your own APIs.
 - Prefer runnable examples as living documentation that cannot drift from the code.
+- Grade the tests, not just the code: a green suite is one signal, not proof. Prefer mutation testing to expose tests that pass without exercising logic — see [harness-engineering](../harness-engineering/SKILL.md) §12.
 
 ## 3. Code for Reading
 
@@ -45,6 +46,7 @@ Apply in order; when they conflict, the higher priority wins.
 
 - Make invalid states unrepresentable; provide a useful zero value or a validating constructor.
 - Use named constants, not magic values. Apply least-privilege to capabilities and permissions.
+- Encode rules in types, constants, and validators rather than model judgment — deterministic logic belongs in tested code, not the LLM (see [harness-engineering](../harness-engineering/SKILL.md) §11).
 - Avoid in-band errors (sentinel values like `-1`, `null`); use explicit error returns or `ok` booleans.
 
 ## 5. Wrap Errors, Don't Flatten

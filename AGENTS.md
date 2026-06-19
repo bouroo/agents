@@ -13,6 +13,10 @@ System-wide instructions for AI coding agents. Language-agnostic, environment-in
 - Don't declare victory early; don't refactor before core is verified; separate worker from checker.
 - Keep context alive across sessions: clock-in (read progress/decisions/last verification) and clock-out (update them) every session.
 - Every session leaves a clean state: startup + verification still run; no half-finished work unrecorded.
+- Gates enforce; prompts only request: move a standard you care about into an enforced gate (versioned, visible), not an instruction that drifts out of context. This repo's gate is `scripts/validate-agents.sh`.
+- Separate reasoning from computation: deterministic logic (arithmetic, parsing, validation, routing) belongs in tested code, not the model; explanations are not evidence.
+- Grade the tests, not just the code: an agent-authored green suite is one signal, not proof — prefer mutation testing and layered validation.
+- Improve the harness, not the prompt: a recurring failure is a harness problem; catalog failure modes and measure intent, not form.
 
 Detailed norms + clock-in/out checklist: [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) — load when designing workflows, checkpoints, or verification rules.
 

@@ -1,6 +1,6 @@
 # Self-Organized Agent Configuration
 
-Shared, language-agnostic agent configuration for AI coding assistants. Contains global coding standards (AGENTS.md), reusable slash commands, domain-specific skills, and an orchestrator agent. Symlinked into each supported tool's config directory via `link.sh`.
+Shared, language-agnostic agent configuration for AI coding assistants. Contains global coding standards (AGENTS.md), reusable slash commands, on-demand skills, and orchestrator agents. Symlinked into each supported tool's config directory via `link.sh`.
 
 ## Quick Start
 
@@ -15,25 +15,28 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 
 ```
 ~/.agents/
-├── AGENTS.md                  # Global coding standards and workflow principles
-├── README.md                  # This file
-├── link.sh                    # Symlink manager for supported tools
-├── agents/                    # Agent definitions (mode, permissions, system prompts)
-│   └── conductor.md           # Master orchestrator — decomposes, delegates, validates
-├── commands/                  # Slash commands (reusable prompt workflows)
-│   ├── refactor-phase.md     # Refactor phase — analyze, plan, baseline, execute, verify
-│   ├── review-phase.md       # Review phase — review code for correctness, safety, performance
-│   ├── spdd-workflow.md      # SPDD end-to-end — canvas → spec → code → sync
-│   └── verify-phase.md       # Verify phase — format, lint, type-check, scan, test, githook
-├── skills/                    # Domain-specific skill modules
-│   ├── effective-code-craft/      # Clean, maintainable, production-ready code practices
-│   ├── harness-engineering/       # Harness norms — repo-as-record, WIP=1, executable completion, three-layer termination
-│   ├── performance-patterns/      # High-performance software patterns (memory, concurrency, I/O)
-│   └── spec-driven-development/   # Specification-first workflow with REASONS canvas
-└── .agents/                   # Runtime + reference directory
-    ├── plans/                 # Spec drafts, REASONS canvases, plan trackers
-    └── handoff/               # Subagent reports and summaries
-├── scripts/                    # Repo self-checks (validate-agents.sh)
+├── AGENTS.md                      # Global coding standards and workflow router
+├── README.md                      # This file
+├── link.sh                        # Symlink manager for supported tools
+├── agents/                        # Orchestrator agents (mode, permissions, prompt)
+│   ├── conductor.md               # Decisive orchestrator — assumes on best practice, records, rarely asks
+│   └── squad-lead.md              # Alignment-first orchestrator — batched clarify gate before planning
+├── commands/                      # Slash commands (reusable prompt workflows)
+│   ├── refactor-phase.md
+│   ├── review-phase.md
+│   ├── spdd-workflow.md
+│   └── verify-phase.md
+├── skills/                        # On-demand skill modules (load via the skill tool)
+│   ├── commit-message/
+│   ├── effective-code-craft/
+│   ├── harness-engineering/
+│   ├── performance-patterns/
+│   └── spec-driven-development/
+├── scripts/
+│   └── validate-agents.sh         # Repo self-checks — the opencode-format gate
+└── .agents/                       # Runtime + reference directory (created on use)
+    ├── plans/                     # Spec drafts, REASONS canvases, plan trackers, retros
+    └── handoff/                   # Subagent reports and summaries
 ```
 
 ## Supported Tools
@@ -60,9 +63,12 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 
 ## Agents
 
-| Agent        | Mode    | Purpose                                                  |
-|--------------|---------|----------------------------------------------------------|
-| `conductor`  | primary | Self-organizing orchestrator — decomposes, delegates, senses, self-corrects, steers |
+| Agent        | Mode    | Purpose                                                                                  |
+|--------------|---------|------------------------------------------------------------------------------------------|
+| `conductor`  | primary | Decisive orchestrator — decomposes, delegates, verifies. Assumes on best practice, records every assumption, rarely asks. |
+| `squad-lead` | primary | Alignment-first orchestrator — same squad mechanics, but locks scope with a batched clarification gate before planning.   |
+
+Both are non-coding: they think, dispatch, verify, and steer through a squad of subagents. They share canonical Convergence Gates and On-Disk State (see [skills/harness-engineering](skills/harness-engineering/SKILL.md) Appendix A & B).
 
 ## Commands
 
@@ -78,9 +84,10 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 | Skill                       | Trigger                                                                                  |
 |-----------------------------|------------------------------------------------------------------------------------------|
 | `effective-code-craft`      | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
-| `harness-engineering`       | Designing agent workflows, checkpoints, or verification rules; preventing overreach, premature victory, or context loss |
+| `harness-engineering`       | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; building guides/sensors, gates, and lifecycle controls; preventing overreach, premature victory, or context loss |
 | `performance-patterns`      | Optimizing for speed, throughput, latency, or memory after correctness is proven          |
 | `spec-driven-development`   | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
+| `commit-message`            | Generating a conventional commit message from staged changes                              |
 
 ## OpenCode Format Mapping
 
@@ -111,7 +118,9 @@ Validate the repo's artifacts at any time with `./scripts/validate-agents.sh`.
 
 ## Harness Engineering
 
-These configs embody the harness-engineering canon, not merely reference it: the repo is the operational record of truth; instructions are split into focused, agent-loadable modules; work in progress is limited to one verified task at a time; completion requires executable evidence; every task runs through static, runtime, and end-to-end verification; and state persists across sessions via explicit clock-in/out checklists.
+These configs embody the harness-engineering canon, not merely reference it. The repo is the operational record of truth; instructions are split into focused, agent-loadable modules; work in progress is limited to one verified task at a time; completion requires executable evidence; every task runs through static, runtime, and end-to-end verification; and state persists across sessions via explicit clock-in/out checklists.
+
+The `harness-engineering` skill adds the design vocabulary for *building* these controls — feedforward **guides** vs feedback **sensors**, **computational** vs **inferential** controls — plus the engineering disciplines that keep agent output trustworthy: **gates enforce** (prompts only request), **separate reasoning from computation** (deterministic logic belongs in tested code, not the model), **grade the tests** (mutation testing; an agent-authored green suite is a signal, not proof), and **engineer the whole lifecycle** (improve the harness, not the prompt; deliberate friction is leverage).
 
 Norms + clock-in/out checklist: [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md)
 
@@ -123,10 +132,15 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
   └────────────── repeat until aligned ──────────────────┘
 ```
 
+The workflow is phased to keep each review checkpoint small enough to engage with (cognitive load, not ceremony): validate behavior at the system boundary early, review code only once it works, and generate unit tests last as a regression net. See [skills/spec-driven-development](skills/spec-driven-development/SKILL.md) for the fitness table — when to spec, and when not to.
+
 ## References
 
-- [Structured Prompt-Driven Development (SPDD)](https://martinfowler.com/articles/structured-prompt-driven/) — REASONS Canvas, prompt-code bidirectional sync
+- [Structured Prompt-Driven Development (SPDD)](https://martinfowler.com/articles/structured-prompt-driven/) — REASONS Canvas, prompt-code bidirectional sync, phased-review rationale
 - [GitHub Spec-Kit — Spec-driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md) — Spec-as-truth, executable specs, constitutional gates
+- [Harness Engineering — Martin Fowler](https://martinfowler.com/articles/harness-engineering.html) — Guides vs sensors; computational vs inferential controls; shift quality left
+- [Maintaining Code Quality at Agent Speed — Salesforce](https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/) — Gates over prompts, grade-the-tests, mutation testing, engineer the lifecycle
+- [How to Build Reliable AI Agents — Salesforce](https://engineering.salesforce.com/how-to-build-reliable-ai-agents-5-engineering-patterns-from-a-production-system/) — Separate reasoning from computation, explanations≠evidence, improve the harness
 - [10x Commandments of Highly Effective Go](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/) — Code quality and readability principles
 - [Go Performance Patterns](https://goperf.dev/01-common-patterns/) — Memory, concurrency, I/O, compiler optimization patterns
 - [Kilo Docs — Customize](https://kilo.ai/docs/customize/) — Config at `~/.config/kilo/AGENTS.md`, agents dir `agent/`
@@ -138,4 +152,3 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 - [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — Why instructions must be split, not bloated
 - [Kilo Docs — Prompt Engineering](https://kilo.ai/docs/customize/prompt-engineering) — Think-then-do loop; clarity, context, output format
 - [Kilo Docs — Context Condensing](https://kilo.ai/docs/customize/context/context-condensing) — Why AGENTS.md must stay a router; compaction discipline
-- [Harness Engineering — Martin Fowler](https://martinfowler.com/articles/harness-engineering.html) — Companion article to the harness canon
