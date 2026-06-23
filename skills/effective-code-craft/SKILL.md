@@ -40,7 +40,8 @@ Apply in order; when they conflict, the higher priority wins.
 - Name length scales with scope: short for locals (`i`, `buf`, `err`), longer at package level. Single-word names first; add words only to disambiguate.
 - Omit type-like words (`users` over `userSlice`) and context the surrounding API already provides (`count`, not `userCount`, inside `UserCount`).
 - Avoid `get`/`Get` prefixes; start with the noun. Don't repeat package names in exported symbols (`widget.New`, not `widget.NewWidget`).
-- Comments explain *why*, not *what*. Doc comments are full sentences beginning with the symbol's name.
+- Arrange code to explain itself: clear names, short functions, and named helpers carry intent so the reader rarely needs prose. Reserve comments for the *why* the code cannot show — non-obvious rationale, constraints, or history.
+- When a comment is warranted, keep it terse and in the language's idiomatic doc style (e.g., godoc, JSDoc, rustdoc): full sentences for exported symbols, beginning with the symbol's name; no restating of what the code already says.
 
 ## 4. Safe by Default
 
