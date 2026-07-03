@@ -24,7 +24,6 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 ├── commands/                      # Slash commands (reusable prompt workflows)
 │   ├── refactor-phase.md
 │   ├── review-phase.md
-│   ├── spdd-workflow.md
 │   └── verify-phase.md
 ├── skills/                        # On-demand skill modules (load via the skill tool)
 │   ├── commit-message/
@@ -76,7 +75,6 @@ Both are non-coding: they think, dispatch, verify, and steer through a squad of 
 |--------------------|----------------------------------------------------------------------|
 | `refactor-phase`    | Refactor phase — analyze, plan, baseline, execute, verify            |
 | `review-phase`      | Review phase — review code changes for correctness, safety, performance |
-| `spdd-workflow`     | Structured prompt-driven development — canvas → spec → code → sync   |
 | `verify-phase`      | Verify phase — format, lint, type-check, scan, test, githook gate    |
 
 ## Skills
@@ -149,6 +147,11 @@ The workflow is phased to keep each review checkpoint small enough to engage wit
 - [Effective Harnesses for Long-Running Agents — Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — Small next steps, handoff files, context anxiety
 - [Harness Design for Long-Running Application Development — Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — Worker/checker separation, premature-victory prevention
 - [Learn Harness Engineering (12 lectures)](https://walkinglabs.github.io/learn-harness-engineering/en/) — Synthesized canon these configs are grounded in
+- [Unrolling the Codex agent loop — OpenAI](https://openai.com/index/unrolling-the-codex-agent-loop/) — How the agent loop is structured and where the harness intervenes
+- [Demystifying evals for AI agents — Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) — Designing evaluator rubrics and calibrating agent self-judgment
+- [Improving Deep Agents with harness engineering — LangChain](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering) — Applying guides/sensors and lifecycle controls to deep agents
+- [Continually improving our agent harness — Cursor](https://cursor.com/blog/continually-improving-agent-harness) — Iterating the harness as models improve; simplification over accretion
+- [Decision-Time Guidance: Keeping Replit Agent Reliable — Replit](https://blog.replit.com/decision-time-guidance) — Situational guidance at the decision point instead of prompt-stuffing
 - [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — Why instructions must be split, not bloated
 - [Kilo Docs — Prompt Engineering](https://kilo.ai/docs/customize/prompt-engineering) — Think-then-do loop; clarity, context, output format
 - [Kilo Docs — Context Condensing](https://kilo.ai/docs/customize/context/context-condensing) — Why AGENTS.md must stay a router; compaction discipline
