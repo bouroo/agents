@@ -23,7 +23,7 @@ Use this 7-part structure for every spec:
 | **A — Approach** | Chosen strategy, alternatives rejected, why |
 | **S — Structure** | Component placement, dependencies, interfaces |
 | **O — Operations** | Concrete, testable implementation steps in order |
-| **N — Norms** | Cross-cutting rules: naming, error handling, documentation, code clarity |
+| **N — Norms** | Cross-cutting rules: naming, error handling, documentation, clarity |
 | **S — Safeguards** | Non-negotiable boundaries: invariants, perf limits, security |
 
 ### Template
@@ -54,11 +54,11 @@ Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS C
 ## O — Operations
 - Ordered, testable implementation steps
 - Each step precise enough for a subagent to execute without ambiguity
-- Include test scenarios (happy path, error path, edge cases)
+- Test scenarios: happy path, error path, edge cases
 - At least one step exercises an end-to-end boundary
 
 ## N — Norms
-- Naming: scope-proportional, no repetition of context/type, no type-in-name
+- Naming: scope-proportional, no context/type repetition
 - Error handling: explicit returns, guard-clause-first, wrap-with-context
 - Documentation: name-first sentences for public symbols
 - Style: eliminate nesting, omit zero-value noise
@@ -81,12 +81,12 @@ Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS C
 
 Structure every generation as a controlled loop, not a one-shot:
 
-1. **Analyze** — read the relevant code/state; restate the problem and the change boundary before writing anything.
+1. **Analyze** — read the relevant code/state; restate the problem and change boundary before writing anything.
 2. **Plan** — fill the REASONS canvas; name the ordered, testable steps; mark unknowns explicitly.
 3. **Execute** — implement one step at a time against the canvas, not intuition.
 4. **Review** — verify each step with an executable check before proceeding.
 
-Be specific and concrete in prompts: name files, symbols, and acceptance criteria; give examples and specify the output format. Vague prompts produce vague specs; vague specs produce wrong code. When a request is ambiguous, resolve it against best practice and record the assumption — do not silently guess.
+Be specific: name files, symbols, and acceptance criteria; give examples and specify output format. Vague prompts produce vague specs; vague specs produce wrong code. When ambiguous, resolve against best practice and record the assumption — don't silently guess.
 
 **Source:** Kilo — Prompt Engineering (https://kilo.ai/docs/customize/prompt-engineering).
 
@@ -108,21 +108,21 @@ Story → Analysis → Canvas → Generate → Test → Review → Sync
 
 ### Why the workflow is phased — cognitive load, not ceremony
 
-Intent confirmation is *distributed* across the steps, not compressed into one review after the plan. A single large review overwhelms the reviewer — they skim, defer, or approve by default — and intent drifts even when everything looks correct on paper. Each checkpoint stays small enough to actually engage with: Step 2 pins the *problem*, Step 3 the *why/what*, Step 4 the *design/operations*, Step 5 the *behavior*, Step 6 the *code*. By the time you review code, requirements and design are already signed off, so attention goes to what matters at that stage.
+Intent confirmation is *distributed* across steps, not compressed into one review. A single large review overwhelms the reviewer — they skim, defer, or approve by default — and intent drifts even when everything looks correct on paper. Each checkpoint stays small: Step 2 pins the *problem*, Step 3 the *why/what*, Step 4 the *design/operations*, Step 5 the *behavior*, Step 6 the *code*. By code review, requirements and design are already signed off, so attention goes to what matters.
 
 ### Test sequencing — a deliberate inversion of TDD
 
-Classic TDD uses tests to shape design through fast feedback. This workflow wants the same outcomes but distributes them differently:
+Classic TDD uses tests to shape design through fast feedback. SPDD distributes the same outcomes differently:
 
-- **API / end-to-end tests come early** — validate behavior at the system boundary so you only review code that actually works. Generated code is cheap; there is little value reviewing implementation that does not satisfy the intended behavior.
+- **API / end-to-end tests come early** — validate behavior at the system boundary so you only review code that actually works. Generated code is cheap; little value reviewing implementation that doesn't satisfy intended behavior.
 - **Code review then focuses on what only humans can judge** — logic, architecture, trade-offs, non-functional concerns.
-- **Unit tests come last as a regression net** — once intent is explicit in the canvas and the implementation has stabilized through boundary validation and review, generate unit tests to lock behavior in. Generating them earlier means rewriting them after review-driven changes.
+- **Unit tests come last as a regression net** — once intent is explicit in the canvas and the implementation has stabilized, generate unit tests to lock behavior in. Generating them earlier means rewriting after review-driven changes.
 
-Tests are not less important here; intent is just made explicit earlier, so tests apply at the stages where they create the most leverage. Grade the tests themselves (mutation testing) — see [[harness-engineering]] §12.
+Grade the tests themselves (mutation testing) — see [harness-engineering](../harness-engineering/SKILL.md) §12.
 
 ## Fitness — when to spec, and when not to
 
-SPDD is an investment that pays off in logic-heavy, repeatable, high-constraint work. Decide up front whether to invoke it.
+SPDD pays off in logic-heavy, repeatable, high-constraint work. Decide up front.
 
 | Fit | Scenario |
 |---|---|
@@ -130,51 +130,51 @@ SPDD is an investment that pays off in logic-heavy, repeatable, high-constraint 
 | ★★☆☆☆ | Hotfixes under fire; exploratory spikes; one-off/disposable scripts. |
 | ★☆☆☆☆ | Context black holes (domain rules unclear, no boundaries); pure aesthetic/visual work driven by taste, not logic. |
 
-For the low-fit cases, skip the canvas and note the assumption. For hotfixes specifically: stabilize first, then close the governance loop afterward (update the spec/asset retroactively so production signal feeds back).
+For low-fit cases, skip the canvas and note the assumption. For hotfixes: stabilize first, then close the governance loop afterward (update the spec/asset retroactively so production signal feeds back).
 
 ## Three Triggers to Tighten a Spec
 
 When output is wrong, the fix is usually a sharper spec, not a louder prompt:
 
-- **Behavioral mismatch** (output deviates from acceptance criteria) → logic-correction case: update the spec first, then regenerate the code.
-- **Overcomplicated logic** (solution more elaborate than the problem warrants) → the **Approach** or **Operations** section is under-specified; tighten the constraints.
-- **Instruction failure** (agent ignores a Norm or Safeguard) → make that constraint more prominent and unambiguous in the spec itself.
+- **Behavioral mismatch** (output deviates from acceptance criteria) → logic-correction: update the spec first, then regenerate the code.
+- **Overcomplicated logic** (solution more elaborate than the problem warrants) → **Approach** or **Operations** is under-specified; tighten the constraints.
+- **Instruction failure** (agent ignores a Norm or Safeguard) → make that constraint more prominent and unambiguous in the spec.
 
 ## Spec Quality Checklist
 
 Verify before delegation:
 
-- [ ] Every REASONS section is filled — no empty sections.
+- [ ] Every REASONS section filled — no empty sections.
 - [ ] Requirements have measurable acceptance criteria and a Definition of Done.
 - [ ] Safeguards specify numeric limits (latency, size, error rates, quotas).
-- [ ] Norms cover naming, logging, and error handling.
+- [ ] Norms cover naming, logging, error handling.
 - [ ] Norms specify scope-proportional naming and guard-clause control flow.
-- [ ] No in-band error signaling — errors are explicit, not sentinel values.
+- [ ] No in-band error signaling — errors explicit, not sentinel values.
 - [ ] Public symbols have name-first doc comments (full sentences).
-- [ ] Unknowns are marked with `[NEEDS CLARIFICATION]`, not glossed over.
-- [ ] Operations are ordered and testable — a subagent can execute them sequentially.
-- [ ] Generated code has no orphaned features (in code but not in spec).
-- [ ] Generated spec has no orphan requirements (in spec but not in code).
+- [ ] Unknowns marked `[NEEDS CLARIFICATION]`, not glossed over.
+- [ ] Operations ordered and testable — a subagent can execute sequentially.
+- [ ] No orphaned features (in code but not in spec).
+- [ ] No orphan requirements (in spec but not in code).
 
 ## Key Rules
 
 - **Sync, not handoff** — spec and code evolve together; a stale spec is a bug.
-- **No speculative features** — if it is not in the spec, do not build it.
+- **No speculative features** — if it's not in the spec, don't build it.
 - **Immutable principles** — never violate Norms or Safeguards for convenience.
 - **Bidirectional feedback** — production reality informs spec evolution.
-- **Logic change** → update the spec first, then regenerate code; **Refactor (no behavior change)** → change code first, then sync the spec. Never land one side without the other.
+- **Logic change** → update spec first, then regenerate code; **Refactor (no behavior change)** → change code first, then sync spec. Never land one side without the other.
 
 ## Constitutional Gates (Spec-kit)
 
 - **Simplicity** — prefer ≤3 projects at the initial implementation stage.
-- **Anti-abstraction** — use the language's natural types; do not introduce a layer that does not add value.
+- **Anti-abstraction** — use the language's natural types; don't introduce a layer that adds no value.
 - **Test-first** — write tests before implementation; tests encode the spec.
 - **Integration-first** — prefer end-to-end tests that exercise real boundaries.
 - **Library-first** — structure as reusable libraries with a thin CLI shim on top.
-- **CLI interface** — every feature should be reachable from the command line.
+- **CLI interface** — every feature reachable from the command line.
 - **Guard clauses** — handle errors and edge cases first; keep the happy path unindented.
 - **No in-band errors** — return explicit error values, never overload return values to signal failure.
-- **Eliminate repetition** — names must not repeat package, type, or surrounding context information.
+- **Eliminate repetition** — names must not repeat package, type, or surrounding context.
 - **Named construction** — use explicit field/parameter names when constructing external types; omit zero-value defaults.
 
 ## Norms Reference
@@ -183,25 +183,25 @@ Language-agnostic norms derived from production style guides. Specify these in t
 
 ### Naming
 
-- **Scope-proportional** — name length proportional to scope size and inversely proportional to usage frequency. Single-letter names for tiny scopes (`i`, `err`); descriptive names for package-level symbols.
-- **No repetition** — names must not repeat their enclosing context. `db.Load`, not `db.LoadFromDatabase`. `count`, not `userCount` inside a `UserCount` method.
-- **No type-in-name** — omit type information from variable names. `users`, not `usersSlice`; `limit`, not `limitInt`.
+- **Scope-proportional** — name length proportional to scope, inversely proportional to usage. Single-letter names for tiny scopes (`i`, `err`); descriptive names at package level.
+- **No repetition** — names must not repeat enclosing context. `db.Load`, not `db.LoadFromDatabase`. `count`, not `userCount` inside `UserCount`.
+- **No type-in-name** — omit type info from variable names. `users`, not `usersSlice`; `limit`, not `limitInt`.
 
 ### Error Handling
 
-- **Explicit returns** — functions that can fail return a separate error value, not in-band sentinels (-1, null, empty string).
-- **Guard-clause flow** — handle errors and edge cases at the top of the function; keep the happy path unindented. Avoid else-after-return.
+- **Explicit returns** — functions that can fail return a separate error value, not in-band sentinels (-1, null, "").
+- **Guard-clause flow** — handle errors and edge cases at the top; keep the happy path unindented. Avoid else-after-return.
 - **Wrap, don't flatten** — add context when propagating; preserve the cause chain. Never inspect error strings to branch.
 
 ### Documentation
 
 - **Name-first sentences** — doc comments for public symbols begin with the symbol's name as a full sentence: `// Encode writes the JSON encoding of req to w.`
-- **Show usage** — provide runnable examples for non-trivial APIs. Examples live in test files.
+- **Show usage** — provide runnable examples for non-trivial APIs; examples live in test files.
 
 ### Code Clarity
 
 - **Eliminate nesting** — prefer early returns and guard clauses over deeply nested conditionals.
-- **Omit zero-value noise** — only specify non-default values in construction. Default is zero/nil/false unless stated otherwise.
+- **Omit zero-value noise** — only specify non-default values in construction. Default is zero/nil/false unless stated.
 - **Named fields for external types** — always use explicit field names when constructing types from other packages.
 
 ## When to Use
