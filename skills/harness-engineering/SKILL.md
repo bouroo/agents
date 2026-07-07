@@ -10,8 +10,6 @@ description: >
   checkpoints, verification rules, or orchestrator agents. Grounded in the OpenAI/Anthropic
   harness canon, Martin Fowler's harness-engineering model, the Salesforce agentic-reliability
   patterns, and the 12-lecture "Learn Harness Engineering" series.
-compatibility: opencode, kilo
-disable-model-invocation: false
 ---
 
 # Harness Engineering — Agent-Loadable Norms
