@@ -1,6 +1,20 @@
 # Self-Organized Agent Configuration
 
-Shared, language-agnostic agent configuration for AI coding assistants. Contains global coding standards (`AGENTS.md`), reusable slash commands, on-demand skills, and orchestrator agents. Symlinked into each supported tool's config directory via `link.sh`.
+[![Last commit](https://img.shields.io/github/last-commit/bouroo/agents?logo=github)](https://github.com/bouroo/agents)
+[![Stars](https://img.shields.io/github/stars/bouroo/agents?logo=github)](https://github.com/bouroo/agents)
+![Type](https://img.shields.io/badge/type-AI%20agent%20config-blue)
+![Tools](https://img.shields.io/badge/tools-8-success)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE.md)
+
+A shared, language-agnostic setup for AI coding assistants. Drop one folder into your machine and eight different tools — Gemini, Claude, OpenCode, Kilo, Codex, Qwen, and more — pick up the same global coding standards, slash commands, and reusable skills. No per-tool copy-paste, no drift between projects.
+
+## Why use it
+
+- **One config, many tools** — write the rules once; link it everywhere via a single script.
+- **Coding standards baked in** — global guidelines live in `AGENTS.md` and are followed by every tool.
+- **On-demand skills** — focused modules (commit messages, code craft, performance, harness design, specs) load only when you need them.
+- **Slash commands** — run repeatable workflows like refactor / review / verify with one command.
+- **One-command install** — `link.sh` handles the symlinks; `link.sh status` tells you what's linked.
 
 ## Quick Start
 
@@ -11,7 +25,9 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 ~/.agents/link.sh link opencode   # Link only OpenCode (filter by tool name)
 ```
 
-## Directory Structure
+Then restart your coding tool so it picks up the new config.
+
+## What's inside
 
 ```
 ~/.agents/
@@ -37,9 +53,41 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
     └── handoff/                   # Subagent reports and summaries
 ```
 
+### Agents
+
+Orchestrators that think, dispatch, and verify — they never edit code themselves.
+
+| Agent          | Mode    | Purpose                                                                                  |
+|----------------|---------|------------------------------------------------------------------------------------------|
+| `conductor` | primary | Self-organizing orchestrator. Decomposes tasks, delegates to subagents, validates outcomes, and steers its own harness. Decisive: chooses the industry-standard option, records the assumption, and proceeds. Never executes work directly. |
+
+It is non-coding: it thinks, dispatches, verifies, and steers through a squad of subagents. It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
+
+### Commands
+
+Reusable prompt workflows you trigger with a slash command.
+
+| Command            | Description                                                          |
+|--------------------|----------------------------------------------------------------------|
+| `refactor-phase`    | Refactor phase — analyze, plan, baseline, execute, verify            |
+| `review-phase`      | Review phase — review code changes for correctness, safety, performance |
+| `verify-phase`      | Verify phase — format, lint, type-check, scan, test, githook gate    |
+
+### Skills
+
+Focused modules the agent loads on demand when a task matches.
+
+| Skill                       | Trigger                                                                                  |
+|-----------------------------|------------------------------------------------------------------------------------------|
+| `effective-code-craft`      | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
+| `harness-engineering`       | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
+| `performance-patterns`      | Optimizing for speed, throughput, latency, or memory after correctness is proven          |
+| `spec-driven-development`   | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
+| `commit-message`            | Generating a conventional commit message from staged changes                              |
+
 ## Supported Tools
 
-`link.sh` symlinks four artifacts into each tool's config directory:
+`link.sh` symlinks four artifacts into each tool's config directory.
 
 | Artifact      | Source            | Linked as         | Notes                          |
 |---------------|-------------------|-------------------|--------------------------------|
@@ -59,33 +107,31 @@ Shared, language-agnostic agent configuration for AI coding assistants. Contains
 | OpenCode   | `~/.config/opencode/`    | `AGENTS.md`  | `agents/`   |
 | Kilo       | `~/.config/kilo/`        | `AGENTS.md`  | `agent/`    |
 
-## Agents
+## How it works
 
-| Agent          | Mode    | Purpose                                                                                  |
-|----------------|---------|------------------------------------------------------------------------------------------|
-| `conductor` | primary | Self-organizing orchestrator. Decomposes tasks, delegates to subagents, validates outcomes, and steers its own harness. Decisive: chooses the industry-standard option, records the assumption, and proceeds. Never executes work directly. |
+Everything in this repo is plain markdown — the symlinks make it look like each tool's own config directory contains the same rules, commands, and skills. `AGENTS.md` is intentionally short: it's a router that points the agent at the right skill or command on demand instead of dumping every rule into one giant prompt. Adding a new tool is a matter of adding a target to `link.sh`; updating the rules means editing one file, and every linked tool picks up the change.
 
-It is non-coding: it thinks, dispatches, verifies, and steers through a squad of subagents. It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
+## Methodology
 
-## Commands
+### Harness Engineering
 
-| Command            | Description                                                          |
-|--------------------|----------------------------------------------------------------------|
-| `refactor-phase`    | Refactor phase — analyze, plan, baseline, execute, verify            |
-| `review-phase`      | Review phase — review code changes for correctness, safety, performance |
-| `verify-phase`      | Verify phase — format, lint, type-check, scan, test, githook gate    |
+These configs embody the harness-engineering canon, not merely reference it: the repo is the operational record of truth; instructions are split into focused, agent-loadable modules; WIP is one verified task at a time; completion requires executable evidence; every task runs static + runtime + end-to-end verification; and state persists across sessions via explicit clock-in/out checklists.
 
-## Skills
+The `harness-engineering` skill adds the design vocabulary for *building* these controls — feedforward **guides** vs feedback **sensors**, **computational** vs **inferential** controls — and the disciplines that keep agent output trustworthy: **gates enforce**, **separate reasoning from computation**, **grade the tests** (mutation testing — an agent-authored green suite is a signal, not proof), and **engineer the whole lifecycle** (improve the harness, not the prompt; deliberate friction is leverage). Norms + clock-in/out checklist: [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md).
 
-| Skill                       | Trigger                                                                                  |
-|-----------------------------|------------------------------------------------------------------------------------------|
-| `effective-code-craft`      | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
-| `harness-engineering`       | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
-| `performance-patterns`      | Optimizing for speed, throughput, latency, or memory after correctness is proven          |
-| `spec-driven-development`   | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
-| `commit-message`            | Generating a conventional commit message from staged changes                              |
+### SPDD Methodology
+
+```
+Story → Analysis → Canvas → Generate → Test → Review → Sync
+  ↑                                                      |
+  └────────────── repeat until aligned ──────────────────┘
+```
+
+The workflow is phased to keep each review checkpoint small enough to engage with (cognitive load, not ceremony): validate behavior at the system boundary early, review code only once it works, and generate unit tests last as a regression net. See [skills/spec-driven-development/SKILL.md](skills/spec-driven-development/SKILL.md) for the fitness table — when to spec, and when not to.
 
 ## OpenCode Format Mapping
+
+> **Reference for contributors and portability.** This section explains how the repo's artifacts map to the [opencode](https://opencode.ai/docs/) format so the config loads natively across tools.
 
 This repo follows the [opencode](https://opencode.ai/docs/) artifact format so it loads natively when `link.sh` symlinks `commands/`, `skills/`, and `agents/` into `~/.config/opencode/`. OpenCode auto-discovers all three directories; no `opencode.json` is required.
 
@@ -111,22 +157,6 @@ This repo follows the [opencode](https://opencode.ai/docs/) artifact format so i
 ```
 
 Validate the repo's artifacts at any time with `./scripts/validate-agents.sh`.
-
-## Harness Engineering
-
-These configs embody the harness-engineering canon, not merely reference it: the repo is the operational record of truth; instructions are split into focused, agent-loadable modules; WIP is one verified task at a time; completion requires executable evidence; every task runs static + runtime + end-to-end verification; and state persists across sessions via explicit clock-in/out checklists.
-
-The `harness-engineering` skill adds the design vocabulary for *building* these controls — feedforward **guides** vs feedback **sensors**, **computational** vs **inferential** controls — and the disciplines that keep agent output trustworthy: **gates enforce**, **separate reasoning from computation**, **grade the tests** (mutation testing — an agent-authored green suite is a signal, not proof), and **engineer the whole lifecycle** (improve the harness, not the prompt; deliberate friction is leverage). Norms + clock-in/out checklist: [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md).
-
-## SPDD Methodology
-
-```
-Story → Analysis → Canvas → Generate → Test → Review → Sync
-  ↑                                                      |
-  └────────────── repeat until aligned ──────────────────┘
-```
-
-The workflow is phased to keep each review checkpoint small enough to engage with (cognitive load, not ceremony): validate behavior at the system boundary early, review code only once it works, and generate unit tests last as a regression net. See [skills/spec-driven-development/SKILL.md](skills/spec-driven-development/SKILL.md) for the fitness table — when to spec, and when not to.
 
 ## References
 

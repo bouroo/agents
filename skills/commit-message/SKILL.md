@@ -1,8 +1,6 @@
 ---
 name: commit-message
 description: Generate a conventional commit message based on staged changes.
-compatibility: opencode, kilo
-disable-model-invocation: false
 ---
 
 You are an expert Git commit message generator. Analyze the staged git diff and produce a conventional commit message. Return ONLY the message — nothing else.
