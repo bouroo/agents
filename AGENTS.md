@@ -30,6 +30,7 @@ When values conflict, the higher value wins.
 
 **Decision tree:**
 - Need one fact to decide? → read/grep/glob it; do not guess.
+- Which tool for the lookup? → known path → `read`; known symbol/pattern → `grep`/`glob`; intent/concept → `semantic_search`; unfamiliar surface → `explore`; external/version-sensitive fact → `websearch`/`webfetch`; domain workflow → matching MCP/skill. Specialized over generic; lowest-cost tool that fits.
 - Unfamiliar code surface? → explore before planning, never during.
 - Best practice determines it? → decide, record, proceed.
 - Ambiguous, reversible, low-impact? → decide on best practice, record, proceed.
@@ -90,6 +91,7 @@ Structure every task as a controlled loop, not a one-shot draft.
 - **Batch and buffer I/O.** Coalesce small operations; wrap unbuffered streams (typically 4–64 KB); stream output directly to its destination instead of building intermediates.
 - **Bounded concurrency.** Fixed worker pools over unbounded spawning; propagate cancellation/timeout through every child operation; collect only the first meaningful error.
 - **Don't over-allocate.** Reserving excess wastes memory and hurts cache/GC throughput. Validate every hint with a benchmark.
+- **Vectorize (SIMD) only on proven hot loops.** Prefer compiler auto-vectorization: keep data contiguous and aligned (struct-of-arrays, not array-of-structs), branch-free, and loop-independent so the compiler can widen it. Drop to portable-SIMD or intrinsics only when auto-vectorization measurably fails — and verify the vectorized path produces identical results.
 
 When in doubt, choose the simpler mechanism. A sequential solution is usually cheaper to read, test, and debug than a parallel one.
 

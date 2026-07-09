@@ -198,6 +198,18 @@ Add the smallest artifact that directly addresses the observed failure mode — 
 - Tie back to §13: simplification is the inverse of accretion — both are harness work, not prompt work.
 **Source:** Anthropic — Harness design for long-running application development; Learn Harness Engineering — quality-document.
 
+## 16. Tools & MCP — Understanding Agent Capabilities
+
+**Why:** An agent's effectiveness depends on selecting the right tool for each sub-task. MCP (Model Context Protocol) servers extend the agent's toolkit with domain-specific capabilities; misusing or ignoring available tools is a systematic failure mode.
+**Rules**
+- **Tool selection is a decision, not a guess.** Match the tool to the task's semantics and cost: known path → `read`; known pattern → `grep`/`glob`; intent/concept → `semantic_search`; unfamiliar surface → `explore`; external/version-sensitive fact → `websearch`/`webfetch`; domain workflow → matching MCP server or skill. Prefer specialized over generic; lowest-cost tool that fits.
+- **MCP servers are domain extensions.** Treat each MCP server as a specialized capability boundary — understand what it exposes (tools, resources, prompts) and when to invoke it vs. falling back to general tools. Prefer MCP tools when they provide structured, validated access to a domain (e.g., database queries, API interactions, file-type-specific operations).
+- **Discover before assuming.** When an MCP server is available, inspect its exposed tools and their schemas before calling. Don't guess parameter shapes or capabilities — read the tool description.
+- **Compose tools, don't nest them.** Chain tool outputs through agent reasoning (tool A → interpret → tool B), not by embedding one tool call inside another. Each tool call should be independently auditable.
+- **Fail gracefully on tool errors.** Tool and MCP calls can fail (timeout, auth, invalid input). Handle errors explicitly: retry transient failures, fall back to alternative tools, surface persistent failures rather than silently dropping them.
+- **Prefer computational tools over inferential reasoning** for deterministic tasks — a database MCP query beats asking the model to recall data; a linter MCP beats asking the model to check style.
+**Source:** Kilo — Prompt Engineering; Martin Fowler — Harness Engineering §9 (Guides vs Sensors); AGENTS.md §2 (Decision-Making Framework).
+
 ---
 
 ## Appendix A — Orchestrator Convergence Gates
