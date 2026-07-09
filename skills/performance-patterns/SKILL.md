@@ -37,6 +37,14 @@ Apply only after correctness is proven. Measure before and after; keep what the 
 - **Direct streaming** — write formatted output directly to the destination writer/stream instead of constructing an intermediate string/buffer to pass downstream.
 - **Guarded observability** — wrap expensive log/tracing argument computation in an enabled-check to avoid computing values never emitted; prefer lazy evaluation for verbose/debug output.
 
+## SIMD & Vectorization
+
+- **Auto-vectorization first** — prefer compiler auto-vectorization: keep data contiguous and aligned (struct-of-arrays, not array-of-structs), branch-free, and loop-independent so the compiler can widen it.
+- **Portable SIMD / intrinsics** — drop to explicit SIMD only when auto-vectorization measurably fails on a proven hot loop; verify the vectorized path produces identical results.
+- **Data layout** — favor struct-of-arrays over array-of-structs for SIMD-friendly access patterns; align buffers to vector width (16/32/64 bytes) when targeting explicit SIMD.
+- **Branch elimination** — replace branches with conditional moves, masks, or predication in hot loops; branches inside SIMD lanes serialize execution.
+- **Measure the vectorized path** — compare scalar vs vectorized on realistic data; gains depend on data size, alignment, and the target ISA. No SIMD lands without a benchmark.
+
 ## Compiler
 
 - **Build flags** — enable release/production modes (inlining, escape analysis, dead-code elimination); consider profile-guided optimization for hot code.
