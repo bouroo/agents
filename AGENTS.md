@@ -53,6 +53,8 @@ Structure every task as a controlled loop, not a one-shot draft.
 
 **Spec is truth.** Code serves the spec, not the reverse. If it isn't in the spec, don't build it — no speculative features. When output is wrong, the fix is usually a sharper spec, not a louder prompt.
 
+**Docs are part of the change.** If the repo keeps durable docs (e.g. a `docs/` tree with systems, flows, architecture/ADRs, glossary — see its `docs/README.md`), read the docs for the area *before* changing it, and update the affected doc *in the same change* when behavior, interfaces, invariants, or domain terms shift. Docs and code must agree; a stale doc is a bug. This routing file says where to look and how to work — it is not the place for detailed system docs.
+
 ---
 
 ## 4. Code Craft Norms (language-agnostic)

@@ -78,3 +78,5 @@ Run formatter, linter, type-checker, and full test suite. Re-profile and re-benc
 ## 6. Sync Spec
 
 Update or create the spec to match the refactor; never leave the spec describing the old shape. When code and spec diverge, fix the spec first, then the code. A stale spec is a bug.
+
+Sync also covers the repo-local `docs/` tree when one exists: **if the repo maintains a `docs/` tree**, and the refactor moves or renames the important source files a doc points to, update the affected system or flow doc **and its Source map** so links still resolve and the doc still points at the code it describes.
