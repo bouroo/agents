@@ -38,7 +38,7 @@ Collect all findings, group them by severity, and produce the review summary.
 
 ## Review Checklist
 
-Evaluate every change across these lenses. Full norms: `AGENTS.md` §5; deeper treatments: `skills/effective-code-craft` and `skills/performance-patterns`.
+Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft Norms"; deeper treatments: `skills/effective-code-craft` and `skills/performance-patterns`.
 
 ### Correctness
 

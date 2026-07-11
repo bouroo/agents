@@ -44,7 +44,7 @@ Run CPU, memory, and I/O profilers. Identify the top contributors. Record heap p
 
 ## 2. Plan
 
-Write a REASONS canvas — see `AGENTS.md` §4. Lock scope explicitly. Mark unknowns; tests and benchmarks are part of the plan, not an afterthought.
+Write a REASONS canvas — see `AGENTS.md` "Workflow". Lock scope explicitly. Mark unknowns; tests and benchmarks are part of the plan, not an afterthought.
 
 ---
 
@@ -63,9 +63,9 @@ Before touching production code, capture or write tests and benchmarks for the t
 
 Make small, atomic commits. Keep the build green at every step. Preserve public behavior. When principles conflict, clarity wins over concision, simplicity over concision, and maintainability over consistency.
 
-Apply engineering norms — see `AGENTS.md` §5 and `skills/effective-code-craft` (Architecture: libraries not monoliths, code for reading, decouple from environment; Safety: safe by default, wrap errors with context, design for errors; State & Concurrency: avoid mutable globals, use concurrency sparingly, prefer worker pools, prefer atomics for simple counters; Observability: actionable structured logs, tracing for request debugging, metrics for performance).
+Apply engineering norms — see `AGENTS.md` "Code Craft Norms" and `skills/effective-code-craft` (Architecture: libraries not monoliths, code for reading, decouple from environment; Safety: safe by default, wrap errors with context, design for errors; State & Concurrency: avoid mutable globals, use concurrency sparingly, prefer worker pools, prefer atomics for simple counters; Observability: actionable structured logs, tracing for request debugging, metrics for performance).
 
-Apply performance patterns — see `AGENTS.md` §6 and `skills/performance-patterns`. **Apply only after correctness is proven; measure before/after; revert regressions.** Covers memory (preallocate, pool, order fields, avoid boxing, prefer zero-copy, keep on stack, share immutable, linear-time builders), I/O (buffer, batch, stream direct, guard expensive log/tracing args), and compiler/build (release flags, PGO for hot code, minimize escapes).
+Apply performance patterns — see `AGENTS.md` "Performance Discipline" and `skills/performance-patterns`. **Apply only after correctness is proven; measure before/after; revert regressions.** Covers memory (preallocate, pool, order fields, avoid boxing, prefer zero-copy, keep on stack, share immutable, linear-time builders), I/O (buffer, batch, stream direct, guard expensive log/tracing args), and compiler/build (release flags, PGO for hot code, minimize escapes).
 
 ---
 

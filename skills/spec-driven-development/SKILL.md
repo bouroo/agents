@@ -60,7 +60,7 @@ Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS C
 - Error handling: explicit returns, guard-clause-first, wrap-with-context
 - Documentation: name-first sentences for public symbols
 - Style: eliminate nesting, omit zero-value noise
-- Reference AGENTS.md §5 for the full norm set
+- Reference AGENTS.md "Code Craft Norms" for the full norm set
 
 ## S — Safeguards
 - Invariants that must hold
