@@ -208,7 +208,7 @@ Add the smallest artifact that directly addresses the observed failure mode — 
 - **Compose tools, don't nest them.** Chain tool outputs through agent reasoning (tool A → interpret → tool B), not by embedding one tool call inside another. Each tool call should be independently auditable.
 - **Fail gracefully on tool errors.** Tool and MCP calls can fail (timeout, auth, invalid input). Handle errors explicitly: retry transient failures, fall back to alternative tools, surface persistent failures rather than silently dropping them.
 - **Prefer computational tools over inferential reasoning** for deterministic tasks — a database MCP query beats asking the model to recall data; a linter MCP beats asking the model to check style.
-**Source:** Kilo — Prompt Engineering; Martin Fowler — Harness Engineering §9 (Guides vs Sensors); AGENTS.md §2 (Decision-Making Framework).
+**Source:** Kilo — Prompt Engineering; Martin Fowler — Harness Engineering §9 (Guides vs Sensors); AGENTS.md "Decision-Making Framework".
 
 ---
 
