@@ -84,7 +84,7 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` §5; deeper t
 
 ### Documentation and Consistency
 
-- If the change affects how users build, test, interact with, or release code, is the documentation updated?
+- **If the repo maintains a `docs/` tree**, and the change affects behavior, interfaces, invariants, or glossary-defined terms, the affected `docs/` system, flow, or ADR must be updated **in the same change** — reviewers verify docs and code agree and treat a stale doc as a bug.
 - Style consistent with the codebase and project style guide; new code follows the guide, even when surrounding code does not (file a follow-up for the latter).
 - Do not mix style-only changes with functional changes in the same commit.
 
