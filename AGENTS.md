@@ -35,6 +35,7 @@ When values conflict, the higher value wins.
 - Best practice determines it? → decide, record, proceed.
 - Ambiguous, reversible, low-impact? → decide on best practice, record, proceed.
 - Ambiguous + high-impact + hard to reverse? → ask one focused question, then proceed.
+- Durable, cross-system architectural decision? → route to spec-driven-development (REASONS canvas) + repo-documentation (ADR) skills; humans accept ADRs.
 - Logic that must be deterministic (arithmetic, parsing, routing, validation, scheduling)? → use real code/a solver, **never** LLM reasoning. Models handle ambiguity; deterministic code handles precision.
 
 **Record every assumption** in a visible place (commit message, spec, or decision log). Invisible decisions are un-auditable.
@@ -119,6 +120,10 @@ When in doubt, choose the simpler mechanism. A sequential solution is usually ch
 
 **The repository is the system of record — not conversation memory.** Every session starts with wiped short-term memory; restart work from files, never from recollection of prior turns.
 
+### Context Management
+
+When the host tool exposes these levers, use them: **Lazy instruction loading** — do NOT eagerly expand `instructions` arrays or `@file` references; load on demand (OpenCode rule: "Do NOT preemptively load all references — use lazy loading based on actual need"). **Semantic codebase index** — when available, prefer semantic_search over broad grep fan-out for unfamiliar surfaces; use context condensing to summarize old context rather than carrying stale tool output.
+
 - **Keep this file a router.** It holds overview and hard constraints; detail lives in on-demand topic docs and skills. Every token here persists across compaction and is paid every turn — make each one earn its place.
 - **Prefer references and lazy loading** (`@file`, links, on-demand skills) over pasting large bodies inline. Prune stale tool outputs between turns; they consume the window forever if left.
 - **Put the next executable action in the latest turn or a tracked file.** Recent turns survive compaction; mid-history instructions do not. When context is tight, a clean reset from repo files beats a lossy, half-remembered thread.
@@ -127,7 +132,7 @@ When in doubt, choose the simpler mechanism. A sequential solution is usually ch
 
 ### Working with Context Condensing
 
-Long sessions auto-compact: the harness summarizes older turns into an anchored summary (goal, constraints, progress, decisions, next steps, relevant files) and keeps only a recent tail verbatim. Old tool outputs are pruned to `"[Old tool result content cleared]"` beyond a recency window. The summary is lossy — treat it as a hint, not a record.
+Long sessions auto-compact: the harness summarizes older turns into an anchored summary and keeps only a recent tail verbatim. Old tool outputs are pruned to `"[Old tool result content cleared]"` beyond a recency window. The summary is lossy — treat it as a hint, not a record.
 
 - **Critical state lives on disk, never only in conversation.** Decisions go in the decision log; progress goes in the progress file; the next action goes in the latest turn or a tracked file. Anything that must survive compaction is written to a file before the turn ends.
 - **Checkpoint before expected compaction.** On long runs, flush in-progress state (plan, decisions, handoff, verification evidence) to disk each turn so a mid-task compaction loses nothing it cannot re-read.
@@ -163,4 +168,4 @@ A recurring failure is a **harness problem, not a prompt problem.** Before rewri
 
 ---
 
-*Sources synthesized: Learn Harness Engineering (walkinglabs); Martin Fowler — Harness Engineering & Structured Prompt-Driven Development; Salesforce — Agentic Engineering patterns; JetBrains 10x Commandments; goperf.dev; Kilo — Prompt Engineering & Context Condensing.*
+*Sources synthesized: Learn Harness Engineering (walkinglabs); Martin Fowler — Harness Engineering & Structured Prompt-Driven Development; Salesforce — Agentic Engineering patterns; JetBrains 10x Commandments; goperf.dev; Kilo — Prompt Engineering & Context Condensing; OpenCode — Config (`instructions`, `references`, `compaction`); Kilo — Codebase Indexing & Context Condensing.*

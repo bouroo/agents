@@ -153,12 +153,33 @@ This repo follows the [opencode](https://opencode.ai/docs/) artifact format so i
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": ["docs/guidelines.md"],
+  "instructions": ["docs/guidelines.md", ".cursor/rules/*.md"],
   "references": {
     "sdk": { "repository": "owner/repo", "description": "Use for SDK implementation details" }
+  },
+  "compaction": {
+    "auto": true,
+    "prune": false,
+    "reserved": 10000
+  },
+  "agent": {
+    "conductor": { "model": "anthropic/claude-sonnet-4-5" }
+  },
+  "provider": {
+    "anthropic": { "options": { "apiKey": "{env:ANTHROPIC_API_KEY}" } }
   }
 }
 ```
+
+- `instructions` — array of paths/globs to instruction files; lazily loaded, not eagerly expanded.
+- `references` — map of named reference repos the agent can consult for external context.
+- `compaction` — `{ auto, prune, reserved }`; controls context compaction behavior (auto-compact when full, prune old tool outputs, reserve a token buffer).
+- `agent` — per-agent model/permission overrides; custom agents also load from `agents/*.md`.
+- `provider` — provider config; supports `{env:VAR}` and `{file:path}` variable substitution.
+
+### Context Management
+
+**AGENTS.md is a router, not a dump.** Keep global rules terse; load detail from skills on demand (Kilo: "Keep custom instructions concise and actionable"; OpenCode: lazy-load instructions). **Semantic codebase index.** When the host tool offers it (Kilo: "Codebase Indexing"), prefer `semantic_search` over broad grep fan-out for unfamiliar surfaces. **Context condensing discipline.** Long sessions auto-compact; put the next executable action and current blocker in the latest turn or a tracked file, because the verbatim tail is what survives (Kilo: "Context Condensing"; OpenCode: `compaction` config). **Variable substitution for secrets.** Use `{env:VAR}` / `{file:path}` so keys never live in config files (OpenCode config doc). See `AGENTS.md` §7 and `skills/harness-engineering` for the full doctrine — this section summarizes, does not duplicate.
 
 Validate the repo's artifacts at any time with `./scripts/validate-agents.sh`.
 
@@ -223,3 +244,4 @@ Validate the repo's artifacts at any time with `./scripts/validate-agents.sh`.
 - [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) — Why instructions must be split, not bloated
 - [Kilo Docs — Prompt Engineering](https://kilo.ai/docs/customize/prompt-engineering) — Think-then-do loop; clarity, context, output format
 - [Kilo Docs — Context Condensing](https://kilo.ai/docs/customize/context/context-condensing) — AGENTS.md as router; compaction discipline
+- [Kilo Docs — Codebase Indexing](https://kilo.ai/docs/customize/context/codebase-indexing) — Semantic index for unfamiliar surfaces
