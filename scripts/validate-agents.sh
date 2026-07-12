@@ -72,6 +72,12 @@ validate_skills() {
             fail "skill $name: name '$fm_name' does not match required pattern"
         fi
 
+        # name length 1..64.
+        fm_name_len="${#fm_name}"
+        if [ "$fm_name_len" -lt 1 ] || [ "$fm_name_len" -gt 64 ]; then
+            fail "skill $name: name length $fm_name_len not in 1..64"
+        fi
+
         # description field exists and length 1..1024.
         desc="$(echo "$fm" | awk '
             /^description:/ {
