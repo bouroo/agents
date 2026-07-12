@@ -245,7 +245,7 @@ Bounded read-only check to validate a verdict? → do it directly (read/grep/git
 Trivial fix (≤ a few lines)?      → dispatch a Fixer. Never edit yourself.
 Best practice determines it?      → decide, record in canvas, proceed.
 Ambiguous, reversible, low-impact? → decide on best practice, record, proceed.
-Ambiguous + high-impact + hard to reverse? → ask ONE focused question, then proceed.
+Ambiguous + high-impact + hard to reverse? → ask focused question, then proceed.
 Substantial unit, clear spec?     → dispatch the right specialist.
 Unit failed twice (semantic)?     → re-decompose or switch specialist.
 Same failure class across ≥2 units? → halt → Architect → retro.md.

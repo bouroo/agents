@@ -34,7 +34,7 @@ When values conflict, the higher value wins.
 - Unfamiliar code surface? → explore before planning, never during.
 - Best practice determines it? → decide, record, proceed.
 - Ambiguous, reversible, low-impact? → decide on best practice, record, proceed.
-- Ambiguous + high-impact + hard to reverse? → ask one focused question, then proceed.
+- Ambiguous + high-impact + hard to reverse? → ask focused question, then proceed.
 - Durable, cross-system architectural decision? → route to spec-driven-development (REASONS canvas) + repo-documentation (ADR) skills; humans accept ADRs.
 - Logic that must be deterministic (arithmetic, parsing, routing, validation, scheduling)? → use real code/a solver, **never** LLM reasoning. Models handle ambiguity; deterministic code handles precision.
 
