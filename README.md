@@ -37,6 +37,7 @@ Then restart your coding tool so it picks up the new config.
 ├── agents/                        # Orchestrator agents (mode, permissions, prompt)
 │   └── conductor.md               # Decisive orchestrator — chooses best practice, records assumption, proceeds
 ├── commands/                      # Slash commands (reusable prompt workflows)
+│   ├── document-phase.md
 │   ├── refactor-phase.md
 │   ├── review-phase.md
 │   └── verify-phase.md
@@ -45,6 +46,7 @@ Then restart your coding tool so it picks up the new config.
 │   ├── effective-code-craft/
 │   ├── harness-engineering/
 │   ├── performance-patterns/
+│   ├── repo-documentation/
 │   └── spec-driven-development/
 ├── scripts/
 │   └── validate-agents.sh         # Repo self-checks — the opencode-format gate
@@ -69,6 +71,7 @@ Reusable prompt workflows you trigger with a slash command.
 
 | Command            | Description                                                          |
 |--------------------|----------------------------------------------------------------------|
+| `document-phase`    | Document phase — bootstrap repo docs or sync docs/ with code changes |
 | `refactor-phase`    | Refactor phase — analyze, plan, baseline, execute, verify            |
 | `review-phase`      | Review phase — review code changes for correctness, safety, performance |
 | `verify-phase`      | Verify phase — format, lint, type-check, scan, test, githook gate    |
@@ -82,6 +85,7 @@ Focused modules the agent loads on demand when a task matches.
 | `effective-code-craft`      | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
 | `harness-engineering`       | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
 | `performance-patterns`      | Optimizing for speed, throughput, latency, or memory after correctness is proven          |
+| `repo-documentation`        | Repo keeps a `docs/` tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change |
 | `spec-driven-development`   | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
 | `commit-message`            | Generating a conventional commit message from staged changes                              |
 

@@ -125,6 +125,16 @@ When in doubt, choose the simpler mechanism. A sequential solution is usually ch
 - **Leave a clean state on exit.** Confirm standard startup and verification still pass; update the progress/decision log; revert speculative edits rather than leaving them uncommitted; state the next action so another agent could pick it up. Prefer a small, committed, passing checkpoint over a large, unverified, half-done change.
 - **One task at a time (WIP = 1).** Finish and verify before starting the next. Prefer less work fully finished over more work half-done.
 
+### Working with Context Condensing
+
+Long sessions auto-compact: the harness summarizes older turns into an anchored summary (goal, constraints, progress, decisions, next steps, relevant files) and keeps only a recent tail verbatim. Old tool outputs are pruned to `"[Old tool result content cleared]"` beyond a recency window. The summary is lossy — treat it as a hint, not a record.
+
+- **Critical state lives on disk, never only in conversation.** Decisions go in the decision log; progress goes in the progress file; the next action goes in the latest turn or a tracked file. Anything that must survive compaction is written to a file before the turn ends.
+- **Checkpoint before expected compaction.** On long runs, flush in-progress state (plan, decisions, handoff, verification evidence) to disk each turn so a mid-task compaction loses nothing it cannot re-read.
+- **Resume from disk after compaction.** Re-read the plan, decision log, and progress file first; do not trust half-remembered context. The summary tells you *that* work happened; the files tell you *what* and *why*.
+- **Write compaction-friendly latest turns.** The recent tail is preserved verbatim — put the next executable action, the current blocker, and any decision made this turn in the latest assistant turn, not several turns back where pruning or summarization can erase it.
+- **Tuning is config, not workflow.** `compaction.threshold_percent` sets when auto-compaction fires; `compaction.tail_turns` / `preserve_recent_tokens` size the verbatim tail; `compaction.prune` toggles the recency-window cleanup; a separate `agent.compaction.model` can summarize cheaper. Defaults are sane — change them only with reason, and record why.
+
 ---
 
 ## 8. Hard Constraints (non-negotiable)
