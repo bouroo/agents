@@ -50,7 +50,7 @@ Then restart your coding tool so it picks up the new config.
 │   └── spec-driven-development/
 ├── scripts/
 │   └── validate-agents.sh         # Repo self-checks — the opencode-format gate
-└── .agents/                       # Runtime + reference directory (created on use)
+└── .agents/                       # Per-project runtime dir (created on use IN THE TARGET PROJECT, never in this repo; gitignored here)
     ├── plans/                     # Spec drafts, REASONS canvases, plan trackers, retros
     └── handoff/                   # Subagent reports and summaries
 ```
