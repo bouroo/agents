@@ -158,6 +158,44 @@ This repo follows the [opencode](https://opencode.ai/docs/) artifact format so i
 
 Validate the repo's artifacts at any time with `./scripts/validate-agents.sh`.
 
+## Kilo/Opencode config example
+```json
+{
+  ...
+  "model": "gray-work/combo-builder",
+  "small_model": "google/gemini-flash-lite-latest",
+  "subagent_model": "gray-work/combo-builder",
+  "default_agent": "conductor",
+  "agent": {
+    "conductor": {
+      "model": "gray-work/combo-frontier"
+    },
+    "orchestrator": {
+      "model": "gray-work/combo-frontier"
+    },
+    "plan": {
+      "model": "gray-work/combo-frontier"
+    },
+    "debug": {
+      "model": "gray-work/combo-builder"
+    },
+    "code": {
+      "model": "gray-work/combo-builder"
+    },
+    "ask": {
+      "model": "gray-work/combo-slave"
+    },
+    "explore": {
+      "model": "gray-work/combo-slave"
+    },
+    "compaction": {
+      "model": "gray-work/combo-slave"
+    }
+  },
+  ...
+}
+```
+
 ## References
 
 - [Structured Prompt-Driven Development (SPDD) — Martin Fowler](https://martinfowler.com/articles/structured-prompt-driven/) — REASONS Canvas, prompt-code bidirectional sync, phased-review rationale
