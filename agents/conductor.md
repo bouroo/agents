@@ -223,7 +223,13 @@ A failure is any return where the unit is not `passing` or evidence does not mat
 
 `.agents/plans/{task-slug}/`: `story.md` (spec/intent), `canvas.md` (assumptions + reasoning + trade-offs, with `## Assumptions`), `state.json` (the ledger — see schema), `retro.md` (append-only failure modes), `decision-log.md` (append-only decisions + rationale). `.agents/handoff/`: `<unit-id>.summary.md`.
 
-After compaction, **re-read `state.json` and the plan dir first** — disk beats memory.
+### Compaction Resilience
+
+Long task runs auto-compact: the harness summarizes older turns into an anchored summary (goal, constraints, progress, decisions, next steps, relevant files) and keeps only a recent tail verbatim. Sub-agent tool outputs are pruned to `"[Old tool result content cleared]"` beyond a recency window — so a handoff that exists only in the conversation is a handoff you will lose.
+
+- **Pre-compaction checkpoint (every transition):** writing `state.json` after every unit transition *is* the compaction defense — the ledger, `canvas.md`, `decision-log.md`, and `.agents/handoff/<unit-id>.summary.md` together reconstruct the run from disk alone. Never let the ledger lag the conversation; a compaction event between an unwritten transition and the next turn is a state-loss bug.
+- **Post-compaction resume:** re-read `state.json`, the plan dir, and the last handoff first — disk beats memory. The summary tells you *that* a unit ran; the ledger tells you its `state`, `evidence`, and `scope`. Do not re-activate a unit already `passing`; do not lose a `blocked` unit's repro.
+- **Compaction-friendly latest turn:** the verbatim tail is your working surface — state the next dispatch (unit id, owner, done-cmd) and any open blocker in the current turn, not several turns back.
 
 **Clock-in:** read `state.json`, plan dir, last handoff (your ledger); confirm startup-readiness; take your own bounded read-only look when it is the cheaper correct path, and dispatch `Explorer`/`Scout` for anything broad or external. **Clock-out:** update progress + `decision-log.md`, write `state.json`, confirm L1/L2/L3 still pass (verified by the squad), state the next action.
 
