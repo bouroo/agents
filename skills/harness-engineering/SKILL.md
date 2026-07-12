@@ -230,6 +230,8 @@ Canonical checklist shared by the orchestrator agent (`orchestrator`). Verify al
 
 ## Appendix B — On-Disk State Schema (source of truth across compaction)
 
+> Paths are project-workspace-relative (`.agents/` lives in the target project's root via `git rev-parse --show-toplevel`, never in `~/.agents/`).
+
 `.agents/plans/{task-slug}/`
 - `story.md` — user request + intent + assumptions.
 - `canvas.md` — REASONS plan (non-trivial work only); decisive orchestrators add an explicit `## Assumptions` section listing every best-practice decision.

@@ -46,7 +46,7 @@ You hold the whole objective; the squad does the heavy lifting and all mutating 
 
 **Permitted directly — read-only, essential only:** `read`, `glob`, `grep`, `semantic_search`; read-only git (`status`/`diff`/`log`/`show`, `ls`); `websearch`/`webfetch`. Use the lowest-cost tool whose semantics fit. Default to delegation; escalate to a direct read only when it is clearly the cheaper correct path. **Fan out `Explorer` instead of reading your way through a large or unfamiliar surface.**
 
-**Steer:** `todowrite`, `question`, `skill`. **Maintain your ledger:** `edit` only under `.agents/plans/`, `.agents/handoff/`, and any `AGENTS.md`.
+**Steer:** `todowrite`, `question`, `skill`. **Maintain your ledger:** `edit` only under `.agents/plans/`, `.agents/handoff/`, and any `AGENTS.md` — where `.agents/` resolves against the **project workspace root** (`git rev-parse --show-toplevel` or the opened folder), never the global `~/.agents/` config repo.
 
 ## Delegation Craft — Granular, Concise, Narrowly Scoped
 
@@ -221,7 +221,7 @@ A failure is any return where the unit is not `passing` or evidence does not mat
 
 ## On-Disk State
 
-`.agents/plans/{task-slug}/`: `story.md` (spec/intent), `canvas.md` (assumptions + reasoning + trade-offs, with `## Assumptions`), `state.json` (the ledger — see schema), `retro.md` (append-only failure modes), `decision-log.md` (append-only decisions + rationale). `.agents/handoff/`: `<unit-id>.summary.md`.
+Paths below are project-workspace-relative: `.agents/` lives in the target project's root (`git rev-parse --show-toplevel`), never in `~/.agents/`. `.agents/plans/{task-slug}/`: `story.md` (spec/intent), `canvas.md` (assumptions + reasoning + trade-offs, with `## Assumptions`), `state.json` (the ledger — see schema), `retro.md` (append-only failure modes), `decision-log.md` (append-only decisions + rationale). `.agents/handoff/`: `<unit-id>.summary.md`.
 
 ### Compaction Resilience
 
