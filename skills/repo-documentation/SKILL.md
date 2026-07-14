@@ -12,7 +12,7 @@ description: >
 
 Source code is the implementation source of truth; `docs/` explains the system at a useful abstraction. The repo you are working in keeps its own `AGENTS.md` (or `docs/README.md`) as the routing/index layer.
 
-> **Precondition.** This skill applies to repos that maintain a `docs/` tree. When loaded from the `document-phase` command, it also covers bootstrapping `docs/` from scratch. When loaded passively (during review or refactor), it activates only if `docs/` already exists — do not impose docs on a repo mid-review.
+> **Precondition.** This skill applies to repos that maintain a `docs/` tree. When loaded from the `document-phase` command, it also covers bootstrapping `docs/` from scratch. When loaded passively (during review or refactor), it activates only if `docs/` already exists  --  do not impose docs on a repo mid-review.
 
 > `AGENTS.md` tells agents where to look and how to work; `docs/` explains how the application works.
 
@@ -49,13 +49,13 @@ docs/
   systems/
   flows/
   architecture/
-    README.md
-    decisions/
-      README.md
+ README.md
+ decisions/
+ README.md
   templates/
-    system.md
-    flow.md
-    adr.md
+ system.md
+ flow.md
+ adr.md
 ```
 
 Exact filenames can follow the host repo's conventions; the conceptual structure should remain clear.
@@ -76,23 +76,23 @@ Exact filenames can follow the host repo's conventions; the conceptual structure
 
 Every ADR begins with YAML frontmatter:
 
-- `status` (required) — one of `Proposed`, `Accepted`, `Superseded`, `Deprecated`, `Rejected`.
-- `date` (required) — `YYYY-MM-DD`.
-- `superseded_by` (required only when `status: Superseded`) — repo-relative path to the replacement ADR.
+- `status` (required)  --  one of `Proposed`, `Accepted`, `Superseded`, `Deprecated`, `Rejected`.
+- `date` (required)  --  `YYYY-MM-DD`.
+- `superseded_by` (required only when `status: Superseded`)  --  repo-relative path to the replacement ADR.
 
-Only **`Accepted`** ADRs are current guidance. Never rewrite an accepted ADR to change the decision — create a new one and mark the old `Superseded`, linking with `superseded_by`. Small non-decision corrections (typos, links) are allowed.
+Only **`Accepted`** ADRs are current guidance. Never rewrite an accepted ADR to change the decision  --  create a new one and mark the old `Superseded`, linking with `superseded_by`. Small non-decision corrections (typos, links) are allowed.
 
 **Architectural decisions are human-owned.** Agents draft ADR text from accepted decisions and keep existing ADRs aligned with code; humans accept.
 
 ## Source Maps
 
-Every system and flow doc includes a **Source map** section that links the most important source files via relative Markdown links. Don't list every file — prefer entry points, state definitions, handlers, services, jobs, tests, and integration files.
+Every system and flow doc includes a **Source map** section that links the most important source files via relative Markdown links. Don't list every file  --  prefer entry points, state definitions, handlers, services, jobs, tests, and integration files.
 
 ## Style
 
 - Clear, direct Markdown; stable headings.
 - Relative Markdown links for related docs and source files.
-- Explain behavior, responsibilities, flows, invariants, pitfalls — not every line.
+- Explain behavior, responsibilities, flows, invariants, pitfalls  --  not every line.
 - Mark uncertainty explicitly: `[NEEDS CLARIFICATION]`.
 - Stay concise enough to read before making changes.
 - **Glossary headings use Title Case** (e.g. `## Email Verification`, `## Verification Token`). Prefer that Title Case form in finished docs when it improves clarity. Lowercase is fine in drafts, comments, identifiers, or informal notes.
@@ -140,7 +140,7 @@ When a repo decides to adopt `docs/` (a human-owned choice, not something an age
 
 Each initial doc should be accurate, useful, and linked to relevant source files. Mark uncertain areas for follow-up rather than inventing explanations.
 
-> When bootstrapping (via `document-phase`), create the tree structure, copy templates, and document the initial target area. Outside of `document-phase`, do not bootstrap — only sync an existing tree.
+> When bootstrapping (via `document-phase`), create the tree structure, copy templates, and document the initial target area. Outside of `document-phase`, do not bootstrap  --  only sync an existing tree.
 
 ## Validation
 
@@ -148,15 +148,15 @@ Run the working repo's doc/link checks and validators (e.g. Markdown linters, li
 
 ## Templates
 
-This skill ships three sibling templates that you can copy into the working repo's `docs/templates/` — either during a `document-phase` bootstrap or when the repo already has `docs/` and needs a fresh template:
+This skill ships three sibling templates that you can copy into the working repo's `docs/templates/`  --  either during a `document-phase` bootstrap or when the repo already has `docs/` and needs a fresh template:
 
-- `system.md` — for `docs/systems/`.
-- `flow.md` — for `docs/flows/`.
-- `adr.md` — for `docs/architecture/decisions/`.
+- `system.md`  --  for `docs/systems/`.
+- `flow.md`  --  for `docs/flows/`.
+- `adr.md`  --  for `docs/architecture/decisions/`.
 
 The templates are intentionally minimal: they enforce headings, not prose. Fill each section with whatever the system/flow/decision actually has; leave sections empty only when clearly irrelevant and note why.
 
-> During `document-phase` bootstrap, copy these templates into the new `docs/templates/` tree. Outside of `document-phase`, if the repo has no `docs/`, do not create one — reference the skill's templates directly without standing up a tree.
+> During `document-phase` bootstrap, copy these templates into the new `docs/templates/` tree. Outside of `document-phase`, if the repo has no `docs/`, do not create one  --  reference the skill's templates directly without standing up a tree.
 
 ## Extending the System
 
