@@ -1,3 +1,4 @@
 # Runtime ledger — must live in the target project, never in this config repo.
 .agents/
 .DS_Store
+__pycache__/
