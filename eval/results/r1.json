@@ -1,0 +1,16 @@
+{
+  "round": 1,
+  "date": "2026-07-14",
+  "scenarios": ["s1-intent-gate"],
+  "status": "seed",
+  "note": "Round 1 is a scenario seed, not a measured run. Full multi-round eval with transcripts is future work (see RESULTS.md).",
+  "results": [
+    {
+      "scenario": "s1-intent-gate",
+      "model": null,
+      "passed": null,
+      "transcript": null,
+      "note": "not yet run"
+    }
+  ]
+}

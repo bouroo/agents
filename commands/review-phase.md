@@ -1,5 +1,5 @@
 ---
-description: Review phase — review code changes for quality, security, and performance
+description: Review phase  --  review code changes for quality, security, and performance
 ---
 
 # Review Phase
@@ -14,7 +14,7 @@ If a target was provided, focus the review on it: **$ARGUMENTS**. Otherwise revi
 
 - Read the commit message, PR description, or change summary. Does the change make sense? Should it exist at all?
 - Identify the scope: bug fix, feature, refactor, or cleanup?
-- Locate the primary files — review those first to establish context before reading supporting files.
+- Locate the primary files  --  review those first to establish context before reading supporting files.
 
 ### 2. Review the Design
 
@@ -24,7 +24,7 @@ If a target was provided, focus the review on it: **$ARGUMENTS**. Otherwise revi
 
 ### 3. Review Every Line
 
-Read every line of human-written code. For generated code and data files, scan for anomalies but do not scrutinize formatting. If any section is unclear, flag it — if you cannot understand the code, other developers will struggle too.
+Read every line of human-written code. For generated code and data files, scan for anomalies but do not scrutinize formatting. If any section is unclear, flag it  --  if you cannot understand the code, other developers will struggle too.
 
 ### 4. Check Context
 
@@ -44,7 +44,7 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 
 - Does the change do what the author intends, and is that intent good for users? Edge cases and boundary conditions handled?
 - Race conditions, deadlocks, or lifetime issues in concurrent code?
-- Any over-engineering — generality or features added for hypothetical future needs?
+- Any over-engineering  --  generality or features added for hypothetical future needs?
 - For user-visible impact (UI, API, CLI), can you verify the behavior?
 
 ### Safety and Error Handling
@@ -84,7 +84,7 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 
 ### Documentation and Consistency
 
-- **If the repo maintains a `docs/` tree**, and the change affects behavior, interfaces, invariants, or glossary-defined terms, the affected `docs/` system, flow, or ADR must be updated **in the same change** — reviewers verify docs and code agree and treat a stale doc as a bug.
+- **If the repo maintains a `docs/` tree**, and the change affects behavior, interfaces, invariants, or glossary-defined terms, the affected `docs/` system, flow, or ADR must be updated **in the same change**  --  reviewers verify docs and code agree and treat a stale doc as a bug.
 - Style consistent with the codebase and project style guide; new code follows the guide, even when surrounding code does not (file a follow-up for the latter).
 - Do not mix style-only changes with functional changes in the same commit.
 
@@ -92,10 +92,10 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 
 ## Severity Labels
 
-- **MUST FIX** — Bugs, security vulnerabilities, data loss risks, broken functionality, anything that degrades overall code health. The change cannot ship without addressing these.
-- **SHOULD FIX** — Design issues, missing tests, performance concerns, error-handling gaps that meaningfully affect maintainability. Strongly recommend resolving before merging.
-- **NIT** — Minor style or polish items. Prefix the comment with `Nit:` to signal the author may skip.
-- **SUGGESTION** — Optional ideas, alternative approaches, or educational notes.
+- **MUST FIX**  --  Bugs, security vulnerabilities, data loss risks, broken functionality, anything that degrades overall code health. The change cannot ship without addressing these.
+- **SHOULD FIX**  --  Design issues, missing tests, performance concerns, error-handling gaps that meaningfully affect maintainability. Strongly recommend resolving before merging.
+- **NIT**  --  Minor style or polish items. Prefix the comment with `Nit:` to signal the author may skip.
+- **SUGGESTION**  --  Optional ideas, alternative approaches, or educational notes.
 
 ---
 
@@ -104,17 +104,17 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 - **Be kind.** Comment on the code, not the author.
 - **Explain your reasoning.** State *why* something is an issue, not just *what*. Reference principles, patterns, or trade-offs.
 - **Balance direction and autonomy.** Point out problems and let the author decide the fix when possible; offer direct code only when genuinely more helpful.
-- **Accept explanations as code improvements.** Confusing code should be rewritten or commented — not just clarified in the review thread.
+- **Accept explanations as code improvements.** Confusing code should be rewritten or commented  --  not just clarified in the review thread.
 - **Recognize good work.** Call out clean algorithms, thorough tests, elegant naming.
 
 ---
 
 ## Principles
 
-1. **Overall code health must improve.** Approve when the change clearly improves the system, even if it is not perfect. There is no perfect code — only better code.
+1. **Overall code health must improve.** Approve when the change clearly improves the system, even if it is not perfect. There is no perfect code  --  only better code.
 2. **Technical facts over opinions.** Engineering principles beat personal preference.
 3. **Style guides are authoritative.** On purely stylistic matters, follow the project guide; if silent, be consistent with surrounding code.
-4. **Design is not style.** Software design decisions are rooted in principles, not taste — evaluate on engineering merits.
+4. **Design is not style.** Software design decisions are rooted in principles, not taste  --  evaluate on engineering merits.
 5. **Consistency matters.** If no other rule applies, be consistent with the existing codebase, provided it does not worsen code health.
 6. **No "clean it up later."** New complexity or debt should be cleaned up before merging; file a tracked follow-up only for pre-existing issues exposed by the change.
 7. **Speed matters.** A fast review cycle with strict standards produces fewer complaints than a slow cycle with the same standards.
@@ -142,5 +142,5 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 - [ ] **[file:line]** Optional: description of the suggested improvement.
 
 ## Verdict
-[APPROVE / REQUEST CHANGES / BLOCKED — with one-line justification]
+[APPROVE / REQUEST CHANGES / BLOCKED  --  with one-line justification]
 ```

@@ -1,0 +1,46 @@
+name: validate
+
+# Runs the repo's deterministic verification gates on every push and pull
+# request. This repository ships no build tool; scripts/checks.py and
+# scripts/validate-agents.sh ARE the verification surface, so CI exists to
+# run them on a clean runner so a broken artifact never lands on main or
+# develop.
+#
+# Gates (see scripts/checks.py --help):
+#   G1 plugin.json + marketplace.json parse and carry required keys
+#   G2 versions agree across both manifests
+#   G3-G5 frontmatter shape for skills/, agents/, commands/
+#   G6 no em/en-dash characters in scanned files
+#   G7 no orphan skills (plugin.json cross-ref + on-disk SKILL.md)
+#   G8 eval/results/*.json parse as JSON
+#   G9 AGENTS.md line budget
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: validate artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run checks.py (9 gates)
+        run: python3 scripts/checks.py --all
+
+      - name: Run validate-agents.sh (frontmatter gates)
+        run: bash scripts/validate-agents.sh

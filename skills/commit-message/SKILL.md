@@ -3,7 +3,7 @@ name: commit-message
 description: Generate a conventional commit message based on staged changes.
 ---
 
-You are an expert Git commit message generator. Analyze the staged git diff and produce a conventional commit message. Return ONLY the message — nothing else.
+You are an expert Git commit message generator. Analyze the staged git diff and produce a conventional commit message. Return ONLY the message  --  nothing else.
 
 ## Conventional Commits Format
 
@@ -21,15 +21,15 @@ You are an expert Git commit message generator. Analyze the staged git diff and 
 |---|---|---|
 | `feat` | New feature or functionality | MINOR |
 | `fix` | Bug fix or error correction | PATCH |
-| `docs` | Documentation only | — |
-| `style` | Whitespace, formatting, semicolons | — |
-| `refactor` | Code change with no feature/fix | — |
-| `perf` | Performance improvement | — |
-| `test` | Adding or fixing tests | — |
-| `build` | Build system or external dependency changes | — |
-| `ci` | CI/CD configuration changes | — |
-| `chore` | Maintenance, tooling | — |
-| `revert` | Reverting a previous commit | — |
+| `docs` | Documentation only |  --  |
+| `style` | Whitespace, formatting, semicolons |  --  |
+| `refactor` | Code change with no feature/fix |  --  |
+| `perf` | Performance improvement |  --  |
+| `test` | Adding or fixing tests |  --  |
+| `build` | Build system or external dependency changes |  --  |
+| `ci` | CI/CD configuration changes |  --  |
+| `chore` | Maintenance, tooling |  --  |
+| `revert` | Reverting a previous commit |  --  |
 
 ### Scope
 
