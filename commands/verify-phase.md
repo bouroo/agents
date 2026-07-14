@@ -1,12 +1,12 @@
 ---
-description: Verify phase — format, lint, type-check, scan, test, and githook gate with fix/review loop
+description: Verify phase  --  format, lint, type-check, scan, test, and githook gate with fix/review loop
 ---
 
 # Verify Phase
 
 Goal: leave the working tree in a state that passes every quality gate, including the repository's githook verify script.
 
-> **Agent:** requires `bash` + `edit` — run on the implementing/build agent, not `plan` or `conductor`.
+> **Agent:** requires `bash` + `edit`  --  run on the implementing/build agent, not `plan` or `conductor`.
 
 Scope (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole working tree.
 
@@ -16,19 +16,19 @@ Scope (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole wor
 
 Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat until clean or no more auto-fixes are possible, then advance.
 
-1. **Format** — apply the project's formatter; fail if files would change after auto-fix.
-2. **Lint** — run the linter with warnings-as-errors; auto-fix where the toolchain supports it.
-3. **Type-check** — run the static type checker with strict settings; no auto-fix, so move directly to review on issues.
-4. **Scan** — run secret/SAST/vulnerability scanners; fail on findings above threshold. Never auto-fix security findings — review and escalate.
-5. **Test** — run the full suite (unit + integration); coverage must meet the spec's Safeguards. A green suite is one signal, not proof — for high-trust changes, **grade the tests** with mutation testing (a suite that stays green after mutation is decoration, not coverage). See [harness-engineering](../skills/harness-engineering/SKILL.md) §12.
+1. **Format**  --  apply the project's formatter; fail if files would change after auto-fix.
+2. **Lint**  --  run the linter with warnings-as-errors; auto-fix where the toolchain supports it.
+3. **Type-check**  --  run the static type checker with strict settings; no auto-fix, so move directly to review on issues.
+4. **Scan**  --  run secret/SAST/vulnerability scanners; fail on findings above threshold. Never auto-fix security findings  --  review and escalate.
+5. **Test**  --  run the full suite (unit + integration); coverage must meet the spec's Safeguards. A green suite is one signal, not proof  --  for high-trust changes, **grade the tests** with mutation testing (a suite that stays green after mutation is decoration, not coverage). See [harness-engineering](../skills/harness-engineering/SKILL.md) §12.
 
 ## Fix/Review Loop
 
 After any stage with remaining issues:
 
-- **Fix** — apply the safest, narrowest auto-fixes first. Never band-aid; correct the root cause.
-- **Review** — if findings are legitimate, patch and re-run. If false positives, document the exception and escalate to the spec's Safeguards.
-- **Re-verify** — run the stage again. Stop after a maximum of three iterations; escalate unresolved issues.
+- **Fix**  --  apply the safest, narrowest auto-fixes first. Never band-aid; correct the root cause.
+- **Review**  --  if findings are legitimate, patch and re-run. If false positives, document the exception and escalate to the spec's Safeguards.
+- **Re-verify**  --  run the stage again. Stop after a maximum of three iterations; escalate unresolved issues.
 
 ## Githook Gate
 
@@ -42,4 +42,4 @@ Enforce a zero exit code. If no githook script exists, note the absence and proc
 
 ## Reporting
 
-Produce a concise pass/fail summary for every stage: exact command invoked, exit code, files changed (if any), any actionable findings outstanding, and a final verdict — **CLEAN** or **BLOCKED**.
+Produce a concise pass/fail summary for every stage: exact command invoked, exit code, files changed (if any), any actionable findings outstanding, and a final verdict  --  **CLEAN** or **BLOCKED**.
