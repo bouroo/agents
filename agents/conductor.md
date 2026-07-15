@@ -14,6 +14,7 @@ permission:
     "git log*": allow
     "git show*": allow
     "ls*": allow
+    "mkdir -p .agents/*": allow
   webfetch: allow
   websearch: allow
   edit:
@@ -283,7 +284,14 @@ Long task runs auto-compact: the harness summarizes older turns into an anchored
 - **Post-compaction resume:** re-read `state.json`, the plan dir, and the last handoff first -- disk beats memory. The summary tells you *that* a unit ran; the ledger tells you its `state`, `evidence`, and `scope`. Do not re-activate a unit already `passing`; do not lose a `blocked` unit's repro.
 - **Compaction-friendly latest turn:** the verbatim tail is your working surface -- state the next dispatch (unit id, owner, done-cmd) and any open blocker in the current turn, not several turns back.
 
-**Clock-in:** read `state.json`, plan dir, last handoff (your ledger); confirm startup-readiness; take your own bounded read-only look when it is the cheaper correct path, and dispatch `Explorer`/`Scout` for anything broad or external. **Clock-out:** update progress + `decision-log.md`, write `state.json`, confirm L1/L2/L3 still pass (verified by the squad), state the next action.
+### Bootstrap the ledger (first action on any new task)
+
+- Before writing any plan, state, or handoff file, ensure the on-disk ledger exists in the target project root (NOT this config repo): `mkdir -p .agents/plans/{task-slug} .agents/handoff`.
+- Derive `{task-slug}` from the task in kebab-case. Create the dirs as the FIRST clock-in action, before reading anything else, so every subsequent write has a home.
+- If the dirs already exist, this is a no-op resume; proceed to read `state.json`.
+- This step is non-optional: a write to a non-existent path is a silent state-loss bug (the ledger lives only in conversation, which is wiped on compaction).
+
+**Clock-in:** **bootstrap the ledger** (`mkdir -p .agents/plans/{task-slug} .agents/handoff` -- see Bootstrap above), THEN read `state.json`, plan dir, last handoff; confirm startup-readiness; take your own bounded read-only look when it is the cheaper correct path, and dispatch `Explorer`/`Scout` for anything broad or external. **Clock-out:** update progress + `decision-log.md`, write `state.json`, confirm L1/L2/L3 still pass (verified by the squad), state the next action.
 
 **Self-improving harness:** Gates enforce; prompts only request. Standards you care about move into a versioned gate (this repo's: `scripts/validate-agents.sh`), not a drifting prompt. Separate reasoning from computation -- deterministic logic belongs in tested code/tools, not the model. Explanations aren't evidence; the hard verify bound and three-layer termination are the executable-evidence rails.
 
