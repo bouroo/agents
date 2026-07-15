@@ -260,8 +260,6 @@ Canonical checklist shared by the orchestrator agent (`orchestrator`). Verify al
 
 > Paths are project-workspace-relative (`.agents/` lives in the target project's root via `git rev-parse --show-toplevel`, never in `~/.agents/`).
 
-> Paths are project-workspace-relative (`.agents/` lives in the target project's root via `git rev-parse --show-toplevel`, never in `~/.agents/`).
-
 `.agents/plans/{task-slug}/`
 - `story.md` -- user request + intent + assumptions.
 - `canvas.md` -- REASONS plan (non-trivial work only); decisive orchestrators add an explicit `## Assumptions` section listing every best-practice decision.
