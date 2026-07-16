@@ -16,27 +16,23 @@ Target area (optional): **$ARGUMENTS**. If empty, ask the user which module/pack
 
 Map the target area, its dependencies, and call sites. Identify the smell, not just the symptom.
 
-**Structural smells:**
-- Mutable global state  --  package-level variables mutated from multiple call sites.
-- Tight coupling to environment  --  env vars, CLI args, or filesystem paths accessed deep in domain packages instead of the entry point.
-- Monolithic entry points  --  `main` doing real work instead of parsing, delegating, and handling errors.
-- Side-effecting domain logic  --  functions that print, exit, or mutate external state instead of returning data and errors.
+**Structural smells** (top 3  --  full set in [effective-code-craft](../skills/effective-code-craft/SKILL.md) "Structure & Coupling"):
 
-**Performance smells:**
-- Unnecessary allocations  --  repeated allocation/destruction of objects in hot loops (should pool or reuse).
-- Missing preallocation  --  collections grown incrementally when final size is known or estimable.
-- Excessive copying  --  large buffers or structs passed by value when a reference, slice, or view would suffice.
-- Unbuffered I/O  --  raw file or network reads/writes without buffering (typically 4-64 KB).
-- Small frequent operations  --  per-element syscalls, DB queries, or network round trips that should be batched.
-- Heap escapes  --  short-lived values that escape to the heap due to pointers-to-locals, interface boxing, or large closure captures.
-- Suboptimal data layout  --  struct fields not ordered largest-to-smallest, causing padding waste.
-- N+1 patterns  --  sequential I/O or DB calls inside loops instead of bulk/batched operations.
+- Mutable global state mutated from multiple call sites.
+- Tight coupling to environment (env vars, CLI args, FS paths deep in domain packages).
+- Monolithic entry points doing real work instead of parsing, delegating, and handling errors.
 
-**Correctness smells:**
-- Unchecked errors  --  discarded return values, ignored error channels, or `_` assignments.
-- In-band errors  --  sentinel values like `-1`, `null`, or empty string used instead of explicit error returns.
-- Error string inspection  --  comparing error messages with `==` or `contains` instead of typed/sentinel error matching.
-- Missing cancellation propagation  --  concurrent tasks spawned without timeout or cancellation context.
+**Performance smells** (top 3  --  full patterns in [performance-patterns](../skills/performance-patterns/SKILL.md)):
+
+- Unnecessary allocations in hot loops; missing preallocation when final size is known.
+- Unbuffered I/O; per-element syscalls or DB queries that should be batched.
+- Heap escapes from pointers-to-locals, interface boxing, or large closure captures.
+
+**Correctness smells** (top 3  --  full hard rules in [effective-code-craft](../skills/effective-code-craft/SKILL.md) "Hard rules"):
+
+- Unchecked errors  --  discarded returns, ignored error channels, `_` assignments.
+- In-band errors  --  sentinels like `-1`, `null`, empty string instead of explicit error returns.
+- Error string inspection  --  comparing messages with `==`/`contains` instead of typed/sentinel matching.
 
 Run CPU, memory, and I/O profilers. Identify the top contributors. Record heap profiles and allocation counts. These measurements form the basis for all subsequent decisions.
 
@@ -63,9 +59,9 @@ Before touching production code, capture or write tests and benchmarks for the t
 
 Make small, atomic commits. Keep the build green at every step. Preserve public behavior. When principles conflict, clarity wins over concision, simplicity over concision, and maintainability over consistency.
 
-Apply engineering norms  --  see `AGENTS.md` "Code Craft Norms" and `skills/effective-code-craft` (Architecture: libraries not monoliths, code for reading, decouple from environment; Safety: safe by default, wrap errors with context, design for errors; State & Concurrency: avoid mutable globals, use concurrency sparingly, prefer worker pools, prefer atomics for simple counters; Observability: actionable structured logs, tracing for request debugging, metrics for performance).
+**Apply engineering norms**  --  see `AGENTS.md` "Code Craft Norms" and [effective-code-craft](../skills/effective-code-craft/SKILL.md) (Architecture, Safety, State & Concurrency, Observability).
 
-Apply performance patterns  --  see `AGENTS.md` "Performance Discipline" and `skills/performance-patterns`. **Apply only after correctness is proven; measure before/after; revert regressions.** Covers memory (preallocate, pool, order fields, avoid boxing, prefer zero-copy, keep on stack, share immutable, linear-time builders), I/O (buffer, batch, stream direct, guard expensive log/tracing args), and compiler/build (release flags, PGO for hot code, minimize escapes).
+**Apply performance patterns**  --  see `AGENTS.md` "Performance Discipline" and [performance-patterns](../skills/performance-patterns/SKILL.md). Apply only after correctness is proven; measure before/after; revert regressions.
 
 ---
 

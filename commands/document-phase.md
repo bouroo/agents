@@ -14,7 +14,7 @@ Target area (optional): **$ARGUMENTS**. Interpret as the system, flow, ADR, or g
 
 ## 0. Load the documentation skill
 
-Before anything else, load the **`repo-documentation` skill** via the skill tool. It carries the full doctrine for repo-local docs and ships the three copy-in templates (`system.md`, `flow.md`, `adr.md`) as siblings of `SKILL.md`. This command is the trigger; the skill is the reference. Refer back to it at each step for the canonical wording.
+Before anything else, load the **`repo-documentation` skill** via the skill tool. It carries the full doctrine for repo-local docs and ships the three copy-in templates (`system.md`, `flow.md`, `adr.md`) as siblings of `SKILL.md`. This command is the trigger; the skill is the reference. Refer back to it at each step for canonical wording on doc types, ADR frontmatter rules, source maps, glossary usage, and the granularity rules (system until it crosses systems, then promote to flow).
 
 ---
 
@@ -28,19 +28,12 @@ Document when behavior is central, risky, frequently changed, hard to infer from
 
 Check whether the target repo already has a `docs/` tree; the answer dictates the path.
 
-- **If `docs/` is absent** → **bootstrap** it:
-  - Create `docs/`, `docs/systems/`, `docs/flows/`, `docs/architecture/decisions/`, and `docs/templates/`.
-  - Create `docs/README.md`  --  an index that explains the layout (what goes in `systems/`, `flows/`, `architecture/decisions/`, `templates/`, and the glossary at `docs/glossary.md`) and links to the doc types.
-  - Create `docs/glossary.md` as a stub with a short preamble and an empty `## Terms` section.
-  - Copy the three skill templates (`system.md`, `flow.md`, `adr.md`) from the `repo-documentation` skill's siblings into `docs/templates/`. This lets the repo customize them over time.
-  - Then proceed to step 2 to document the target area.
+- **If `docs/` is absent** → **bootstrap**: create `docs/`, `docs/systems/`, `docs/flows/`, `docs/architecture/decisions/`, `docs/templates/`; create `docs/README.md` as an index explaining the layout; create `docs/glossary.md` as a stub with a short preamble and an empty `## Terms` section; copy the three skill templates from `repo-documentation`'s siblings into `docs/templates/`. Then proceed to step 2.
 - **If `docs/` is present** → proceed directly to step 2. Use the existing tree structure as-is; do not rearrange or copy templates that are already there.
 
 ---
 
 ## 2. Locate
-
-Find the right place in the docs tree before writing anything.
 
 - Read `AGENTS.md` and/or `docs/README.md` if present for the docs map and the docs/AGENTS division of labor.
 - Identify the affected system doc in `docs/systems/` and any related flow docs in `docs/flows/`.
@@ -52,27 +45,23 @@ Find the right place in the docs tree before writing anything.
 
 ## 3. Choose Type
 
-Pick exactly one type for the new or updated doc; resist creating new categories.
+Pick exactly one type for the new or updated doc; resist creating new categories. Doc types, granularity rules, and when to promote system → flow live in the `repo-documentation` skill. Brief:
 
-- **System**  --  a coherent area of application behavior (module, package, service, feature area). Use when behavior is local and easy to explain in one place.
-- **Flow**  --  behavior that **crosses systems, has several steps or states, is frequently changed or debugged, involves external services, or has security/billing/data-integrity/user-visible implications**. Promote from a system doc when it grows complex.
-- **ADR**  --  a durable technical decision that shapes more than one system (auth strategy, async webhook processing, ownership of state, idempotency mandates, adapter boundaries). Status: `Proposed` until approved, then `Accepted`. Never rewrite an accepted ADR to change the decision; create a new ADR and mark the old one `Superseded` with `superseded_by`.
-- **Glossary**  --  a Title Case domain term that is reused across systems and is easy to misunderstand (Account, Workspace, Session, Verification Token, etc.).
-
-Use the granularity rules from the `repo-documentation` skill: keep behavior inside a system doc until it crosses systems or meets any flow criterion, then promote to a flow doc.
+- **System**  --  coherent area of application behavior (module, package, service, feature area).
+- **Flow**  --  behavior that crosses systems, has several steps/states, is frequently changed or debugged, involves external services, or has security/billing/data-integrity/user-visible implications.
+- **ADR**  --  durable technical decision shaping more than one system. Status: `Proposed` until approved, then `Accepted`. Never rewrite an accepted ADR to change the decision; create a new ADR and mark the old one `Superseded` with `superseded_by`.
+- **Glossary**  --  Title Case domain term reused across systems and easy to misunderstand.
 
 ---
 
 ## 4. Draft from Template
 
-Templates live with the `repo-documentation` skill, and (after bootstrap) a working copy also lives at `docs/templates/` in the target repo.
-
 - If `docs/templates/` exists, prefer it  --  the repo may have customized the templates. The skill's sibling templates remain the canonical reference.
-- If `docs/templates/` is absent (a pre-existing `docs/` tree that was never bootstrapped via this command), reference the skill's sibling templates directly without creating a tree in the working repo.
+- If `docs/templates/` is absent (a pre-existing `docs/` tree never bootstrapped via this command), reference the skill's sibling templates directly without creating a tree in the working repo.
 
-Hard requirements when drafting:
+Hard requirements (full wording in the skill):
 
-- **Source map**  --  include a `## Source map` section with Markdown relative links to the most important source files (entry points, state definitions, handlers, services, jobs, key tests). Do not list every file unless the system is small.
+- **Source map**  --  include a `## Source map` with Markdown relative links to the most important source files (entry points, state definitions, handlers, services, jobs, key tests). Do not list every file unless the system is small.
 - **Related docs**  --  link to other systems, flows, ADRs, and glossary entries via relative Markdown links.
 - **Mark uncertainty**  --  if behavior is hard to infer, write `[NEEDS CLARIFICATION]` or "uncertain  --  verify against code" rather than inventing an explanation. Unsupported guesses are worse than gaps.
 - **ADRs**  --  every ADR begins with YAML frontmatter: `status` (Proposed/Accepted/Superseded/Deprecated/Rejected), `date` (`YYYY-MM-DD`), and `superseded_by` (required only when Superseded). Do not add other frontmatter fields.

@@ -158,7 +158,7 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 - Treat a green suite as one signal, not proof. Tests that hug the happy path, assert wrong behavior, or drift alongside an implementation bug all pass. The risk is not just a weak test -- it is **verification theater**: the agent reports a passing test as proof, the transcript shows the test ran, but the test was a tautology or a one-line assertion that the implementation trivially satisfies. A test that cannot fail cannot prove anything.
 - **Prefer mutation testing to grade the tests:** deliberately mutate the implementation (flip a comparison, drop a line, alter a constant); if the suite stays green, those tests were decoration, not coverage.
 - Capture the exact command, expected output, and actual output for every "done" claim. A passing test reported without a captured command + output is a smell -- treat it as unverified until the evidence is on disk.
-- Cross-link: see §5 (prevent premature victory), §11 (explanations are not evidence), and [Verification theater in depth](./references/verification-theater.md).
+- **Cross-link:** §11 establishes that explanations are not evidence; see also §5 and [Verification theater in depth](./references/verification-theater.md).
 **Source:** Salesforce -- How to Build Reliable AI Agents, Pattern 5; Learn Harness Engineering -- grade-the-tests.
 
 ## 13. Catalog Failure Modes; Engineer the Lifecycle
@@ -181,7 +181,7 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 | --- | --- | --- | --- |
 | Unprompted fixing | Agent rewrites code or spec sections the user did not ask for, "while it is in there" | Restrict active scope (WIP=1) and gate edits on the Intent line | feature list / scope surface + [intent-gate](../effective-code-craft/references/intent-gate.md) |
 | Silent step-dropping | Plan had N steps; transcript shows N-1; skipped step never mentioned | Externalize the plan as a checklist; require every item marked done with evidence | plan checklist + evidence log |
-| Retry thrash | Same edit attempted 3+ times with small variations; output oscillates near failure | Hard verify bound (3 cycles -> hand back) | §15 hand-back contract |
+| Retry thrash | Same edit attempted 3+ times with small variations; output oscillates near failure | Hard verify bound (§15) | §15 hand-back contract |
 | Verification theater | Transcript claims a verify step happened (test ran, build green, endpoint returned 201) but the observation is missing; the agent read the code and nodded | Require executable evidence: command + exit code + actual output, captured to disk | three-layer termination gate + [verification-theater](./references/verification-theater.md) |
 | Premature victory | Agent declares done after edits but before runnable proof | Bind completion to executable evidence | clean-state checklist + three-layer termination (§5) |
 | Context loss | Decisions, constraints, or prior failures forgotten after compaction or long tasks | Make the repo the system of record; checkpoint next action in latest turn | progress log + decision log + handoff |

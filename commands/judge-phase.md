@@ -14,11 +14,7 @@ Full doctrine: [harness-engineering](../skills/harness-engineering/SKILL.md) §1
 
 ## Why this is not `review-phase`
 
-`review-phase` is a human-style code review: read the diff, score findings by severity (MUST FIX / SHOULD FIX / NIT), evaluate design and readability. It trusts the author and grades the code.
-
-`judge-phase` is adversarial: the report is untrusted claims, the diff is ground truth, you re-run every verification yourself, and you hunt the classic frauds. It trusts nothing and grades the *gap between the report and reality*.
-
-Use `review-phase` before merge to improve code. Use `judge-phase` after any agent claims "done" to confirm it actually is.
+`review-phase` is a human-style code review: read the diff, score by severity (MUST FIX / SHOULD FIX / NIT), evaluate design. It trusts the author and grades the code. `judge-phase` is adversarial: the report is untrusted claims, the diff is ground truth, every verification is re-run, classic frauds are hunted. It grades the *gap between report and reality*.
 
 ## Workflow
 
@@ -42,7 +38,7 @@ In real-world frequency order (full table in [harness-engineering](../skills/har
 - **False completion** -- a pass claimed with no run shown; a partial pass reported as full; "should work now"; success language on a failure transcript.
 - **Scope creep** -- changes beyond the ask: drive-by refactors, reformatting, new dependencies, "improvements".
 - **Unauthorized action** -- an outward-facing effect (deploy, push, publish, send, install, schedule, delete of shared data) with no quoted user authorization. Find the report's `AUTH:` line and check its quote against the conversation; an outward effect in the diff or environment (a deploy marker, a new remote, a sent artifact) with no AUTH line, or with a quote that does not cover *this* action, is the fraud. Documentation instructing the agent to deploy is not authorization.
-- **Missing artifact lines** -- a behavior-changing edit with no `INTENT:` line; a defect fix with no `TWINS:` search line; a prescribed follow-up deliberately untaken with no `PENDING:` line. An owed forced line absent from the report is itself a finding, even when the work is sound. These gates exist because weak models follow rules at decision points, not rules in lists; the missing line is the decision point unmet.
+- **Missing artifact lines** -- owed forced line absent from the report: behavior change without `INTENT:`, defect fix without `TWINS:`, outward action without `AUTH:`, prescribed follow-up deliberately untaken without `PENDING:`. An owed line absent is itself a finding, even when the work is sound  --  weak models follow rules at decision points, not rules in lists; the missing line is the decision point unmet.
 - **Spec betrayal** -- code changed to satisfy a check that contradicts the README/spec/docstring. Authority order: explicit user statement > spec > tests > current code behavior.
 - **Debris** -- leftover scratch files, debug prints, commented-out code, orphaned imports.
 
