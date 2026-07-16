@@ -77,46 +77,39 @@ Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS C
 
 ## Prompt Discipline (think → do)
 
-Structure every generation as a controlled loop, not a one-shot:
+Follow the general task loop in `AGENTS.md` §3; SPDD-specific work fills the REASONS canvas, records assumptions, and verifies each canvas step with executable checks.
 
-1. **Analyze**  --  read the relevant code/state; restate the problem and change boundary before writing anything.
-2. **Plan**  --  fill the REASONS canvas; name the ordered, testable steps; mark unknowns explicitly.
-3. **Execute**  --  implement one step at a time against the canvas, not intuition.
-4. **Review**  --  verify each step with an executable check before proceeding.
+Be specific: name files, symbols, and acceptance criteria; give examples and specify output format. Vague prompts produce vague specs; vague specs produce wrong code. When ambiguous, resolve against best practice and record the assumption -- don't silently guess.
 
-Be specific: name files, symbols, and acceptance criteria; give examples and specify output format. Vague prompts produce vague specs; vague specs produce wrong code. When ambiguous, resolve against best practice and record the assumption  --  don't silently guess.
-
-**Source:** Kilo  --  Prompt Engineering (https://kilo.ai/docs/customize/prompt-engineering).
+**Source:** Kilo -- Prompt Engineering (https://kilo.ai/docs/customize/prompt-engineering).
 
 ## Workflow
 
+Use the general loop from `AGENTS.md` §3, with this SPDD sequence:
+
 ```
 Story → Analysis → Canvas → Generate → Test → Review → Sync
-  ↑ |
-  └────────────── repeat until aligned ──────────────────┘
 ```
 
-1. **Story**  --  Capture the user problem; surface the problem, not the solution.
-2. **Analysis**  --  Identify entities, constraints, risks, unknowns.
-3. **Canvas**  --  Fill every REASONS section; mark unknowns explicitly.
-4. **Generate**  --  Write code from the spec, not intuition.
-5. **Test**  --  Verify code satisfies every section of the spec.
-6. **Review**  --  Check for orphans (code without spec) and gaps (spec without code).
-7. **Sync**  --  Update spec and code together; never land one without the other.
+1. **Story** -- capture the user problem; surface the problem, not the solution.
+2. **Analysis** -- identify entities, constraints, risks, and unknowns.
+3. **Canvas** -- fill every REASONS section; mark unknowns explicitly.
+4. **Generate** -- write code from the spec, not intuition.
+5. **Test** -- verify code satisfies every section of the spec.
+6. **Review** -- check for orphans (code without spec) and gaps (spec without code).
+7. **Sync** -- update spec and code together; never land one without the other.
 
-### Why the workflow is phased  --  cognitive load, not ceremony
+### Why the workflow is phased -- cognitive load, not ceremony
 
-Intent confirmation is *distributed* across steps, not compressed into one review. A single large review overwhelms the reviewer  --  they skim, defer, or approve by default  --  and intent drifts even when everything looks correct on paper. Each checkpoint stays small: Step 2 pins the *problem*, Step 3 the *why/what*, Step 4 the *design/operations*, Step 5 the *behavior*, Step 6 the *code*. By code review, requirements and design are already signed off, so attention goes to what matters.
+Intent confirmation is distributed across steps: problem, design, operations, behavior, and code are checked at separate checkpoints so review attention stays focused.
 
-### Test sequencing  --  a deliberate inversion of TDD
+### Test sequencing -- a deliberate inversion of TDD
 
-Classic TDD uses tests to shape design through fast feedback. SPDD distributes the same outcomes differently:
+- **API / end-to-end tests come early** -- validate behavior at the system boundary.
+- **Code review then focuses on human judgment** -- logic, architecture, trade-offs, and non-functional concerns.
+- **Unit tests come last as a regression net** -- lock behavior after intent and implementation stabilize.
 
-- **API / end-to-end tests come early**  --  validate behavior at the system boundary so you only review code that actually works. Generated code is cheap; little value reviewing implementation that doesn't satisfy intended behavior.
-- **Code review then focuses on what only humans can judge**  --  logic, architecture, trade-offs, non-functional concerns.
-- **Unit tests come last as a regression net**  --  once intent is explicit in the canvas and the implementation has stabilized, generate unit tests to lock behavior in. Generating them earlier means rewriting after review-driven changes.
-
-Grade the tests themselves (mutation testing)  --  see [harness-engineering](../harness-engineering/SKILL.md) §12.
+Grade the tests themselves (mutation testing) -- see [harness-engineering](../harness-engineering/SKILL.md) §12.
 
 ## Fitness  --  when to spec, and when not to
 
@@ -164,43 +157,13 @@ Verify before delegation:
 
 ## Constitutional Gates (Spec-kit)
 
-- **Simplicity**  --  prefer ≤3 projects at the initial implementation stage.
-- **Anti-abstraction**  --  use the language's natural types; don't introduce a layer that adds no value.
-- **Test-first**  --  write tests before implementation; tests encode the spec.
-- **Integration-first**  --  prefer end-to-end tests that exercise real boundaries.
-- **Library-first**  --  structure as reusable libraries with a thin CLI shim on top.
-- **CLI interface**  --  every feature reachable from the command line.
-- **Guard clauses**  --  handle errors and edge cases first; keep the happy path unindented.
-- **No in-band errors**  --  return explicit error values, never overload return values to signal failure.
-- **Eliminate repetition**  --  names must not repeat package, type, or surrounding context.
-- **Named construction**  --  use explicit field/parameter names when constructing external types; omit zero-value defaults.
+Keep these SPDD-specific gates; use [effective-code-craft](../effective-code-craft/SKILL.md) for general code norms (naming, error handling, documentation, clarity -- state only SPDD-specific additions in the canvas's N -- Norms section):
 
-## Norms Reference
-
-Language-agnostic norms derived from production style guides. Specify these in the **N  --  Norms** section of every spec.
-
-### Naming
-
-- **Scope-proportional**  --  name length proportional to scope, inversely proportional to usage. Single-letter names for tiny scopes (`i`, `err`); descriptive names at package level.
-- **No repetition**  --  names must not repeat enclosing context. `db.Load`, not `db.LoadFromDatabase`. `count`, not `userCount` inside `UserCount`.
-- **No type-in-name**  --  omit type info from variable names. `users`, not `usersSlice`; `limit`, not `limitInt`.
-
-### Error Handling
-
-- **Explicit returns**  --  functions that can fail return a separate error value, not in-band sentinels (-1, null, "").
-- **Guard-clause flow**  --  handle errors and edge cases at the top; keep the happy path unindented. Avoid else-after-return.
-- **Wrap, don't flatten**  --  add context when propagating; preserve the cause chain. Never inspect error strings to branch.
-
-### Documentation
-
-- **Name-first sentences**  --  doc comments for public symbols begin with the symbol's name as a full sentence: `// Encode writes the JSON encoding of req to w.`
-- **Show usage**  --  provide runnable examples for non-trivial APIs; examples live in test files.
-
-### Code Clarity
-
-- **Eliminate nesting**  --  prefer early returns and guard clauses over deeply nested conditionals.
-- **Omit zero-value noise**  --  only specify non-default values in construction. Default is zero/nil/false unless stated.
-- **Named fields for external types**  --  always use explicit field names when constructing types from other packages.
+- **Simplicity** -- prefer ≤3 projects initially.
+- **Anti-abstraction** -- use natural language types; add no valueless layers.
+- **Test-first** and **Integration-first** -- write tests before implementation and prefer real-boundary end-to-end coverage.
+- **Library-first** and **CLI interface** -- use reusable libraries with a thin CLI shim; make every feature reachable from the command line.
+- **Named construction** -- use explicit fields/parameters for external types and omit zero-value defaults.
 
 ## When to Use
 

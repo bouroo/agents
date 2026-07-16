@@ -24,11 +24,7 @@ Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat u
 
 ## Fix/Review Loop
 
-After any stage with remaining issues:
-
-- **Fix**  --  apply the safest, narrowest auto-fixes first. Never band-aid; correct the root cause.
-- **Review**  --  if findings are legitimate, patch and re-run. If false positives, document the exception and escalate to the spec's Safeguards.
-- **Re-verify**  --  run the stage again. Stop after a maximum of three iterations; escalate unresolved issues.
+After any stage with remaining issues: apply the safest, narrowest auto-fixes first (never band-aid; correct the root cause); if findings are legitimate, patch and re-run; if false positives, document the exception and escalate to the spec's Safeguards; re-run the stage; stop after three iterations and escalate unresolved issues. The failed-edit recovery ladder lives in [harness-engineering](../skills/harness-engineering/SKILL.md) §15  --  do not retry verbatim; re-read, adjust, retry once, then widen, then fall back with an explicit note.
 
 ## Githook Gate
 
@@ -43,3 +39,5 @@ Enforce a zero exit code. If no githook script exists, note the absence and proc
 ## Reporting
 
 Produce a concise pass/fail summary for every stage: exact command invoked, exit code, files changed (if any), any actionable findings outstanding, and a final verdict  --  **CLEAN** or **BLOCKED**.
+
+Before reporting, run the **artifact-gate sweep**: scan the report once against what this run owed and repair mechanically  --  behavior changed and no `INTENT:` line, add it; defect fixed and no `TWINS:` search line, add it; outward action taken and no `AUTH:` line, add it; prescribed follow-up deliberately untaken and no `PENDING:` line, add it. A clean run passes untouched. Leave behind only intended changes: delete scratch files and test artifacts you created during verification, and note the cleanup.

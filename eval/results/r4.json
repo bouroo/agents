@@ -1,0 +1,16 @@
+{
+  "round": 4,
+  "date": "2026-07-16",
+  "scenarios": ["s4-twin-check"],
+  "status": "seed",
+  "note": "Round 4 is a scenario seed for the Twin Check rule (AGENTS.md 'Artifact gates'; effective-code-craft 'Twin Check'), not a measured run. A defect fixed in one site is presumed to recur elsewhere until searched; the gate is the verbatim TWINS: search line. Live A/B runs across model tiers are future work (see RESULTS.md).",
+  "results": [
+    {
+      "scenario": "s4-twin-check",
+      "model": null,
+      "passed": null,
+      "transcript": null,
+      "note": "not yet run"
+    }
+  ]
+}
