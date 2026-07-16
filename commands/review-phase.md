@@ -38,7 +38,7 @@ Collect all findings, group them by severity, and produce the review summary.
 
 ## Review Checklist
 
-Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft Norms"; deeper treatments: `skills/effective-code-craft` and `skills/performance-patterns`.
+Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft Norms"; deeper treatments: [effective-code-craft](../skills/effective-code-craft/SKILL.md) and [performance-patterns](../skills/performance-patterns/SKILL.md). Keep this checklist short  --  the skills are the reference; the bullets below are the highest-signal prompts per lens.
 
 ### Correctness
 
@@ -50,31 +50,26 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 ### Safety and Error Handling
 
 - Invalid states unrepresentable; input validated at boundaries?
-- All errors checked and propagated with context; none silently discarded?
-- No panics/exceptions/crashes for normal control flow?
-- No mutable global state; resources (files, connections, locks) acquired and released correctly?
+- All errors checked and propagated with context; none silently discarded? See effective-code-craft "Hard rules".
 - Concurrency safe; spawned-task lifetimes obvious and bounded? Beware accidental aliasing from shallow copies.
+- See effective-code-craft "Safety" and "State & Concurrency" for the rest.
 
 ### Tests
 
 - Appropriate unit, integration, or end-to-end tests covering happy, error, and boundary paths?
-- Failures report input, actual, expected clearly?
-- Tests themselves maintainable, no false positives on implementation refactors?
+- Tests themselves maintainable, no false positives on implementation refactors? See harness-engineering §11 (mutation grading).
 
 ### Performance
 
 - Allocations, copies, and locks justified, not habitual?
 - Hot paths preallocated, pooled, or stack-allocated where applicable?
-- No N+1 I/O patterns, unbounded buffering, or unnecessary synchronous waits?
-- Small immutable values passed by value; large or mutable ones by reference?
-- Expensive operations (I/O, parsing, serialization) batched where possible?
+- No N+1 I/O patterns, unbounded buffering, or unnecessary synchronous waits? Full patterns: [performance-patterns](../skills/performance-patterns/SKILL.md).
 
 ### Readability and Naming
 
-- Names match scope (short locals, descriptive public); casing and acronym uniformity follow project convention.
+- Names match scope; casing and acronym uniformity follow project convention.
 - Functions short and single-purpose; happy path at minimal indent, errors handled first with early returns.
-- Lines broken by semantics, not rigid column limit. No dead code, commented-out blocks, or speculative features.
-- Public APIs have doc comments; comments explain *why*, not *what*.
+- Public APIs have doc comments; comments explain *why*, not *what*. Full norms: effective-code-craft "Clarity".
 
 ### Structure and Coupling
 

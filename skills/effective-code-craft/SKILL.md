@@ -91,14 +91,7 @@ No prescribed-but-untaken follow-up, no line. The judge treats an unmentioned pe
 
 ## Artifact Gate Sweep (The Last Check Before Sending)
 
-The four gates above are not separate steps; they are a mechanical sweep performed once, right before the report ships. Scan the finished report against what this run owed and repair mechanically:
-
-- behavior changed and no `INTENT:` line  ->  add it;
-- defect fixed and no `TWINS:` line  ->  add it;
-- outward action taken and no `AUTH:` line  ->  add it;
-- prescribed follow-up deliberately untaken and no `PENDING:` line  ->  add it.
-
-A clean run passes the sweep untouched. The gate fires only when something is owed and missing.
+Before sending the report, mechanically check whether this run owed `INTENT:`, `TWINS:`, `AUTH:`, or `PENDING:` and add any missing line. A clean run passes untouched; gates fire only when owed.
 
 ## 1. Write Libraries, Not Monoliths
 

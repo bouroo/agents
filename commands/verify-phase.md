@@ -24,12 +24,7 @@ Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat u
 
 ## Fix/Review Loop
 
-After any stage with remaining issues:
-
-- **Fix**  --  apply the safest, narrowest auto-fixes first. Never band-aid; correct the root cause.
-- **Failed-edit recovery ladder**  --  when an edit itself fails (bad match, wrong span), do not retry verbatim: (1) re-read the exact region, (2) adjust the match, (3) retry once; (4) only then widen to a larger span; a full rewrite is last, and you say you fell back and why.
-- **Review**  --  if findings are legitimate, patch and re-run. If false positives, document the exception and escalate to the spec's Safeguards.
-- **Re-verify**  --  run the stage again. Stop after a maximum of three iterations; escalate unresolved issues.
+After any stage with remaining issues: apply the safest, narrowest auto-fixes first (never band-aid; correct the root cause); if findings are legitimate, patch and re-run; if false positives, document the exception and escalate to the spec's Safeguards; re-run the stage; stop after three iterations and escalate unresolved issues. The failed-edit recovery ladder lives in [harness-engineering](../skills/harness-engineering/SKILL.md) §15  --  do not retry verbatim; re-read, adjust, retry once, then widen, then fall back with an explicit note.
 
 ## Githook Gate
 
