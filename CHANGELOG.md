@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-16
+
 ### Added
 - `judge-phase` command: adversarial verification of finished work -- treats a "done" report as claims, re-runs verifications, hunts the classic frauds (weakened checks, false completion, scope creep, spec betrayal, debris), and delivers a VERIFIED / VERIFIED WITH CAVEATS / REFUTED verdict. Distinct from the trusting `review-phase`.
 - `harness-engineering` §18: the Judge stance and fraud-table doctrine backing `judge-phase`.
@@ -17,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Conductor PROVE phase now includes the Judge role alongside Tester and Reviewer.
 - `README.md` command table registers `judge-phase`.
+- Bumped `plugin.json` and `marketplace.json` versions from 1.0.0 to 1.2.0; the manifests had drifted behind the release tags.
+
+### Fixed
+- `CHANGELOG.md` en-dash in the skill-name length entry broke the G6 no-dash gate in CI; replaced with an ASCII hyphen.
 
 ## [1.1.0] - 2026-07-16
 
@@ -65,3 +71,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.0.0]: https://github.com/bouroo/agents/releases/tag/v1.0.0
 [1.0.1]: https://github.com/bouroo/agents/releases/tag/v1.0.1
 [1.1.0]: https://github.com/bouroo/agents/releases/tag/v1.1.0
+[1.2.0]: https://github.com/bouroo/agents/releases/tag/v1.2.0
