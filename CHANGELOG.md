@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Plugin packaging (`plugin.json`, `marketplace.json`) and cross-platform installers (`install.sh` POSIX, `install.ps1` Windows).
-- Skill-name length constraint (1–64 chars) validation gate (`scripts/validate-agents.sh`).
+- Skill-name length constraint (1-64 chars) validation gate (`scripts/validate-agents.sh`).
 - Adversarial judge-phase in the conductor agent and accompanying doc cleanup.
 - CI workflow (`.github/workflows/validate.yml`) running `scripts/checks.py` and `scripts/validate-agents.sh` on push/PR to `main` and `develop`.
 - Kilo/Opencode configuration example in `README.md`.
