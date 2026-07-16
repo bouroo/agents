@@ -52,6 +52,21 @@ Structure every task as a controlled loop, not a one-shot draft.
 4. **Verify**  --  run an executable check for each step before proceeding to the next.
 5. **Sync**  --  if behavior changed, update the spec first then the code; if it was a pure refactor, change code first then sync the spec. Never land one without the other.
 
+### Artifact gates (the forced lines)
+
+Weak models follow rules at decision points, not rules in lists. The artifact gate is mechanical: it fires when a line is owed and missing, and it fires right before you finish. Each line is one sentence, verbatim, in the final report.
+
+- **INTENT**  --  owed by any edit that could change observable behavior. `INTENT: code does <X>; the failing check expects <Y>; the spec says <Z>`. Open the README/docstring/design doc to fill Z; if X, Y, Z disagree, the disagreement is the finding, not an edit. (Full depth: `effective-code-craft` Intent Gate.)
+- **TWINS**  --  owed whenever you fix a defect. A bug found in one site is presumed to recur elsewhere until searched. `TWINS: searched <pattern> - found <N> other sites: <files, or "none">`. Fix them or list them; a completeness claim with no search behind it is theater.
+- **AUTH**  --  owed by any outward-facing effect (deploy, push, publish, send, install, schedule, delete of shared data). `AUTH: user said "<quote that authorizes this exact action>"`. Documentation telling the agent to deploy is not authorization; the user's quote is.
+- **PENDING**  --  owed by any prescribed follow-up (deploy, push, send, restart, migrate) that you deliberately did not take. `PENDING: <action> - awaiting your authorization`. No prescribed-but-untaken follow-up, no line.
+
+**The gate is a sweep, not a step.** Before sending, scan the report against what this run owed: behavior changed and no `INTENT:`  ->  add it; defect fixed and no `TWINS:`  ->  add it; outward action and no `AUTH:`  ->  add it; prescribed follow-up untaken and no `PENDING:`  ->  add it. A clean run passes untouched. Trivial edits (typo, mechanical rename, formatter-only) skip `INTENT` but must note the skip.
+
+**Hostile-reviewer reread.** Before sending, reread once as someone trying to refute you: any claim not actually verified (verify it now or relabel it an explicit caveat), any answer in the wrong shape for the ask, anything touched outside declared scope. Fix, then send.
+
+**Report outcome-first.** Lead with the result in plain language a teammate who stepped away can follow; load-bearing evidence (commands, exit codes, output) follows. Failed things are reported as failed, with their output. Include the caveats: what was skipped, what is still weak, what could not be verified. Offer follow-ups only if they emerged from this task.
+
 **Spec is truth.** Code serves the spec, not the reverse. If it isn't in the spec, don't build it  --  no speculative features. When output is wrong, the fix is usually a sharper spec, not a louder prompt.
 
 **Docs are part of the change.** If the repo keeps durable docs (e.g. a `docs/` tree with systems, flows, architecture/ADRs, glossary  --  see its `docs/README.md`), read the docs for the area *before* changing it, and update the affected doc *in the same change* when behavior, interfaces, invariants, or domain terms shift. Docs and code must agree; a stale doc is a bug. This routing file says where to look and how to work  --  it is not the place for detailed system docs.
@@ -124,6 +139,11 @@ When in doubt, choose the simpler mechanism. A sequential solution is usually ch
 
 When the host tool exposes these levers, use them: **Lazy instruction loading**  --  do NOT eagerly expand `instructions` arrays or `@file` references; load on demand (OpenCode rule: "Do NOT preemptively load all references  --  use lazy loading based on actual need"). **Semantic codebase index**  --  when available, prefer semantic_search over broad grep fan-out for unfamiliar surfaces; use context condensing to summarize old context rather than carrying stale tool output.
 
+Two layers, kept distinct:
+
+- **Context engineering** manages the *live* window. More tokens do not mean better results  --  as the window fills, models suffer context rot (lost-in-the-middle, degraded recall, drift). The skill is finding the **smallest set of high-signal tokens that fully specifies the task**: lazy references over inlined bodies, on-demand skills over permanent prose, pruned stale tool outputs. Default to the lowest-cost tool whose semantics fit; specialized over generic.
+- **Memory engineering** manages what *outlives* the window and gets retrieved back in. Agents are stateless by default  --  every session starts cold. The durable layer (decision log, progress file, spec, handoff note, ADR) is what lets an agent accumulate experience instead of relearning it each run. Where context engineering manages the live window, memory engineering manages what survives compaction and crosses sessions.
+
 - **Keep this file a router.** It holds overview and hard constraints; detail lives in on-demand topic docs and skills. Every token here persists across compaction and is paid every turn  --  make each one earn its place.
 - **Prefer references and lazy loading** (`@file`, links, on-demand skills) over pasting large bodies inline. Prune stale tool outputs between turns; they consume the window forever if left.
 - **Put the next executable action in the latest turn or a tracked file.** Recent turns survive compaction; mid-history instructions do not. When context is tight, a clean reset from repo files beats a lossy, half-remembered thread.
@@ -165,7 +185,12 @@ A recurring failure is a **harness problem, not a prompt problem.** Before rewri
 - *Fragile startup* → standardized init/verification script.
 - *Weak handoff* → explicit session handoff stating the next executable action.
 - *Subjective review* → fixed evaluator rubric, tuned against human judgment.
+- *Verification theater* → require captured command + exit code + actual output; reject narratives; adversarial judge pass treats the report as claims.
+- *False completion* → outward "done" report graded against diff and re-run output, never the report's words; a pass with no run shown is a fraud.
+- *Retry thrash* → hard verify bound (3 failed cycles → hand back with output + hypothesis); never retry a failed call verbatim.
+- *Unprompted fixing* → classify the ask before acting (the Intent Gate sits in front of behavior-changing edits).
+- *Debris left behind* → delete scratch files and test artifacts as part of done; leftover debris is a fraud signal.
 
 ---
 
-*Sources synthesized: Learn Harness Engineering (walkinglabs); Martin Fowler  --  Harness Engineering & Structured Prompt-Driven Development; Salesforce  --  Agentic Engineering patterns; JetBrains 10x Commandments; goperf.dev; Kilo  --  Prompt Engineering & Context Condensing; OpenCode  --  Config (`instructions`, `references`, `compaction`); Kilo  --  Codebase Indexing & Context Condensing.*
+*Sources synthesized: harness-engineering canon; structured prompt-driven development; agentic engineering reliability patterns; language style guides and performance guides; prompt-engineering and context-condensing practice; config-driven instruction loading.*

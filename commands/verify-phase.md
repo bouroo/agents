@@ -27,6 +27,7 @@ Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat u
 After any stage with remaining issues:
 
 - **Fix**  --  apply the safest, narrowest auto-fixes first. Never band-aid; correct the root cause.
+- **Failed-edit recovery ladder**  --  when an edit itself fails (bad match, wrong span), do not retry verbatim: (1) re-read the exact region, (2) adjust the match, (3) retry once; (4) only then widen to a larger span; a full rewrite is last, and you say you fell back and why.
 - **Review**  --  if findings are legitimate, patch and re-run. If false positives, document the exception and escalate to the spec's Safeguards.
 - **Re-verify**  --  run the stage again. Stop after a maximum of three iterations; escalate unresolved issues.
 
@@ -43,3 +44,5 @@ Enforce a zero exit code. If no githook script exists, note the absence and proc
 ## Reporting
 
 Produce a concise pass/fail summary for every stage: exact command invoked, exit code, files changed (if any), any actionable findings outstanding, and a final verdict  --  **CLEAN** or **BLOCKED**.
+
+Before reporting, run the **artifact-gate sweep**: scan the report once against what this run owed and repair mechanically  --  behavior changed and no `INTENT:` line, add it; defect fixed and no `TWINS:` search line, add it; outward action taken and no `AUTH:` line, add it; prescribed follow-up deliberately untaken and no `PENDING:` line, add it. A clean run passes untouched. Leave behind only intended changes: delete scratch files and test artifacts you created during verification, and note the cleanup.
