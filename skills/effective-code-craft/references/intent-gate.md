@@ -112,6 +112,5 @@ log line, side effect, timing, ordering -- must pass the gate.
 
 ## Source
 
-fable-method -- Sahir619/fable-method. See also
-[harness-engineering](../harness-engineering/SKILL.md) §11 (separate
+See also [harness-engineering](../harness-engineering/SKILL.md) §11 (separate
 reasoning from computation) and §5 (prevent premature victory).

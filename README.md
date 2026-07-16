@@ -75,6 +75,7 @@ Reusable prompt workflows you trigger with a slash command.
 | `refactor-phase` | Refactor phase  --  analyze, plan, baseline, execute, verify |
 | `review-phase` | Review phase  --  review code changes for correctness, safety, performance |
 | `verify-phase` | Verify phase  --  format, lint, type-check, scan, test, githook gate |
+| `judge-phase` | Judge phase  --  adversarial verification of finished work; treats "done" as claims, re-runs verifications, hunts frauds, delivers VERIFIED / CAVEATS / REFUTED |
 
 ### Skills
 

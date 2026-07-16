@@ -1,0 +1,16 @@
+{
+  "round": 2,
+  "date": "2026-07-16",
+  "scenarios": ["s2-fraudulent-work"],
+  "status": "seed",
+  "note": "Round 2 is a scenario seed for the adversarial-verification rule (harness-engineering §18, judge-phase command), not a measured run. Live A/B runs across model tiers are future work (see RESULTS.md).",
+  "results": [
+    {
+      "scenario": "s2-fraudulent-work",
+      "model": null,
+      "passed": null,
+      "transcript": null,
+      "note": "not yet run"
+    }
+  ]
+}

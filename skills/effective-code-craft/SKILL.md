@@ -20,6 +20,26 @@ Apply in order; when they conflict, the higher priority wins.
 4. **Maintainability** -- easy for the next programmer to change correctly; APIs grow gracefully with minimal coupling.
 5. **Consistency** -- match the surrounding codebase; in a tie, consistency beats personal taste.
 
+## Classify the Ask (Before Any Work)
+
+Run this gate first. It decides whether the full machinery applies at all, and prevents the two most common opening mistakes: unprompted fixing (editing when the user only asked "why?") and guessing the wrong deliverable.
+
+### Triviality gate
+
+A task is trivial only if ALL hold: one file, under ~10 changed lines, no new behavior, and you already know exactly what to change without searching. If trivial: make the change, confirm it with the one obvious check (re-read the changed span, or run the build/lint/command it affects), report in one or two sentences. Everything else, and anything you are unsure about, gets the full workflow.
+
+### Ask shape
+
+| Shape | Signal | Deliverable |
+|---|---|---|
+| **Question / assessment** | "why is...", "what do you think...", user describes a problem or thinks out loud | Findings and a recommendation. Change nothing. |
+| **Task** | "fix", "build", "change", "make" | The completed change, verified. |
+| **Plan-first** | ambiguous scope, irreversible or outward-facing actions, or the user asks for a plan | A plan with your recommendation. Stop and wait for approval. |
+
+Tie-breaks, in order: (1) any plan-first signal beats task; (2) a mixed ask ("why is this failing, and can you fix it?") is a task whose final report must also answer the question; (3) genuinely unsure between task and plan-first, choose plan-first.
+
+**Ambiguous-scope test:** if you can imagine two materially different deliverables the user might mean, and only the user can settle which, ask exactly one pointed question that states your recommended interpretation, then wait. Never ask about things evidence can settle; never re-litigate a decision the user already made.
+
 ## Intent Gate (Before Any Behavior-Changing Edit)
 
 Before any edit that could change observable behavior, emit one literal line in your final report:

@@ -126,8 +126,7 @@ verification theater, not part of the verification.
 
 ## Source
 
-fable-method -- Sahir619/fable-method. Cross-link
-[harness-engineering](../SKILL.md) §5 (prevent premature victory), §11
+Cross-link [harness-engineering](../SKILL.md) §5 (prevent premature victory), §11
 (explanations are not evidence), §12 (grade the tests), and the
 Failure-Mode -> Control Map row "Verification theater" in §14. The
 [Intent gate](../../effective-code-craft/SKILL.md) is the upstream
