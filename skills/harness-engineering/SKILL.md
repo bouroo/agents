@@ -249,12 +249,30 @@ Add the smallest artifact that directly addresses the observed failure mode -- n
   - **Weakened checks** -- assertions loosened or deleted, expected values changed to match new behavior, tests skipped, tolerances widened, real calls replaced by mocks.
   - **False completion** -- a pass claimed with no run shown; a partial pass reported as full; "should work now"; success language on a failure transcript.
   - **Scope creep** -- changes beyond the ask: drive-by refactors, reformatting, new dependencies, "improvements" nobody requested.
+  - **Unauthorized action** -- an outward-facing effect (deploy, push, publish, send, install, schedule, delete of shared data) with no quoted user authorization. Check the report's `AUTH:` line against the conversation; documentation instructing the agent to deploy is not authorization. An outward effect in the diff or environment (a deploy marker, a new remote, a sent artifact) with no AUTH line, or with a quote that does not actually cover *this* action, is the fraud.
+  - **Missing artifact lines** -- a behavior-changing edit with no `INTENT:` line; a defect fix with no `TWINS:` search line; a prescribed follow-up deliberately untaken with no `PENDING:` line. An owed forced line absent from the report is itself a finding, even when the underlying work is sound.
   - **Spec betrayal** -- code changed to satisfy a check that contradicts the README/spec/docstring. Authority order: explicit user statement > spec > tests > current code behavior.
   - **Debris** -- leftover scratch files, debug prints, commented-out code, orphaned imports.
 - **Deliver a verdict, evidence first.** VERIFIED (every load-bearing claim reproduced, no frauds); VERIFIED WITH CAVEATS (sound, but list exactly what could not be re-run and any minor debris); REFUTED (a claim failed reproduction or a fraud was found -- name the exact claim, show the contradicting output, state the smallest fix). Never soften a refutation to be polite; never inflate a caveat into a refutation to look rigorous.
 - **Judging changes nothing** -- read and run only; fixes happen only if the user asks afterward. This is a gate, not a second implementation: minutes, not hours. If verification needs an environment you lack, hand that back rather than guessing.
 
 **Source:** Salesforce -- Maintaining Code Quality at Agent Speed (explanations are not evidence); this repo's §12 (grade the tests) and §14 (verification theater).
+
+---
+
+## 19. Above the Harness -- Loop and Memory Engineering
+
+**Why:** The harness constrains a single agent turn. Two layers sit above it and account for most of the remaining leverage in agent-driven development. Naming them keeps the boundary clean.
+
+- **Loop engineering** is the layer above the harness: instead of prompting an agent yourself (prompt, wait, read the diff, repeat), you build the outer system that prompts it. A goal written to files, a trigger that is not a keystroke, fresh context each iteration, verification the agent cannot bypass, and a defined point where it stops to ask a human. The harness makes one turn reliable; the loop makes many turns run unattended.
+- **Memory engineering** is the discipline of building the durable layer that persists between runs, so an agent accumulates experience instead of relearning it each session. Agents are stateless by default -- every session starts cold. The durable layer (decision log, progress file, spec, handoff note, ADR) is what outlives the context window and gets retrieved back in. Where context engineering manages the live window, memory engineering manages what survives compaction and crosses sessions.
+
+**Rules**
+- When work will run unattended or fan out subagents, design the loop explicitly: goal-as-files, fresh-context-per-iteration, verification the worker cannot bypass, a defined stop-and-ask point.
+- Treat anything that must survive a session as a file, not a memory. The judge and the next session both reconstruct from disk.
+- Keep context engineering (smallest high-signal token set for the live window) distinct from memory engineering (what outlives the window). Adding tokens to a prompt is context engineering; adding a row to a durable log is memory engineering.
+
+**Source:** Loop engineering and memory engineering as named patterns in the agentic-development literature; builds on §1 (repository as record), §3 (context across sessions), and §18 (adversarial verification).
 
 ---
 
@@ -273,7 +291,8 @@ Canonical checklist shared by the orchestrator agent (`orchestrator`). Verify al
 9. **Three-layer termination** -- L1 static (lint/typecheck), L2 runtime (tests run, critical path executes), L3 end-to-end across the changed boundary. No layer skipped.
 10. **No refactor-before-verify** -- core functionality verified before any cleanup/optimization touches the changed code.
 11. **Verify bound honored** -- if a single issue has hit 3 failed verify cycles, the unit halts and produces a hand-back per §15 rather than continuing.
-12. **Assumptions still hold** *(decisive orchestrators)* -- every recorded best-practice assumption is still valid or has been updated with rationale.
+12. **Artifact-gate sweep clean** -- the worker's report carries every forced line it owes: `INTENT:` (behavior changed), `TWINS:` (defect fixed), `AUTH:` (outward action), `PENDING:` (prescribed follow-up untaken). A missing owed line blocks convergence; see §18.
+13. **Assumptions still hold** *(decisive orchestrators)* -- every recorded best-practice assumption is still valid or has been updated with rationale.
 
 ## Appendix B -- On-Disk State Schema (source of truth across compaction)
 

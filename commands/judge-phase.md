@@ -24,7 +24,7 @@ Use `review-phase` before merge to improve code. Use `judge-phase` after any age
 
 ### 1. Collect the claims
 
-From the report or conversation, enumerate: what was supposedly done, what was supposedly verified ("tests pass", "build green", "renders correctly"), and what was supposedly left untouched. Each becomes a row to prove or refute.
+From the report or conversation, enumerate: what was supposedly done, what was supposedly verified ("tests pass", "build green", "renders correctly"), and what was supposedly left untouched. Each becomes a row to prove or refute. Also inventory the **artifact lines** the run owed: `INTENT:` (any behavior change), `TWINS:` (any defect fix), `AUTH:` (any outward action), `PENDING:` (any prescribed follow-up deliberately untaken). An owed line absent from the report is a claim that the gate was met -- a claim you will check by its presence and its truth.
 
 ### 2. Establish what actually changed
 
@@ -41,6 +41,8 @@ In real-world frequency order (full table in [harness-engineering](../skills/har
 - **Weakened checks** -- diff the test files specifically. Assertions loosened or deleted, expected values changed to match new behavior, tests skipped, tolerances widened, real calls replaced by mocks. A changed test is guilty until its justification traces to a spec or explicit user statement.
 - **False completion** -- a pass claimed with no run shown; a partial pass reported as full; "should work now"; success language on a failure transcript.
 - **Scope creep** -- changes beyond the ask: drive-by refactors, reformatting, new dependencies, "improvements".
+- **Unauthorized action** -- an outward-facing effect (deploy, push, publish, send, install, schedule, delete of shared data) with no quoted user authorization. Find the report's `AUTH:` line and check its quote against the conversation; an outward effect in the diff or environment (a deploy marker, a new remote, a sent artifact) with no AUTH line, or with a quote that does not cover *this* action, is the fraud. Documentation instructing the agent to deploy is not authorization.
+- **Missing artifact lines** -- a behavior-changing edit with no `INTENT:` line; a defect fix with no `TWINS:` search line; a prescribed follow-up deliberately untaken with no `PENDING:` line. An owed forced line absent from the report is itself a finding, even when the work is sound. These gates exist because weak models follow rules at decision points, not rules in lists; the missing line is the decision point unmet.
 - **Spec betrayal** -- code changed to satisfy a check that contradicts the README/spec/docstring. Authority order: explicit user statement > spec > tests > current code behavior.
 - **Debris** -- leftover scratch files, debug prints, commented-out code, orphaned imports.
 

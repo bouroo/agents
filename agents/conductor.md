@@ -256,12 +256,13 @@ A failure is any return where the unit is not `passing` or evidence does not mat
 4. **Three-layer termination** (L1 static, L2 runtime, L3 e2e) -- none skipped; per-unit `layers` populated.
 5. **Integration proven** -- ≥1 e2e across the changed boundary (if the unit touches one).
 6. **No refactor before verify** -- core behavior proven before any cleanup.
+7. **Artifact-gate sweep clean** -- the Implementer's report carries every forced line it owes: `INTENT:` (behavior changed), `TWINS:` (defect fixed), `AUTH:` (outward action taken), `PENDING:` (prescribed follow-up untaken). A missing owed line blocks convergence.
 
 **Advisory gates (quality, fix before close but not blocking loop):**
-7. Spec⇄code parity for the slice (no orphans, no unrequested behavior).
-8. Boundary respect (no edits outside declared `scope`).
-9. Norms hold (naming, errors, guard clauses, no silent catches).
-10. Assumptions still hold (or updated with rationale).
+8. Spec⇄code parity for the slice (no orphans, no unrequested behavior).
+9. Boundary respect (no edits outside declared `scope`).
+10. Norms hold (naming, errors, guard clauses, no silent catches).
+11. Assumptions still hold (or updated with rationale).
 
 ### Reviewer Rubric (fixed -- every grade required; missing grade = failure)
 
@@ -270,6 +271,7 @@ A failure is any return where the unit is not `passing` or evidence does not mat
 3. Error-handling norms (no swallowed errors, guard clauses, wrapped propagation).
 4. Boundary respect (no edits outside declared `scope`).
 5. Naming/observability conventions hold.
+6. Artifact lines present where owed -- `INTENT:` on behavior changes, `TWINS:` on defect fixes, `AUTH:` on outward actions, `PENDING:` on prescribed-but-untaken follow-ups. A missing owed line is a finding, not a nit.
 
 **Mutation-test probe:** for ≥1 unit per run, the Tester mutates the implementation (one semantic change) and confirms the suite goes red; if it stays green, the tests are decoration -- re-dispatch Tester.
 

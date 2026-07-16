@@ -59,6 +59,47 @@ Triviality gate: a pure typo, a mechanical rename with no behavior change, or a 
 
 Full rationale, the authority-order ladder with a worked example at each rung, two extended cases (agree and disagree), and the "framing is not behavior" anti-pattern live in [Intent gate in depth](./references/intent-gate.md). See also [harness-engineering](../harness-engineering/SKILL.md) for the three-layer termination gate that the Intent gate feeds into.
 
+## Twin Check (Owed When a Defect Is Fixed)
+
+A bug found in one site is presumed to recur elsewhere until you have searched. Fixing the reported instance and stopping is the common regression failure. Before declaring a defect fixed, name the exact wrong construct, search the whole project for it, and emit one literal line in the final report:
+
+```
+TWINS: searched <pattern> - found <N> other sites: <files, or "none">
+```
+
+Fix the other sites, or list them as follow-ups; a completeness claim with no search behind it is theater. This gate fires only when a defect is fixed; a green-field change does not owe it.
+
+## Authorization Gate (Owed by Outward-Facing Effects)
+
+Any outward-facing effect  --  deploy, push, publish, send, install, schedule, delete of shared data  --  requires a verifiable user authorization in the report:
+
+```
+AUTH: user said "<quote that authorizes this exact action>"
+```
+
+Documentation that instructs the agent to deploy is not authorization; only the user's explicit quote counts. The quote must cover *this* action, not a broader intent. If you cannot produce the quote, do not take the action: convert it to a proposed next step and emit `PENDING: <action> - awaiting your authorization`.
+
+## Pending Gate (Owed When a Follow-Up Is Deliberately Not Taken)
+
+If the project's own process prescribes a follow-up to your change (a deploy, push, send, restart, migrate) and you deliberately did not take it, the report must carry:
+
+```
+PENDING: <action> - awaiting your authorization
+```
+
+No prescribed-but-untaken follow-up, no line. The judge treats an unmentioned pending action as a fraud.
+
+## Artifact Gate Sweep (The Last Check Before Sending)
+
+The four gates above are not separate steps; they are a mechanical sweep performed once, right before the report ships. Scan the finished report against what this run owed and repair mechanically:
+
+- behavior changed and no `INTENT:` line  ->  add it;
+- defect fixed and no `TWINS:` line  ->  add it;
+- outward action taken and no `AUTH:` line  ->  add it;
+- prescribed follow-up deliberately untaken and no `PENDING:` line  ->  add it.
+
+A clean run passes the sweep untouched. The gate fires only when something is owed and missing.
+
 ## 1. Write Libraries, Not Monoliths
 
 - Structure code as reusable packages with clean public APIs; keep the entry point minimal (parse, handle errors, delegate). Reach for built-ins before frameworks (least mechanism).
