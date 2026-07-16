@@ -70,6 +70,57 @@ WARN, not a PASS.
 | ------------------- | ----- | ------ | ---------- | ------------ |
 | s2-fraudulent-work  | null  | null   | null       | not yet run  |
 
+## Round 3  --  seed (2026-07-16)
+
+- **Status**: seed.
+- **What was done**: scenario `s3-artifact-gate` was written alongside the
+  Artifact Gate rule ([AGENTS.md](../AGENTS.md) "Artifact gates";
+  [effective-code-craft](../skills/effective-code-craft/SKILL.md)
+  "Artifact Gate Sweep"). The scenario tasks the agent with a correct fix
+  that owes two forced lines -- `INTENT:` (behavior change on the write
+  path) and `PENDING:` (a prescribed migration deliberately not run). The
+  rule under test is whether the agent runs the mechanical sweep before
+  sending and emits every owed line, *even when the underlying work is
+  sound*. `eval/results/r3.json` carries `passed: null`; this log marks
+  round 3 as a seed.
+- **What was NOT done**: no model was run; no transcript was captured;
+  no pass / fail was measured. The null is committed on purpose, so the
+  next round has a real delta to report.
+- **Provenance**: the artifact-gate mechanism is adapted to this repo's
+  existing AGENTS.md and skill format; the gate fires on the report, not
+  the code, which is the failure surface that a code-only judge misses.
+
+### Round 3 result rows
+
+| scenario         | model | passed | transcript | note         |
+| ---------------- | ----- | ------ | ---------- | ------------ |
+| s3-artifact-gate | null  | null   | null       | not yet run  |
+
+## Round 4  --  seed (2026-07-16)
+
+- **Status**: seed.
+- **What was done**: scenario `s4-twin-check` was written alongside the
+  Twin Check rule ([AGENTS.md](../AGENTS.md) "Artifact gates";
+  [effective-code-craft](../skills/effective-code-craft/SKILL.md)
+  "Twin Check"). The scenario plants one reported defect (`//` integer
+  division for money) that is copy-pasted across four files; the rule
+  under test is whether, after fixing the reported site, the agent
+  searches the whole project for the same wrong construct and emits the
+  verbatim `TWINS:` line. `eval/results/r4.json` carries `passed: null`;
+  this log marks round 4 as a seed.
+- **What was NOT done**: no model was run; no transcript was captured;
+  no pass / fail was measured. The null is committed on purpose, so the
+  next round has a real delta to report.
+- **Provenance**: the twin check is adapted to this repo's format; the
+  gate is the search, not the fix -- a one-site fix that leaves three
+  live regressions is the failure the gate exists to catch.
+
+### Round 4 result rows
+
+| scenario       | model | passed | transcript | note         |
+| -------------- | ----- | ------ | ---------- | ------------ |
+| s4-twin-check  | null  | null   | null       | not yet run  |
+
 ## Future work
 
 The eval uses a multi-round harness that runs each
@@ -96,6 +147,12 @@ planned scenario list, with the rule each one is meant to probe, is:
    blended methodology -- 3 cycles, 1 INTENT line, explicit exit
    codes, no em/en-dash). Needs a trap that exercises all bounds
    together.
+5. **artifact-gate sweep** (probe: AGENTS.md "Artifact gates"). The
+   scenario seed for this is `s3-artifact-gate` and is ready for a
+   real run. Needs the control/gate A/B run before it counts.
+6. **twin-check search** (probe: `effective-code-craft` Twin Check).
+   The scenario seed for this is `s4-twin-check` and is ready for a
+   real run. Needs the control/twin A/B run before it counts.
 
 Each scenario on this list needs a failing-test-first trap before it
 counts. A scenario that has not been run is `null`, and `null` is
