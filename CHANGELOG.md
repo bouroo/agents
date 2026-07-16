@@ -18,6 +18,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Conductor PROVE phase now includes the Judge role alongside Tester and Reviewer.
 - `README.md` command table registers `judge-phase`.
 
+## [1.1.0] - 2026-07-16
+
+### Added
+- Plugin packaging (`plugin.json`, `marketplace.json`) and cross-platform installers (`install.sh` POSIX, `install.ps1` Windows).
+- Skill-name length constraint (1–64 chars) validation gate (`scripts/validate-agents.sh`).
+- Adversarial judge-phase in the conductor agent and accompanying doc cleanup.
+- CI workflow (`.github/workflows/validate.yml`) running `scripts/checks.py` and `scripts/validate-agents.sh` on push/PR to `main` and `develop`.
+- Kilo/Opencode configuration example in `README.md`.
+
+### Changed
+- Decision-making framework refined: removed the single-question constraint for ambiguous, high-impact, hard-to-reverse decisions.
+- Context-compaction protocols and documentation workflows (`document-phase` command, `repo-documentation` module) defined in agent operating doctrine.
+- Conductor "Clock-in" mandates ledger bootstrapping (`mkdir -p .agents/*`) before any file write.
+- `.agents/` directory location clarified and ignored in the config repo.
+- Opencode schema and context-management guidelines updated.
+
 ## [1.0.1] - 2026-07-15
 
 ### Added
@@ -47,3 +63,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README de-coupled from tool-specific model names; the example config now uses generic placeholders.
 
 [1.0.0]: https://github.com/bouroo/agents/releases/tag/v1.0.0
+[1.0.1]: https://github.com/bouroo/agents/releases/tag/v1.0.1
+[1.1.0]: https://github.com/bouroo/agents/releases/tag/v1.1.0
