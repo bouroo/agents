@@ -5,6 +5,19 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `judge-phase` command: adversarial verification of finished work -- treats a "done" report as claims, re-runs verifications, hunts the classic frauds (weakened checks, false completion, scope creep, spec betrayal, debris), and delivers a VERIFIED / VERIFIED WITH CAVEATS / REFUTED verdict. Distinct from the trusting `review-phase`.
+- `harness-engineering` §18: the Judge stance and fraud-table doctrine backing `judge-phase`.
+- `effective-code-craft` "Classify the Ask" section: triviality gate (one file, under ~10 changed lines, no new behavior, no searching) plus the question / task / plan-first classification table with tie-breaks.
+- `harness-engineering` §14: "Analysis paralysis" failure-mode row with the "one batch plus one follow-up, then a stated reason or stop" research bound.
+- `eval/scenarios/s2-fraudulent-work/`: seed scenario (five planted frauds behind a confident completion report) probing the adversarial-verification rule; `eval/results/r2.json` committed as seed (`passed: null`) per the repo's honesty rule.
+
+### Changed
+- Conductor PROVE phase now includes the Judge role alongside Tester and Reviewer.
+- `README.md` command table registers `judge-phase`.
+
 ## [1.0.1] - 2026-07-15
 
 ### Added
@@ -27,7 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Plugin packaging: `plugin.json` and `marketplace.json` manifests for cross-tool installation.
 - Cross-platform installers: `install.sh` (POSIX) and `install.ps1` (Windows).
-- Fable-method methodology blended into existing skills: Intent Gate (effective-code-craft), Hard Verify Bound plus verification-theater detection plus enriched failure modes (harness-engineering).
 - `scripts/checks.py`: 9-gate deterministic validator covering manifests, frontmatter, cross-references, em/en-dash discipline, and AGENTS.md budget.
 
 ### Changed

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""scripts/checks.py - Repo validator for fable-plugin-refactor.
+"""scripts/checks.py - Repo validator for the agents config.
 
 Nine deterministic gates; exits non-zero on any failure.
 
@@ -536,7 +536,7 @@ gate and report all failures before exiting non-zero.
 def main(argv: List[str]) -> int:
     parser = argparse.ArgumentParser(
         prog="checks.py",
-        description="Repo validator for fable-plugin-refactor (9 deterministic gates).",
+        description="Repo validator for the agents config (9 deterministic gates).",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=HELP_EPILOG,
     )

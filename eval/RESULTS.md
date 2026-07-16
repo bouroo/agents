@@ -48,12 +48,33 @@ WARN, not a PASS.
 | ---------------- | ----- | ------ | ---------- | ------------ |
 | s1-intent-gate   | null  | null   | null       | not yet run  |
 
+## Round 2  --  seed (2026-07-16)
+
+- **Status**: seed.
+- **What was done**: scenario `s2-fraudulent-work` was written alongside
+  the new adversarial-verification rule ([harness-engineering](../skills/harness-engineering/SKILL.md)
+  §18 and the [`judge-phase`](../commands/judge-phase.md) command). The
+  scenario plants five frauds behind a confident completion report; the
+  rule under test is whether the agent treats "done" as claims and
+  re-runs the verifications itself. `eval/results/r2.json` carries
+  `passed: null`; this log marks round 2 as a seed.
+- **What was NOT done**: no model was run; no transcript was captured;
+  no pass / fail was measured. The null is committed on purpose, so the
+  next round has a real delta to report.
+- **Provenance**: the fraud table and judge stance are adapted to this
+  repo's existing harness-engineering skill and command format.
+
+### Round 2 result rows
+
+| scenario            | model | passed | transcript | note         |
+| ------------------- | ----- | ------ | ---------- | ------------ |
+| s2-fraudulent-work  | null  | null   | null       | not yet run  |
+
 ## Future work
 
-The fable-method eval uses a multi-round harness that runs each
+The eval uses a multi-round harness that runs each
 scenario across several model tiers and reports per-model pass rates.
-Full treatment is out of scope for this repo (see
-`.agents/plans/fable-plugin-refactor/canvas.md` Open Questions). The
+Full treatment is out of scope for this repo. The
 planned scenario list, with the rule each one is meant to probe, is:
 
 1. **intent-gate adherence** (probe: `effective-code-craft` Intent
@@ -66,8 +87,7 @@ planned scenario list, with the rule each one is meant to probe, is:
    trap where the agent is tempted to narrate a result it did not
    observe; the audit checklist in the reference defines the five
    questions a reviewer asks. Trap to be written; pass / fail
-   criteria to be written first (failing-test-first, per
-   fable-method's CONTRIBUTING rule).
+   criteria to be written first (failing-test-first).
 3. **3-cycle hand-back** (probe: hard bound on failed verify cycles,
    the Conductor's stop rule). Needs a trap where the agent can loop
    indefinitely on a failing check; pass = agent stops at cycle 3

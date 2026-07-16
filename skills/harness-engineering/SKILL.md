@@ -171,7 +171,7 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 - **Engineer the lifecycle, not just the code.** Faster generation relocates the bottleneck downstream (review, testing, CI/CD, release).
 - **Deliberate friction is leverage, not waste.** A gate, mutation run, or review checkpoint is the system asking "can this be trusted?" -- stripping them moves problems further before anyone notices. Make *confidence* scale with *generation*.
 - See the Failure-Mode -> Control Map in §14 for the canonical names: unprompted fixing, silent step-dropping, retry thrash, verification theater, premature victory, context loss, cold-start confusion, scope sprawl, fragile startup, weak handoff, subjective review. The map is the catalog.
-**Source:** Salesforce -- Maintaining Code Quality at Agent Speed, Patterns 4, 6 & 7; How to Build Reliable AI Agents, Pattern 5; fable-method -- failure-modes table.
+**Source:** Salesforce -- Maintaining Code Quality at Agent Speed, Patterns 4, 6 & 7; How to Build Reliable AI Agents, Pattern 5.
 
 ## 14. Failure-Mode -> Control Map
 
@@ -190,10 +190,11 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 | Fragile startup | Every session re-learns how to boot the project | Standardize setup and verification | init.sh / standard startup path |
 | Weak handoff | Next session cannot tell what is verified, broken, or next | End with an explicit handoff | session-handoff / `.agents/handoff/` |
 | Subjective review | Review quality depends on taste or memory | Score output with fixed categories | evaluator rubric (6 dimensions) |
+| Analysis paralysis | Research or evidence-gathering continues after it stopped changing the plan; lookups return nothing new | Bound research: one batch plus one follow-up; a third needs a stated reason; two consecutive empty lookups stop | research budget in delegation packet |
 
 Add the smallest artifact that directly addresses the observed failure mode -- never dump more text into one global instruction file.
 
-**Source:** Learn Harness Engineering -- method-map; fable-method -- 14-row failure-modes table.
+**Source:** Learn Harness Engineering -- method-map.
 
 ## 15. Hard Verify Bound -- 3 Cycles, Then Hand Back
 
@@ -214,7 +215,7 @@ Add the smallest artifact that directly addresses the observed failure mode -- n
 - **No narrative victory.** "I think this is fixed" is not a hand-back; a hand-back is the four fields above, on disk.
 - **Pairs with the Intent gate** in [effective-code-craft](../effective-code-craft/SKILL.md): the Intent line records the intended behavior; the verify bound enforces that the path to that behavior has a budget. When the budget is spent, the disagreement moves up the ladder, not sideways.
 - **Counts as a fail-stop, not a soft retry.** The agent's next action is the hand-back, not another implementation attempt.
-**Source:** fable-method -- hard verify bound; Learn Harness Engineering -- failure-mode -> control.
+**Source:** Learn Harness Engineering -- failure-mode -> control.
 
 ## 16. Harness Simplification & the Quality Document
 
@@ -236,6 +237,24 @@ Add the smallest artifact that directly addresses the observed failure mode -- n
 - **Fail gracefully on tool errors.** Tool and MCP calls can fail (timeout, auth, invalid input). Handle errors explicitly: retry transient failures, fall back to alternative tools, surface persistent failures rather than silently dropping them.
 - **Prefer computational tools over inferential reasoning** for deterministic tasks -- a database MCP query beats asking the model to recall data; a linter MCP beats asking the model to check style.
 **Source:** Kilo -- Prompt Engineering; Martin Fowler -- Harness Engineering §9 (Guides vs Sensors); AGENTS.md "Decision-Making Framework".
+
+## 18. Adversarial Verification -- the Judge stance and the fraud table
+
+**Why:** The most documented failure of coding agents is claiming success regardless of reality: "fixed, all tests pass" on broken work, tests quietly weakened until they pass, scope silently expanded. A read-only reviewer reading the diff and scoring on a rubric catches some of this; an adversarial judge that treats the report as a set of untrusted claims catches more. The judge's stance is fixed: **a report is a set of claims, not evidence.** Nothing is believed that was not observed. Triggered via the [`judge-phase`](../../commands/judge-phase.md) command.
+
+**Rules**
+- **Diff is ground truth; the report is not.** Establish what actually changed with `git diff` and `git status` (or a pristine-copy diff when there is no repo) before reading a single claim. Compare the set of touched files against the ask's blast radius.
+- **Re-run every claimed verification yourself.** Do not read code and nod: run the tests, the build, the script, the page. Capture the actual output. A claim that cannot be re-run (missing environment, credentials, human-eyes-only) is labeled UNVERIFIABLE, never assumed true.
+- **Hunt the fraud table** (in real-world frequency order). A finding is guilty until its justification traces to a spec or explicit user statement:
+  - **Weakened checks** -- assertions loosened or deleted, expected values changed to match new behavior, tests skipped, tolerances widened, real calls replaced by mocks.
+  - **False completion** -- a pass claimed with no run shown; a partial pass reported as full; "should work now"; success language on a failure transcript.
+  - **Scope creep** -- changes beyond the ask: drive-by refactors, reformatting, new dependencies, "improvements" nobody requested.
+  - **Spec betrayal** -- code changed to satisfy a check that contradicts the README/spec/docstring. Authority order: explicit user statement > spec > tests > current code behavior.
+  - **Debris** -- leftover scratch files, debug prints, commented-out code, orphaned imports.
+- **Deliver a verdict, evidence first.** VERIFIED (every load-bearing claim reproduced, no frauds); VERIFIED WITH CAVEATS (sound, but list exactly what could not be re-run and any minor debris); REFUTED (a claim failed reproduction or a fraud was found -- name the exact claim, show the contradicting output, state the smallest fix). Never soften a refutation to be polite; never inflate a caveat into a refutation to look rigorous.
+- **Judging changes nothing** -- read and run only; fixes happen only if the user asks afterward. This is a gate, not a second implementation: minutes, not hours. If verification needs an environment you lack, hand that back rather than guessing.
+
+**Source:** Salesforce -- Maintaining Code Quality at Agent Speed (explanations are not evidence); this repo's §12 (grade the tests) and §14 (verification theater).
 
 ---
 
@@ -310,4 +329,3 @@ After compaction, **re-read `state.json` and the plan dir first**. Disk beats me
 - LangChain: Improving Deep Agents with harness engineering -- https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering
 - Cursor: Continually improving our agent harness -- https://cursor.com/blog/continually-improving-agent-harness
 - Replit: Decision-Time Guidance: Keeping Replit Agent Reliable -- https://blog.replit.com/decision-time-guidance
-- fable-method -- https://github.com/Sahir619/fable-method

@@ -167,7 +167,7 @@ Goal: deliver surgical, intent-gated changes through the squad.
 - WIP = 1: one unit `in_progress` per worker; a new unit starts only when the prior is `passing` or explicitly `blocked`.
 - Trivial fixes go to `Fixer` with a repro in hand -- never edit yourself.
 
-### PROVE (Tester, Reviewer)
+### PROVE (Tester, Reviewer, Judge)
 
 Goal: produce executable evidence that the unit satisfies its done-command.
 
@@ -205,6 +205,7 @@ Encoded from [harness-engineering](../skills/harness-engineering/SKILL.md) §15.
 | **Fixer** | Narrow bug with a repro in hand | ACT | One failing test -> one targeted fix |
 | **Tester** | Tests: happy/error/edge/e2e + L1/L2/L3 evidence | PROVE | Coverage for a unit or change |
 | **Reviewer** | Read-only diff review + findings | PROVE | Before declaring a unit converged |
+| **Judge** | Adversarial verification: treats "done" as claims, re-runs verifications, hunts frauds | PROVE | After any consequential claim of completion; trigger via [`judge-phase`](../commands/judge-phase.md); doctrine in [harness-engineering](../skills/harness-engineering/SKILL.md) §18 |
 
 **Returns differ by role:** Explorer/Scout return *summaries* (read-only, safe to parallelize broadly); Implementer/Tester/Fixer return *state transitions* (serialize by scope).
 
