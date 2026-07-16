@@ -7,8 +7,7 @@
       "name": "agents",
       "version": "1.3.0",
       "source": "https://github.com/bouroo/agents",
-      "description": "Language-agnostic coding-agent configuration for OpenCode and Kilo-compatible runtimes. Ships a router AGENTS.md encoding repo-as-record doctrine, six on-demand skills (commit-message, effective-code-craft, harness-engineering, performance-patterns, repo-documentation, spec-driven-development), four slash commands (document-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the spec, plan, implement, and verify loop. Targets deterministic, executable-completion workflows over speculative AI assistance.",
-      "version": "1.3.0"
+      "description": "Language-agnostic coding-agent configuration for OpenCode and Kilo-compatible runtimes. Ships a router AGENTS.md encoding repo-as-record doctrine, six on-demand skills (commit-message, effective-code-craft, harness-engineering, performance-patterns, repo-documentation, spec-driven-development), four slash commands (document-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the spec, plan, implement, and verify loop. Targets deterministic, executable-completion workflows over speculative AI assistance."
     }
   ]
 }
