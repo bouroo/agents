@@ -10,6 +10,16 @@ description: >
 
 Ten commandments for high-quality code, distilled from JetBrains 10x rules and Google style principles.
 
+> **Override.** A project-level style guide that explicitly supersedes this skill takes precedence; project convention beats personal taste.
+
+**Stance:** You treat every unclear name, swallowed error, and untested branch as a defect waiting to ship. Clarity beats cleverness; the next reader is the customer.
+
+**Modes:**
+
+- **Write mode** -- producing new code. Run the Classify-then-Intent gates first; then walk the ten commandments in order. Sequential.
+- **Review mode** -- grading a diff. Read only the change; check it against the Artifact Gate Sweep and the commandments most relevant to the diff. Sequential.
+- **Audit mode** -- sweeping an existing codebase for craft defects. Launch up to 5 parallel sub-agents, one per concern: (1) naming and clarity, (2) error handling and guard clauses, (3) test posture, (4) coupling and global state, (5) comments and dead code.
+
 ## Style Priorities
 
 Apply in order; when they conflict, the higher priority wins.
@@ -151,6 +161,32 @@ Before sending the report, mechanically check whether this run owed `INTENT:`, `
 
 - Log only what someone must investigate and fix. Structured fields, never secrets.
 - Use tracing for request debugging and metrics for performance, not logs.
+
+## Common Mistakes
+
+| Mistake | Fix |
+|---|---|
+| Discarding an error (`_`, `try/except: pass`, `catch (e) {}`) | Every error is checked, handled, retried, or propagated with context |
+| In-band sentinel (`return -1`, `return null`, `return ""`) | Explicit error return or `ok` boolean; let the type system reject misuse |
+| Branching on error string (`if msg.contains("timeout")`) | Typed/sentinel error + `Is`/`As`/pattern-match on the type, never the message |
+| Mutable package-level / global state | Inject dependencies explicitly; guard shared state behind a single owner |
+| Naming by type (`userSlice`, `userList`) | Name by role (`users`); drop words the surrounding context already supplies |
+| `else` after a terminating `if` (`return`, `break`) | Drop the `else`; keep the happy path unindented |
+| Function with 5+ parameters | Group related parameters into a struct/record/options object |
+| Deeply nested conditionals | Extract named booleans; early-return guards; switch over if-else chains |
+| Comment that restates the code | Delete it; reserve comments for *why* the code cannot show |
+| Unexported/private symbol that is actually part of the contract | Make the contract explicit; export the symbol or document it as internal |
+| Returning a live reference to internal state | Return a defensive copy; callers must not mutate your internals |
+
+## Enforce with Automated Tooling
+
+Move what you can out of review and into deterministic checks. Configure (in order of leverage): formatter (gofmt, prettier, rustfmt, black), linter (golangci-lint, eslint, clippy, ruff), type-checker (tsc, mypy, rustc), and unit tests in pre-commit and CI. A rule the linter enforces is a rule reviewers never have to repeat.
+
+## Cross-References
+
+- [Intent gate in depth](./references/intent-gate.md)
+- [harness-engineering](../harness-engineering/SKILL.md) -- three-layer termination, mutation testing, verification theater
+- [performance-patterns](../performance-patterns/SKILL.md) -- optimize only after these norms hold
 
 ## Guru Meditation
 

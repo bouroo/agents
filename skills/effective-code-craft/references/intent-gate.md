@@ -1,6 +1,6 @@
 # Intent Gate in Depth
 
-A forced artifact at the behavior-change decision point. The short form lives in [effective-code-craft](../effective-code-craft/SKILL.md); this file is the why and the worked cases.
+A forced artifact at the behavior-change decision point. The short form lives in [effective-code-craft](../SKILL.md); this file is the why and the worked cases.
 
 ## The rule
 
@@ -94,7 +94,7 @@ behavior the spec rejects. Do not edit the code to satisfy Y. Report:
 ## Framing is not behavior
 
 The most common trap: a task framed as "fix the code" or "make the
-tests pass" tempts the agent to treat Y (the test) as the destination.
+ tests pass" tempts the agent to treat Y (the test) as the destination.
 This inverts the ladder -- tests become the authority over spec, and
 spec becomes decoration. They are not decoration.
 
@@ -112,5 +112,5 @@ log line, side effect, timing, ordering -- must pass the gate.
 
 ## Source
 
-See also [harness-engineering](../harness-engineering/SKILL.md) §11 (separate
+See also [harness-engineering](../../harness-engineering/SKILL.md) §11 (separate
 reasoning from computation) and §5 (prevent premature victory).

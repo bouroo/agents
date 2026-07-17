@@ -8,9 +8,9 @@ Map row in §14; this file is the costume, the cost, the audit, and the fix.
 
 A transcript that contains all the right words in all the right places --
 "the test passed", "the build is green", "I verified the endpoint returns
-201" -- but the observation is missing. The agent read the code, decided
-it was fine, and narrated the result as if it had been observed. The
-narrative is convincing; the evidence is absent.
+201" -- but the observation is missing. The agent read the code, decided it
+was fine, and narrated the result as if it had been observed. The narrative
+is convincing; the evidence is absent.
 
 The shape repeats:
 
@@ -19,8 +19,8 @@ The shape repeats:
    for X should now pass."
 3. The agent concludes with the result: "tests pass, so the change is
    done."
-4. The captured command, exit code, and actual output never appear in
-   the transcript. The terminal output is paraphrased, summarized, or
+4. The captured command, exit code, and actual output never appear in the
+   transcript. The terminal output is paraphrased, summarized, or
    referenced in the past tense as if it had been seen.
 
 Variants:
@@ -64,8 +64,8 @@ five questions, asked of every "done" claim:
 2. **Is the exit code captured?** A command that "ran" without an exit
    code is suspect. A passing build must show exit 0; a failing test
    must show the failing line, not a narrative summary.
-3. **Is the actual output captured, or a paraphrase?** The output for
-   a passing test should be the test runner's success line; for a
+3. **Is the actual output captured, or a paraphrase?** The output for a
+   passing test should be the test runner's success line; for a
    failing test, the diff. A summary like "the build was green" is a
    paraphrase; treat it as unverified.
 4. **Does the claim match the observation?** "All tests pass" with a
@@ -115,8 +115,8 @@ orchestrator-level convergence gates that bind completion to all three.
 
 The structural fix for tautology-test theater. Deliberately mutate the
 implementation (flip a comparison, drop a line, alter a constant). If
-the suite stays green, the tests were decoration -- they could not
-fail, so they could not prove anything. A test that fails when the
+the suite stays green, the tests were decoration -- they could not fail,
+so they could not prove anything. A test that fails when the
 implementation is broken is a test that proves something.
 
 Mutation testing is the harness's way of asking the test suite the
