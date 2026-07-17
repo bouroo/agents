@@ -10,23 +10,32 @@ description: >
 
 A prompt-as-artifact workflow. **Spec is truth. Code serves spec, not the reverse.**
 
+> **Override.** A project-level specification policy that explicitly supersedes this skill takes precedence.
+
+**Stance:** You value simplicity and explicitness. You apply rigor only when risk warrants it; you push back on premature abstraction and on heavyweight process for trivial work. The spec is the durable contract; the code is its executable shadow.
+
+**Modes:**
+
+- **Design mode** -- shaping a new feature, service, or module. Ask about architecture preference and risk tolerance before proposing a spec; favor the smallest pattern that satisfies the requirement. Use the Fitness Levels table to set rigor.
+- **Resolve mode** -- disambiguating conflicting or vague requirements. Produce the REASONS canvas; surface every `[NEEDS CLARIFICATION]`; stop and wait rather than guess.
+- **Implement mode** -- locked spec -> code. Generate code *from* the locked spec, not alongside it; verify against acceptance criteria at L1/L2/L3.
+- **Sync mode** -- keeping spec and code aligned after the fact. Logic change: spec first, then code. Refactor: code first, then spec. Never land one without the other.
+
 ## REASONS Canvas
 
-Use this 7-part structure for every spec:
+Use this 7-part structure for every non-trivial spec. Fill every section. Mark unknowns with `[NEEDS CLARIFICATION]`.
 
-| Section | Capture |
-|---|---|
-| **R  --  Requirements** | Problem, Definition of Done, acceptance criteria |
-| **E  --  Entities** | Domain objects, relationships, boundaries |
-| **A  --  Approach** | Chosen strategy, alternatives rejected, why |
-| **S  --  Structure** | Component placement, dependencies, interfaces |
-| **O  --  Operations** | Concrete, testable implementation steps in order |
-| **N  --  Norms** | Cross-cutting rules: naming, error handling, documentation, clarity |
-| **S  --  Safeguards** | Non-negotiable boundaries: invariants, perf limits, security |
+| Letter | Section | Capture |
+|---|---|---|
+| **R** | Requirements | Problem statement, Definition of Done, acceptance criteria |
+| **E** | Entities | Domain objects, relationships, boundaries, data flow |
+| **A** | Approach | Chosen strategy, alternatives rejected and why, key trade-offs |
+| **S** | Safeguards | Non-negotiable constraints: latency, size, error rates, quotas, security |
+| **O** | Outline | Ordered, testable execution phases (the implementation plan) |
+| **N** | Norms | Cross-cutting rules: naming, error handling, documentation, clarity |
+| **S** | Signoff | Approval criteria, reviewers, rollout gate, rollback plan |
 
 ### Template
-
-Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS CLARIFICATION]`.
 
 ```markdown
 ## R  --  Requirements
@@ -44,132 +53,116 @@ Use for every non-trivial task. Fill every section. Mark unknowns with `[NEEDS C
 - Alternatives considered and rejected
 - Key trade-offs
 
-## S  --  Structure
-- Where the change fits in the codebase
-- Components, dependencies, interfaces
-- Files to create or modify
+## S  --  Safeguards
+- Performance ceilings (latency, memory, size limits with numbers)
+- Error-rate / availability budgets
+- Security rules (no secrets in logs, least privilege)
+- Quotas and cost ceilings
+- Invariants that must hold
 
-## O  --  Operations
-- Ordered, testable implementation steps
-- Each step precise enough for a subagent to execute without ambiguity
+## O  --  Outline
+- Ordered, testable phases
+- Each phase precise enough for a subagent to execute without ambiguity
 - Test scenarios: happy path, error path, edge cases
-- At least one step exercises an end-to-end boundary
+- At least one phase exercises an end-to-end boundary
 
 ## N  --  Norms
 - Naming: scope-proportional, no context/type repetition
 - Error handling: explicit returns, guard-clause-first, wrap-with-context
 - Documentation: name-first sentences for public symbols
-- Style: eliminate nesting, omit zero-value noise
-- Reference AGENTS.md "Code Craft Norms" for the full norm set
+- Reference [effective-code-craft](../effective-code-craft/SKILL.md) for the full norm set
 
-## S  --  Safeguards
-- Invariants that must hold
-- Performance ceilings (latency, memory, size limits with numbers)
-- Security rules (no secrets in logs, least privilege)
-- Non-negotiable constraints
+## S  --  Signoff
+- Approval criteria (who reviews, what evidence is required)
+- Stakeholders
+- Rollout gate (metrics, feature flag, canary plan)
+- Rollback plan (how to revert safely)
 ```
 
-## Core Skills
+## Spec Structure (sections inside a spec document)
 
-1. **Abstraction-first**  --  Design objects, collaborations, and boundaries *before* generating code. Intent precedes implementation.
-2. **Alignment**  --  Lock scope explicitly: what we will do, what we won't, what remains open. Visible in the spec.
-3. **Iterative review**  --  Treat output as a controlled loop (spec → generate → verify → refine), not a one-shot draft.
+Beyond the REASONS canvas, a complete spec document typically carries:
 
-## Prompt Discipline (think → do)
+- **Problem** -- the user need in one paragraph; surface the problem, not a presumed solution.
+- **Entities** -- domain objects and their relationships.
+- **Approach** -- chosen strategy with rejected alternatives.
+- **Constraints** -- non-negotiable boundaries (latency, cost, security, compatibility).
+- **Phases** -- ordered execution steps, each independently testable.
+- **Test scenarios** -- happy path, error path, edge cases, at least one end-to-end.
+- **Safeguards** -- invariants and numeric limits that must hold at all times.
+- **Error handling** -- typed errors, no in-band sentinels, wrap-with-context propagation.
 
-Follow the general task loop in `AGENTS.md` §3; SPDD-specific work fills the REASONS canvas, records assumptions, and verifies each canvas step with executable checks.
+## Prompt Lifecycle
 
-Be specific: name files, symbols, and acceptance criteria; give examples and specify output format. Vague prompts produce vague specs; vague specs produce wrong code. When ambiguous, resolve against best practice and record the assumption -- don't silently guess.
-
-**Source:** Kilo -- Prompt Engineering (https://kilo.ai/docs/customize/prompt-engineering).
-
-## Workflow
-
-Use the general loop from `AGENTS.md` §3, with this SPDD sequence:
+Treat the spec as a versioned artifact moving through six states:
 
 ```
-Story → Analysis → Canvas → Generate → Test → Review → Sync
+draft → review → lock → implement → feedback → evolve
 ```
 
-1. **Story** -- capture the user problem; surface the problem, not the solution.
-2. **Analysis** -- identify entities, constraints, risks, and unknowns.
-3. **Canvas** -- fill every REASONS section; mark unknowns explicitly.
-4. **Generate** -- write code from the spec, not intuition.
-5. **Test** -- verify code satisfies every section of the spec.
-6. **Review** -- check for orphans (code without spec) and gaps (spec without code).
-7. **Sync** -- update spec and code together; never land one without the other.
+- **draft** -- canvas is incomplete or under debate; safe to rewrite.
+- **review** -- canvas is complete; reviewers challenge Requirements, Approach, Safeguards.
+- **lock** -- signed off; code generation may begin; any change requires re-opening.
+- **implement** -- code is produced *from* the locked spec, not alongside it.
+- **feedback** -- tests, runtime, and user signal are recorded against the spec.
+- **evolve** -- feedback triggers spec updates, which re-enter at `review`.
 
-### Why the workflow is phased -- cognitive load, not ceremony
+A locked spec that disagrees with reality is a bug -- open a new change, don't silently drift.
 
-Intent confirmation is distributed across steps: problem, design, operations, behavior, and code are checked at separate checkpoints so review attention stays focused.
+## Fitness Levels
 
-### Test sequencing -- a deliberate inversion of TDD
+Match the rigor of the canvas to the risk of the work:
 
-- **API / end-to-end tests come early** -- validate behavior at the system boundary.
-- **Code review then focuses on human judgment** -- logic, architecture, trade-offs, and non-functional concerns.
-- **Unit tests come last as a regression net** -- lock behavior after intent and implementation stabilize.
+| Level | Scenario | Effort guidance |
+|---|---|---|
+| **Spike / throwaway** | Exploration, time-boxed learning, throwaway prototypes. | Lightweight canvas (R + A only); explicitly mark "spike" so reviewers don't enforce production norms. |
+| **Prototype** | User-facing but limited audience; intent clear, shape unknown. | Full REASONS at lower fidelity; lightweight tests; signoff by one reviewer. |
+| **Production** | Default for shipped features, services, and modules. | Full REASONS, executable tests at L1/L2/L3, signed-off safeguards. |
+| **Critical** | High-compliance, hard-constraint, multi-team, cross-cutting systems. | Full REASONS + ADR + mutation testing + formal review + rollout gate + rollback plan. |
 
-Grade the tests themselves (mutation testing) -- see [harness-engineering](../harness-engineering/SKILL.md) §12.
+Decision rule: when in doubt, round up one level -- downgrading a critical change costs more than upgrading a small one.
 
-## Fitness  --  when to spec, and when not to
+## Spec ⇄ Code Sync
 
-SPDD pays off in logic-heavy, repeatable, high-constraint work. Decide up front.
+The two artifacts must never diverge silently.
 
-| Fit | Scenario |
-|---|---|
-| ★★★★★ | Scaled, standardized delivery; high-compliance / hard-constraint systems; multi-person traceable changes; cross-cutting consistency refactors. |
-| ★★☆☆☆ | Hotfixes under fire; exploratory spikes; one-off/disposable scripts. |
-| ★☆☆☆☆ | Context black holes (domain rules unclear, no boundaries); pure aesthetic/visual work driven by taste, not logic. |
-
-For low-fit cases, skip the canvas and note the assumption. For hotfixes: stabilize first, then close the governance loop afterward (update the spec/asset retroactively so production signal feeds back).
-
-## Three Triggers to Tighten a Spec
-
-When output is wrong, the fix is usually a sharper spec, not a louder prompt:
-
-- **Behavioral mismatch** (output deviates from acceptance criteria) → logic-correction: update the spec first, then regenerate the code.
-- **Overcomplicated logic** (solution more elaborate than the problem warrants) → **Approach** or **Operations** is under-specified; tighten the constraints.
-- **Instruction failure** (agent ignores a Norm or Safeguard) → make that constraint more prominent and unambiguous in the spec.
-
-## Spec Quality Checklist
-
-Verify before delegation:
-
-- [ ] Every REASONS section filled  --  no empty sections.
-- [ ] Requirements have measurable acceptance criteria and a Definition of Done.
-- [ ] Safeguards specify numeric limits (latency, size, error rates, quotas).
-- [ ] Norms cover naming, logging, error handling.
-- [ ] Norms specify scope-proportional naming and guard-clause control flow.
-- [ ] No in-band error signaling  --  errors explicit, not sentinel values.
-- [ ] Public symbols have name-first doc comments (full sentences).
-- [ ] Unknowns marked `[NEEDS CLARIFICATION]`, not glossed over.
-- [ ] Operations ordered and testable  --  a subagent can execute sequentially.
-- [ ] No orphaned features (in code but not in spec).
-- [ ] No orphan requirements (in spec but not in code).
-
-## Key Rules
-
-- **Sync, not handoff**  --  spec and code evolve together; a stale spec is a bug.
-- **No speculative features**  --  if it's not in the spec, don't build it.
-- **Immutable principles**  --  never violate Norms or Safeguards for convenience.
-- **Bidirectional feedback**  --  production reality informs spec evolution.
-- **Logic change** → update spec first, then regenerate code; **Refactor (no behavior change)** → change code first, then sync spec. Never land one side without the other.
+- **Logic change** (new behavior, modified behavior) → **spec first, then code.** Lock the new spec; generate code from it; verify against acceptance criteria.
+- **Refactor (no behavior change)** → **code first, then spec.** Land the refactor with green tests; sync the spec to reflect the new structure.
+- **Bidirectional feedback** -- production reality informs spec evolution. Hotfixes land in code, then the spec is updated retroactively so the governance loop closes.
+- **Never land one side without the other.** A spec without code is an abandoned promise; code without spec is undocumented behavior.
 
 ## Constitutional Gates (Spec-kit)
 
-Keep these SPDD-specific gates; use [effective-code-craft](../effective-code-craft/SKILL.md) for general code norms (naming, error handling, documentation, clarity -- state only SPDD-specific additions in the canvas's N -- Norms section):
+Keep these SPDD-specific gates. Use [effective-code-craft](../effective-code-craft/SKILL.md) for general code norms -- state only SPDD-specific additions in the canvas's **N -- Norms** section:
 
-- **Simplicity** -- prefer ≤3 projects initially.
+- **Simplicity** -- prefer ≤3 projects initially; resist premature decomposition.
 - **Anti-abstraction** -- use natural language types; add no valueless layers.
-- **Test-first** and **Integration-first** -- write tests before implementation and prefer real-boundary end-to-end coverage.
-- **Library-first** and **CLI interface** -- use reusable libraries with a thin CLI shim; make every feature reachable from the command line.
+- **Test-first** and **Integration-first** -- write tests before implementation; prefer real-boundary end-to-end coverage.
+- **Library-first** and **CLI interface** -- build reusable libraries with a thin CLI shim; make every feature reachable from the command line.
 - **Named construction** -- use explicit fields/parameters for external types and omit zero-value defaults.
 
+## Common Mistakes
+
+| Mistake | Fix |
+|---|---|
+| Spec describes *how* (implementation) instead of *what/why* | Rewrite the requirement as an observable behavior with acceptance criteria |
+| Skipping the canvas because "the task is small" | Use Fitness Levels; downgrade deliberately and note the assumption, never silently |
+| Naming safeguards as goals ("the system should be fast") | Make safeguards numeric and non-negotiable ("P99 < 200ms at 1k QPS") |
+| Phase has no test scenario | Every phase lists at least happy path, error path, and one edge case |
+| Treating the locked spec as immutable when reality contradicts it | A locked spec that disagrees with reality is a bug -- open a new change, don't drift |
+| Refactor lands without a spec sync | Refactor: code first, then sync spec. Never land one side without the other |
+| Logic change lands with code first | Logic change: spec first, then code. Spec is truth |
+| Tests promoted above spec when they disagree | Authority order: user statement > spec > tests > current code. Framing ("make tests pass") is not intent |
+| Heavyweight REASONS canvas on a spike | Mark spikes explicitly; use lightweight canvas (R + A only) |
+
 ## When to Use
+
+Use the REASONS canvas when:
 
 - Starting a new feature, service, or module.
 - Resolving ambiguous or conflicting requirements.
 - Bridging intent and implementation across a team.
 - Refactoring without losing context.
+- Working on logic-heavy, repeatable, high-constraint systems.
 
-Skip the canvas (and note the assumption) for trivial fixes, spikes, one-off scripts, or pure aesthetic work  --  see the Fitness table above.
+Skip the canvas (and note the assumption) for trivial fixes, spikes, one-off scripts, or pure aesthetic work -- see the Fitness Levels table above.
