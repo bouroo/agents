@@ -9,43 +9,110 @@ description: >
 
 Apply only after correctness is proven. Measure before and after; keep what the data supports.
 
+> **Override.** A project-level performance policy that explicitly supersedes this skill takes precedence.
+
+**Stance:** You treat intuition about bottlenecks as wrong ~80% of the time. Profile first; optimize the measured hot path; one change at a time; cite the benchmark in the commit message.
+
+**Modes:**
+
+- **Review mode (architecture)** -- broad scan of a module or service for structural anti-patterns (missing connection pools, unbounded concurrency, wrong data structures, N+1 queries). Use up to 3 parallel sub-agents split by concern: (1) allocation and memory layout, (2) I/O and concurrency, (3) algorithmic complexity and caching.
+- **Review mode (hot path)** -- focused analysis of a single function or tight loop the caller named. Sequential.
+- **Optimize mode** -- a bottleneck has been identified by a profiler or benchmark. Follow the iterative cycle (define metric -> baseline -> diagnose -> change one thing -> compare) sequentially. Sequential.
+
+## Rule Out External Bottlenecks First
+
+Before optimizing code, verify the bottleneck is in your process. If 90% of latency is a slow DB query or upstream API call, allocation tuning will not help.
+
+**Diagnose:** (1) an off-CPU profiler shows I/O wait time; if off-CPU dominates, the bottleneck is external. (2) Distributed tracing shows which upstream span is slow. (3) A goroutine/thread dump blocked in socket reads or DB drivers = external wait.
+
+**When external:** optimize that component -- query tuning, caching, connection pools, circuit breakers.
+
+## Iterative Methodology
+
+The cycle: **Define -> Benchmark -> Diagnose -> Improve -> Compare**.
+
+1. **Define your metric** -- latency, throughput, memory, or CPU? Without a target, optimizations are random.
+2. **Write an atomic benchmark** -- isolate one function per benchmark to avoid result contamination.
+3. **Measure baseline** -- capture to a file as an audit trail (`report-1.txt`).
+4. **Diagnose** -- use the Decision Tree below to pick the right tool and section.
+5. **Improve** -- apply ONE optimization at a time, with an explanatory comment.
+6. **Compare** -- use a statistical comparator (e.g. `benchstat`) to confirm significance; paste the comparison in the commit body so reviewers see the exact delta.
+7. **Repeat** -- increment the report number, tackle the next bottleneck.
+
+## Decision Tree: Where Is Time Spent?
+
+| Bottleneck | Signal (from profiler) | Action |
+|---|---|---|
+| Too many allocations | heap `alloc_objects` high | Memory patterns below |
+| CPU-bound hot loop | function dominates CPU profile | CPU / SIMD patterns below |
+| GC pauses / OOM | high GC%, container limits | Runtime tuning (memory limit, GC trigger) |
+| Network / I/O latency | threads blocked on I/O | I/O & networking patterns |
+| Repeated expensive work | same computation/fetch multiple times | Caching (singleflight, memoization, work avoidance) |
+| Wrong algorithm | O(n^2) where O(n) exists | Algorithmic fix -- data structure swap |
+| Lock contention | mutex/block profile hot | Concurrency patterns below; reduce critical section |
+| Slow upstream queries | DB time dominates traces | Query tuning, batch, connection pool sizing |
+
 ## Memory
 
-- **Object pooling**  --  in tight loops or hot paths, reuse via a checkout/return pool; tune size against footprint and contention.
-- **Preallocation**  --  when a collection's final size is known, reserve capacity up front to avoid repeated reallocation and copying.
-- **Field alignment**  --  for large or frequently allocated structs, order fields largest → smallest (64 → 8 bit) to minimize padding and improve cache locality.
-- **Avoid boxing**  --  in hot loops use concrete types over interface/erased generics; pass value types by value to prevent hidden heap allocations.
-- **Zero-copy**  --  for large data or high-throughput pipelines, pass references, reuse buffers, slice over views instead of duplicating.
-- **Stack allocation**  --  keep short-lived values on the stack by avoiding pointers-to-locals, large closure captures, unintended escape.
-- **Immutability for sharing**  --  share read-only data across workers without locks; construct fully before publishing, never mutate after.
-- **Over-allocation**  --  preallocate only what's needed; reserving excess wastes memory and can hurt cache utilization and GC throughput. Validate hints with benchmarks.
-- **Incremental building**  --  for strings/buffers built piece-by-piece, use a linear-time builder (amortized append) rather than repeated concatenation (quadratic in pieces).
+- **Object pooling** -- reuse objects through a checkout/return pool in tight loops; tune pool size against contention.
+- **Preallocation** -- reserve capacity when the final size is known to avoid repeated reallocation and copying. Do not preallocate speculatively -- `make([]T, 0, 1000)` wastes memory when the common case is 10 items.
+- **Field alignment** -- order fields largest -> smallest to minimize padding and improve cache locality.
+- **Avoid boxing** -- prefer concrete types over interfaces or erased generics in hot loops; pass value types by value.
+- **Zero-copy** -- pass references, reuse buffers, and slice over views in high-throughput paths.
+- **Stack allocation** -- keep short-lived values on the stack; avoid pointers-to-locals and large closure captures.
+- **Immutability for sharing** -- share read-only data without locks; construct it fully before publishing.
+- **Incremental building** -- use a linear-time builder instead of repeated concatenation that becomes quadratic.
+- **Avoid reflection in hot paths** -- typed comparison and access are orders of magnitude faster than reflection-based equivalents.
 
 ## Concurrency
 
-- **Worker pools**  --  when tasks are small or resources bounded, use a fixed pool fed by a queue rather than spawning a context per task.
-- **Atomics**  --  for simple shared counters/flags, use hardware atomics; prefer lock-free only when contention stays low.
-- **Lazy initialization**  --  defer expensive setup to first use, guarded by once-only synchronization; reduces startup time and unused work.
-- **Cancellation propagation**  --  thread cancellation/timeout context through every child operation; check at natural abort points and on blocking calls.
-- **Structured error collection**  --  for related concurrent operations, group with shared cancellation and propagate only the first meaningful error; avoid accumulating all errors unless callers need them.
-- **Directional channels**  --  specify data-flow direction (send-only vs receive-only) so the compiler enforces ownership and prevents accidental misuse.
+- **Worker pools** -- use a fixed pool fed by a queue instead of spawning one worker per task.
+- **Bounded concurrency** -- cap parallelism explicitly (`SetLimit(n)`, semaphores, tickets) to prevent unbounded fan-out under load.
+- **Atomics** -- use hardware atomics for simple counters and flags; prefer lock-free designs only when contention is low.
+- **Lazy initialization** -- defer expensive setup until first use behind once-only synchronization.
+- **Cancellation propagation** -- thread cancellation and timeouts through every child operation; missing this leaks workers.
+- **Structured error collection** -- group related work with shared cancellation and propagate the first meaningful error.
+- **Directional channels / unbuffered by default** -- distinguish send-only from receive-only channels for compile-time safety; larger buffers mask backpressure, use them only with measured justification.
 
 ## I/O
 
-- **Buffering**  --  wrap unbuffered file/network I/O with buffered readers/writers (typically 4-64 KB) to coalesce syscalls and amortize fixed cost.
-- **Batching**  --  accumulate small operations up to a size or time threshold, then submit as one batch; design for partial success and back-pressure.
-- **Direct streaming**  --  write formatted output directly to the destination writer/stream instead of constructing an intermediate string/buffer to pass downstream.
-- **Guarded observability**  --  wrap expensive log/tracing argument computation in an enabled-check to avoid computing values never emitted; prefer lazy evaluation for verbose/debug output.
+- **Buffering** -- wrap unbuffered I/O with 4-64 KB buffers to coalesce system calls.
+- **Batching** -- accumulate work to a size or time threshold; design for partial success and back-pressure.
+- **Direct streaming** -- write formatted output directly to the destination writer instead of building intermediates.
+- **Tune transport defaults** -- default HTTP clients and DB drivers ship with low idle-connection limits; size them to match your concurrency.
+- **Guarded observability** -- wrap expensive log and trace computation in an enabled-check; log calls in hot loops allocate even when the level is disabled.
+- **No panic/recover in hot paths** -- stack unwinding and stack-trace allocation cost real cycles; use error returns.
 
 ## SIMD & Vectorization
 
-- **Auto-vectorization first**  --  prefer compiler auto-vectorization: keep data contiguous and aligned (struct-of-arrays, not array-of-structs), branch-free, and loop-independent so the compiler can widen it.
-- **Portable SIMD / intrinsics**  --  drop to explicit SIMD only when auto-vectorization measurably fails on a proven hot loop; verify the vectorized path produces identical results.
-- **Data layout**  --  favor struct-of-arrays over array-of-structs for SIMD-friendly access patterns; align buffers to vector width (16/32/64 bytes) when targeting explicit SIMD.
-- **Branch elimination**  --  replace branches with conditional moves, masks, or predication in hot loops; branches inside SIMD lanes serialize execution.
-- **Measure the vectorized path**  --  compare scalar vs vectorized on realistic data; gains depend on data size, alignment, and the target ISA. No SIMD lands without a benchmark.
+- **Auto-vectorization first** -- keep data contiguous, branch-free, and loop-independent so the compiler can widen operations.
+- **Portable SIMD / intrinsics** -- use explicit SIMD only when auto-vectorization measurably fails on a proven hot loop.
+- **Data layout** -- prefer struct-of-arrays over array-of-structs and align data to vector width.
+- **Branch elimination** -- use conditional moves or masks in hot loops where measurement supports it.
+- **Measure the vectorized path** -- benchmark scalar and vectorized implementations on realistic data.
 
-## Compiler
+## Compiler & Runtime
 
-- **Build flags**  --  enable release/production modes (inlining, escape analysis, dead-code elimination); consider profile-guided optimization for hot code.
-- **Escape analysis**  --  minimize heap escapes by passing small structs by value, keeping method receivers on structs without pointer indirection when possible, and avoiding interface wrapping in hot paths.
+- **Build flags** -- enable release modes and use profile-guided optimization for proven hot code.
+- **Escape analysis** -- minimize heap escapes with value types and avoid interface wrapping in hot paths.
+- **Runtime limits in containers** -- set the runtime memory limit to ~80-90% of the container memory to prevent OOM kills; tune the GC trigger against live heap.
+- **Document optimizations** -- add a comment with the benchmark number explaining *why* a non-obvious pattern is faster, so a future reader does not "clean it up" and regress.
+
+## Common Mistakes
+
+| Mistake | Fix |
+|---|---|
+| Optimizing without profiling | Profile first -- intuition is wrong ~80% of the time |
+| Default HTTP/DB client without transport tuning | Defaults cap idle connections at ~2; size to your concurrency |
+| Logging in hot loops | Log calls allocate even when level is disabled; guard with enabled-check, use lazy/attr variants |
+| `unsafe` / pointer arithmetic without benchmark proof | Justified only when profiling shows >10% improvement in a verified hot path |
+| `reflect.DeepEqual` / generic equality in production | 50-200x slower than typed comparison; use language-native equality |
+| No memory limit in containers | Set runtime memory limit to 80-90% of container memory |
+| Panic/exception as control flow in hot path | Stack unwinding allocates; use error returns |
+| One big benchmark that touches everything | Isolate one function per benchmark; contaminated results mislead |
+| Preallocating speculatively | Preallocate only when capacity is known with evidence |
+
+## Cross-References
+
+- [effective-code-craft](../effective-code-craft/SKILL.md) -- correctness and clarity come before performance
+- [harness-engineering](../harness-engineering/SKILL.md) §11 -- deterministic logic in tested code, not in the model

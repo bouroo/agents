@@ -18,6 +18,14 @@ Source code is the implementation source of truth; `docs/` explains the system a
 
 This skill is the portable doctrine plus the three templates. Apply it to whatever repo you are currently working in.
 
+**Stance:** You treat documentation as a first-class deliverable written for the reader who has never seen this codebase. Code shows *what*; docs explain *why*, *when*, and *what can go wrong*. A comment that only restates the code wastes the reader's time.
+
+**Modes:**
+
+- **Write mode** -- generating or filling in missing documentation (system/flow/ADR/glossary). Work sequentially through the Agent Workflow; or parallelize across independent docs using sub-agents.
+- **Review mode** -- auditing existing docs for completeness, accuracy, and style. Use up to 5 parallel sub-agents, one per doc layer (systems, flows, architecture/ADR, glossary, README/index).
+- **Sync mode** -- updating existing docs to match a code change. Update only docs whose behavior/interface/invariant/domain-term changed (see Keeping Docs Updated). Never bootstrap a tree outside `document-phase`.
+
 ## Core Idea
 
 Durable repo-local docs close the context gap for both humans and agents. Without them, contributors have to infer behavior, boundaries, domain terms, and architectural constraints from scattered source and one-off comments. With them:
@@ -49,13 +57,13 @@ docs/
   systems/
   flows/
   architecture/
- README.md
- decisions/
- README.md
+    README.md
+    decisions/
+      README.md
   templates/
- system.md
- flow.md
- adr.md
+    system.md
+    flow.md
+    adr.md
 ```
 
 Exact filenames can follow the host repo's conventions; the conceptual structure should remain clear.
@@ -90,12 +98,22 @@ Every system and flow doc includes a **Source map** section that links the most 
 
 ## Style
 
+Apply to every piece of documentation you write or review:
+
+- **Concision** -- write the shortest version that carries the idea. Remove ornament and hollow transitions. Never drop facts, warnings, or user-requested depth.
+- **Intent over paraphrase** -- code shows *what* happens; docs explain *why* it exists, *when* to use it, *what constraints* apply. A comment that only restates the signature wastes the reader's time.
+- **No invented context** -- omit unsupported rationale, marketing claims (`seamlessly`, `robust`, `enterprise-grade`), or future promises. Leave gaps visible (`[NEEDS CLARIFICATION]`) rather than filling with speculation.
+- **Preserve meaning when editing** -- keep modality intact (`must`/`should`/`may` are different obligations). Preserve conditions, warnings, required actions. A cleaner sentence that changes obligations is wrong.
+
+Formatting:
+
 - Clear, direct Markdown; stable headings.
 - Relative Markdown links for related docs and source files.
-- Explain behavior, responsibilities, flows, invariants, pitfalls  --  not every line.
-- Mark uncertainty explicitly: `[NEEDS CLARIFICATION]`.
+- Explain behavior, responsibilities, flows (mermaid diagrams), invariants, pitfalls  --  not every line.
 - Stay concise enough to read before making changes.
 - **Glossary headings use Title Case** (e.g. `## Email Verification`, `## Verification Token`). Prefer that Title Case form in finished docs when it improves clarity. Lowercase is fine in drafts, comments, identifiers, or informal notes.
+
+**Anti-patterns to remove on sight:** pure-paraphrase comments that restate the code, signature restatement, marketing vocabulary, groundless future claims (`future extensibility`, `easy to scale`), hollow transitions (`it's worth noting that`, `in conclusion`), and template padding that adds no information.
 
 ## Keeping Docs Updated (the key discipline)
 
