@@ -1,21 +1,84 @@
 ---
-description: "High-level orchestrator that plans, decides, delegates, and evaluates. Delegates all execution -- writes, builds, tests, commits, and broad/multi-file exploration -- to specialized sub-agents. May perform essential read-only inspection directly (reading files, searching, and read-only git) only when doing so is necessary to make a decision or validate a sub-agent's verdict. Never mutates source, never runs the toolchain itself."
+description: "High-level orchestrator that plans, decides, delegates, and evaluates. Delegates all execution -- writes, builds, tests, commits, and broad/multi-file exploration -- to specialized sub-agents. May perform essential read-only inspection directly (reading files, searching, read-only git, and read-only toolchain inspection) only when doing so is necessary to make a decision or validate a sub-agent's verdict. Never mutates source, never runs the toolchain itself -- no builds, tests, lint, format, installs, mod edits, or commits."
 mode: primary
 color: "#F59E0B"
-steps: 50
+steps: 60
+# Permission policy -- see https://kilo.ai/docs/customize/agent-permissions
+# Rule precedence: rules are evaluated in config order; the LAST matching rule wins.
+# So every block below puts broad fallbacks FIRST and specific exceptions AFTER.
+# Sub-agents (general, explore) inherit from global kilo config; this file shapes
+# only the conductor's own surface. Keeping the bash default at `ask` (not `deny`)
+# means future toolchain calls prompt once instead of being silently killed.
 permission:
   read: allow
   glob: allow
   grep: allow
-  task: allow
-  bash:
+  # Delegation: only the two built-in subagent types. Never delegate to another
+  # 'conductor' (spec: "Never pick conductor as the specialist").
+  task:
     "*": deny
+    "general": allow
+    "explore": allow
+  # Bash: read-only inspection is allowed silently; everything else prompts;
+  # destructive commands are always denied.
+  bash:
+    # --- Hard denials (evaluated first; later allows cannot override because these
+    #     patterns are more specific and only match destructive commands) ---
+    "git push * --force*": deny
+    "git push -f*": deny
+    "git push --force*": deny
+    "git push": deny
+    "git reset --hard*": deny
+    "git clean -fd*": deny
+    "git commit --amend*": deny
+    "rm -rf /*": deny
+    "rm -rf ~*": deny
+    "sudo *": deny
+    # --- Read-only inspection: allow silently (cannot mutate state) ---
+    "ls*": allow
+    "cat *": allow
+    "head *": allow
+    "tail *": allow
+    "less *": allow
+    "tree *": allow
+    "wc *": allow
+    "file *": allow
+    "which *": allow
+    "type *": allow
+    "diff *": allow
+    "du *": allow
+    "df *": allow
+    "date *": allow
+    "uname *": allow
+    "whoami *": allow
+    "printenv *": allow
+    "grep *": allow
+    "rg *": allow
+    "ag *": allow
+    "sort *": allow
+    "uniq *": allow
+    "cut *": allow
+    "tr *": allow
+    "jq *": allow
+    "man *": allow
     "git status*": allow
     "git diff*": allow
     "git log*": allow
     "git show*": allow
-    "ls*": allow
     "mkdir -p .agents/*": allow
+    # Read-only Go toolchain inspection (no mutation).
+    "go version": allow
+    "go env *": allow
+    "go list *": allow
+    "go mod edit -json*": allow   # read-only: prints go.mod as JSON
+    "go mod graph": allow
+    "go mod why *": allow
+    "go doc *": allow
+    "go help *": allow
+    # --- Broad fallback: anything else prompts the user (including all toolchain
+    #     mutation -- go build, go test, go mod edit -require, docker, etc.).
+    #     The user approves once and can save the pattern. ---
+    "*": ask
   webfetch: allow
   websearch: allow
   edit:
