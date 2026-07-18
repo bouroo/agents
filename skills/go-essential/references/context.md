@@ -1,9 +1,9 @@
-# Context — Depth
+# Context - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §7. The short rules live there; this file is
 the why, the worked code, and the failure modes.
 
-`context.Context` is the "session" of a request — it ties together every operation in the same
+`context.Context` is the "session" of a request - it ties together every operation in the same
 unit of work and propagates cancellation, deadlines, and request-scoped values across API
 boundaries.
 
@@ -14,12 +14,12 @@ external APIs. Breaking the chain defeats cancellation, trace propagation, and d
 enforcement.
 
 ```go
-// ✗ Bad — creates a new context, breaking the chain
+// ✗ Bad - creates a new context, breaking the chain
 func (s *OrderService) Create(ctx context.Context, order Order) error {
     return s.db.ExecContext(context.Background(), "INSERT INTO orders ...", order.ID)
 }
 
-// ✓ Good — propagates the caller's context
+// ✓ Good - propagates the caller's context
 func (s *OrderService) Create(ctx context.Context, order Order) error {
     return s.db.ExecContext(ctx, "INSERT INTO orders ...", order.ID)
 }
@@ -32,7 +32,7 @@ func DoThing(ctx context.Context, x int) error { ... }
 ```
 
 - Always first.
-- Always named `ctx` (not `context` — shadows the package; not `c` — too short).
+- Always named `ctx` (not `context` - shadows the package; not `c` - too short).
 - Never stored in a struct. Pass explicitly through function parameters.
 
 ## Creating Contexts
@@ -48,7 +48,7 @@ func DoThing(ctx context.Context, x int) error { ... }
 | Background work outliving the parent       | `context.WithoutCancel(parent)` (Go 1.21+) |
 
 **`Background()` vs `TODO()`:** both return a non-cancelable context. `Background()` is for the
-top of the call chain (main, init, tests). `TODO()` is a placeholder — "I know I need a context
+top of the call chain (main, init, tests). `TODO()` is a placeholder - "I know I need a context
 here but I haven't plumbed one yet." Linters flag `TODO()` left in production code.
 
 ## Cancellation, Timeouts, Deadlines
@@ -91,7 +91,7 @@ for _, item := range items {
 
 ### `AfterFunc` (Go 1.21+)
 
-Register a callback that fires when the context is cancelled — useful for cleanup or signaling
+Register a callback that fires when the context is cancelled - useful for cleanup or signaling
 without a goroutine parked on `select`.
 
 ```go
@@ -104,7 +104,7 @@ defer stop() // unregister if the work completes normally
 
 ## Context Values
 
-Context values carry **request-scoped metadata only** — request ID, user ID, trace context,
+Context values carry **request-scoped metadata only** - request ID, user ID, trace context,
 tenant ID. NEVER function parameters (those go in the function signature).
 
 **Unexported key types prevent collisions:**
@@ -135,7 +135,7 @@ type is unexported; no other package can read or overwrite the value.
 
 `context.WithoutCancel(parent)` (Go 1.21+) returns a copy of the parent that does not cancel
 when the parent does. Use for background work spawned by a request handler that must complete
-even if the client disconnects — audit logs, cleanup, "fire-and-track" notifications.
+even if the client disconnects - audit logs, cleanup, "fire-and-track" notifications.
 
 ```go
 func (s *OrderService) Create(ctx context.Context, o Order) error {
@@ -148,26 +148,26 @@ func (s *OrderService) Create(ctx context.Context, o Order) error {
 }
 ```
 
-The audit goroutine still needs its own bounded lifecycle — pair `WithoutCancel` with a service-
+The audit goroutine still needs its own bounded lifecycle - pair `WithoutCancel` with a service-
 level shutdown context so the process doesn't exit mid-write.
 
 ## HTTP Servers and Clients
 
 ```go
-// Server — the handler gets a request-scoped context
+// Server - the handler gets a request-scoped context
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context() // cancelled when the client disconnects
     // ... pass ctx through to services
 }
 
-// Client — attach the context to the request
+// Client - attach the context to the request
 req := req.WithContext(ctx)
 resp, err := httpClient.Do(req)
 ```
 
 ## Databases
 
-Always use the `*Context` variants — `QueryContext`, `ExecContext`, `BeginTx` with a context.
+Always use the `*Context` variants - `QueryContext`, `ExecContext`, `BeginTx` with a context.
 The non-context variants (`Query`, `Exec`) block indefinitely on a slow query.
 
 ```go
@@ -189,32 +189,32 @@ See [Observability](./observability.md) for the tracing integration details.
 ## Common Mistakes
 
 ```go
-// ✗ Bad — storing context in a struct
+// ✗ Bad - storing context in a struct
 type Service struct {
     ctx context.Context // leaks; the struct outlives any single request
 }
 
-// ✓ Good — pass ctx as a parameter to each method
+// ✓ Good - pass ctx as a parameter to each method
 func (s *Service) Do(ctx context.Context, x int) error { ... }
 ```
 
 ```go
-// ✗ Bad — nil context panics in some stdlib functions
+// ✗ Bad - nil context panics in some stdlib functions
 func Do(ctx context.Context) {
     if ctx == nil {
         ctx = context.Background() // NEVER do this; pass a real context
     }
 }
 
-// ✓ Good — use context.TODO() at the caller, fix it later
+// ✓ Good - use context.TODO() at the caller, fix it later
 Do(context.TODO())
 ```
 
 ```go
-// ✗ Bad — string key collides with other packages
+// ✗ Bad - string key collides with other packages
 ctx = context.WithValue(ctx, "user_id", 42)
 
-// ✓ Good — unexported key type
+// ✓ Good - unexported key type
 type ctxKey int
 const keyUserID ctxKey = 1
 ctx = context.WithValue(ctx, keyUserID, 42)
@@ -224,7 +224,7 @@ ctx = context.WithValue(ctx, keyUserID, 42)
 
 `govet` and `staticcheck` catch many context pitfalls:
 
-- `lostcancel` — `WithCancel`/`WithTimeout`/`WithDeadline` without a `cancel()` call on every
+- `lostcancel` - `WithCancel`/`WithTimeout`/`WithDeadline` without a `cancel()` call on every
   path.
-- `context-as-argument` — context not first parameter.
-- `context-keys-type` — string or known-type key used for `context.WithValue`.
+- `context-as-argument` - context not first parameter.
+- `context-keys-type` - string or known-type key used for `context.WithValue`.

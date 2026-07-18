@@ -1,4 +1,4 @@
-# Naming — Depth
+# Naming - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §2. The short rules live there; this file is
 the why, the worked code, and the decision tables.
@@ -11,7 +11,7 @@ the why, the worked code, and the decision tables.
 Go uses `MixedCase` (CamelCase). `localVar`, `exportedVar`. Underscores appear only in cgo, test
 files (`_test.go`), generated code, and the rare `//go:` directive.
 
-**Capitalization controls visibility** — the first letter upper-case exports. `ALL_CAPS`
+**Capitalization controls visibility** - the first letter upper-case exports. `ALL_CAPS`
 constants conflict with that rule, look like C, and don't add signal:
 
 ```go
@@ -31,24 +31,24 @@ var DefaultTimeout = 30 * time.Second
 - **Singular, not plural.** `list` not `lists`; `buffer` not `buffers`.
 - **Match the directory.** A package at `internal/order/` is `package order`.
 - **Don't stutter.** `user.NewUser()` → `user.New()`. `config.LoadConfig()` → `config.Load()`.
-- **Avoid generic names** — `util`, `common`, `helpers`, `misc` are code-smell; they collect
+- **Avoid generic names** - `util`, `common`, `helpers`, `misc` are code-smell; they collect
   unrelated code. Split by concern instead.
 
 ## Exported Identifiers and Stutter
 
 ```go
-// ✗ Bad — name restates the package
+// ✗ Bad - name restates the package
 package user
 func NewUser() *User { ... }
 func DeleteUser(u *User) { ... }
 
-// ✓ Good — package provides context
+// ✓ Good - package provides context
 package user
 func New() *User { ... }
 func Delete(u *User) { ... }
 ```
 
-At the call site: `user.New()`, `user.Delete(u)` — clear without restating the package name.
+At the call site: `user.New()`, `user.Delete(u)` - clear without restating the package name.
 
 ## Interfaces
 
@@ -75,8 +75,8 @@ type OrderStore interface {
   message id"`, not `"Invalid message ID."` (the `errors.New` and `fmt.Errorf` doc comments
   specify this; linters enforce it).
 - **Sentinel errors include the package name.** `var ErrNotFound = errors.New("user: not found")`
-  — the prefix tells the reader where the error originated in a chain.
-- **Wrap with the operation, not the error.** `fmt.Errorf("querying users: %w", err)` — not
+  - the prefix tells the reader where the error originated in a chain.
+- **Wrap with the operation, not the error.** `fmt.Errorf("querying users: %w", err)` - not
   `fmt.Errorf("%w", err)` (no context added) or `fmt.Errorf("user error: %v", err)` (loses the
   chain).
 
@@ -100,9 +100,9 @@ Upper-case the whole acronym in `MixedCase`:
 - **`-er` for single-method interfaces:** `Reader`, `Stringer`, `Marshaller`.
 - **`-ed` for past-tense actions:** `closed`, `started`, `initialized`.
 - **`-ing` for ongoing actions:** `streaming`, `processing`.
-- **`Must*` for panicking constructors:** `MustParse`, `MustCompile` — caller asserts the input
+- **`Must*` for panicking constructors:** `MustParse`, `MustCompile` - caller asserts the input
   is valid and accepts the panic otherwise. Use only at init time or in tests.
-- **`f` suffix for format funcs:** `Errorf`, `Wrapf`, `Sprintf` — take a `printf`-style format
+- **`f` suffix for format funcs:** `Errorf`, `Wrapf`, `Sprintf` - take a `printf`-style format
   string.
 - **`With*` for functional-option setters:** `WithTimeout`, `WithLogger`.
 

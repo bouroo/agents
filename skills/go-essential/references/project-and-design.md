@@ -1,4 +1,4 @@
-# Project and Design — Depth
+# Project and Design - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §9. The headline rules live there; this file
 covers project layout, functional options, constructors, architecture, and resource lifecycle.
@@ -7,9 +7,9 @@ covers project layout, functional options, constructors, architecture, and resou
 
 When starting a project, ask the developer (in order):
 
-1. **Software architecture** — clean, hexagonal, DDD, flat? Never impose complex structure on a
+1. **Software architecture** - clean, hexagonal, DDD, flat? Never impose complex structure on a
    small project.
-2. **Dependency injection approach** — manual constructor injection, or a DI library
+2. **Dependency injection approach** - manual constructor injection, or a DI library
    (wire, dig/fx), or none at all. The choice affects wiring,
    lifecycle (health checks, graceful shutdown), and project structure.
 
@@ -30,7 +30,7 @@ Right-size structure to scope. A 100-line CLI tool needs no layers of abstractio
 project/
   cmd/
     {name}/main.go      # entry point; minimal (parse, wire, Run)
-  internal/             # private packages — not importable externally
+  internal/             # private packages - not importable externally
   pkg/                  # public, exportable packages (omit if none)
   api/                  # OpenAPI/protobuf schemas (services)
   web/                  # frontend assets (services)
@@ -43,7 +43,7 @@ project/
 
 - **`cmd/{name}/main.go`** does flag parsing, dependency wiring, and calls `Run()`. Business
   logic lives in `internal/` or `pkg/`.
-- **`internal/`** is enforced by the toolchain — packages here cannot be imported from outside
+- **`internal/`** is enforced by the toolchain - packages here cannot be imported from outside
   the module. Use it for everything proprietary.
 - **`pkg/`** only when code is genuinely reusable by external consumers. Don't create it
   speculatively.
@@ -118,7 +118,7 @@ srv, err := NewServer(":8080",
 )
 ```
 
-Options that validate MUST return an error — catch bad config at construction, not at runtime.
+Options that validate MUST return an error - catch bad config at construction, not at runtime.
 Use the builder pattern only when you need complex validation between configuration steps that
 the functional-options form can't express cleanly.
 
@@ -127,12 +127,12 @@ the functional-options form can't express cleanly.
 `init()`:
 
 - Runs implicitly before `main()` and before tests
-- Cross-file order is filename-alphabetical — fragile
-- Cannot return errors — failures must `panic` or `log.Fatal`
+- Cross-file order is filename-alphabetical - fragile
+- Cannot return errors - failures must `panic` or `log.Fatal`
 - Hidden side effects make tests unpredictable
 
 ```go
-// ✗ Bad — hidden global state, untestable
+// ✗ Bad - hidden global state, untestable
 var db *sql.DB
 func init() {
     var err error
@@ -140,7 +140,7 @@ func init() {
     if err != nil { log.Fatal(err) }
 }
 
-// ✓ Good — explicit constructor, dependency injected
+// ✓ Good - explicit constructor, dependency injected
 func NewUserRepository(db *sql.DB) *UserRepository { return &UserRepository{db: db} }
 ```
 
@@ -151,14 +151,14 @@ Place an explicit Unknown/Invalid sentinel at iota 0:
 ```go
 type Status int
 const (
-    StatusUnknown   Status = iota  // 0 — uninitialized sentinel
+    StatusUnknown   Status = iota  // 0 - uninitialized sentinel
     StatusActive                    // 1
     StatusInactive                  // 2
     StatusSuspended                 // 3
 )
 ```
 
-A `var s Status` silently becomes `0` — if that maps to a real state like `StatusReady`, code can
+A `var s Status` silently becomes `0` - if that maps to a real state like `StatusReady`, code can
 behave as if a state was deliberately chosen when none was. The Unknown sentinel catches it.
 
 ## Resource Management
@@ -211,7 +211,7 @@ for attempt := 0; attempt < maxAttempts; attempt++ {
 
 ### Limit everything
 
-Pool sizes, queue depths, buffers, goroutine counts — unbounded resources grow until they crash.
+Pool sizes, queue depths, buffers, goroutine counts - unbounded resources grow until they crash.
 Prefer `errgroup.SetLimit(n)` over unbounded `g.Go(...)`.
 
 ## Data Handling
@@ -224,7 +224,7 @@ Prefer `errgroup.SetLimit(n)` over unbounded `g.Go(...)`.
 | `[]byte` | I/O         | Writing to `io.Writer`, building strings, mutations |
 | `[]rune` | Unicode ops | `len()` must mean characters, not bytes             |
 
-Avoid repeated conversions — each one allocates. Stay in one type until you need the other.
+Avoid repeated conversions - each one allocates. Stay in one type until you need the other.
 
 ### Iterators and streaming
 
@@ -246,16 +246,16 @@ var templateFS embed.FS
 var version string
 ```
 
-Embeds at compile time — eliminates runtime file-I/O errors and external file dependencies.
+Embeds at compile time - eliminates runtime file-I/O errors and external file dependencies.
 
 ## Essential Root Files
 
 Every Go project should have at the root:
 
-- **Makefile** — `make build`, `make test`, `make lint`, `make cover`
-- **.gitignore** — `/vendor/`, binary outputs, `.env`, `coverage.out`
-- **.golangci.yml** — linter configuration
-- **go.mod / go.sum** — module definition and checksums
+- **Makefile** - `make build`, `make test`, `make lint`, `make cover`
+- **.gitignore** - `/vendor/`, binary outputs, `.env`, `coverage.out`
+- **.golangci.yml** - linter configuration
+- **go.mod / go.sum** - module definition and checksums
 
 ## Initialization Checklist
 
@@ -276,11 +276,11 @@ When starting a new Go project:
 
 ## Architecture Principles (Regardless of Pattern)
 
-- **Keep the domain pure** — no framework dependencies in the domain layer.
-- **Fail fast** — validate at boundaries, trust internal code.
-- **Make illegal states unrepresentable** — use types to enforce invariants.
-- **Respect 12-Factor** — see above.
-- **Minimize dependencies** — "a little recode > a big dependency."
+- **Keep the domain pure** - no framework dependencies in the domain layer.
+- **Fail fast** - validate at boundaries, trust internal code.
+- **Make illegal states unrepresentable** - use types to enforce invariants.
+- **Respect 12-Factor** - see above.
+- **Minimize dependencies** - "a little recode > a big dependency."
 
 For deep architecture guides (clean, hexagonal, DDD with file trees and code) see
 [Design Patterns](./design-patterns.md).

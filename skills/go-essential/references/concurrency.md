@@ -1,4 +1,4 @@
-# Concurrency — Depth
+# Concurrency - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §6. The core principles live there; this file
 covers channels/select, sync primitives, pipelines, and audit patterns.
@@ -24,9 +24,9 @@ func worker(ctx context.Context, jobs <-chan Job, results chan<- Result) {
   close.
 - **Default to unbuffered.** Buffering masks backpressure; use only with measured justification
   (e.g., smoothing a bursty producer).
-- **Always include `ctx.Done()` in `select`** — without it the goroutine leaks after caller
+- **Always include `ctx.Done()` in `select`** - without it the goroutine leaks after caller
   cancellation.
-- **Avoid `time.After` in hot loops** — each call allocates a fresh timer:
+- **Avoid `time.After` in hot loops** - each call allocates a fresh timer:
 
   ```go
   // ✗ Allocates per iteration
@@ -49,7 +49,7 @@ func worker(ctx context.Context, jobs <-chan Job, results chan<- Result) {
   }
   ```
 
-- **Send copies, not pointers.** A pointer on a channel is shared memory — defeats the channel's
+- **Send copies, not pointers.** A pointer on a channel is shared memory - defeats the channel's
   purpose.
 
 ## Sync Primitives
@@ -79,7 +79,7 @@ for _, url := range urls {
 if err := g.Wait(); err != nil { return err }
 ```
 
-`wg.Add` must be called **before** `go` — calling it inside the goroutine lets `Wait` return
+`wg.Add` must be called **before** `go` - calling it inside the goroutine lets `Wait` return
 early.
 
 ## Pipelines and Worker Pools
@@ -131,7 +131,7 @@ Detection:
 - Tests: `go.uber.org/goleak.VerifyTestMain(m)` in `TestMain`.
 - Live: `/debug/pprof/goroutine?debug=2` stack dump.
 - Race checks: `go test -race ./...`.
-- Go 1.26+ experimental `GOEXPERIMENT=goroutineleakprofile` — do not rely on as default.
+- Go 1.26+ experimental `GOEXPERIMENT=goroutineleakprofile` - do not rely on as default.
 
 Fix pattern: every `go` statement must have a corresponding stop mechanism (ctx, done channel,
 WaitGroup) and a clear owner.
@@ -146,19 +146,19 @@ WaitGroup) and a clear owner.
 | Missing `ctx.Done()` in `select`               | Always select on context                                           |
 | Unbounded goroutine spawning                   | `errgroup.SetLimit(n)` or semaphore                                |
 | Sharing pointer via channel                    | Send copies or immutable values                                    |
-| `wg.Add` inside goroutine                      | Call `Add` before `go` — `Wait` may return early                   |
+| `wg.Add` inside goroutine                      | Call `Add` before `go` - `Wait` may return early                   |
 | Forgetting `-race` in CI                       | Always `go test -race ./...`                                       |
 | Mutex held across I/O                          | Keep critical sections short                                       |
-| Concurrent map read/write                      | Hard crash — `sync.Map` or `RWMutex` + map                         |
-| RLock then upgrade to Lock                     | Deadlock — acquire Lock from the start if mutation is needed       |
+| Concurrent map read/write                      | Hard crash - `sync.Map` or `RWMutex` + map                         |
+| RLock then upgrade to Lock                     | Deadlock - acquire Lock from the start if mutation is needed       |
 | `sync.Pool` item not Reset before Put          | Next user sees stale state                                         |
 
 ## Audit Sub-Agents (Parallel)
 
 When auditing concurrency across a codebase, split into 5 parallel sub-agents:
 
-1. **Goroutine spawns** — every `go func` / `go method` has a shutdown mechanism and clear owner.
-2. **Shared state** — mutable globals and shared fields without synchronization.
-3. **Channel usage** — ownership, direction, closure, buffer sizes.
-4. **Hot patterns** — `time.After` in loops, missing `ctx.Done()` in select, unbounded spawning.
-5. **Primitives** — mutex usage, `sync.Map`, atomics, documented thread-safety.
+1. **Goroutine spawns** - every `go func` / `go method` has a shutdown mechanism and clear owner.
+2. **Shared state** - mutable globals and shared fields without synchronization.
+3. **Channel usage** - ownership, direction, closure, buffer sizes.
+4. **Hot patterns** - `time.After` in loops, missing `ctx.Done()` in select, unbounded spawning.
+5. **Primitives** - mutex usage, `sync.Map`, atomics, documented thread-safety.

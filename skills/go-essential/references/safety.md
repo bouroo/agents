@@ -1,4 +1,4 @@
-# Safety — Depth
+# Safety - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §4. The headline rules live there; this file
 covers nil traps, slice/map aliasing, numeric edges, and defensive design in detail.
@@ -62,14 +62,14 @@ func (r *Registry) Register(name string, it Item) {
 
 ## Slice & Map Safety
 
-### Slice aliasing — the `append` trap
+### Slice aliasing - the `append` trap
 
 `append` reuses the backing array if capacity allows. Both slices then share memory, so mutating
 one corrupts the other.
 
 ```go
 a := make([]int, 3, 5)        // len=3, cap=5
-b := append(a, 4)             // fits in cap — b reuses a's backing array
+b := append(a, 4)             // fits in cap - b reuses a's backing array
 b[0] = 99                     // a[0] is now also 99
 
 // Force a fresh allocation
@@ -90,7 +90,7 @@ copy(header, bigBuffer[:8])   // header owns an 8-byte array, not bigBuffer's me
 
 ### Map concurrent access
 
-Maps MUST NOT be read and written concurrently — Go's runtime detects this and crashes hard
+Maps MUST NOT be read and written concurrently - Go's runtime detects this and crashes hard
 (`fatal error: concurrent map writes`). Use `sync.Map` for read-heavy workloads, or
 `sync.RWMutex` + plain map when writes dominate.
 
@@ -112,7 +112,7 @@ for i := range xs { xs[i].V *= 2 }     // mutates xs
 
 ```go
 var v int64 = 3_000_000_000
-i32 := int32(v)   // -1294967296 — silent wraparound
+i32 := int32(v)   // -1294967296 - silent wraparound
 
 // Guard the conversion
 if v > math.MaxInt32 || v < math.MinInt32 {
@@ -134,7 +134,7 @@ if math.Abs(a-b) < eps { /* equal */ }
 ### Division
 
 - Integer division by zero panics.
-- Float division by zero yields `+Inf`, `-Inf`, or `NaN` — no panic, but corrupts downstream
+- Float division by zero yields `+Inf`, `-Inf`, or `NaN` - no panic, but corrupts downstream
   math. Guard with `if divisor == 0`.
 
 ## Resource Safety
@@ -240,11 +240,11 @@ Always pass such structs by pointer.
 
 When auditing safety across a codebase, split into 5 parallel sub-agents:
 
-1. **Nil traps** — typed-nil-interface returns, nil map writes, nil-receiver safety, nil-channel
+1. **Nil traps** - typed-nil-interface returns, nil map writes, nil-receiver safety, nil-channel
    blocks.
-2. **Slice/map aliasing** — `append` reusing backing arrays, subslice retention, missing
+2. **Slice/map aliasing** - `append` reusing backing arrays, subslice retention, missing
    `slices.Clone`.
-3. **Numeric edges** — int conversions without bounds checks, float `==` comparisons, division by
+3. **Numeric edges** - int conversions without bounds checks, float `==` comparisons, division by
    zero.
-4. **Resource lifecycle** — `defer` in loops, missing `defer Close()`, leaked resources.
-5. **Initialization** — broken zero values, `init()` abuse, mutable globals, `noCopy` gaps.
+4. **Resource lifecycle** - `defer` in loops, missing `defer Close()`, leaked resources.
+5. **Initialization** - broken zero values, `init()` abuse, mutable globals, `noCopy` gaps.

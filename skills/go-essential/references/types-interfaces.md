@@ -1,4 +1,4 @@
-# Types and Interfaces — Depth
+# Types and Interfaces - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §5. The headline rules live there; this file
 expands on interface design, embedding, type assertions, field tags, and receiver choice.
@@ -21,13 +21,13 @@ type ReadWriteCloser interface { io.Reader; io.Writer; io.Closer }
 ### Defined where consumed
 
 ```go
-// package notification — defines only what it needs
+// package notification - defines only what it needs
 type Sender interface { Send(to, body string) error }
 
 type Service struct{ sender Sender }
 func NewService(s Sender) *Service { return &Service{sender: s} }
 
-// package email — exports a concrete Client; knows nothing of Sender
+// package email - exports a concrete Client; knows nothing of Sender
 type Client struct{ ... }
 func (c *Client) Send(to, body string) error { ... }
 ```
@@ -79,7 +79,7 @@ Honor stdlib signatures exactly. Don't invent variants:
 ### Safe assertion (always)
 
 ```go
-// ✓ comma-ok — no panic on mismatch
+// ✓ comma-ok - no panic on mismatch
 s, ok := val.(string)
 if !ok { return errors.New("expected string") }
 
@@ -139,8 +139,8 @@ Override by defining a method with the same name on the outer type.
 
 | Use          | When                                                                  |
 | ------------ | --------------------------------------------------------------------- |
-| **Embed**    | You want to promote the inner type's full API — outer "is a" enhanced |
-| **Named field** | You only use the inner type internally — outer "has a" dependency  |
+| **Embed**    | You want to promote the inner type's full API - outer "is a" enhanced |
+| **Named field** | You only use the inner type internally - outer "has a" dependency  |
 
 ```go
 type APIGateway struct { http.Handler }   // embed: exposes Handler methods
@@ -164,7 +164,7 @@ type UserService struct{ store UserStore }
 func NewUserService(s UserStore) *UserService { return &UserService{store: s} }
 ```
 
-Tests pass a mock `UserStore` — no real database needed.
+Tests pass a mock `UserStore` - no real database needed.
 
 ## Struct Field Tags
 
@@ -202,7 +202,7 @@ type Order struct {
 | Receiver is a large struct (~128B+)             | Method is a read-only accessor        |
 | Consistency: if any method uses pointer, all do | Map and function values (reference types) |
 
-**Receiver consistency is mandatory** — mixing pointer and value receivers on the same type
+**Receiver consistency is mandatory** - mixing pointer and value receivers on the same type
 causes subtle interface-implementation bugs. Pick one and apply to every method.
 
 ## Generics over `any`
@@ -225,7 +225,7 @@ compiler reject type mismatches at build time instead of producing runtime panic
 
 | Mistake                                            | Fix                                                |
 | -------------------------------------------------- | -------------------------------------------------- |
-| Large interfaces (5+ methods)                      | Split into focused 1–3 method interfaces           |
+| Large interfaces (5+ methods)                      | Split into focused 1-3 method interfaces           |
 | Defining interface in the implementor package      | Define where consumed                              |
 | Returning interface from constructor               | Return a concrete type                             |
 | Bare type assertion                                | Always `v, ok := x.(T)`                            |

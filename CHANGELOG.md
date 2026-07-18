@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-18
+
+### Added
+- `go-essential` skill: production-readiness rules for Go (code style, naming, error handling, safety, structs and interfaces, concurrency, context, testing, project and design, design patterns, observability, documentation, performance, safe refactoring). Ships as a core SKILL.md plus fourteen deep-dive references under `skills/go-essential/references/`. Registered in `plugin.json` and `marketplace.json`; catalog copy now reads "seven on-demand skills".
+
+### Changed
+- `agents/conductor.md` operational boundary hardened: pre-flight classification is now mandatory every turn (delegate / read-only direct / halt); self-execution (editing source, running the toolchain, or committing outside a sub-agent) is a logged Structural failure, not a shortcut. Granular `permission` block denies destructive git and all `edit` outside `.agents/`, allows a whitelist of read-only inspection commands, and prompts (`ask`) on everything else. `steps` raised from 50 to 60.
+- Plugin and marketplace manifests bumped from 1.4.0 to 1.5.0.
+
+### Fixed
+- Em/en-dash characters across `skills/go-essential/references/*.md` that tripped `scripts/checks.py` gate G6 (no-dash) replaced with ASCII hyphens; the gate is green again.
+
 ## [1.4.0] - 2026-07-17
 
 ### Added
@@ -104,3 +116,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.0]: https://github.com/bouroo/agents/releases/tag/v1.2.0
 [1.3.0]: https://github.com/bouroo/agents/releases/tag/v1.3.0
 [1.4.0]: https://github.com/bouroo/agents/releases/tag/v1.4.0
+[1.5.0]: https://github.com/bouroo/agents/releases/tag/v1.5.0

@@ -1,33 +1,33 @@
-# Documentation — Depth
+# Documentation - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §12. The short rules live there; this file is
 the why, the worked code, and the templates.
 
 Documentation is a first-class deliverable. Write for the reader who has never seen this
-codebase — the next maintainer, the new hire, or an AI agent scanning the project cold.
+codebase - the next maintainer, the new hire, or an AI agent scanning the project cold.
 
 ## Writing Principles
 
 Apply to every piece of documentation you write or review.
 
-**Concision** — write the shortest version that carries the idea. Remove ornament and hollow
+**Concision** - write the shortest version that carries the idea. Remove ornament and hollow
 transitions. Never drop facts, warnings, or user-requested depth.
 
-**Intent over paraphrase** — code shows *what* happens; docs explain *why* it exists, *when* to
+**Intent over paraphrase** - code shows *what* happens; docs explain *why* it exists, *when* to
 use it, *what constraints* apply. A comment that only restates the signature wastes the reader's
 time.
 
-**No invented context** — omit unsupported rationale, marketing claims (`seamlessly`, `robust`,
+**No invented context** - omit unsupported rationale, marketing claims (`seamlessly`, `robust`,
 `enterprise-grade`), or future promises. Leave gaps visible rather than filling with speculation.
 
-**Preserve meaning when editing** — keep modality intact (`must`/`should`/`may` are different
+**Preserve meaning when editing** - keep modality intact (`must`/`should`/`may` are different
 obligations). Preserve conditions, warnings, required actions. A cleaner sentence that changes
 obligations is wrong.
 
 **Anti-patterns to remove on sight:**
 
 - Pure-paraphrase comments that start with the name but add nothing (godoc requires the name as
-  prefix — what it forbids is stopping there).
+  prefix - what it forbids is stopping there).
 - Signature restatement.
 - Marketing vocabulary.
 - Groundless future claims (`future extensibility`, `easy to scale`).
@@ -67,8 +67,8 @@ func CalculateDiscount(basePrice float64, quantity int, tiers []DiscountTier) (f
 
 **Rules:**
 
-- **Name starts the comment.** `CalculateDiscount` — not `This function` or `// calculates`.
-- **Explain why, when, and constraints** — not what the code already shows.
+- **Name starts the comment.** `CalculateDiscount` - not `This function` or `// calculates`.
+- **Explain why, when, and constraints** - not what the code already shows.
 - **Name the sentinel errors returned.** `// Returns ErrInvalidPrice if basePrice is negative.`
 - **Parameters block** when non-trivial; use `//   - name: description` (two-space indent, dash).
 - **Example block** uses indented Go code (one tab inside the comment).
@@ -106,7 +106,7 @@ func NewClientWithTimeout(...) *Client { ... }
 
 ## Example Test Functions
 
-`Example_xxx` test functions are executable documentation — they render under godoc and are
+`Example_xxx` test functions are executable documentation - they render under godoc and are
 verified by `go test`. Drift between docs and code becomes a build failure, not a stale comment.
 
 ```go
@@ -139,16 +139,16 @@ create and share URLs.
 
 Follow a stable section order:
 
-1. **Title** — project name as `# heading`.
-2. **Badges** — shields.io pictograms (Go version, license, CI, coverage, Go Report Card, Go
+1. **Title** - project name as `# heading`.
+2. **Badges** - shields.io pictograms (Go version, license, CI, coverage, Go Report Card, Go
    Reference).
-3. **Summary** — 1–2 sentences explaining what the project does.
-4. **Demo** — code snippet, GIF, screenshot, or video showing the project in action.
-5. **Getting Started** — installation + minimal working example.
-6. **Features / Specification** — detailed feature list or specification.
-7. **Contributing** — link to CONTRIBUTING.md or inline if short.
-8. **Contributors** — thank contributors (badge or list).
-9. **License** — license name + link.
+3. **Summary** - 1-2 sentences explaining what the project does.
+4. **Demo** - code snippet, GIF, screenshot, or video showing the project in action.
+5. **Getting Started** - installation + minimal working example.
+6. **Features / Specification** - detailed feature list or specification.
+7. **Contributing** - link to CONTRIBUTING.md or inline if short.
+8. **Contributors** - thank contributors (badge or list).
+9. **License** - license name + link.
 
 Common Go project badges:
 
@@ -163,7 +163,7 @@ Common Go project badges:
 ## CONTRIBUTING.md
 
 Get a new contributor to a working build in under 10 minutes. If setup takes longer, fix the
-process (Makefile, docker-compose, devcontainer) — don't document the pain.
+process (Makefile, docker-compose, devcontainer) - don't document the pain.
 
 Required sections:
 
@@ -183,7 +183,7 @@ Follow [Keep a Changelog](https://keepachangelog.com/) format or use GitHub Rele
 ### Changed
 - `Calculate` now returns `(float64, error)` instead of panicking on bad input.
 ### Deprecated
-- `NewClientWithTimeout` — use `NewClient` with the `WithTimeout` option.
+- `NewClientWithTimeout` - use `NewClient` with the `WithTimeout` option.
 ### Fixed
 - Integer overflow on `quantity > math.MaxInt32`.
 ```
@@ -213,5 +213,5 @@ project:
 - Pointers to deeper docs.
 
 For libraries: also register on [pkg.go.dev](https://pkg.go.dev), Context7, DeepWiki, and
-zRead for AI discoverability — even for private internal libraries, the discovery surface helps
+zRead for AI discoverability - even for private internal libraries, the discovery surface helps
 internal tools.

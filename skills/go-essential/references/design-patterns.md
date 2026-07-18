@@ -1,4 +1,4 @@
-# Design Patterns & Idioms — Depth
+# Design Patterns & Idioms - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §10. The short rules live there; this file is
 the why, the worked code, and the decision tables.
@@ -59,7 +59,7 @@ srv, err := NewServer(":8080",
 - Defaults live in the constructor, not in the struct field tags.
 - Options that can fail return an error. Catch bad config at construction, not at runtime.
 - Reserve `MustX` constructors (`MustParse`) for package-level initialization where a failure
-  means the program cannot start — never in library code called by users.
+  means the program cannot start - never in library code called by users.
 
 ## Enums and Zero Values
 
@@ -67,14 +67,14 @@ Go has no first-class enums; `iota` produces untyped or typed integer constants.
 zero value silently passes as the first declared member.
 
 ```go
-// ✗ Bad — StatusActive is the zero value, so an uninitialized Status is Active
+// ✗ Bad - StatusActive is the zero value, so an uninitialized Status is Active
 type Status int
 const (
     StatusActive Status = iota
     StatusInactive
 )
 
-// ✓ Good — Unknown sentinel at 0; real values start at 1
+// ✓ Good - Unknown sentinel at 0; real values start at 1
 type Status int
 const (
     StatusUnknown Status = iota // 0
@@ -89,28 +89,28 @@ Use the type system to enforce invariants. If a transition is impossible, make i
 construct a value that would require it.
 
 ```go
-// ✗ Bad — every method must re-check state
+// ✗ Bad - every method must re-check state
 type Order struct {
     Status string // "open" | "closed" | "shipped"
     Items  []Item
 }
 
-// ✓ Good — closed orders are a different type; the compiler enforces the rule
+// ✓ Good - closed orders are a different type; the compiler enforces the rule
 type OpenOrder struct{ items []Item }
 type ClosedOrder struct{ items []Item; total int64 }
 
 func (o OpenOrder) Close() ClosedOrder { return ClosedOrder{items: o.items, total: sum(o.items)} }
-// CloseOrder has no method to mutate items — the state is locked at construction.
+// CloseOrder has no method to mutate items - the state is locked at construction.
 ```
 
 Other techniques:
 
-- **Newtype pattern**: `type UserID string`, `type TenantID string` — prevents mixing IDs at
+- **Newtype pattern**: `type UserID string`, `type TenantID string` - prevents mixing IDs at
   call sites without runtime cost.
 - **Non-empty slices**: a `func NonEmpty[T any](xs []T) ([]T, error)` constructor that rejects
   empty inputs; the empty case is handled once, not in every consumer.
 - **Sealed interfaces**: a private method on an interface makes it impossible to implement
-  outside the defining package — the set of implementations is closed.
+  outside the defining package - the set of implementations is closed.
 
 ## Resource Management
 
@@ -148,7 +148,7 @@ defer func() {
 **`runtime.AddCleanup` over `runtime.SetFinalizer`** (Go 1.24+). Finalizers run at unpredictable
 times, can resurrect objects, and have ordering issues. `AddCleanup` is a more predictable
 mechanism for resource cleanup tied to object lifetime. For most resources, an explicit `Close()`
-or `defer` is still the right answer — cleanup hooks are for cases where the caller may forget.
+or `defer` is still the right answer - cleanup hooks are for cases where the caller may forget.
 
 ## Resilience and Limits
 
@@ -165,7 +165,7 @@ resp, err := httpClient.Do(req.WithContext(ctx))
 **Retry checklist:**
 
 - Check `ctx.Err()` before each attempt; abort if cancelled.
-- Use exponential backoff with jitter — fixed intervals thunder-herd downstream.
+- Use exponential backoff with jitter - fixed intervals thunder-herd downstream.
 - Bound the retry count; unbounded retries amplify an outage into a self-DoS.
 - After exhausting retries, surface the last error; do not silently swallow it.
 
@@ -184,7 +184,7 @@ Each conversion allocates. Stay in one representation until you need the other.
 
 ## Iterators and Streaming (Go 1.23+)
 
-Iterators (`iter.Seq[T]`, `iter.Seq2[K, V]`) let consumers drive iteration — the producer does
+Iterators (`iter.Seq[T]`, `iter.Seq2[K, V]`) let consumers drive iteration - the producer does
 not materialize a collection. Use them when:
 
 - The dataset is large and the consumer may exit early (`break` after the first match).
@@ -192,7 +192,7 @@ not materialize a collection. Use them when:
 - The consumer only scans once (multiple passes warrant a slice).
 
 ```go
-// Produces a lazy iterator over DB rows — memory stays constant regardless of result size
+// Produces a lazy iterator over DB rows - memory stays constant regardless of result size
 func Rows(ctx context.Context, db *sql.DB, q string, args ...any) iter.Seq2[Row, error] {
     return func(yield func(Row, error) bool) {
         rows, err := db.QueryContext(ctx, q, args...)
@@ -217,7 +217,7 @@ with a fixed-size buffer; never materialize the whole payload in memory.
 ## Compile-Time Checks
 
 ```go
-// Interface satisfaction — free at runtime, breaks the build on contract drift
+// Interface satisfaction - free at runtime, breaks the build on contract drift
 var _ io.Reader = (*MyBuffer)(nil)
 
 // Struct tag validity
@@ -240,7 +240,7 @@ Core principles regardless of architecture:
 ## Common Mistakes
 
 ```go
-// ✗ Bad — init() with hidden global state, cannot return errors
+// ✗ Bad - init() with hidden global state, cannot return errors
 var db *sql.DB
 func init() {
     var err error
@@ -248,32 +248,32 @@ func init() {
     if err != nil { log.Fatal(err) }
 }
 
-// ✓ Good — explicit constructor, injectable
+// ✓ Good - explicit constructor, injectable
 func NewUserRepository(db *sql.DB) *UserRepository {
     return &UserRepository{db: db}
 }
 ```
 
 ```go
-// ✗ Bad — regexp compiled per call
+// ✗ Bad - regexp compiled per call
 func ValidEmail(s string) bool {
     re := regexp.MustCompile(`^[^@]+@[^@]+\.[^@]+$`) // O(n) compile, allocates
     return re.MatchString(s)
 }
 
-// ✓ Good — compiled once at package level
+// ✓ Good - compiled once at package level
 var emailRE = regexp.MustCompile(`^[^@]+@[^@]+\.[^@]+$`)
 func ValidEmail(s string) bool { return emailRE.MatchString(s) }
 ```
 
 ```go
-// ✗ Bad — unbounded retry with no cancellation
+// ✗ Bad - unbounded retry with no cancellation
 for {
     if err := doCall(); err == nil { break }
     time.Sleep(time.Second)
 }
 
-// ✓ Good — bounded retry, backoff, context-aware
+// ✓ Good - bounded retry, backoff, context-aware
 for attempt := 0; attempt < maxAttempts; attempt++ {
     if err := doCall(ctx); err == nil { return nil }
     if ctx.Err() != nil { return ctx.Err() }
