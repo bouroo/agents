@@ -1,4 +1,4 @@
-# Error Handling — Depth
+# Error Handling - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §3. The short rules live there; this file is
 the why, the worked code, and the inspection patterns.
@@ -9,11 +9,11 @@ Error messages tell the story of *what happened*, lowercase, no trailing punctua
 prescribed action.
 
 ```go
-// ✓ Good — describes what happened
+// ✓ Good - describes what happened
 errors.New("unexpected EOF")
 fmt.Errorf("parsing token %q: %w", tok, err)
 
-// ✗ Bad — capitalized, prescriptive, or contains an acronym
+// ✗ Bad - capitalized, prescriptive, or contains an acronym
 errors.New("Invalid ID, please check your input")
 fmt.Errorf("Failed to connect to %s", host)
 ```
@@ -36,42 +36,42 @@ if err := parseConfig(path); err != nil {
     return fmt.Errorf("loading config from %q: %w", path, err)
 }
 
-// Walk the chain — sentinel match
+// Walk the chain - sentinel match
 if errors.Is(err, ErrNotFound) { ... }
 
-// Walk the chain — typed extraction
+// Walk the chain - typed extraction
 var perr *fs.PathError
 if errors.As(err, &perr) {
     log.Printf("path failure: %s", perr.Path)
 }
 
-// Go 1.26+ — type-safe extraction when T implements error
+// Go 1.26+ - type-safe extraction when T implements error
 if perr, ok := errors.AsType[*fs.PathError](err); ok { ... }
 
-// Go 1.20+ — combine independent errors
+// Go 1.20+ - combine independent errors
 return errors.Join(err1, err2, err3)
 ```
 
-NEVER branch on error string contents (`strings.Contains(err.Error(), "timeout")`) — wrap with a
+NEVER branch on error string contents (`strings.Contains(err.Error(), "timeout")`) - wrap with a
 typed/sentinel error and inspect the chain. Messages change; types and sentinels don't.
 
 ## Single Handling Rule
 
 An error is either logged OR returned, NEVER both. Logging-then-returning produces duplicate
-entries in log aggregators — the same failure appears at the call site and at every wrapping
+entries in log aggregators - the same failure appears at the call site and at every wrapping
 layer.
 
 ```go
-// ✗ Bad — logs and returns
+// ✗ Bad - logs and returns
 func (s *Service) Do(ctx context.Context, x string) error {
     if err := s.repo.Save(ctx, x); err != nil {
         slog.Error("save failed", "err", err, "x", x)
-        return err   // also returned — will be logged again upstream
+        return err   // also returned - will be logged again upstream
     }
     return nil
 }
 
-// ✓ Good — wrap and return; let the top-level handler log
+// ✓ Good - wrap and return; let the top-level handler log
 func (s *Service) Do(ctx context.Context, x string) error {
     if err := s.repo.Save(ctx, x); err != nil {
         return fmt.Errorf("saving %q: %w", x, err)
@@ -140,8 +140,8 @@ default:
 
 When auditing error handling across a codebase, split into 5 parallel sub-agents:
 
-1. **Error creation** — `errors.New`/`fmt.Errorf` quality, low-cardinality messages.
-2. **Error wrapping** — `%w` vs `%v`, wrapping context present.
-3. **Single-handling rule** — find log-and-return pairs, swallowed errors, `_ =` discards.
-4. **Panic/recover** — `panic` usage, recovery at goroutine boundaries.
-5. **Structured logging** — `slog` at error sites, no PII in messages, low-cardinality templates.
+1. **Error creation** - `errors.New`/`fmt.Errorf` quality, low-cardinality messages.
+2. **Error wrapping** - `%w` vs `%v`, wrapping context present.
+3. **Single-handling rule** - find log-and-return pairs, swallowed errors, `_ =` discards.
+4. **Panic/recover** - `panic` usage, recovery at goroutine boundaries.
+5. **Structured logging** - `slog` at error sites, no PII in messages, low-cardinality templates.

@@ -1,4 +1,4 @@
-# Testing — Depth
+# Testing - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §8. The core rules live there; this file
 covers structure, table-driven tests, goleak, synctest, fuzzing, and benchmarks.
@@ -6,10 +6,10 @@ covers structure, table-driven tests, goleak, synctest, fuzzing, and benchmarks.
 ## File Conventions
 
 ```go
-// package_test.go    — same package (white-box, access to unexported)
+// package_test.go    - same package (white-box, access to unexported)
 package mypackage
 
-// mypackage_test.go  — external test package (black-box, public API only)
+// mypackage_test.go  - external test package (black-box, public API only)
 package mypackage_test
 ```
 
@@ -26,7 +26,7 @@ func ExampleAdd() { ... }                           // executable doc
 func FuzzAdd(f *testing.F) { ... }                  // fuzz test
 ```
 
-Subtests in `t.Run` use lowercase descriptive phrases: `"valid id"`, `"empty input"` — not
+Subtests in `t.Run` use lowercase descriptive phrases: `"valid id"`, `"empty input"` - not
 `"Valid ID"` or `"valid_ID"`.
 
 ## Table-Driven Tests
@@ -79,7 +79,7 @@ for _, tt := range tests {
 ```
 
 In Go 1.22+ the loop variable is per-iteration, so the `tt := tt` defensive copy is no longer
-required — but it is harmless and documents intent for readers on older toolchains.
+required - but it is harmless and documents intent for readers on older toolchains.
 
 ## Goroutine Leak Detection (goleak)
 
@@ -162,7 +162,7 @@ Run with `go test -fuzz=FuzzReverse -fuzztime=30s ./...`. Corpus failures are sa
 
 ## Benchmarks
 
-Use `b.Loop()` (Go 1.24+) — it handles warmup and reports stable timings. The legacy
+Use `b.Loop()` (Go 1.24+) - it handles warmup and reports stable timings. The legacy
 `for i := 0; i < b.N; i++` form is reserved for modules targeting Go <1.24.
 
 ```go
@@ -275,9 +275,9 @@ go test -fuzz=FuzzName ./...           # fuzzing
 
 When auditing a test suite, split into 3 parallel sub-agents:
 
-1. **Unit test quality** — coverage gaps, table-driven structure, assertion quality, no
+1. **Unit test quality** - coverage gaps, table-driven structure, assertion quality, no
    implementation-detail coupling.
-2. **Integration test isolation** — build tags, fixtures, no shared mutable state, no order
+2. **Integration test isolation** - build tags, fixtures, no shared mutable state, no order
    dependency.
-3. **Concurrency hygiene** — `t.Parallel()` where safe, `goleak` in `TestMain` for goroutine-
+3. **Concurrency hygiene** - `t.Parallel()` where safe, `goleak` in `TestMain` for goroutine-
    spawning packages, no `time.After`-based sleeps that flake.

@@ -1,10 +1,10 @@
-# Observability — Depth
+# Observability - Depth
 
 Loaded on demand from [go-essential](../SKILL.md) §11. The short rules live there; this file is
 the why, the worked code, and the inspection patterns.
 
-A feature is not production-ready until it is observable. The five signals — logs, metrics,
-traces, profiles, RUM — answer different questions and compose into full visibility.
+A feature is not production-ready until it is observable. The five signals - logs, metrics,
+traces, profiles, RUM - answer different questions and compose into full visibility.
 
 ## The Five Signals
 
@@ -34,13 +34,13 @@ slog.InfoContext(ctx, "order created", "order_id", orderID, "amount", total)
 
 **Log levels:**
 
-- **Debug** — development only; never enabled in production by default.
-- **Info** — normal operations; the "audit trail" of successful unit-of-work completion.
-- **Warn** — degraded but functional; needs attention but not urgent.
-- **Error** — failures requiring attention.
+- **Debug** - development only; never enabled in production by default.
+- **Info** - normal operations; the "audit trail" of successful unit-of-work completion.
+- **Warn** - degraded but functional; needs attention but not urgent.
+- **Error** - failures requiring attention.
 
 **Hot-path logging:** if a log line is inside a tight loop or hot request path, use
-`slog.LogAttrs(ctx, slog.LevelDebug, msg, attrs...)` — at disabled levels it skips the
+`slog.LogAttrs(ctx, slog.LevelDebug, msg, attrs...)` - at disabled levels it skips the
 key-value boxing that `slog.Info(...)` would allocate.
 
 ### Go 1.26+: slog multi-handler
@@ -60,7 +60,7 @@ logger := slog.New(slog.NewMultiHandler(
 If the project still uses `zap`, `logrus`, or `zerolog`:
 
 1. Add `slog` as the new default via `slog.SetDefault()`.
-2. Bridge handlers route slog output through the legacy logger during migration — install a
+2. Bridge handlers route slog output through the legacy logger during migration - install a
    bridging handler that delegates to the old sink.
 3. Convert callsites incrementally: `zap.L().Info(...)` → `slog.Info(...)`.
 4. Once all callsites convert, drop the bridge and the legacy dependency.
@@ -86,23 +86,23 @@ var httpDuration = prometheus.NewHistogramVec(
 ### Cardinality Discipline
 
 A label series is one time series. A metric with `user_id` as a label on a high-traffic endpoint
-creates one time series per user — millions of users means millions of time series, and
+creates one time series per user - millions of users means millions of time series, and
 Prometheus OOMs.
 
 ```go
-// ✗ Bad — unbounded cardinality
+// ✗ Bad - unbounded cardinality
 httpRequests.WithLabelValues(r.Method, r.URL.Path, userID).Inc()
 
-// ✓ Good — bounded cardinality (route pattern, not full URL)
+// ✓ Good - bounded cardinality (route pattern, not full URL)
 httpRequests.WithLabelValues(r.Method, routePattern).Inc()
 ```
 
 **Rule:** label values must come from a small, closed set. Method, route pattern, status class
-(`2xx`, `4xx`, `5xx`), error code — yes. User ID, full URL, request ID, session ID — no.
+(`2xx`, `4xx`, `5xx`), error code - yes. User ID, full URL, request ID, session ID - no.
 
 ### Track Percentiles
 
-P50 (median), P90, P99, P99.9 — the tail matters. A P50 of 50ms with a P99 of 5s is a broken
+P50 (median), P90, P99, P99.9 - the tail matters. A P50 of 50ms with a P99 of 5s is a broken
 service for 1% of users. Wire `histogram_quantile(0.99, rate(...[5m]))` into dashboards and
 alert rules.
 
@@ -139,10 +139,10 @@ Context carries `trace_id`, `span_id`, and deadlines across service boundaries. 
 `*Context` variant of every API:
 
 ```go
-// ✗ Bad — breaks trace propagation, ignores deadline
+// ✗ Bad - breaks trace propagation, ignores deadline
 rows, err := db.Query("SELECT ...")
 
-// ✓ Good — context flows through; trace and deadline preserved
+// ✓ Good - context flows through; trace and deadline preserved
 rows, err := db.QueryContext(ctx, "SELECT ...")
 ```
 
@@ -181,7 +181,7 @@ if eo, ok := obs.(prometheus.ExemplarObserver); ok {
 ## Profiling
 
 Toggle pprof on/off via env vars without redeploying. Protect pprof endpoints behind auth in
-production — they expose goroutine stacks and memory that can leak secrets.
+production - they expose goroutine stacks and memory that can leak secrets.
 
 ```go
 import _ "net/http/pprof"
@@ -199,64 +199,64 @@ sample rate that keeps overhead under ~1% CPU.
 
 Alert on the four golden signals with explicit `for:` durations to avoid flapping:
 
-- **Latency** — P99 above SLO threshold for 5m.
-- **Traffic** — unusual spike or drop sustained for 10m.
-- **Errors** — error rate above 1% for 5m.
-- **Saturation** — CPU > 90%, memory near `GOMEMLIMIT`, goroutine count climbing.
+- **Latency** - P99 above SLO threshold for 5m.
+- **Traffic** - unusual spike or drop sustained for 10m.
+- **Errors** - error rate above 1% for 5m.
+- **Saturation** - CPU > 90%, memory near `GOMEMLIMIT`, goroutine count climbing.
 
 **Common mistakes:**
 
-- Using `irate()` instead of `rate()` — `irate` only looks at the last two samples and is noisy.
-- Missing `for:` duration — every transient blip pages someone.
-- Alerting on absolute counts instead of rates — traffic growth makes absolute-count alerts
+- Using `irate()` instead of `rate()` - `irate` only looks at the last two samples and is noisy.
+- Missing `for:` duration - every transient blip pages someone.
+- Alerting on absolute counts instead of rates - traffic growth makes absolute-count alerts
   irrelevant.
 
 ## Definition of Done
 
 A feature is not production-ready until:
 
-- [ ] **Metrics declared** — counters for operations/errors, histograms for latencies, gauges for
+- [ ] **Metrics declared** - counters for operations/errors, histograms for latencies, gauges for
       saturation. PromQL queries and alert rules live as comments above the metric declaration.
-- [ ] **Logging is proper** — structured with `slog`, context variants used, no PII, errors
+- [ ] **Logging is proper** - structured with `slog`, context variants used, no PII, errors
       logged XOR returned (never both).
-- [ ] **Spans created** — every service method, DB query, external call has a span; errors
+- [ ] **Spans created** - every service method, DB query, external call has a span; errors
       recorded with `span.RecordError()`.
-- [ ] **Dashboards and alerts wired** — the PromQL from metric comments is in Grafana and in
+- [ ] **Dashboards and alerts wired** - the PromQL from metric comments is in Grafana and in
       Prometheus alerting rules.
-- [ ] **RUM events tracked** — key business events tracked server-side; identity key is
+- [ ] **RUM events tracked** - key business events tracked server-side; identity key is
       `user_id`, not email; consent checked before tracking.
 
 ## Common Mistakes
 
 ```go
-// ✗ Bad — log AND return (error gets logged multiple times up the chain)
+// ✗ Bad - log AND return (error gets logged multiple times up the chain)
 if err != nil {
     slog.Error("query failed", "error", err)
     return fmt.Errorf("query: %w", err)
 }
 
-// ✓ Good — return with context, log once at the top of the call chain
+// ✓ Good - return with context, log once at the top of the call chain
 if err != nil {
     return fmt.Errorf("querying users: %w", err)
 }
 ```
 
 ```go
-// ✗ Bad — high-cardinality label
+// ✗ Bad - high-cardinality label
 httpRequests.WithLabelValues(r.Method, r.URL.Path, userID).Inc()
 
-// ✓ Good — bounded labels only
+// ✓ Good - bounded labels only
 httpRequests.WithLabelValues(r.Method, routePattern).Inc()
 ```
 
 ```go
-// ✗ Bad — Summary for latency (cannot aggregate across instances)
+// ✗ Bad - Summary for latency (cannot aggregate across instances)
 prometheus.NewSummary(prometheus.SummaryOpts{
     Name:       "http_request_duration_seconds",
     Objectives: map[float64]float64{0.99: 0.001},
 })
 
-// ✓ Good — Histogram (aggregatable, supports histogram_quantile)
+// ✓ Good - Histogram (aggregatable, supports histogram_quantile)
 prometheus.NewHistogram(prometheus.HistogramOpts{
     Name:    "http_request_duration_seconds",
     Buckets: prometheus.DefBuckets,
