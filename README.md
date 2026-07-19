@@ -114,7 +114,9 @@ Then restart your coding tool so it picks up the new config.
 ├── plugin.json              # Symlink -> .agents/plugins/legacy/plugin.json
 ├── marketplace.json         # Symlink -> .agents/plugins/legacy/marketplace.json
 ├── agents/                  # Orchestrator agents (mode, permissions, prompt)
-│   └── conductor.md         # Decisive orchestrator -- chooses best practice, records assumption, proceeds
+│   ├── coder.md             # Mutating subagent -- implements, fixes, verifies, and judges
+│   ├── conductor.md         # Decisive orchestrator -- chooses best practice, records assumption, proceeds
+│   └── discover.md          # Read-only subagent -- plans, explores, looks up, and reviews
 ├── commands/                # Slash commands (reusable prompt workflows)
 │   ├── document-phase.md
 │   ├── judge-phase.md
@@ -147,8 +149,10 @@ Orchestrators that think, dispatch, and verify  --  they never edit code themsel
 | Agent | Mode | Purpose |
 |----------------|---------|------------------------------------------------------------------------------------------|
 | `conductor` | primary | Self-organizing orchestrator. Decomposes tasks, delegates to subagents, validates outcomes, and steers its own harness. Decisive: chooses the industry-standard option, records the assumption, and proceeds. Never executes work directly. |
+| `coder` | subagent | Mutating specialist. Implements source changes, fixes narrow bugs with a repro, runs L1/L2/L3 verification and the mutation probe, and delivers adversarial VERIFIED / CAVEATS / REFUTED judgments. Owns its own permissive `edit`/`bash` permission block. |
+| `discover` | subagent | Read-only specialist. Consolidates Architect / Explorer / Scout / Reviewer into plan, explore, lookup, and review modes. Never edits source or runs the toolchain; writes only under `.agents/**`. Issues the fixed seven-grade review rubric. |
 
-It is non-coding: it thinks, dispatches, verifies, and steers through a squad of subagents. It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
+The conductor is non-coding: it thinks, dispatches, verifies, and steers through the two named subagents (`coder` for mutation and toolchain, `discover` for planning, exploration, external lookup, and read-only review). It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
 
 ### Commands
 
