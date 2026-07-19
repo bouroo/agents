@@ -2,9 +2,12 @@
 
 [![Last commit](https://img.shields.io/github/last-commit/bouroo/agents?logo=github)](https://github.com/bouroo/agents)
 [![Stars](https://img.shields.io/github/stars/bouroo/agents?logo=github)](https://github.com/bouroo/agents)
+[![skills.sh](https://skills.sh/b/bouroo/agents)](https://skills.sh/bouroo/agents)
 ![Type](https://img.shields.io/badge/type-AI%20agent%20config-blue)
 ![Tools](https://img.shields.io/badge/tools-8-success)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE.md)
+
+> Installable via the open Agent Skills ecosystem -- `npx skills add bouroo/agents` (see [skills.sh](https://skills.sh/bouroo/agents)) -- and via the bundled `link.sh` / `install.sh` for filesystem-symlink installs.
 
 A shared, language-agnostic setup for AI coding assistants. Drop one folder into your machine and eight different tools  --  Gemini, Claude, OpenCode, Kilo, Codex, Qwen, and more  --  pick up the same global coding standards, slash commands, and reusable skills. No per-tool copy-paste, no drift between projects.
 
@@ -18,11 +21,69 @@ A shared, language-agnostic setup for AI coding assistants. Drop one folder into
 
 ## Quick Start
 
+Pick one of the two install paths. Both land the same artifacts.
+
+### A. Agent Skills install (skills.sh / Claude Code plugin format)
+
+The recommended cross-tool path: works with any Agent-Skills-compatible runtime (Claude Code, Cursor, Codex, OpenCode, Kilo, Gemini, Cline, Antigravity, AMP, Copilot, and 30+ others).
+
 ```bash
-~/.agents/link.sh # Create symlinks for all supported tools
-~/.agents/link.sh status # Check symlink status
-~/.agents/link.sh unlink # Remove all symlinks
-~/.agents/link.sh link opencode # Link only OpenCode (filter by tool name)
+# Project-local install (default): skills land in ./<agent>/skills/
+npx skills add bouroo/agents
+
+# Global install: skills land in ~/<agent>/skills/
+npx skills add bouroo/agents -g
+
+# Pick specific skills
+npx skills add bouroo/agents --skill effective-code-craft --skill harness-engineering
+
+# Install specific skills to specific agents only
+npx skills add bouroo/agents -a claude-code -a opencode --skill go-essential -y
+
+# List everything the repo ships before installing
+npx skills add bouroo/agents --list
+```
+
+Discovery is via the `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` manifests in this repo (the Claude Code plugin marketplace format; honored by the `skills` CLI and any compatible runtime).
+
+### B. Cursor plugin marketplace install
+
+```bash
+# Add the marketplace (one-time)
+cursor plugin marketplace add bouroo/agents
+
+# Install the plugin
+cursor plugin install coder-agents@bouroo-coder-agents
+```
+
+Discovery is via `.cursor-plugin/plugin.json` and `.cursor-plugin/marketplace.json` per the [cursor/plugins](https://github.com/cursor/plugins) schema.
+
+### C. Gemini CLI extension install
+
+```bash
+gemini extensions install https://github.com/bouroo/agents
+```
+
+Discovery is via `gemini-extension.json` at the repo root. Skills load from `skills/`, slash commands from `commands/`, and the conductor sub-agent from `agents/`. Update with `gemini extensions update coder-agents`.
+
+### D. Symlink install (`link.sh` / `install.sh`)
+
+For the eight explicitly-targeted tools (Gemini, antigravity, Codex, Claude, Qwen, OpenCode, Kilo), the bundled installer symlinks `AGENTS.md`, `commands/`, `skills/`, and `agents/` into each tool's config directory. No Node.js required. `link.sh` is now a thin backward-compat shim that execs `install.sh` -- the only thing it does is translate the legacy verbs (`link` -> `install`, `unlink` -> `uninstall`) and forward everything else (tool filters, `--dry-run`, `--force`, `--help`) verbatim. The two are interchangeable; pick whichever verb set you remember.
+
+```bash
+# install.sh vocabulary (canonical)
+~/.agents/install.sh install           # link into every detected tool (default)
+~/.agents/install.sh status            # show linkage state
+~/.agents/install.sh uninstall         # remove symlinks
+~/.agents/install.sh list              # list detected tools + target paths
+~/.agents/install.sh install kilo      # filter to a single tool
+~/.agents/install.sh install --dry-run # preview without writing
+
+# link.sh vocabulary (shim, backward-compat)
+~/.agents/link.sh                      # = install.sh install
+~/.agents/link.sh status               # = install.sh status
+~/.agents/link.sh unlink               # = install.sh uninstall
+~/.agents/link.sh link opencode        # = install.sh install opencode
 ```
 
 Then restart your coding tool so it picks up the new config.
@@ -31,29 +92,53 @@ Then restart your coding tool so it picks up the new config.
 
 ```
 ~/.agents/
-├── AGENTS.md # Global coding standards and workflow router
-├── README.md # This file
-├── link.sh # Symlink manager for supported tools
-├── agents/ # Orchestrator agents (mode, permissions, prompt)
-│ └── conductor.md # Decisive orchestrator  --  chooses best practice, records assumption, proceeds
-├── commands/ # Slash commands (reusable prompt workflows)
-│ ├── document-phase.md
-│ ├── refactor-phase.md
-│ ├── review-phase.md
-│ └── verify-phase.md
-├── skills/ # On-demand skill modules (load via the skill tool)
-│ ├── commit-message/
-│ ├── effective-code-craft/
-│ ├── harness-engineering/
-│ ├── performance-patterns/
-│ ├── repo-documentation/
-│ └── spec-driven-development/
+├── AGENTS.md                # Global coding standards and workflow router
+├── README.md                # This file
+├── link.sh                  # Backward-compat shim that execs install.sh (verb translation only)
+├── install.sh               # The installer: links AGENTS.md, commands/, skills/, agents/ into every supported tool
+├── .agents/plugins/         # Source-of-truth plugin manifests (one subdir per tool)
+│   ├── claude/
+│   │   ├── plugin.json      # Claude Code plugin manifest (skills.sh discovery)
+│   │   └── marketplace.json # Multi-plugin catalog (skills.sh discovery)
+│   ├── cursor/
+│   │   ├── plugin.json      # Cursor plugin manifest (Cursor marketplace)
+│   │   └── marketplace.json # Cursor marketplace catalog
+│   ├── gemini/
+│   │   └── gemini-extension.json  # Gemini CLI extension manifest
+│   └── legacy/
+│       ├── plugin.json      # OpenCode/Kilo plugin manifest (legacy path)
+│       └── marketplace.json # OpenCode/Kilo marketplace (legacy path)
+├── .claude-plugin/          # Symlinks -> .agents/plugins/claude/* (Claude Code auto-discovery)
+├── .cursor-plugin/          # Symlinks -> .agents/plugins/cursor/* (Cursor auto-discovery)
+├── gemini-extension.json   # Symlink -> .agents/plugins/gemini/gemini-extension.json
+├── plugin.json              # Symlink -> .agents/plugins/legacy/plugin.json
+├── marketplace.json         # Symlink -> .agents/plugins/legacy/marketplace.json
+├── agents/                  # Orchestrator agents (mode, permissions, prompt)
+│   └── conductor.md         # Decisive orchestrator -- chooses best practice, records assumption, proceeds
+├── commands/                # Slash commands (reusable prompt workflows)
+│   ├── document-phase.md
+│   ├── judge-phase.md
+│   ├── refactor-phase.md
+│   ├── review-phase.md
+│   └── verify-phase.md
+├── skills/                  # On-demand skill modules (load via the skill tool)
+│   ├── commit-message/
+│   ├── effective-code-craft/
+│   ├── go-essential/
+│   ├── harness-engineering/
+│   ├── performance-patterns/
+│   ├── repo-documentation/
+│   └── spec-driven-development/
 ├── scripts/
-│ └── validate-agents.sh # Repo self-checks  --  the opencode-format gate
-└── .agents/ # Per-project runtime dir (created on use IN THE TARGET PROJECT, never in this repo; gitignored here)
- ├── plans/ # Spec drafts, REASONS canvases, plan trackers, retros
- └── handoff/ # Subagent reports and summaries
+│   ├── checks.py            # 13-gate repo validator (manifests, frontmatter, dash, symlinks, AGENTS.md budget)
+│   └── validate-agents.sh   # Frontmatter + skill-name pattern gate
+└── .agents/                 # Per-project runtime dir (plans/, handoff/ created on use IN THE TARGET
+                             # PROJECT, never in this repo; gitignored here except .agents/plugins/)
+    ├── plans/               # Spec drafts, REASONS canvases, plan trackers, retros
+    └── handoff/             # Subagent reports and summaries
 ```
+
+> **Manifest layout.** Tool-specific plugin manifests live canonically under `.agents/plugins/<tool>/` and are surfaced at their tool-discovery paths (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`, root `plugin.json`/`marketplace.json`) via symlinks. The `G13_plugin_symlinks` gate in `scripts/checks.py` enforces this contract so a future edit at the discovery path cannot silently fork from the source of truth.
 
 ### Agents
 
@@ -79,20 +164,35 @@ Reusable prompt workflows you trigger with a slash command.
 
 ### Skills
 
-Focused modules the agent loads on demand when a task matches.
+Focused modules the agent loads on demand when a task matches. Each ships a terse `SKILL.md` and, where depth is needed, a sibling `references/` tree loaded lazily by explicit "load when" hints (progressive disclosure per the [Agent Skills best-practices](https://agentskills.io/skill-creation/best-practices)).
 
 | Skill | Trigger |
 |-----------------------------|------------------------------------------------------------------------------------------|
 | `effective-code-craft` | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
+| `go-essential` | Writing, reviewing, refactoring, or auditing Go production code; starting a Go project; profiling a hot path; instrumenting a service |
 | `harness-engineering` | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
 | `performance-patterns` | Optimizing for speed, throughput, latency, or memory after correctness is proven |
 | `repo-documentation` | Repo keeps a `docs/` tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change |
 | `spec-driven-development` | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
 | `commit-message` | Generating a conventional commit message from staged changes |
 
-## Supported Tools
+## Compatibility
 
-`link.sh` symlinks four artifacts into each tool's config directory.
+This repo is installable through three ecosystems that share the same [Agent Skills](https://agentskills.io/specification) format. All plugin manifests live canonically under `.agents/plugins/<tool>/` and are surfaced at their tool-discovery paths via symlinks (enforced by the `G13_plugin_symlinks` gate).
+
+| Install path | Mechanism | Tools reached |
+|---|---|---|
+| **`npx skills add bouroo/agents`** ([skills.sh](https://skills.sh)) | `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (the Claude Code plugin marketplace format, honored by the `skills` CLI) | Claude Code, Cursor, Codex, OpenCode, Kilo Code, Cline, GitHub Copilot, Antigravity, AMP, Gemini CLI, Roo, Goose, Continue, and 30+ more. Full list at [skills.sh/docs/cli](https://skills.sh/docs/cli). |
+| **Cursor plugin marketplace** | `.cursor-plugin/plugin.json` + `.cursor-plugin/marketplace.json` per the [cursor/plugins](https://github.com/cursor/plugins) schema | Cursor (IDE + CLI). |
+| **Gemini CLI extension** | `gemini-extension.json` at repo root, installed via `gemini extensions install https://github.com/bouroo/agents` | Gemini CLI (and Antigravity CLI). Skills load from `skills/`; commands from `commands/`; sub-agents from `agents/`. |
+| **`link.sh` / `install.sh`** (this repo) | Symlink `AGENTS.md`, `commands/`, `skills/`, `agents/` into each tool's config dir | Gemini + antigravity (`~/.gemini/`), Codex (`~/.codex/`), Claude (`~/.claude/`), Qwen (`~/.qwen/`), OpenCode (`~/.config/opencode/`), Kilo (`~/.config/kilo/`). |
+| **Manual copy** | Copy `skills/<name>/` into the target tool's skill discovery path | Any Agent-Skills-compatible runtime. See [skill discovery paths](https://skills.sh/docs/cli). |
+
+The skills themselves are pure markdown (`SKILL.md` + optional `references/`) with YAML frontmatter -- they load in any compliant runtime. The `conductor` agent and `commands/` are OpenCode/Kilo-native and only land when the runtime has an agents concept.
+
+## Supported Tools (symlink install)
+
+`link.sh` / `install.sh` symlink four artifacts into each tool's config directory.
 
 | Artifact | Source | Linked as | Notes |
 |---------------|-------------------|-------------------|--------------------------------|
@@ -249,3 +349,10 @@ Model names are examples; substitute your provider/model IDs.
 - [Kilo Docs  --  Prompt Engineering](https://kilo.ai/docs/customize/prompt-engineering)  --  Think-then-do loop; clarity, context, output format
 - [Kilo Docs  --  Context Condensing](https://kilo.ai/docs/customize/context/context-condensing)  --  AGENTS.md as router; compaction discipline
 - [Kilo Docs  --  Codebase Indexing](https://kilo.ai/docs/customize/context/codebase-indexing)  --  Semantic index for unfamiliar surfaces
+- [Agent Skills Specification](https://agentskills.io/specification)  --  the open SKILL.md format this repo conforms to (frontmatter, progressive disclosure, `references/` and `scripts/` conventions).
+- [Agent Skills  --  Best practices for skill creators](https://agentskills.io/skill-creation/best-practices)  --  real expertise over generic advice; progressive disclosure via "load when X" hints; bundled scripts with helpful errors.
+- [Agent Skills  --  Optimizing skill descriptions](https://agentskills.io/skill-creation/optimizing-descriptions)  --  train/validation split for triggering accuracy on the `description` field.
+- [skills.sh](https://skills.sh)  --  the open agent skills leaderboard and `npx skills` CLI that powers `npx skills add bouroo/agents`.
+- [Claude Code Plugin Marketplace](https://code.claude.com/docs/en/plugin-marketplaces)  --  the `.claude-plugin/plugin.json` + `marketplace.json` format the `skills` CLI and Claude Code honor.
+- [Cursor Plugin Specification](https://github.com/cursor/plugins)  --  the `.cursor-plugin/plugin.json` + `marketplace.json` schema this repo conforms to.
+- [Gemini CLI Extensions -- Reference](https://geminicli.com/docs/extensions/reference/)  --  the `gemini-extension.json` manifest format and the `gemini extensions install` command.

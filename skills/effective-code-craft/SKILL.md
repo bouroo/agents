@@ -184,9 +184,19 @@ Move what you can out of review and into deterministic checks. Configure (in ord
 
 ## Cross-References
 
-- [Intent gate in depth](./references/intent-gate.md)
+- [Intent gate in depth](./references/intent-gate.md) -- load when a behavior change is ambiguous and the inline §Intent Gate block above is not enough to classify it.
 - [harness-engineering](../harness-engineering/SKILL.md) -- three-layer termination, mutation testing, verification theater
 - [performance-patterns](../performance-patterns/SKILL.md) -- optimize only after these norms hold
+
+## References
+
+Load on demand; the body above is sufficient for everyday review and write.
+
+- JetBrains: *10x Commandments of Highly Effective Go* -- https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/ (the readability rules §1-§10 distill; load when a reviewer disputes a clarity rule).
+- Google Style Guides -- https://google.github.io/styleguide/ (load when the target language is C++ / Python / Java / TypeScript / R and §Common Mistakes needs a language-specific anchor).
+- *Clean Code* (Martin) and *A Philosophy of Software Design* (Ousterhout) -- load when arguing deep nesting vs. shallow modules during §Audit mode.
+- *The Pragmatic Programmer* (Hunt & Thomas) -- DRY, ETC, orthogonality; load when §6 No Mutable Globals or §8 Decouple from Environment needs reinforcement.
+- *Working Effectively with Legacy Code* (Feathers) -- load when §Review mode hits an untested legacy module and seam/seam-test vocabulary is needed.
 
 ## Guru Meditation
 

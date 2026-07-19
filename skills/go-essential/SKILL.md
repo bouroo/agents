@@ -483,13 +483,22 @@ Move rules out of review and into deterministic checks. In order of leverage:
 
 ## Cross-References
 
-Depth files: [Code Style](./references/code-style.md) · [Naming](./references/naming.md) ·
-[Error Handling](./references/error-handling.md) · [Safety](./references/safety.md) ·
-[Concurrency](./references/concurrency.md) · [Types and Interfaces](./references/types-interfaces.md) ·
-[Context](./references/context.md) · [Testing](./references/testing.md) ·
-[Project and Design](./references/project-and-design.md) · [Design Patterns](./references/design-patterns.md) ·
-[Observability](./references/observability.md) · [Documentation](./references/documentation.md) ·
-[Performance](./references/performance.md) · [Refactoring](./references/refactoring.md).
+Load these on demand when a §1-§13 section above is not enough; do not pull them into context up front.
+
+- [Code Style](./references/code-style.md) -- load when §1 (Clarity Over Cleverness) hits a disputed line-break, receiver, or formatting decision.
+- [Naming](./references/naming.md) -- load when §2 (Names Are the Architecture) hits interface prefixes (`-er`), initialisms (`URL` vs `Url`), or package-naming disputes.
+- [Error Handling](./references/error-handling.md) -- load when §3 (Every Error Is an Event) hits `errors.Is`/`As`, wrapping, or sentinel vs. typed decisions.
+- [Safety](./references/safety.md) -- load when §4 (Defend Against Yourself) hits nil, aliasing, numeric-overflow, or `recover` questions.
+- [Concurrency](./references/concurrency.md) -- load when §6 (Every Goroutine Has an Owner) hits goroutine leaks, channels vs. mutexes, or context-cancellation questions.
+- [Types and Interfaces](./references/types-interfaces.md) -- load when §5 (Small, Composed, Discovered) hits interface placement, generics vs. `any`, or struct tag questions.
+- [Context](./references/context.md) -- load when §7 (One Request, One Chain) hits context-derived values, cancellation propagation, or deadline questions.
+- [Testing](./references/testing.md) -- load when §8 (Tests Are Executable Specifications) hits table-driven shape, t.Parallel, or test-name-as-sentence questions.
+- [Project and Design](./references/project-and-design.md) -- load when §9 (Right-Size Everything) hits internal/ cmd/ layout, package boundaries, or vendor questions.
+- [Design Patterns](./references/design-patterns.md) -- load when §9 needs the concrete pattern (options, functional, builder, factory).
+- [Observability](./references/observability.md) -- load when §10 (A Feature Isn't Done Until Observable) hits structured logging, metrics, or trace-propagation questions.
+- [Documentation](./references/documentation.md) -- load when §11 (Doc Comments First) hits godoc format or example-test questions.
+- [Performance](./references/performance.md) -- load when §12 (Measure, Then Optimize) hits allocation, escape, or benchmark questions; cross-link [performance-patterns](../performance-patterns/SKILL.md).
+- [Refactoring](./references/refactoring.md) -- load when §13 (Safe Change at Scale) needs the step-by-step safety-net protocol.
 
 Companion skills: [effective-code-craft](../effective-code-craft/SKILL.md) (language-agnostic
 craft), [harness-engineering](../harness-engineering/SKILL.md) (three-layer termination and

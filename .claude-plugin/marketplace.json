@@ -1,0 +1,28 @@
+{
+  "$schema": "https://github.com/anthropics/claude-code/raw/main/schema/marketplace.json",
+  "name": "bouroo-agents",
+  "owner": {
+    "name": "bouroo",
+    "url": "https://github.com/bouroo"
+  },
+  "metadata": {
+    "description": "Language-agnostic coding-agent skills: repo-as-record doctrine, harness engineering, code craft, performance, spec-driven development, Go essentials, and a primary conductor orchestrator."
+  },
+  "plugins": [
+    {
+      "name": "coder-agents",
+      "source": "./",
+      "description": "Seven on-demand skills plus a conductor orchestrator. Targets deterministic, executable-completion workflows over speculative AI assistance. Compatible with Claude Code, Cursor, Codex, OpenCode, Kilo, Gemini, and any Agent Skills-compatible runtime.",
+      "version": "1.6.0",
+      "skills": [
+        "./skills/commit-message",
+        "./skills/effective-code-craft",
+        "./skills/go-essential",
+        "./skills/harness-engineering",
+        "./skills/performance-patterns",
+        "./skills/repo-documentation",
+        "./skills/spec-driven-development"
+      ]
+    }
+  ]
+}

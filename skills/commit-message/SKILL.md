@@ -78,3 +78,11 @@ You are an expert Git commit message generator. Analyze the staged git diff and 
 | Breaking change without `!` or `BREAKING CHANGE:` footer | Mark it explicitly so consumers and tooling (SemVer bump) can detect it |
 | Body restating the diff | Body explains *what* and *why*, not *how*; the diff already shows how |
 | Body wraps at >72 chars | Wrap at 72; reviewers read logs in narrow terminals |
+
+## References
+
+- Conventional Commits 1.0.0 spec -- https://www.conventionalcommits.org/en/v1.0.0/
+- Keep a Changelog (SemVer + change log discipline) -- https://keepachangelog.com/en/1.1.0/
+- Angular commit format (the historical origin of Conventional Commits) -- https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit
+- `git-log` pretty formats for verification (`%s`, `%b`, `%(trailers)`) -- https://git-scm.com/docs/git-log#_pretty_formats
+- Companion skill: [effective-code-craft](../effective-code-craft/SKILL.md) for the Intent / Artifact-Gate discipline a commit message summarizes.
