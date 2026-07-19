@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-07-19
+
+### Added
+- `lsp` permission enabled on `coder`, `conductor`, and `discover` agents so they can use language-server tooling (go-to-definition, find-references, hover, diagnostics) when the host runtime exposes an LSP tool.
+
+### Changed
+- Permission blocks in `agents/coder.md`, `agents/conductor.md`, and `agents/discover.md` rewritten from explicit allow-list + `*: ask`/`*: deny` fallback to a single broad allow followed by specific destructive-command denials. Under Kilo's "last matching rule wins" precedence the broad allow MUST come first and the denials MUST come after, so the deny-list still wins. Net effect: fewer user prompts during normal operation while the same destructive-command guardrails (force-push, reset --hard, clean -fd, commit --amend, rm -rf /, rm -rf ~, sudo) remain in force.
+- `conductor` edit policy moved from `deny` with narrow allow-rules to `allow` with `external_directory: ask` enforcing the worktree boundary (any access outside the current working directory prompts at runtime; the user can save the pattern).
+- `README.md` Kilo/Opencode config example replaced abstract `<your-model-here>` placeholders with concrete Anthropic model IDs and now includes `coder` and `discover` subagent entries alongside the built-in agents.
+- All plugin manifests (`.agents/plugins/{claude,cursor,gemini,legacy}/`) bumped from 1.6.1 to 1.7.0.
+
 ## [1.6.1] - 2026-07-19
 
 ### Added
@@ -149,5 +160,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.3.0]: https://github.com/bouroo/agents/releases/tag/v1.3.0
 [1.4.0]: https://github.com/bouroo/agents/releases/tag/v1.4.0
 [1.5.0]: https://github.com/bouroo/agents/releases/tag/v1.5.0
+[1.7.0]: https://github.com/bouroo/agents/releases/tag/v1.7.0
 [1.6.1]: https://github.com/bouroo/agents/releases/tag/v1.6.1
 [1.6.0]: https://github.com/bouroo/agents/releases/tag/v1.6.0
