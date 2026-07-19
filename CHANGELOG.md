@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-07-19
+
+### Added
+- `coder` and `discover` named subagents. The eight-role squad (Architect, Explorer, Scout, Implementer, Fixer, Tester, Reviewer, Judge) consolidates into two agent files: `agents/coder.md` mutates source and runs the toolchain across implement / fix / verify / judge modes; `agents/discover.md` is strictly read-only across plan / explore / lookup / review modes. Each ships its own `permission:` block so the conductor's restrictive policy does not propagate (the "write/edit permission denied" inheritance fix).
+
+### Changed
+- `agents/conductor.md` routing rewritten around the two named squad members: `task:` allow-list switched from `general`/`explore` to `coder`/`discover`; the squad table, routing cheatsheet, THINK/ACT/PROVE phase prose, and failure-routing table all reference the new names. Permission block restructured under the open `permission:` frontmatter schema; default `edit` policy tightened from `ask` to `deny` with explicit allow-rules only for `.agents/handoff/**` and `.agents/plans/**`. Steps raised from 60 to 120.
+- All plugin manifests (`.agents/plugins/{claude,cursor,gemini,legacy}/`) bumped from 1.6.0 to 1.6.1.
+
 ## [1.6.0] - 2026-07-19
 
 ### Added
@@ -140,4 +149,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.3.0]: https://github.com/bouroo/agents/releases/tag/v1.3.0
 [1.4.0]: https://github.com/bouroo/agents/releases/tag/v1.4.0
 [1.5.0]: https://github.com/bouroo/agents/releases/tag/v1.5.0
+[1.6.1]: https://github.com/bouroo/agents/releases/tag/v1.6.1
 [1.6.0]: https://github.com/bouroo/agents/releases/tag/v1.6.0
