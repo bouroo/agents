@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Language-agnostic coding-agent configuration for OpenCode and Kilo-compatible runtimes. Ships a router AGENTS.md encoding repo-as-record doctrine, seven on-demand skills (commit-message, effective-code-craft, go-essential, harness-engineering, performance-patterns, repo-documentation, spec-driven-development), five slash commands (document-phase, judge-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the think/act/prove loop. Targets deterministic, executable-completion workflows over speculative AI assistance.",
   "author": "bouroo",
   "license": "Apache-2.0",
