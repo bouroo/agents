@@ -408,8 +408,12 @@ is wrong ~80% of the time.
     kills); `automaxprocs` so `GOMAXPROCS` sees the cgroup quota.
 15. **`unsafe` only with benchmark proof** - justified only when >10% of a verified hot path.
     Isolate and document.
-16. **Document optimizations** with benchmark numbers so a future reader doesn't revert them
+16. **Document optimizations** with benchmark numbers so a future reader doesn’t revert them
     as "unnecessary."
+17. **Set read/write deadlines on every long-lived connection** (`SetReadDeadline` /
+    `SetWriteDeadline` on `net.Conn`, `*http.Response.Body`, websockets) - no deadline means a
+    stuck peer leaks a blocked goroutine forever. Use idle/timeouts via a `time.AfterFunc`
+    heartbeat; do not depend on `KeepAlive` alone.
 
 → Depth: [Performance](./references/performance.md).
 

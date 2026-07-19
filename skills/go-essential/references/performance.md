@@ -167,6 +167,48 @@ allocations per request often matters more than micro-optimizing CPU.
   scheduler from running that goroutine on a different OS thread. Avoid cgo in hot paths;
   rewrite in pure Go if the call is frequent.
 
+## Low-Level Networking
+
+- **`TCP_NODELAY` (disable Nagle's algorithm).** Default behavior batches small writes to coalesce packets; for latency-sensitive request/response, set `SetNoDelay(true)` on the conn. Measure first -- it can hurt throughput on many-small-write workloads.
+- **`SO_REUSEPORT`.** Lets multiple listener goroutines or processes bind the same port; the kernel load-balances accept. Useful for multi-worker servers behind one port. Set via `net.ListenConfig.Control`.
+- **`SO_RCVBUF` / `SO_SNDBUF`.** Default socket buffers are small (~64 KB on Linux); raise for high-bandwidth-delay-product links. Has a measurable ceiling -- measure, do not guess.
+- **TCP keepalives.** `net.ListenConfig{KeepAlive: 30 * time.Second}` for long-lived connections; without it, dead peers are detected only on the next write failure.
+- **Accept backlog (`SOMAXCONN`).** Under connection storms a too-small accept backlog drops connections silently; align `net.ListenConfig.Control` backlog with expected peak concurrency.
+- **Set socket options in `ListenConfig.Control`.** Options set after bind do not apply to accepted conns uniformly; set them inside the `Control` function so they take effect before the socket is exposed.
+
+## DNS
+
+- **cgo resolver vs pure-Go resolver.** Go picks one automatically based on build/platform; the cgo resolver does blocking libc calls, the pure-Go resolver is concurrent and allocation-friendlier. Force the pure-Go resolver with `net.DefaultResolver.PreferGo = true` when you do not need exotic `nsswitch.conf` semantics.
+- **Cache and deduplicate lookups.** Wrap a resolver with TTL caching and in-flight de-dup (singleflight) -- concurrent identical lookups are a silent cost center.
+- **Pre-resolve known upstreams.** For a fixed backend, dial a pre-built `*net.TCPAddr` directly; eliminates per-request DNS entirely.
+- **Measure DNS in traces.** Add a DNS span to every outbound call; DNS stalls are easy to miss otherwise.
+
+## TLS
+
+- **Session resumption.** Server: `tls.Config{SessionTicketsDisabled: false}`; client: set `ClientSessionCache`. Saves one full RTT per resumed session -- large win for short-lived connections.
+- **ALPN.** Required for HTTP/2 (`NextProtos: []string{"h2", "http/1.1"}`); missing ALPN silently downgrades to HTTP/1.1.
+- **Cipher suites.** Go defaults are good post-1.17, but verify an explicit `tls.Config{CipherSuites: ...}` is not pinning a slow suite; prefer AEAD ciphers (ChaCha20-Poly1305, AES-GCM).
+- **Minimal cert chain.** Every intermediate cert is verified per handshake; ship the smallest valid chain.
+- **Pin minimum versions.** `tls.Config{MinVersion: tls.VersionTLS12}`; old TLS versions are both slower and insecure.
+
+## High-Concurrency Servers
+
+- **Per-connection goroutine cost.** At 10K+ connections each goroutine costs ~8 KB stack plus scheduler overhead; usually fine, but a partial-failure leak compounds fast. Track `runtime.NumGoroutine()` as a metric.
+- **Enforce deadlines on every long-lived conn.** `SetReadDeadline` / `SetWriteDeadline` on every connection; without them, dead or slow peers accumulate as permanently blocked goroutines.
+- **Runtime poller is the bottleneck, not goroutine count.** At high connection counts the epoll/kqueue poller dominates; profile `netpoll` time before adding concurrency.
+- **Goroutine leak check after load tests.** Snapshot the `pprof` goroutine profile before and after a load run; a steady-state leak is invisible without it.
+- **Align `GOMAXPROCS` with the cgroup CPU quota** (see Runtime Tuning); an overcount burns scheduler cycles under contention.
+
+## Long-Lived Connections
+
+- **Pool per-message buffers.** Long-lived connections (WebSockets, TCP streams) churn message buffers; reuse them via `sync.Pool` and `Reset` before `Put`.
+- **Watch for backing-array leaks.** `s := make([]byte, 4096); out := s[:n]` keeps the whole 4 KB alive via `out`; copy to a right-sized slice before publishing.
+- **Every register needs a matching unregister.** Each connection that registers with a hub/registry must `defer unregister(conn)`; instrument the live count and alert on drift.
+
+## QUIC
+
+- **`quic-go` for mobile and lossy paths.** QUIC survives network migration where TCP drops, and offers 0-RTT session resumption. Library `github.com/quic-go/quic-go`. Measure against HTTP/2 over TCP -- gains are workload-dependent and not universal.
+
 ## Caching
 
 - **Work avoidance is the fastest code.** The cheapest computation is the one you don't do.
