@@ -46,7 +46,10 @@ The cycle: **Define -> Benchmark -> Diagnose -> Improve -> Compare**.
 | Too many allocations | heap `alloc_objects` high | Memory patterns below |
 | CPU-bound hot loop | function dominates CPU profile | CPU / SIMD patterns below |
 | GC pauses / OOM | high GC%, container limits | Runtime tuning (memory limit, GC trigger) |
-| Network / I/O latency | threads blocked on I/O | I/O & networking patterns |
+| Network / I/O latency (general) | threads blocked on I/O | I/O & networking patterns below |
+| Off-CPU in DNS resolution | resolver time in traces | Cache results, pre-resolve IPs, force pure-Go resolver |
+| Off-CPU in TLS handshake | handshake spans dominate | Enable session resumption, ALPN, fast cipher suites |
+| Many TIME_WAIT sockets | short-lived conns, no keep-alive | Connection pooling, SO_REUSEADDR |
 | Repeated expensive work | same computation/fetch multiple times | Caching (singleflight, memoization, work avoidance) |
 | Wrong algorithm | O(n^2) where O(n) exists | Algorithmic fix -- data structure swap |
 | Lock contention | mutex/block profile hot | Concurrency patterns below; reduce critical section |
@@ -81,7 +84,16 @@ The cycle: **Define -> Benchmark -> Diagnose -> Improve -> Compare**.
 - **Direct streaming** -- write formatted output directly to the destination writer instead of building intermediates.
 - **Tune transport defaults** -- default HTTP clients and DB drivers ship with low idle-connection limits; size them to match your concurrency.
 - **Guarded observability** -- wrap expensive log and trace computation in an enabled-check; log calls in hot loops allocate even when the level is disabled.
+- **Sample tracing at the edge** -- per-connection spans allocate and show up in heap profiles at 10K+ connections; use head-based sampling, never blindly trace every connection.
+- **Choose transport by workload** -- raw TCP/custom framing for lowest latency and per-message control; HTTP/2 for multiplexed request/response with flow control; gRPC for IDL + streaming + cross-language; QUIC for connection migration, 0-RTT, and lossy/mobile paths. Multiplexed HTTP/2 or QUIC typically beats a pool of HTTP/1.1 connections under high concurrency -- measure both before committing.
 - **No panic/recover in hot paths** -- stack unwinding and stack-trace allocation cost real cycles; use error returns.
+
+## Resilience Under Load
+
+- **Circuit breakers** -- open after N consecutive failures or latency threshold breach; shed calls until a probe succeeds. Protects latency and upstream cost, not just correctness.
+- **Active load shedding** -- reject work at the edge when in-flight count or queue depth exceeds a measured threshold; cheaper than doing work you will discard. Shed before queueing, not after.
+- **Backpressure signaling** -- bounded queue depth is the signal to upstream producers to slow down; never silently buffer unbounded. Propagate backpressure through every stage of a pipeline.
+- **Degradation over failure** -- when capacity is exhausted, return a partial/cached/stale response instead of an error where the domain allows it.
 
 ## SIMD & Vectorization
 
