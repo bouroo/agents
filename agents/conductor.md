@@ -29,8 +29,12 @@ permission:
   # Bash: read-only inspection is allowed silently; everything else prompts;
   # destructive commands are always denied.
   bash:
-    # --- Hard denials (evaluated first; later allows cannot override because these
-    #     patterns are more specific and only match destructive commands) ---
+    # Policy: allow everything EXCEPT destructive commands. Under Kilo's
+    # "last matching rule wins" precedence, the broad allow MUST come first
+    # and the specific denials MUST come after, so the denials override it.
+    # (The conductor still delegates all real execution to coder; this gate
+    # is a backstop.)
+    "*": allow
     "git push * --force*": deny
     "git push -f*": deny
     "git push --force*": deny
@@ -41,57 +45,16 @@ permission:
     "rm -rf /*": deny
     "rm -rf ~*": deny
     "sudo *": deny
-    # --- Read-only inspection: allow silently (cannot mutate state) ---
-    "ls*": allow
-    "cat *": allow
-    "head *": allow
-    "tail *": allow
-    "less *": allow
-    "tree *": allow
-    "wc *": allow
-    "file *": allow
-    "which *": allow
-    "type *": allow
-    "diff *": allow
-    "du *": allow
-    "df *": allow
-    "date *": allow
-    "uname *": allow
-    "whoami *": allow
-    "printenv *": allow
-    "grep *": allow
-    "rg *": allow
-    "ag *": allow
-    "sort *": allow
-    "uniq *": allow
-    "cut *": allow
-    "tr *": allow
-    "jq *": allow
-    "man *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show*": allow
-    "mkdir -p .agents/*": allow
-    # Read-only Go toolchain inspection (no mutation).
-    "go version": allow
-    "go env *": allow
-    "go list *": allow
-    "go mod edit -json*": allow   # read-only: prints go.mod as JSON
-    "go mod graph": allow
-    "go mod why *": allow
-    "go doc *": allow
-    "go help *": allow
-    # --- Broad fallback: anything else prompts the user (including all toolchain
-    #     mutation -- go build, go test, go mod edit -require, docker, etc.).
-    #     The user approves once and can save the pattern. ---
-    "*": ask
   webfetch: allow
   websearch: allow
+  # Edit policy: writes allowed anywhere under the current working directory
+  # (which includes the project's .agents/ tree). Any access OUTSIDE the
+  # worktree (read or write) prompts via `external_directory: ask` below --
+  # the documented mechanism for the worktree boundary (edit matches
+  # worktree-relative paths). The user can save the pattern at runtime.
   edit:
-    "*": ask
-    ".agents/handoff/**": allow
-    ".agents/plans/**": allow
+    "*": allow
+  external_directory: ask
   todowrite: allow
   skill: allow
   question: allow

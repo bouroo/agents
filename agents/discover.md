@@ -14,11 +14,19 @@ permission:
   read: allow
   glob: allow
   grep: allow
+  # Edit policy: writes allowed anywhere under the current working directory
+  # (which includes the project's .agents/ tree). Any access OUTSIDE the
+  # worktree (read or write) prompts via `external_directory: ask` below --
+  # the documented mechanism for the worktree boundary (edit matches
+  # worktree-relative paths). The user can save the pattern at runtime.
   edit:
-    "*": deny
-    ".agents/**": allow
+    "*": allow
+  external_directory: ask
   bash:
-    # Read-only inspection only; never run the project toolchain.
+    # Read-only inspection only; never run the project toolchain. Under Kilo's
+    # "last matching rule wins", the broad deny MUST come first and the specific
+    # allows MUST come after, so the allows override it.
+    "*": deny
     "ls*": allow
     "cat *": allow
     "head *": allow
@@ -50,7 +58,6 @@ permission:
     "go list *": allow
     "go help *": allow
     "mkdir -p .agents/*": allow
-    "*": deny
   webfetch: allow
   websearch: allow
   todowrite: allow
