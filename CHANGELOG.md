@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-07-19
+
+### Added
+- skills.sh / Claude Code plugin marketplace compatibility. New `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` manifests declare every skill via `./skills/<name>` paths (Claude Code convention) so `npx skills add bouroo/agents` discovers and installs them across Claude Code, Cursor, Codex, OpenCode, Kilo, Cline, Copilot, Antigravity, AMP, Gemini CLI, and 30+ other compatible runtimes tracked at skills.sh.
+- Cursor plugin marketplace compatibility. New `.cursor-plugin/plugin.json` and `.cursor-plugin/marketplace.json` per the official [cursor/plugins](https://github.com/cursor/plugins) schema declare all seven skills, the conductor agent, and the five phase commands.
+- Gemini CLI extension compatibility. New `gemini-extension.json` at repo root per the [Gemini CLI extensions reference](https://geminicli.com/docs/extensions/reference/); installs via `gemini extensions install https://github.com/bouroo/agents` and surfaces `skills/`, `commands/`, and `agents/` to Gemini CLI and Antigravity CLI.
+- Consolidated manifest source-of-truth under `.agents/plugins/<tool>/` -- every tool-specific plugin manifest now lives canonically in one of `.agents/plugins/{claude,cursor,gemini,legacy}/`, surfaced at its tool-discovery path via a symlink. `.gitignore` updated to keep `.agents/plans/` and `.agents/handoff/` (the per-project runtime ledger) ignored while shipping `.agents/plugins/`.
+- `G10_claude_plugin_manifests`, `G11_cursor_plugin_manifests`, `G12_gemini_extension_manifest`, and `G13_plugin_symlinks` gates in `scripts/checks.py`. G10-G12 validate the manifest contents (parse, required keys, declared-skill paths resolve on disk, name patterns); G13 enforces the symlink invariant so a future edit at a discovery path cannot silently fork from `.agents/plugins/<tool>/`. Brings the deterministic gate count from 9 to 13.
+- Per-skill `## References` sections (or expanded existing ones) across all seven skills, applying the agentskills.io best-practice of progressive disclosure: each entry carries an explicit "load when X" hint instead of a bare link, so the agent pulls depth on demand rather than eagerly.
+- skills.sh badge and Agent-Skills spec / best-practices / optimizing-descriptions links in `README.md` References.
+
+### Changed
+- `link.sh` is now a thin backward-compat shim (54 lines, down from 195) that execs `install.sh` after translating the legacy verbs (`link` -> `install`, `unlink` -> `uninstall`). Tool filters (`gemini`, `antigravity`, `antigravity-ide`, `codex`, `claude`, `qwen`, `opencode`, `kilo`), `--dry-run`, `--force`, `-h|--help|help`, and bare tool names are forwarded verbatim. All symlink logic, idempotency, dry-run, and the summary line now live in exactly one place (`install.sh`); the two scripts are interchangeable from the user's perspective. README Quick Start D documents both vocabularies side by side.
+- `go-essential` Cross-References rewritten: every `references/*.md` entry now carries a "load when <section> hits <situation>" hint per the agentskills.io progressive-disclosure pattern, instead of a flat `·`-separated list.
+- `harness-engineering` References rewritten with the same "load when X" discipline -- each of the 17 cited sources is anchored to the section it defends or extends.
+- `effective-code-craft` Cross-References and References split: sibling-skill links separate from external craft sources (JetBrains 10x, Google style, Clean Code, Pragmatic Programmer, Feathers), each with a "load when" hint.
+- `repo-documentation` ships an explicit `## Templates (load on demand)` block pointing at `system.md` / `flow.md` / `adr.md` plus a `## References` section (Diataxis, Nygard ADRs, Mermaid syntax) -- the prior single paragraph is now progressive-disclosure-graded.
+- `performance-patterns` Cross-References (sibling skills) separated from `## References` (goperf.dev, Google style, Brendan Gregg USE method, Rust perf book) with "load when" hints.
+- `spec-driven-development` gains a `## References` section (Fowler SPDD, GitHub Spec-Kit, Sutton's Bitter Lesson) with "load when" hints.
+- `commit-message` gains a `## References` section (Conventional Commits 1.0.0, Keep a Changelog, Angular format, git-log pretty formats).
+- README rewritten: "Quick Start" split into A (skills.sh CLI), B (Cursor plugin marketplace), C (Gemini CLI extension), D (symlink installer); "Compatibility" section contrasts five install paths; "What's inside" tree shows the new `.agents/plugins/` source-of-truth layout and the discovery-path symlinks.
+- Bumped all manifest versions (`.agents/plugins/{claude,cursor,gemini,legacy}/*`) from 1.5.0 to 1.6.0.
+
 ## [1.5.0] - 2026-07-18
 
 ### Added
@@ -117,3 +140,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.3.0]: https://github.com/bouroo/agents/releases/tag/v1.3.0
 [1.4.0]: https://github.com/bouroo/agents/releases/tag/v1.4.0
 [1.5.0]: https://github.com/bouroo/agents/releases/tag/v1.5.0
+[1.6.0]: https://github.com/bouroo/agents/releases/tag/v1.6.0

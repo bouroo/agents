@@ -1,4 +1,9 @@
-# Runtime ledger — must live in the target project, never in this config repo.
-.agents/
+# Runtime ledger -- must live in the target project, never in this config repo.
+# Keep .agents/ ignored EXCEPT .agents/plugins/, which is the source-of-truth
+# location for the repo's own plugin manifests (.claude-plugin/,
+# .cursor-plugin/, gemini-extension.json, plugin.json, marketplace.json are
+# symlinks back here).
+.agents/*
+!.agents/plugins/
 .DS_Store
 __pycache__/

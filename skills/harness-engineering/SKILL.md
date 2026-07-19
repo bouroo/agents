@@ -270,20 +270,22 @@ These are the rules an agent follows at all times, not only inside a specific se
 
 ## References
 
-- [Verification theater in depth](./references/verification-theater.md)
-- [Effective code craft](../effective-code-craft/SKILL.md) and [Intent gate in depth](../effective-code-craft/references/intent-gate.md)
-- OpenAI: Harness Engineering -- https://openai.com/index/harness-engineering/
-- Anthropic: Effective harnesses for long-running agents -- https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
-- Anthropic: Harness design for long-running application development -- https://www.anthropic.com/engineering/harness-design-long-running-apps
-- Martin Fowler: Harness engineering for coding agent users -- https://martinfowler.com/articles/harness-engineering.html
-- Salesforce: Maintaining Code Quality at Agent Speed (7 patterns) -- https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/
-- Salesforce: How to Build Reliable AI Agents (5 patterns) -- https://engineering.salesforce.com/how-to-build-reliable-ai-agents-5-engineering-patterns-from-a-production-system/
-- Learn Harness Engineering (12 lectures) -- https://walkinglabs.github.io/learn-harness-engineering/en/
-- Lost in the Middle (Liu et al., 2023) -- https://arxiv.org/abs/2307.03172
-- Kilo -- Prompt Engineering -- https://kilo.ai/docs/customize/prompt-engineering
-- Kilo -- Context Condensing -- https://kilo.ai/docs/customize/context/context-condensing
-- OpenAI: Unrolling the Codex agent loop -- https://openai.com/index/unrolling-the-codex-agent-loop/
-- Anthropic: Demystifying evals for AI agents -- https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
-- LangChain: Improving Deep Agents with harness engineering -- https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering
-- Cursor: Continually improving our agent harness -- https://cursor.com/blog/continually-improving-agent-harness
-- Replit: Decision-Time Guidance: Keeping Replit Agent Reliable -- https://blog.replit.com/decision-time-guidance
+Load on demand; do not pull these into context up front. The body above carries everyday use; load a source only when the matching section needs defence or extension.
+
+- [Verification theater in depth](./references/verification-theater.md) -- load when §12 (Grade the Tests) or §18 (Adversarial Judge) needs the fraud rubric and mutation-testing protocol in full.
+- [Effective code craft](../effective-code-craft/SKILL.md) and [Intent gate in depth](../effective-code-craft/references/intent-gate.md) -- load when §11 (Separate Reasoning from Computation) meets a behavior change that needs classification.
+- OpenAI: Harness Engineering -- https://openai.com/index/harness-engineering/ (the "repo as operational record" claim in §1; load when defending repo-as-record against narrated-status).
+- Anthropic: Effective harnesses for long-running agents -- https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents (small next steps, handoff files; load when sizing a unit in §4 WIP = 1).
+- Anthropic: Harness design for long-running application development -- https://www.anthropic.com/engineering/harness-design-long-running-apps (worker/checker separation, premature-victory prevention; load when shaping §18 Adversarial Judge).
+- Martin Fowler: Harness engineering for coding agent users -- https://martinfowler.com/articles/harness-engineering.html (feedforward vs feedback vocabulary in §9; load when designing a new gate).
+- Salesforce: Maintaining Code Quality at Agent Speed (7 patterns) -- https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/ (gates-over-prompts, grade-the-tests; load for §10 and §12).
+- Salesforce: How to Build Reliable AI Agents (5 patterns) -- https://engineering.salesforce.com/how-to-build-reliable-ai-agents-5-engineering-patterns-from-a-production-system/ (explanations != evidence; load for §6 Structured Handoffs and §17 Error Budget).
+- Learn Harness Engineering (12 lectures) -- https://walkinglabs.github.io/learn-harness-engineering/en/ (synthesized canon; load when stitching sections into a new harness design).
+- Lost in the Middle (Liu et al., 2023) -- https://arxiv.org/abs/2307.03172 (why instructions must be split, not bloated; load for §2 Split Instructions and §3 Minimal Live Context).
+- Kilo -- Prompt Engineering -- https://kilo.ai/docs/customize/prompt-engineering (think-then-do loop; load when aligning the harness with the host tool's default loop).
+- Kilo -- Context Condensing -- https://kilo.ai/docs/customize/context/context-condensing (compaction discipline; load for §3 Minimal Live Context and the §7 Clean-Session Exit handoff).
+- OpenAI: Unrolling the Codex agent loop -- https://openai.com/index/unrolling-the-codex-agent-loop/ (intervention points; load for §16 Tool & MCP Usage).
+- Anthropic: Demystifying evals for AI agents -- https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents (evaluator rubrics; load when calibrating §18 judge rubric).
+- LangChain: Improving Deep Agents with harness engineering -- https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering (guides/sensors applied to deep agents; load for §9 Feedforward vs Feedback).
+- Cursor: Continually improving our agent harness -- https://cursor.com/blog/continually-improving-agent-harness (iterate the harness as models improve; load for §19 Skill Composition).
+- Replit: Decision-Time Guidance: Keeping Replit Agent Reliable -- https://blog.replit.com/decision-time-guidance (situational guidance at the decision point; load for §10 Gates Over Prompts and §13 Catalog Failure Modes).
