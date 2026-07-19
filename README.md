@@ -232,7 +232,7 @@ The `harness-engineering` skill adds the design vocabulary for *building* these 
 
 ```
 Story → Analysis → Canvas → Generate → Test → Review → Sync
-  ↑ |
+  ↑                                                      |
   └────────────── repeat until aligned ──────────────────┘
 ```
 
@@ -295,35 +295,41 @@ Model names are examples; substitute your provider/model IDs.
 ```json
 {
   ...
-  "model": "<your-model-here>",
-  "small_model": "<your-model-here>",
-  "subagent_model": "<your-model-here>",
+  "model": "anthropic/claude-sonnet-5",
+  "small_model": "anthropic/claude-haiku-4",
+  "subagent_model": "anthropic/claude-sonnet-5",
   "default_agent": "conductor",
   "agent": {
     "conductor": {
-      "model": "<your-model-here>"
+      "model": "anthropic/claude-opus-5"
     },
     "orchestrator": {
-      "model": "<your-model-here>"
+      "model": "anthropic/claude-opus-5"
     },
     "plan": {
-      "model": "<your-model-here>"
+      "model": "anthropic/claude-opus-5"
     },
     "debug": {
-      "model": "<your-model-here>"
+      "model": "anthropic/claude-sonnet-5"
     },
     "code": {
-      "model": "<your-model-here>"
+      "model": "anthropic/claude-sonnet-5"
     },
     "ask": {
-      "model": "<your-model-here>"
+      "model": "anthropic/claude-haiku-5"
     },
     "explore": {
-      "model": "<your-model-here>"
+      "model": "anthropic/claude-haiku-5"
     },
     "compaction": {
-      "model": "<your-model-here>"
-    }
+      "model": "anthropic/claude-haiku-5"
+    },
+    "coder": {
+      "model": "anthropic/claude-sonnet-5"
+    },
+    "discover": {
+      "model": "anthropic/claude-haiku-5"
+    },
   },
   ...
 }

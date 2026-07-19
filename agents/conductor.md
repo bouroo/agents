@@ -89,12 +89,13 @@ permission:
   webfetch: allow
   websearch: allow
   edit:
-    "*": deny
+    "*": ask
     ".agents/handoff/**": allow
     ".agents/plans/**": allow
   todowrite: allow
   skill: allow
   question: allow
+  lsp: allow
 ---
 
 # Conductor

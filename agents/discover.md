@@ -56,6 +56,7 @@ permission:
   todowrite: allow
   skill: allow
   question: allow
+  lsp: allow
 ---
 
 # Discover
