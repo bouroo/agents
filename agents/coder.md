@@ -16,7 +16,10 @@ permission:
   grep: allow
   edit: allow
   bash:
-    # Hard denials: destructive operations are never silently allowed.
+    # Policy: allow everything EXCEPT destructive commands. Under Kilo's
+    # "last matching rule wins" precedence, the broad allow MUST come first
+    # and the specific denials MUST come after, so the denials override it.
+    "*": allow
     "git push * --force*": deny
     "git push -f*": deny
     "git push --force*": deny
@@ -27,30 +30,6 @@ permission:
     "rm -rf /*": deny
     "rm -rf ~*": deny
     "sudo *": deny
-    # Read-only inspection uses the current Implementer policy.
-    "ls*": allow
-    "cat *": allow
-    "head *": allow
-    "tail *": allow
-    "less *": allow
-    "tree *": allow
-    "wc *": allow
-    "file *": allow
-    "which *": allow
-    "grep *": allow
-    "rg *": allow
-    "ag *": allow
-    "sort *": allow
-    "uniq *": allow
-    "cut *": allow
-    "jq *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show*": allow
-    "git blame*": allow
-    # Build, test, format, lint, fixes, and probes prompt once by command pattern.
-    "*": ask
   webfetch: allow
   websearch: allow
   todowrite: allow
