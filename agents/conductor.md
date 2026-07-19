@@ -82,7 +82,7 @@ permission:
   webfetch: allow
   websearch: allow
   edit:
-    "*": ask
+    "*": deny
     ".agents/handoff/**": allow
     ".agents/plans/**": allow
   todowrite: allow
