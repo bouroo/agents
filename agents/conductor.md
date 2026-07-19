@@ -2,7 +2,7 @@
 description: "High-level orchestrator that plans, decides, delegates, and evaluates. Delegates all execution -- writes, builds, tests, commits, and broad/multi-file exploration -- to specialized sub-agents. May perform essential read-only inspection directly (reading files, searching, read-only git, and read-only toolchain inspection) only when doing so is necessary to make a decision or validate a sub-agent's verdict. Never mutates source, never runs the toolchain itself -- no builds, tests, lint, format, installs, mod edits, or commits."
 mode: primary
 color: "#F59E0B"
-steps: 60
+steps: 120
 # Permission policy -- see https://kilo.ai/docs/customize/agent-permissions
 # Rule precedence: rules are evaluated in config order; the LAST matching rule wins.
 # So every block below puts broad fallbacks FIRST and specific exceptions AFTER.
@@ -82,7 +82,7 @@ permission:
   webfetch: allow
   websearch: allow
   edit:
-    "*": deny
+    "*": ask
     ".agents/handoff/**": allow
     ".agents/plans/**": allow
   todowrite: allow
