@@ -166,3 +166,13 @@ Use the REASONS canvas when:
 - Working on logic-heavy, repeatable, high-constraint systems.
 
 Skip the canvas (and note the assumption) for trivial fixes, spikes, one-off scripts, or pure aesthetic work -- see the Fitness Levels table above.
+
+## References
+
+Load on demand; the body above is sufficient for everyday use.
+
+- Martin Fowler: *Structured Prompt-Driven Development (SPDD)* -- https://martinfowler.com/articles/structured-prompt-driven/ (the REASONS canvas and prompt⇄code sync rules this skill distills; load when defending the methodology or extending the canvas).
+- GitHub Spec-Kit: *Spec-driven development* -- https://github.com/github/spec-kit/blob/main/spec-driven.md (spec-as-truth, executable specs, constitutional gates; load when implementing §Constitutional Gates).
+- *The Bitter Lesson* (Sutton) -- http://www.incompleteideas.net/IncIdeas/BitterLesson.html (load when resisting premature abstraction during §Fitness Levels triage).
+- Companion skill: [harness-engineering](../harness-engineering/SKILL.md) §6 (Structured Handoffs) and §14 (Failure-Mode -> Control Map) -- the spec is the durable handoff artifact; load when a unit is multi-session or multi-agent.
+- Companion skill: [effective-code-craft](../effective-code-craft/SKILL.md) (Intent gate) -- load when deciding whether a behavior change is *logic* (spec first) or *refactor* (code first) under §Spec ⇄ Code Sync.

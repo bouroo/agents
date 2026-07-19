@@ -179,3 +179,21 @@ The templates are intentionally minimal: they enforce headings, not prose. Fill 
 ## Extending the System
 
 Add new doc categories (e.g. `docs/operations/`, `docs/runbooks/`) only when the repo has recurring needs that do not fit systems / flows / architecture / glossary. Pick one convention, list it in `docs/README.md`, and surface it in `AGENTS.md`'s docs map. Don't create categories in advance.
+
+## Templates (load on demand)
+
+Copy these into the working repo's `docs/templates/` during `document-phase` bootstrap, or reference them in place when the repo already has `docs/`:
+
+- [system.md](./system.md) -- load when filling a `docs/systems/<name>.md`.
+- [flow.md](./flow.md) -- load when filling a `docs/flows/<name>.md` (requires a Mermaid diagram).
+- [adr.md](./adr.md) -- load when recording a `docs/architecture/decisions/NN.md`.
+
+## References
+
+Load on demand; the body above covers everyday use.
+
+- *Docs as a System* (lukewilson2002) -- the repo-local documentation model this skill encodes. Load when extending the categories in §Extending the System or arguing the systems/flows/architecture/glossary split.
+- *Diátaxis* (Grand) -- https://diataxis.fr/ (the four-doc-type taxonomy: tutorial / how-to / reference / explanation). Load when a `docs/` tree outgrows the three templates above.
+- *Documenting Architecture Decisions* (Nygard) -- https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions (the ADR format `adr.md` enforces; load when an ADR review disputes the Structure / Context / Decision / Consequences shape).
+- Mermaid flowchart syntax -- https://mermaid.js.org/syntax/flowchart.html (load when a `docs/flows/*.md` Mermaid block fails to render).
+- Companion skills: [effective-code-craft](../effective-code-craft/SKILL.md) §3 (Code for Reading) for doc-tone discipline, and [harness-engineering](../harness-engineering/SKILL.md) §1 (Repository as System of Record) for why `docs/` explains the system while the repo *is* the system.

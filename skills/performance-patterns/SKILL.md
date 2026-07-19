@@ -128,3 +128,15 @@ The cycle: **Define -> Benchmark -> Diagnose -> Improve -> Compare**.
 
 - [effective-code-craft](../effective-code-craft/SKILL.md) -- correctness and clarity come before performance
 - [harness-engineering](../harness-engineering/SKILL.md) §11 -- deterministic logic in tested code, not in the model
+
+## References
+
+Load these on demand; do not pull them into context up front.
+
+- Go performance deep dive -- https://goperf.dev/01-common-patterns/ (the canonical source this skill distills; load when the hot path is Go-specific and §Memory / §Compiler & Runtime above are not enough).
+- Google Go performance and optimization guide -- https://google.github.io/styleguide/go/#decisions (load for idiomatic-allocation and API-design decisions that affect allocations).
+- Dave Pacheco: *Have you ever optimized this code?* -- https://www.brendangregg.com/ (methodology: measure, then trust the measurement, not the intuition).
+- Brendan Gregg: *The Use Method* -- https://www.brendangregg.com/usemethod.html (load when ruling out external bottlenecks in §Rule Out External Bottlenecks First).
+- Rust performance book -- https://nnethercote.github.io/perf-book/ (load when the target language is Rust; the principles transfer but the toolchain differs).
+- *Systems Performance, 2nd ed.* (Gregg) -- the off-CPU / on-CPU / flamegraph reference for §Decision Tree.
+- Language-agnostic companion: [go-essential §12 Performance](../go-essential/references/performance.md) for Go-specific hot-path patterns.

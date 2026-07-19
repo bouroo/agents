@@ -1,0 +1,17 @@
+{
+  "$schema": "https://cursor.com/schemas/cursor-plugin/marketplace.json",
+  "name": "bouroo-coder-agents",
+  "owner": {
+    "name": "bouroo"
+  },
+  "metadata": {
+    "description": "Language-agnostic coding-agent skills: repo-as-record doctrine, harness engineering, code craft, performance, spec-driven development, Go essentials, and a primary conductor orchestrator."
+  },
+  "plugins": [
+    {
+      "name": "coder-agents",
+      "source": "./",
+      "description": "Seven on-demand skills plus a conductor orchestrator. Targets deterministic, executable-completion workflows over speculative AI assistance. Compatible with Cursor, Claude Code, Codex, OpenCode, Kilo, Gemini, and any Agent Skills-compatible runtime."
+    }
+  ]
+}

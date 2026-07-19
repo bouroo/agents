@@ -1,195 +1,53 @@
 #!/usr/bin/env bash
 #
-# link.sh  --  symlink this repo's shared agent config into supported AI tools.
+# link.sh  --  thin compatibility shim over install.sh.
 #
-# What gets linked per tool:
-# 1. AGENTS.md  → tool's config file (GEMINI.md, CLAUDE.md, or AGENTS.md)
-# 2. commands/  → tool's commands/ directory
-# 3. skills/ → tool's skills/ directory
-# 4. agents/ → tool's agents/ directory (only for tools that support it)
+# All symlink logic has been consolidated into install.sh. This script exists
+# for backward compatibility with the documented CLI:
 #
-# Supported tools:
-# gemini → ~/.gemini/GEMINI.md
-# antigravity → ~/.gemini/GEMINI.md (shares directory with gemini)
-# antigravity-ide → ~/.gemini/GEMINI.md (shares directory with gemini)
-# codex → ~/.codex/AGENTS.md
-# claude → ~/.claude/CLAUDE.md
-# qwen → ~/.qwen/AGENTS.md
-# opencode → ~/.config/opencode/AGENTS.md (agents dir: agents/)
-# kilo → ~/.config/kilo/AGENTS.md (agents dir: agent/)
+#   link.sh [link|unlink|status] [tool-name]
 #
-# Usage: link.sh [link|unlink|status] [tool-name]
+# It translates the legacy verbs and execs install.sh with the same arguments
+# install.sh accepts natively:
 #
-
+#   link         -> install       (default when no action verb is given)
+#   unlink       -> uninstall
+#   status       -> status
+#   list         -> list          (forwarded, install.sh-native)
+#
+# Tool filters (gemini, antigravity, antigravity-ide, codex, claude, qwen,
+# opencode, kilo) and the flags --dry-run, --force, -h|--help|help are
+# passed through unchanged. Install.sh owns TARGETS, idempotency, dry-run,
+# and the summary line; this shim owns only the verb translation.
+#
+# For the canonical installer documentation see install.sh --help.
+#
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+INSTALL_SH="$SCRIPT_DIR/install.sh"
 
-info()  { echo "[link] $*"; }
-warn()  { echo "[link] WARNING: $*" >&2; }
-
-symlink() {
- local src="$1" dst="$2"
-
- if [[ -L "$dst" && "$(readlink "$dst")" == "$src" ]]; then
- return 0
- fi
-
- if [[ -e "$dst" && ! -L "$dst" ]]; then
- warn "$dst exists as a real file/directory  --  skipping to avoid data loss"
- return 1
- fi
-
- rm -f "$dst" 2>/dev/null || true
- ln -sf "$src" "$dst"
- info "linked $dst -> $src"
-}
-
-link_configs() {
- local target_dir="$1"
- local agent_file="$2"
- local agents_dir="${3:-}"
-
- mkdir -p "$target_dir"
-
- symlink "$REPO_DIR/AGENTS.md" "$target_dir/$agent_file"
- symlink "$REPO_DIR/commands"  "$target_dir/commands"
- symlink "$REPO_DIR/skills" "$target_dir/skills"
-
- if [[ -n "$agents_dir" ]]; then
- symlink "$REPO_DIR/agents" "$target_dir/$agents_dir"
- fi
-}
-
-unlink_configs() {
- local target_dir="$1"
- local agent_file="$2"
- local agents_dir="${3:-}"
-
- for path in "$target_dir/$agent_file" "$target_dir/commands" "$target_dir/skills"; do
- if [[ -L "$path" ]]; then
- rm -f "$path"
- info "removed $path"
- fi
- done
-
- if [[ -n "$agents_dir" && -L "$target_dir/$agents_dir" ]]; then
- rm -f "$target_dir/$agents_dir"
- info "removed $target_dir/$agents_dir"
- fi
-}
-
-status_configs() {
- local target_dir="$1"
- local agent_file="$2"
- local agents_dir="${3:-}"
-
- local base="$target_dir/$agent_file"
- if [[ -L "$base" ]]; then
- local dest
- dest="$(readlink "$base")"
- if [[ "$dest" == "$REPO_DIR/AGENTS.md" ]]; then
- echo "  OK  $base"
- else
- echo "  ??  $base -> $dest (not pointing to $REPO_DIR)"
- fi
- elif [[ -e "$base" ]]; then
- echo "  !!  $base exists but is not a symlink"
- else
- echo "  --  $base (not linked)"
- fi
-
- for name in commands skills; do
- local p="$target_dir/$name"
- if [[ -L "$p" && "$(readlink "$p")" == "$REPO_DIR/$name" ]]; then
- echo "  OK  $p"
- elif [[ -L "$p" ]]; then
- echo "  ??  $p -> $(readlink "$p")"
- elif [[ -e "$p" ]]; then
- echo "  !!  $p exists but is not a symlink"
- else
- echo "  --  $p (not linked)"
- fi
- done
-
- if [[ -n "$agents_dir" ]]; then
- local a="$target_dir/$agents_dir"
- if [[ -L "$a" && "$(readlink "$a")" == "$REPO_DIR/agents" ]]; then
- echo "  OK  $a"
- elif [[ -L "$a" ]]; then
- echo "  ??  $a -> $(readlink "$a")"
- elif [[ -e "$a" ]]; then
- echo "  !!  $a exists but is not a symlink"
- else
- echo "  --  $a (not linked)"
- fi
- fi
-}
-
-TARGETS=(
- "gemini:$HOME/.gemini:GEMINI.md:"
- "antigravity:$HOME/.gemini:GEMINI.md:"
- "antigravity-ide:$HOME/.gemini:GEMINI.md:"
- "codex:$HOME/.codex:AGENTS.md:"
- "claude:$HOME/.claude:CLAUDE.md:"
- "qwen:$HOME/.qwen:AGENTS.md:"
- "opencode:$HOME/.config/opencode:AGENTS.md:agents"
- "kilo:$HOME/.config/kilo:AGENTS.md:agent"
-)
-
-ACTION="${1:-link}"
-FILTER="${2:-}"
-
-for target in "${TARGETS[@]}"; do
- IFS=':' read -r name dir agent_file agents_dir <<< "$target"
-
- if [[ -n "$FILTER" && "$name" != "$FILTER" ]]; then
- continue
- fi
-
- if [[ ! -d "$dir" ]]; then
- case "$ACTION" in
- link|"")
- info "$dir does not exist  --  skipping $name"
- continue
- ;;
- status)
- echo "[$name] $dir (directory does not exist)"
- continue
- ;;
- *)
- continue
- ;;
- esac
- fi
- case "$ACTION" in
- unlink)
- echo "[$name]"
- unlink_configs "$dir" "$agent_file" "$agents_dir"
- ;;
- status)
- echo "[$name]"
- status_configs "$dir" "$agent_file" "$agents_dir"
- ;;
- link|"")
- echo "[$name]"
- link_configs "$dir" "$agent_file" "$agents_dir"
- ;;
- *)
- echo "Usage: $0 [link|unlink|status] [filter]"
- echo ""
- echo "Actions:"
- echo "  link Create symlinks for all supported tools (default)"
- echo "  unlink  Remove all symlinks"
- echo "  status  Show symlink status"
- echo ""
- echo "Filter:"
- echo "  Tool name to target a single tool (e.g., 'claude', 'opencode')"
- exit 1
- ;;
- esac
-done
-
-if [[ "$ACTION" != "status" ]]; then
- info "Done. Use '$0 status' to verify, '$0 unlink' to remove."
+if [[ ! -x "$INSTALL_SH" && ! -f "$INSTALL_SH" ]]; then
+  echo "[link] install.sh not found at $INSTALL_SH" >&2
+  exit 1
 fi
+
+# Translate the first positional action verb (link/unlink) to install.sh's
+# vocabulary (install/uninstall). status/list/help pass through verbatim.
+# Anything else (a bare tool name, --flag, or empty) is forwarded untouched
+# so install.sh's default action (install) and its own arg parser take over.
+translate_and_exec() {
+  local -a forwarded=()
+  local first="${1:-}"
+  case "$first" in
+    link)    forwarded+=("install");  shift ;;
+    unlink)  forwarded+=("uninstall"); shift ;;
+    status|list|-h|--help|help) forwarded+=("$first"); shift ;;
+    "")      : ;;  # no action -> install.sh defaults to install
+    *)       forwarded+=("$first"); shift ;;  # bare tool name or flag
+  esac
+  forwarded+=("$@")
+  exec "$INSTALL_SH" "${forwarded[@]}"
+}
+
+translate_and_exec "$@"
