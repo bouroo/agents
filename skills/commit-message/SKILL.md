@@ -1,13 +1,17 @@
 ---
 name: commit-message
-description: Generate a conventional commit message based on staged changes.
+description: Generate a conventional commit message based on staged changes in the PROVE and GROW phases.
 ---
 
-You are an expert Git commit message generator. Analyze the staged git diff and produce a conventional commit message. Return ONLY the message  --  nothing else.
+# Commit Message Generator
+
+Generate Conventional Commits based on staged git diffs, serving as durable decision records across the THINK→ACT→PROVE→GROW loop.
+
+> **Override.** A repo-level commit convention (e.g. `COMMIT.md`, Angular-style, emoji-prefix) that explicitly supersedes Conventional Commits takes precedence; match the repo's existing log before inventing a style.
 
 **Stance:** You write the commit message for the reviewer skimming the log six months from now. Each entry answers *what changed for the reader* -- internal refactors without user-visible impact belong in the body, not the headline.
 
-> **Override.** A repo-level commit convention (e.g. `COMMIT.md`, Angular-style, emoji-prefix) that explicitly supersedes Conventional Commits takes precedence; match the repo's existing log before inventing a style.
+---
 
 ## Conventional Commits Format
 
@@ -55,6 +59,9 @@ You are an expert Git commit message generator. Analyze the staged git diff and 
 - Blank line after body.
 - Breaking change: `BREAKING CHANGE: description` (or `!` after type/scope).
 - Issue refs: `Refs: #123`, `Closes: #456`.
+- Artifact gates: include `INTENT:`, `TWINS:`, `AUTH:`, or `PENDING:` lines where applicable per PROVE phase requirements.
+
+---
 
 ## Analysis Steps
 
@@ -63,7 +70,9 @@ You are an expert Git commit message generator. Analyze the staged git diff and 
 3. Craft `description` for the most significant change.
 4. Detect breaking changes (`!` or `BREAKING CHANGE:` footer).
 5. Add a body only when the change needs explanation beyond the description.
-6. Add footers for issue refs or breaking changes.
+6. Add footers for issue refs, breaking changes, or artifact gate lines.
+
+---
 
 ## Common Mistakes
 
@@ -79,10 +88,18 @@ You are an expert Git commit message generator. Analyze the staged git diff and 
 | Body restating the diff | Body explains *what* and *why*, not *how*; the diff already shows how |
 | Body wraps at >72 chars | Wrap at 72; reviewers read logs in narrow terminals |
 
+---
+
+## Cross-References
+
+- [effective-code-craft](../effective-code-craft/SKILL.md) -- Intent, Twin, Auth, and Pending artifact gates
+- [harness-engineering](../harness-engineering/SKILL.md) -- decision log discipline and repo-as-record
+
+---
+
 ## References
 
 - Conventional Commits 1.0.0 spec -- https://www.conventionalcommits.org/en/v1.0.0/
 - Keep a Changelog (SemVer + change log discipline) -- https://keepachangelog.com/en/1.1.0/
-- Angular commit format (the historical origin of Conventional Commits) -- https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit
+- Angular commit format -- https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit
 - `git-log` pretty formats for verification (`%s`, `%b`, `%(trailers)`) -- https://git-scm.com/docs/git-log#_pretty_formats
-- Companion skill: [effective-code-craft](../effective-code-craft/SKILL.md) for the Intent / Artifact-Gate discipline a commit message summarizes.
