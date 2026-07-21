@@ -109,7 +109,7 @@ SPEC:    <link or inline -- the authoritative behavior contract>
 SCOPE:   <paths/globs this agent may touch>
 DONE:    <single command whose exit 0 = pass>
 EVIDENCE:<the artifact(s) that must appear in the return>
-HANDOFF: <path to write .agents/handoff/<unit-id>.summary.md>
+HANDOFF: <path to write under `$(git rev-parse --show-toplevel)/.agents/handoff/<unit-id>.summary.md`; never use a bare relative `.agents/` -- it escapes the project when cwd ≠ repo root>
 ```
 
 Reject any summary whose `Files touched` exceeds the declared `SCOPE`.
@@ -130,7 +130,7 @@ A `blocked` return without a `Blockers` payload (repro + minimal failing input +
 
 ## 4. `state.json` Schema (brief)
 
-Lives at `.agents/plans/{slug}/state.json`. One ledger per task.
+Lives at `$(git rev-parse --show-toplevel)/.agents/plans/{slug}/state.json`. One ledger per task. Always anchor with `git rev-parse --show-toplevel` -- a bare relative `.agents/...` path resolves outside the project when the cwd is not the repo root (e.g. a subdirectory or a global path like `~/.agents/`).
 
 ```jsonc
 {
@@ -159,7 +159,7 @@ Lives at `.agents/plans/{slug}/state.json`. One ledger per task.
 
 ## 5. Handoff Summary Format
 
-Path: `.agents/handoff/<unit-id>.summary.md`. Fixed schema; every section required; missing section = failure.
+Path: `$(git rev-parse --show-toplevel)/.agents/handoff/<unit-id>.summary.md`. Fixed schema; every section required; missing section = failure. The `.agents/` tree is ALWAYS anchored to the project git root -- never write to a bare relative `.agents/` or to `~/.agents/`, which silently resolves outside the project when the cwd is not the repo root.
 
 ```
 # <unit-id> -- <one-line summary>
@@ -280,15 +280,15 @@ A failure is any return where `state != passing` or evidence does not match the 
 
 ## 11. On-Disk State
 
-Paths are project-workspace-relative: `.agents/` lives in the target project's root (`git rev-parse --show-toplevel`), never in `~/.agents/`.
+Paths are project-workspace-relative: `.agents/` lives in the target project's root (`git rev-parse --show-toplevel`), never in `~/.agents/` or in a bare relative `.agents/` resolved from a non-root cwd. The conductor session's own cwd may be a subdirectory or even a global path -- so every `.agents/...` reference in this file MUST be read as anchored to `$(git rev-parse --show-toplevel)`.
 
-- `.agents/plans/{task-slug}/`
+- `$(git rev-parse --show-toplevel)/.agents/plans/{task-slug}/`
   - `story.md` -- spec / intent
   - `canvas.md` -- assumptions + reasoning + trade-offs (with `## Assumptions`)
   - `state.json` -- the ledger (see §4)
   - `retro.md` -- append-only failure modes
   - `decision-log.md` -- append-only decisions + rationale
-- `.agents/handoff/` -- `<unit-id>.summary.md` (see §5)
+- `$(git rev-parse --show-toplevel)/.agents/handoff/` -- `<unit-id>.summary.md` (see §5)
 
 `{task-slug}` is kebab-case derived from the task.
 
@@ -309,10 +309,10 @@ Long task runs auto-compact; sub-agent tool outputs are pruned beyond a recency 
 **First action on any new task** (before reading anything else):
 
 ```bash
-mkdir -p .agents/plans/{task-slug} .agents/handoff
+ROOT=$(git rev-parse --show-toplevel) && mkdir -p "$ROOT/.agents/plans/{task-slug}" "$ROOT/.agents/handoff"
 ```
 
-Derive `{task-slug}` from the task in kebab-case. If the dirs already exist, this is a no-op resume -- proceed to read `state.json`. This step is non-optional: a write to a non-existent path is a silent state-loss bug.
+Always anchor `.agents/` to the project git root with `$(git rev-parse --show-toplevel)`. Never use a bare relative `.agents/...` -- if the conductor's cwd is not the repo root (e.g. it is a subdirectory or a global path like `~/.agents/`), a bare relative path silently escapes the project. Derive `{task-slug}` from the task in kebab-case. If the dirs already exist, this is a no-op resume -- proceed to read `state.json`. This step is non-optional: a write to a non-existent (or wrong-root) path is a silent state-loss bug.
 
 **Clock-in:** bootstrap ledger → read `state.json` + plan dir + last handoff → confirm startup-readiness → take bounded read-only look when cheaper correct path, dispatch `discover` for broad/external work.
 

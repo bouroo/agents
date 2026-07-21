@@ -57,6 +57,7 @@ permission:
     "go doc *": allow
     "go list *": allow
     "go help *": allow
+    "pyhton3 *": allow
     "mkdir -p .agents/*": allow
   webfetch: allow
   websearch: allow
