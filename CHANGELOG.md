@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-07-21
+
+### Fixed
+- Changed `discover` agent broad permission limit from `deny` to `ask` (`agents/discover.md`).
+- Fixed typo `"pyhton3"` to `"python3"` in `discover` permissions (`agents/discover.md`).
+
+### Changed
+- Documented absolute path anchoring for `.agents/` workflows (`agents/conductor.md`).
+- Added `"python3 *"` to `discover` permissions (`agents/discover.md`).
+
 ## [1.7.0] - 2026-07-19
 
 ### Added
@@ -163,3 +173,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.7.0]: https://github.com/bouroo/agents/releases/tag/v1.7.0
 [1.6.1]: https://github.com/bouroo/agents/releases/tag/v1.6.1
 [1.6.0]: https://github.com/bouroo/agents/releases/tag/v1.6.0
+[1.7.1]: https://github.com/bouroo/agents/releases/tag/v1.7.1
