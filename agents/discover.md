@@ -24,9 +24,9 @@ permission:
   external_directory: ask
   bash:
     # Read-only inspection only; never run the project toolchain. Under Kilo's
-    # "last matching rule wins", the broad deny MUST come first and the specific
+    # "last matching rule wins", the broad ask MUST come first and the specific
     # allows MUST come after, so the allows override it.
-    "*": deny
+    "*": ask
     "ls*": allow
     "cat *": allow
     "head *": allow
