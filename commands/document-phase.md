@@ -4,7 +4,7 @@ description: Document phase  --  bootstrap repo docs or sync an existing docs/ t
 
 # Document Phase
 
-Bootstrap or update the repo's `docs/` documentation so it stays in sync with the code. Docs and code must agree  --  a stale doc is a bug.
+Bootstrap or update the repo's `docs/` documentation so it stays in sync with the code as part of the THINK→ACT→PROVE→GROW loop. Docs and code must agree  --  a stale doc is a bug.
 
 > **Agent:** requires `edit` + `bash` (read)  --  run on the implementing/build agent, not `plan` or `conductor`.
 

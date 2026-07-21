@@ -1,10 +1,10 @@
 ---
-description: Verify phase  --  format, lint, type-check, scan, test, and githook gate with fix/review loop
+description: Verify phase (PROVE loop)  --  format, lint, type-check, scan, test, and githook gate with fix/review loop
 ---
 
 # Verify Phase
 
-Goal: leave the working tree in a state that passes every quality gate, including the repository's githook verify script.
+Goal: leave the working tree in a state that passes every quality gate, including the repository's githook verify script. This command forms the automated layer of the **PROVE** phase in the THINK→ACT→PROVE→GROW loop.
 
 > **Agent:** requires `bash` + `edit`  --  run on the implementing/build agent, not `plan` or `conductor`.
 
