@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-07-21
+
+### Added
+- Integrated Fable Method THINK→ACT→PROVE→GROW loop core across router and workflows.
+- Added GROW phase for self-improving harness (cataloging failure modes in retro logs, building deterministic gates).
+
+### Changed
+- Updated all agents, skills, and commands for the THINK→ACT→PROVE→GROW loop.
+- Updated slash commands (`verify-phase`, `judge-phase`, `review-phase`, `refactor-phase`, `document-phase`) to reference their respective phases in the loop.
+- Updated all plugin manifests (`claude`, `cursor`, `gemini`, `legacy`) to version `2.0.0` and 6 on-demand skills.
+
+### Removed
+- **Breaking:** Removed `go-essential` skill for a pure language-agnostic focus.
+- Removed Go-specific smells and checklist items from commands and references.
+
 ## [1.7.1] - 2026-07-21
 
 ### Fixed
@@ -171,6 +186,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.4.0]: https://github.com/bouroo/agents/releases/tag/v1.4.0
 [1.5.0]: https://github.com/bouroo/agents/releases/tag/v1.5.0
 [1.7.0]: https://github.com/bouroo/agents/releases/tag/v1.7.0
-[1.6.1]: https://github.com/bouroo/agents/releases/tag/v1.6.1
-[1.6.0]: https://github.com/bouroo/agents/releases/tag/v1.6.0
 [1.7.1]: https://github.com/bouroo/agents/releases/tag/v1.7.1
+[2.0.0]: https://github.com/bouroo/agents/releases/tag/v2.0.0

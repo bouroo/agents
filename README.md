@@ -38,7 +38,7 @@ npx skills add bouroo/agents -g
 npx skills add bouroo/agents --skill effective-code-craft --skill harness-engineering
 
 # Install specific skills to specific agents only
-npx skills add bouroo/agents -a claude-code -a opencode --skill go-essential -y
+npx skills add bouroo/agents -a claude-code -a opencode --skill harness-engineering -y
 
 # List everything the repo ships before installing
 npx skills add bouroo/agents --list
@@ -126,7 +126,6 @@ Then restart your coding tool so it picks up the new config.
 ├── skills/                  # On-demand skill modules (load via the skill tool)
 │   ├── commit-message/
 │   ├── effective-code-craft/
-│   ├── go-essential/
 │   ├── harness-engineering/
 │   ├── performance-patterns/
 │   ├── repo-documentation/
@@ -173,7 +172,6 @@ Focused modules the agent loads on demand when a task matches. Each ships a ters
 | Skill | Trigger |
 |-----------------------------|------------------------------------------------------------------------------------------|
 | `effective-code-craft` | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
-| `go-essential` | Writing, reviewing, refactoring, or auditing Go production code; starting a Go project; profiling a hot path; instrumenting a service |
 | `harness-engineering` | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
 | `performance-patterns` | Optimizing for speed, throughput, latency, or memory after correctness is proven |
 | `repo-documentation` | Repo keeps a `docs/` tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change |
@@ -221,6 +219,14 @@ The skills themselves are pure markdown (`SKILL.md` + optional `references/`) wi
 Everything in this repo is plain markdown  --  the symlinks make it look like each tool's own config directory contains the same rules, commands, and skills. `AGENTS.md` is intentionally short: it's a router that points the agent at the right skill or command on demand instead of dumping every rule into one giant prompt. Adding a new tool is a matter of adding a target to `link.sh`; updating the rules means editing one file, and every linked tool picks up the change.
 
 ## Methodology
+
+### THINK→ACT→PROVE→GROW Loop
+
+The core operational loop is grounded in the Fable Method:
+- **THINK (discover):** Classify the ask, define done conditions, gather context and executable evidence, plan testable units.
+- **ACT (coder):** Surgical implementation within explicit SCOPE bounds, one unit at a time.
+- **PROVE (coder verify + discover review):** Three-layer verification (L1 static, L2 runtime, L3 end-to-end), mutation test probe, and adversarial judgment.
+- **GROW (self-improving harness):** Catalog failure modes in retro logs, build deterministic gates from recurring failures, and continuously improve the surrounding harness system.
 
 ### Harness Engineering
 
@@ -329,7 +335,7 @@ Model names are examples; substitute your provider/model IDs.
     },
     "discover": {
       "model": "anthropic/claude-haiku-5"
-    },
+    }
   },
   ...
 }

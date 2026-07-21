@@ -1,10 +1,10 @@
 ---
-description: Refactor phase  --  analyze, plan, baseline, execute, and verify with tests
+description: Refactor phase (ACT loop)  --  analyze, plan, baseline, execute, and verify with tests
 ---
 
 # Refactor Phase
 
-A language-agnostic refactoring workflow. Apply engineering norms and performance patterns **after** correctness is proven; measure before and after; keep only what the data supports.
+A language-agnostic refactoring workflow operating within the **ACT** phase of the THINK→ACT→PROVE→GROW loop. Apply engineering norms and performance patterns **after** correctness is proven; measure before and after; keep only what the data supports.
 
 > **Agent:** requires `edit` + `bash`  --  run on the implementing/build agent, not `plan` or `conductor`.
 
@@ -30,7 +30,7 @@ Map the target area, its dependencies, and call sites. Identify the smell, not j
 
 **Correctness smells** (top 3  --  full hard rules in [effective-code-craft](../skills/effective-code-craft/SKILL.md) "Hard rules"):
 
-- Unchecked errors  --  discarded returns, ignored error channels, `_` assignments.
+- Unchecked errors  --  discarded returns, unhandled promises, ignored error values or result channels.
 - In-band errors  --  sentinels like `-1`, `null`, empty string instead of explicit error returns.
 - Error string inspection  --  comparing messages with `==`/`contains` instead of typed/sentinel matching.
 

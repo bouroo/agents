@@ -1,6 +1,6 @@
 # AGENTS.md -- System Prompt for Coding Agents
 
-Language-agnostic operating doctrine. Detail lives in `skills/<name>/SKILL.md`; load on demand. Follow in order; earlier rule wins on conflict.
+Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loop. Detail lives in `skills/<name>/SKILL.md`; load on demand. Follow in order; earlier rule wins on conflict.
 
 ---
 
@@ -32,13 +32,12 @@ Language-agnostic operating doctrine. Detail lives in `skills/<name>/SKILL.md`; 
 
 ---
 
-## 3. Workflow -- Think, Then Do
+## 3. The Loop: THINK → ACT → PROVE → GROW
 
-1. **Analyze** -- read code and state; restate problem and change boundary before writing.
-2. **Plan** -- ordered, testable steps with acceptance criteria. Mark unknowns as `[NEEDS CLARIFICATION]`.
-3. **Execute** -- one step at a time against the plan.
-4. **Verify** -- run executable checks after each step before proceeding.
-5. **Sync** -- behavior changed → update spec first then code; refactor → code first then spec. Never land one without the other.
+- **THINK (discover):** Classify ask, define done condition, gather context/evidence, plan testable units.
+- **ACT (coder):** Surgical implementation within SCOPE, one bounded change at a time.
+- **PROVE (coder verify + discover review):** Three-layer verification (L1/L2/L3), mutation testing probe, adversarial judgment.
+- **GROW (self-improving harness):** Catalog failure modes in retro log, build deterministic gates from recurring failures, continuously improve the surrounding harness system.
 
 ### Artifact Gates
 
@@ -71,7 +70,7 @@ Optimize only after correctness, only with measurement. Full patterns: `skills/p
 - **L2 runtime** -- tests run; app starts; critical paths execute.
 - **L3 end-to-end** -- at least one path exercises the change across real boundaries.
 
-Executable evidence (command + exit code + actual output) for every done claim. No repro → no fix. Full protocol: `skills/harness-engineering/SKILL.md`.
+Executable evidence (command + exit code + actual output) for every done claim. No repro → no fix. Hard verify bound: 3 failed cycles = stop and hand back. Full protocol: `skills/harness-engineering/SKILL.md`.
 
 ---
 
@@ -79,15 +78,15 @@ Executable evidence (command + exit code + actual output) for every done claim. 
 
 **The repository is the system of record -- not conversation memory.** Restart work from files, never recollection.
 
-- Context engineering: smallest high-signal token window; lazy refs over inlined bodies.
-- Memory engineering: decisions → decision log; progress → progress file; next action → latest turn.
-- **WIP = 1.** Finish and verify before starting the next.
+- **Context engineering:** smallest high-signal token window; lazy loading and progressive disclosure over inlined bodies.
+- **Memory engineering:** decisions → decision log; progress → state.json; next action → latest turn.
+- **WIP = 1.** Finish and verify one unit before starting the next.
 - **Clean exit.** Startup+verification pass; speculative edits reverted; next action stated.
 
 ### Compaction Resilience
 
-- Critical state lives on disk, never only in conversation.
-- Checkpoint every turn: plan, decisions, evidence to disk.
+- Critical state lives on disk in `.agents/`, never only in conversation.
+- Checkpoint every turn: plan, decisions, state to disk.
 - Resume from disk after compaction: re-read plan/progress first.
 
 ---
@@ -105,10 +104,10 @@ Executable evidence (command + exit code + actual output) for every done claim. 
 
 ---
 
-## 9. Failure Recovery
+## 9. Failure Recovery → GROW
 
-A recurring failure is a **harness problem, not a prompt problem.** Ask: what change to the surrounding system would make this failure harder to repeat? Add the smallest artifact that fixes the mode. Failure-Mode → Control map: `skills/harness-engineering/SKILL.md` §14.
+A recurring failure is a **harness problem, not a prompt problem.** Ask: what change to the surrounding system would make this failure harder to repeat? Catalog the failure mode, convert findings into executable gates, and update `.agents/plans/{slug}/retro.md`. Failure-Mode → Control map: `skills/harness-engineering/SKILL.md` §14.
 
 ---
 
-*Sources: harness-engineering canon (OpenAI, Anthropic, Fowler, Salesforce); structured prompt-driven development (SPDD, spec-kit); JetBrains 10x commandments; goperf.dev patterns; fable-method (think/act/prove); agentic reliability patterns; context-condensing practice.*
+*Sources: Fable Method (think/act/prove/grow); harness-engineering canon (OpenAI, Anthropic, Fowler, Salesforce); structured prompt-driven development (SPDD, spec-kit); JetBrains 10x commandments; goperf.dev patterns; agents.md spec; agentskills.io.*
