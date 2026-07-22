@@ -1,6 +1,6 @@
 ---
 name: harness-engineering
-description: Harness-engineering norms across the THINK→ACT→PROVE→GROW loop: repo-as-record, split instructions, WIP=1, three-layer termination (L1/L2/L3), mutation testing, adversarial judging, and error budgets. Use when configuring agent controls, verifying work constraints, or establishing reliability patterns.
+description: "Harness-engineering norms across the THINK→ACT→PROVE→GROW loop: repo-as-record, split instructions, WIP=1, three-layer termination (L1/L2/L3), mutation testing, adversarial judging, and error budgets. Use when configuring agent controls, verifying work constraints, or establishing reliability patterns."
 ---
 
 # Harness Engineering -- Agent-Loadable Norms
