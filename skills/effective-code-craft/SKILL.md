@@ -142,7 +142,8 @@ Before sending the report, mechanically check whether this run owed `INTENT:`, `
 - Omit type-like words (`users` over `userList`) and context the surrounding API already provides (`count`, not `userCount`, inside `UserCount`).
 - Avoid redundant `get`/`Get` prefixes; start with the noun. Don't repeat module names in exported symbols (`widget.create`, not `widget.createWidget`).
 - Arrange code to explain itself: clear names, short functions, named helpers carry intent so the reader rarely needs prose. Reserve comments for the *why* the code cannot show -- non-obvious rationale, constraints, history.
-- When a comment is warranted, keep it terse and in the language's idiomatic doc style (JSDoc, rustdoc, PyDoc, Doxygen): full sentences for exported symbols, beginning with the symbol's name; never restate what the code says.
+- When a comment is warranted, keep it terse and follow the project's idiomatic doc style -- godoc, JSDoc, rustdoc, PyDoc, or Doxygen (a project style guide wins): full sentences for exported symbols, beginning with the symbol's name; never restate what the code says.
+- **Comments document the code, not the process.** Source comments MUST NOT reference internal harness artifacts: plan IDs (`U1`, `T16`), decision IDs (`D5`, `D8`), spec line numbers (`spec §3 L319-335`), handoff paths (`.agents/handoff/...`), or tracking tokens (`PENDING;`, `decision D5`). Those belong only in `.agents/` artifacts. A reader of the source must never need to know the agent's planning vocabulary to understand the code. If the *why* is genuinely a durable design constraint, rewrite it as a standalone statement of the constraint (e.g. "the network gateway authenticates this webhook upstream; the handler validates body fields only") -- no plan/task/decision identifiers.
 
 ### 4. Safe by Default
 - Make invalid states unrepresentable; provide a useful default value or a validating constructor.
@@ -191,6 +192,7 @@ Before sending the report, mechanically check whether this run owed `INTENT:`, `
 | Function with 5+ parameters | Group related parameters into a struct/record/options object |
 | Deeply nested conditionals | Extract named booleans; early-return guards; switch over if-else chains |
 | Comment that restates the code | Delete it; reserve comments for *why* the code cannot show |
+| Comment cites internal harness refs (`D5`, `T16`, `spec §3`, `PENDING;`, `.agents/handoff/...`) | Rewrite as a standalone statement of the durable constraint; plan/task/decision identifiers live only in `.agents/`, never in source |
 | Unexported/private symbol that is actually part of the contract | Make the contract explicit; export the symbol or document it as internal |
 | Returning a live reference to internal state | Return a defensive copy; callers must not mutate your internals |
 
