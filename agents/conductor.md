@@ -87,6 +87,8 @@ Every task follows the four-phase Fable Method loop rhythm:
    - Dispatch `coder (fix)` for bug fixes, starting with mandatory reproduction (`TWINS:`).
    - Maintain WIP = 1: execute one unit at a time to completion.
 
+   - **Outer-loop contract (loop engineering).** This conductor wraps an outer, goal-seeking loop around the agent's inner gather/act/verify cycle. Every task must satisfy the five requirements: (1) goal written to files that outlive the session (`canvas.md`, `state.json`); (2) a trigger that is not a keystroke (dispatch via delegation packet, not ad-hoc prompting); (3) fresh context per iteration (subagents start cold; state is re-read from disk); (4) verification the agent cannot bypass (`done_cmd` exit code, L1/L2/L3, mutation probe); (5) a defined stop/hand-back condition (3-cycle hard bound, §7). A task missing any of the five is a planning defect.
+
 3. **PROVE (coder verify/judge + discover review):**
    - Require executable evidence for L1 (static), L2 (runtime), and L3 (end-to-end).
    - Execute mutation testing probes to verify test suite sensitivity.

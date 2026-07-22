@@ -1,9 +1,6 @@
 ---
 name: spec-driven-development
-description: >
-  Specification-first workflow that treats prompts as version-controlled artifacts within the THINK→ACT→PROVE→GROW loop.
-  Use when starting a new feature, resolving ambiguous requirements, or bridging intent and implementation.
-  Grounded in Martin Fowler's SPDD and GitHub Spec-kit.
+description: Specification-first workflow that treats prompts as version-controlled artifacts within the THINK→ACT→PROVE→GROW loop. Use when starting a new feature, drafting technical requirements, resolving ambiguous requests, or bridging intent and implementation.
 ---
 
 # Spec-Driven Development

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-07-22
+
+### Added
+- Restored `go-essential` skill: language-specific operating doctrine for robust, high-performance, idiomatic Go. Ships as a core `SKILL.md` synthesizing the JetBrains 10x Commandments and goperf.dev, plus four deep-dive references under `skills/go-essential/references/` (concurrency, error-handling, networking, performance) loaded lazily via progressive disclosure.
+- `agents/conductor.md`: "Outer-loop contract (loop engineering)" paragraph under the ACT phase  --  every task must satisfy the five loop-engineering requirements (goal-to-file, non-keystroke trigger, fresh context per iteration, unbypassable verification, defined stop condition).
+- `AGENTS.md` §7: context engineering sharpened ("a line is signal only if the agent cannot discover it itself") and memory engineering expanded to three layers (episodic: handoff/retro; semantic: AGENTS.md/decision-log; procedural: skills/) each with a generate/store/retrieve/update/forget lifecycle.
+- `skills/harness-engineering/SKILL.md`: two new citations (Tessl Patterns agentic-development-workflow; ETH Zurich "How to Build Your AGENTS.md" study quantifying the AGENTS.md budget penalty).
+
+### Changed
+- All six language-agnostic skill descriptions (`commit-message`, `effective-code-craft`, `harness-engineering`, `performance-patterns`, `repo-documentation`, `spec-driven-development`) rewritten as single-line, trigger-focused strings per the Agent Skills description-optimization guidance.
+- `skills/repo-documentation/`: template files (`system.md`, `flow.md`, `adr.md`) moved into a sibling `references/` tree for progressive-disclosure consistency; cross-links inside `SKILL.md` updated to `./references/<name>.md`.
+- All plugin manifests (legacy/OpenCode/Kilo, Claude Code, Cursor, Gemini) bumped to `2.1.0` and now register `go-essential`; catalog copy updated from "six" to "seven on-demand skills".
+
 ## [2.0.0] - 2026-07-22
 
 ### Added
@@ -188,3 +201,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.7.0]: https://github.com/bouroo/agents/releases/tag/v1.7.0
 [1.7.1]: https://github.com/bouroo/agents/releases/tag/v1.7.1
 [2.0.0]: https://github.com/bouroo/agents/releases/tag/v2.0.0
+[2.1.0]: https://github.com/bouroo/agents/releases/tag/v2.1.0

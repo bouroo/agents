@@ -1,9 +1,6 @@
 ---
 name: effective-code-craft
-description: >
-  Apply language-agnostic software craftsmanship principles and artifact gates (INTENT, TWINS, AUTH, PENDING)
-  integrated into the THINK→ACT→PROVE→GROW loop. Use when writing, reviewing, or refactoring code for clarity,
-  safety, testability, or efficiency. Grounded in the JetBrains 10x rules and Google style guide.
+description: Apply language-agnostic software craftsmanship principles and artifact gates (INTENT, TWINS, AUTH, PENDING) integrated into the THINK→ACT→PROVE→GROW loop. Use when writing, reviewing, or refactoring code for clarity, safety, testability, readability, or efficiency.
 ---
 
 # Effective Code Craft

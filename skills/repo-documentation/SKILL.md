@@ -1,10 +1,6 @@
 ---
 name: repo-documentation
-description: >
-  Repo-local documentation system for humans and agents: a docs/ tree of systems, flows, architecture/ADRs, and a
-  glossary, kept in sync with code across the THINK→ACT→PROVE→GROW loop. Use when the repo maintains a docs/
-  tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change.
-  Grounded in the repo-local documentation system (lukewilson2002).
+description: Repo-local documentation system for humans and agents: a docs/ tree of systems, flows, architecture/ADRs, and a glossary. Use when the repo maintains a docs/ tree and a behavior, interface, invariant, or domain-term change occurs that requires updating project documentation.
 ---
 
 # Repo-Local Documentation
@@ -176,9 +172,9 @@ Run the working repo's doc/link checks and validators (e.g. Markdown linters, li
 
 This skill ships three sibling templates that you can copy into the working repo's `docs/templates/`:
 
-- [system.md](./system.md) -- for `docs/systems/`.
-- [flow.md](./flow.md) -- for `docs/flows/`.
-- [adr.md](./adr.md) -- for `docs/architecture/decisions/`.
+- [system.md](./references/system.md) -- for `docs/systems/`.
+- [flow.md](./references/flow.md) -- for `docs/flows/`.
+- [adr.md](./references/adr.md) -- for `docs/architecture/decisions/`.
 
 ---
 
