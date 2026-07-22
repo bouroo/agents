@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-07-22
+
+### Added
+- New code-craft discipline: source comments document the code, not the agent's process. Comments MUST NOT cite internal harness artifacts  -  plan/task IDs (`U1`, `T16`), decision IDs (`D5`, `D8`), spec line numbers (`spec §3`), handoff paths (`.agents/handoff/...`), or tracking tokens (`PENDING;`)  -  and must follow the project's idiomatic doc style (godoc, JSDoc, rustdoc, PyDoc, Doxygen). Propagated to the `coder` agent hard rules, the `review-phase` command readability lens, and the `effective-code-craft` skill clarity norm + smell-table row. A reader of the source must never need to know the agent's planning vocabulary to understand the code.
+
 ## [2.2.0] - 2026-07-22
 
 ### Changed
@@ -210,4 +215,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.7.1]: https://github.com/bouroo/agents/releases/tag/v1.7.1
 [2.0.0]: https://github.com/bouroo/agents/releases/tag/v2.0.0
 [2.1.0]: https://github.com/bouroo/agents/releases/tag/v2.1.0
+[2.3.0]: https://github.com/bouroo/agents/releases/tag/v2.3.0
 [2.2.0]: https://github.com/bouroo/agents/releases/tag/v2.2.0
