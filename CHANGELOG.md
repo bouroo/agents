@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-07-22
+
+### Changed
+- Migrated `plan` mode (the Architect role: unit-graph decomposition, `done_cmd`, `INTENT:` gate, `canvas.md`/`state.json` ledger) from `agents/discover.md` into `agents/conductor.md`. Conductor now owns planning directly and writes planning artifacts under `.agents/plans/{slug}/`; the four `discover (plan)` delegation references in conductor.md are repointed to conductor ownership with `discover (explore)` available for deeper surface reading. `discover` now owns only explore / lookup / review. `README.md` agent table updated to match.
+- `README.md` model-name examples simplified (dropped `-5`/`-4-5` version suffixes from claude-sonnet/haiku/opus examples) and References section reorganized: "Lost in the Middle" moved under a new Methodology subsection; Harness engineering canon expanded to 11 citations (adds Learn Harness Engineering lecture series, OpenAI Harness Engineering, Anthropic Effective Harnesses + Harness Design, OpenAI Codex agent loop, Anthropic Demystifying evals, LangChain, Cursor, Replit).
+- `agents/conductor.md` absorbs Plan Mode (Architect role: unit-graph decomposition, `done_cmd`, `INTENT:` gate, `canvas.md`/`state.json` ledger); `agents/discover.md` narrows to explore / lookup / review (Architect role, Plan Mode section, and `plan` alias removed).
+- All plugin manifests (legacy/OpenCode/Kilo, Claude Code, Cursor, Gemini) bumped to `2.2.0`.
+
 ## [2.1.0] - 2026-07-22
 
 ### Added
@@ -202,3 +210,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.7.1]: https://github.com/bouroo/agents/releases/tag/v1.7.1
 [2.0.0]: https://github.com/bouroo/agents/releases/tag/v2.0.0
 [2.1.0]: https://github.com/bouroo/agents/releases/tag/v2.1.0
+[2.2.0]: https://github.com/bouroo/agents/releases/tag/v2.2.0
