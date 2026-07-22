@@ -70,6 +70,7 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 - Names match scope; casing and acronym uniformity follow project convention.
 - Functions short and single-purpose; happy path at minimal indent, errors handled first with early returns.
 - Public APIs have doc comments; comments explain *why*, not *what*. Full norms: effective-code-craft "Clarity".
+- Comments document the code, not the agent's process. Flag any source comment that cites internal harness references -- plan/task IDs (`U1`, `T16`), decision IDs (`D5`, `D8`), spec line numbers (`spec §3`), handoff paths (`.agents/handoff/...`), or tracking tokens (`PENDING;`). These belong in `.agents/` artifacts, not source. If the underlying point is a durable constraint, the comment should state the constraint standalone.
 
 ### Structure and Coupling
 
