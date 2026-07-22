@@ -1,6 +1,6 @@
 ---
 name: repo-documentation
-description: Repo-local documentation system for humans and agents: a docs/ tree of systems, flows, architecture/ADRs, and a glossary. Use when the repo maintains a docs/ tree and a behavior, interface, invariant, or domain-term change occurs that requires updating project documentation.
+description: "Repo-local documentation system for humans and agents: a docs/ tree of systems, flows, architecture/ADRs, and a glossary. Use when the repo maintains a docs/ tree and a behavior, interface, invariant, or domain-term change occurs that requires updating project documentation."
 ---
 
 # Repo-Local Documentation
