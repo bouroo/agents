@@ -2,7 +2,7 @@
   "$schema": "https://cursor.com/schemas/cursor-plugin/plugin.json",
   "name": "coder-agents",
   "displayName": "Coder Agents",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Language-agnostic coding-agent skills and a primary conductor orchestrator. Ships a router AGENTS.md encoding repo-as-record doctrine, seven on-demand skills (commit-message, effective-code-craft, go-essential, harness-engineering, performance-patterns, repo-documentation, spec-driven-development), and a think/act/prove/grow conductor agent. Targets deterministic, executable-completion workflows over speculative AI assistance.",
   "author": {
     "name": "bouroo"
