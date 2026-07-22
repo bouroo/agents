@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-07-22
+
+### Fixed
+- Two skills (`harness-engineering`, `repo-documentation`) failed to load with "Invalid YAML frontmatter": their `description:` value was an unquoted plain scalar containing a colon-space (`: `), which strict YAML scanners reject (ScannerError) while the repo's lenient frontmatter parser silently accepted it. Both descriptions are now wrapped in double quotes (no inner quotes, so no escaping needed). The other five skills parsed fine and are unchanged.
+
+### Added
+- New prevention gate `G14_frontmatter_colon_safe` in `scripts/checks.py`: scans frontmatter across `skills/`, `commands/`, and `agents/` and FAILs on any top-level scalar value that is unquoted and contains a colon followed by whitespace (the exact class that broke the two skills). Quoted values, block scalars (`>`/`|`), and nested mapping lines are exempt. Stdlib-only (no new dependency). Gate count rises 13 -> 14; docstring, help epilog, and argparse description updated.
+
 ## [2.3.0] - 2026-07-22
 
 ### Added
@@ -215,5 +223,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.7.1]: https://github.com/bouroo/agents/releases/tag/v1.7.1
 [2.0.0]: https://github.com/bouroo/agents/releases/tag/v2.0.0
 [2.1.0]: https://github.com/bouroo/agents/releases/tag/v2.1.0
+[2.3.1]: https://github.com/bouroo/agents/releases/tag/v2.3.1
 [2.3.0]: https://github.com/bouroo/agents/releases/tag/v2.3.0
 [2.2.0]: https://github.com/bouroo/agents/releases/tag/v2.2.0
