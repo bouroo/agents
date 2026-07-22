@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """scripts/checks.py - Repo validator for the agents config.
 
-Nine deterministic gates; exits non-zero on any failure.
+Thirteen deterministic gates; exits non-zero on any failure.
 
 Gates that depend on optional files (plugin.json, marketplace.json, eval/,
 and new skills not yet on disk) WARN (not FAIL) when those files are absent,

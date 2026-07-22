@@ -148,11 +148,11 @@ Orchestrators that think, dispatch, and verify  --  they never edit code themsel
 
 | Agent | Mode | Purpose |
 |----------------|---------|------------------------------------------------------------------------------------------|
-| `conductor` | primary | Self-organizing orchestrator. Decomposes tasks, delegates to subagents, validates outcomes, and steers its own harness. Decisive: chooses the industry-standard option, records the assumption, and proceeds. Never executes work directly. |
+| `conductor` | primary | Self-organizing orchestrator. Owns Plan Mode (unit-graph decomposition, `done_cmd`, `INTENT:` gate, writes `canvas.md`/`state.json` under `.agents/`), delegates to subagents, validates outcomes, and steers its own harness. Decisive: chooses the industry-standard option, records the assumption, and proceeds. Never executes work directly. |
 | `coder` | subagent | Mutating specialist. Implements source changes, fixes narrow bugs with a repro, runs L1/L2/L3 verification and the mutation probe, and delivers adversarial VERIFIED / CAVEATS / REFUTED judgments. Owns its own permissive `edit`/`bash` permission block. |
-| `discover` | subagent | Read-only specialist. Consolidates Architect / Explorer / Scout / Reviewer into plan, explore, lookup, and review modes. Never edits source or runs the toolchain; writes only under `.agents/**`. Issues the fixed seven-grade review rubric. |
+| `discover` | subagent | Read-only specialist. Consolidates Explorer / Scout / Reviewer into explore, lookup, and review modes. Never edits source or runs the toolchain; writes only under `.agents/**`. Issues the fixed seven-grade review rubric. |
 
-The conductor is non-coding: it thinks, dispatches, verifies, and steers through the two named subagents (`coder` for mutation and toolchain, `discover` for planning, exploration, external lookup, and read-only review). It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
+The conductor is non-coding: it plans, dispatches, verifies, and steers through the two named subagents (`coder` for mutation and toolchain, `discover` for exploration, external lookup, and read-only review). It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
 
 ### Commands
 
@@ -303,40 +303,40 @@ Model names are examples; substitute your provider/model IDs.
 ```json
 {
   ...
-  "model": "anthropic/claude-sonnet-5",
-  "small_model": "anthropic/claude-haiku-4",
-  "subagent_model": "anthropic/claude-sonnet-5",
+  "model": "anthropic/claude-sonnet",
+  "small_model": "anthropic/claude-haiku",
+  "subagent_model": "anthropic/claude-sonnet",
   "default_agent": "conductor",
   "agent": {
     "conductor": {
-      "model": "anthropic/claude-opus-5"
+      "model": "anthropic/claude-opus"
     },
     "orchestrator": {
-      "model": "anthropic/claude-opus-5"
+      "model": "anthropic/claude-opus"
     },
     "plan": {
-      "model": "anthropic/claude-opus-5"
+      "model": "anthropic/claude-opus"
     },
     "debug": {
-      "model": "anthropic/claude-sonnet-5"
+      "model": "anthropic/claude-sonnet"
     },
     "code": {
-      "model": "anthropic/claude-sonnet-5"
+      "model": "anthropic/claude-sonnet"
     },
     "ask": {
-      "model": "anthropic/claude-haiku-5"
+      "model": "anthropic/claude-haiku"
     },
     "explore": {
-      "model": "anthropic/claude-haiku-5"
+      "model": "anthropic/claude-haiku"
     },
     "compaction": {
-      "model": "anthropic/claude-haiku-5"
+      "model": "anthropic/claude-haiku"
     },
     "coder": {
-      "model": "anthropic/claude-sonnet-5"
+      "model": "anthropic/claude-sonnet"
     },
     "discover": {
-      "model": "anthropic/claude-haiku-5"
+      "model": "anthropic/claude-haiku"
     }
   },
   ...
@@ -345,32 +345,38 @@ Model names are examples; substitute your provider/model IDs.
 
 ## References
 
+### Methodology
 - [Structured Prompt-Driven Development (SPDD)  --  Martin Fowler](https://martinfowler.com/articles/structured-prompt-driven/)  --  REASONS Canvas, prompt-code bidirectional sync, phased-review rationale
 - [GitHub Spec-Kit  --  Spec-driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md)  --  Spec-as-truth, executable specs, constitutional gates
-- [Harness Engineering  --  Martin Fowler](https://martinfowler.com/articles/harness-engineering.html)  --  Guides vs sensors; computational vs inferential controls; shift quality left
-- [Maintaining Code Quality at Agent Speed  --  Salesforce](https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/)  --  Gates over prompts, grade-the-tests, mutation testing, lifecycle engineering
-- [How to Build Reliable AI Agents  --  Salesforce](https://engineering.salesforce.com/how-to-build-reliable-ai-agents-5-engineering-patterns-from-a-production-system/)  --  Separate reasoning from computation, explanations≠evidence, improve the harness
-- [10x Commandments of Highly Effective Go  --  JetBrains](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/)  --  Code quality and readability principles
-- [Go Performance Patterns  --  goperf.dev](https://goperf.dev/01-common-patterns/)  --  Memory, concurrency, I/O, compiler optimization patterns
-- [Kilo Docs  --  Customize](https://kilo.ai/docs/customize/)  --  Config at `~/.config/kilo/AGENTS.md`, agents dir `agent/`
-- [OpenCode Docs](https://opencode.ai/docs/)  --  Config at `~/.config/opencode/AGENTS.md`, agents dir `agents/`
-- [Harness Engineering  --  OpenAI](https://openai.com/index/harness-engineering/)  --  Repo as operational record; harness-driven agent reliability
+- [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172)  --  Why instructions must be split, not bloated
+
+### Harness engineering canon
+- [Learn Harness Engineering (12 lectures)](https://walkinglabs.github.io/learn-harness-engineering/en/)  --  Synthesized canon these configs are grounded in
+- [Harness Engineering  --  Martin Fowler](https://martinfowler.com/articles/harness-engineering.html)  --  Guides vs sensors; computational vs inferential controls
+- [Harness Engineering  --  OpenAI](https://openai.com/index/harness-engineering/)  --  Repo as operational record; harness-driven reliability
 - [Effective Harnesses for Long-Running Agents  --  Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)  --  Small next steps, handoff files, context anxiety
 - [Harness Design for Long-Running Application Development  --  Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps)  --  Worker/checker separation, premature-victory prevention
-- [Learn Harness Engineering (12 lectures)](https://walkinglabs.github.io/learn-harness-engineering/en/)  --  Synthesized canon these configs are grounded in
-- [Unrolling the Codex agent loop  --  OpenAI](https://openai.com/index/unrolling-the-codex-agent-loop/)  --  Agent loop structure and harness intervention points
-- [Demystifying evals for AI agents  --  Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)  --  Evaluator rubrics and agent self-judgment calibration
-- [Improving Deep Agents with harness engineering  --  LangChain](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)  --  Applying guides/sensors and lifecycle controls to deep agents
-- [Continually improving our agent harness  --  Cursor](https://cursor.com/blog/continually-improving-agent-harness)  --  Iterate the harness as models improve; simplification over accretion
-- [Decision-Time Guidance: Keeping Replit Agent Reliable  --  Replit](https://blog.replit.com/decision-time-guidance)  --  Situational guidance at the decision point, not prompt-stuffing
-- [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172)  --  Why instructions must be split, not bloated
-- [Kilo Docs  --  Prompt Engineering](https://kilo.ai/docs/customize/prompt-engineering)  --  Think-then-do loop; clarity, context, output format
-- [Kilo Docs  --  Context Condensing](https://kilo.ai/docs/customize/context/context-condensing)  --  AGENTS.md as router; compaction discipline
-- [Kilo Docs  --  Codebase Indexing](https://kilo.ai/docs/customize/context/codebase-indexing)  --  Semantic index for unfamiliar surfaces
-- [Agent Skills Specification](https://agentskills.io/specification)  --  the open SKILL.md format this repo conforms to (frontmatter, progressive disclosure, `references/` and `scripts/` conventions).
-- [Agent Skills  --  Best practices for skill creators](https://agentskills.io/skill-creation/best-practices)  --  real expertise over generic advice; progressive disclosure via "load when X" hints; bundled scripts with helpful errors.
-- [Agent Skills  --  Optimizing skill descriptions](https://agentskills.io/skill-creation/optimizing-descriptions)  --  train/validation split for triggering accuracy on the `description` field.
-- [skills.sh](https://skills.sh)  --  the open agent skills leaderboard and `npx skills` CLI that powers `npx skills add bouroo/agents`.
-- [Claude Code Plugin Marketplace](https://code.claude.com/docs/en/plugin-marketplaces)  --  the `.claude-plugin/plugin.json` + `marketplace.json` format the `skills` CLI and Claude Code honor.
-- [Cursor Plugin Specification](https://github.com/cursor/plugins)  --  the `.cursor-plugin/plugin.json` + `marketplace.json` schema this repo conforms to.
-- [Gemini CLI Extensions -- Reference](https://geminicli.com/docs/extensions/reference/)  --  the `gemini-extension.json` manifest format and the `gemini extensions install` command.
+- [Unrolling the Codex agent loop  --  OpenAI](https://openai.com/index/unrolling-the-codex-agent-loop/)  --  Agent loop structure and intervention points
+- [Demystifying evals for AI agents  --  Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)  --  Evaluator rubrics and self-judgment calibration
+- [Improving Deep Agents with harness engineering  --  LangChain](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)  --  Guides/sensors and lifecycle controls for deep agents
+- [Continually improving our agent harness  --  Cursor](https://cursor.com/blog/continually-improving-agent-harness)  --  Iterate the harness as models improve; simplify over accrete
+- [Decision-Time Guidance: Keeping Replit Agent Reliable  --  Replit](https://blog.replit.com/decision-time-guidance)  --  Situational guidance at the decision point
+- [Maintaining Code Quality at Agent Speed  --  Salesforce](https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/)  --  Gates over prompts, grade-the-tests, mutation testing
+- [How to Build Reliable AI Agents  --  Salesforce](https://engineering.salesforce.com/how-to-build-reliable-ai-agents-5-engineering-patterns-from-a-production-system/)  --  Separate reasoning from computation; explanations≠evidence
+
+### Language & performance
+- [10x Commandments of Highly Effective Go  --  JetBrains](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/)  --  Code quality and readability principles
+- [Go Performance Patterns  --  goperf.dev](https://goperf.dev/01-common-patterns/)  --  Memory, concurrency, I/O, compiler optimization patterns
+
+### Tool documentation
+- [Kilo Docs](https://kilo.ai/docs/customize/)  --  [Customize](https://kilo.ai/docs/customize/), [Prompt Engineering](https://kilo.ai/docs/customize/prompt-engineering), [Context Condensing](https://kilo.ai/docs/customize/context/context-condensing), [Codebase Indexing](https://kilo.ai/docs/customize/context/codebase-indexing)
+- [OpenCode Docs](https://opencode.ai/docs/)  --  Config at `~/.config/opencode/AGENTS.md`, agents dir `agents/`
+
+### Agent Skills ecosystem
+- [Agent Skills Specification](https://agentskills.io/specification)  --  The open `SKILL.md` format this repo conforms to
+- [Agent Skills  --  Best practices for skill creators](https://agentskills.io/skill-creation/best-practices)  --  Progressive disclosure via "load when X" hints
+- [Agent Skills  --  Optimizing skill descriptions](https://agentskills.io/skill-creation/optimizing-descriptions)  --  Train/validation split for triggering accuracy
+- [skills.sh](https://skills.sh)  --  Open skills leaderboard and `npx skills` CLI powering `npx skills add bouroo/agents`
+- [Claude Code Plugin Marketplace](https://code.claude.com/docs/en/plugin-marketplaces)  --  `.claude-plugin/plugin.json` + `marketplace.json` format
+- [Cursor Plugin Specification](https://github.com/cursor/plugins)  --  `.cursor-plugin/plugin.json` + `marketplace.json` schema
+- [Gemini CLI Extensions  --  Reference](https://geminicli.com/docs/extensions/reference/)  --  `gemini-extension.json` manifest format
