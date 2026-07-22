@@ -1,10 +1,6 @@
 ---
 name: harness-engineering
-description: >
-  Harness-engineering norms across the THINK→ACT→PROVE→GROW loop: repo-as-record, split instructions,
-  WIP=1, three-layer termination (L1/L2/L3), mutation testing, adversarial judging, error budgets,
-  and the self-improving harness (GROW phase). Grounded in the OpenAI/Anthropic harness canon, Martin Fowler's
-  harness-engineering model, and Salesforce agentic reliability patterns.
+description: Harness-engineering norms across the THINK→ACT→PROVE→GROW loop: repo-as-record, split instructions, WIP=1, three-layer termination (L1/L2/L3), mutation testing, adversarial judging, and error budgets. Use when configuring agent controls, verifying work constraints, or establishing reliability patterns.
 ---
 
 # Harness Engineering -- Agent-Loadable Norms
@@ -233,3 +229,5 @@ Before declaring a unit complete, verify every gate:
 - Martin Fowler: Harness Engineering for Coding Agent Users -- https://martinfowler.com/articles/harness-engineering.html
 - Salesforce: Maintaining Code Quality at Agent Speed -- https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/
 - Learn Harness Engineering (12 lectures) -- https://walkinglabs.github.io/learn-harness-engineering/en/
+- Tessl Patterns: Agentic Development Workflow -- https://tessl.io/patterns/themes/agentic-development-workflow/ (loop, memory, context, evals patterns this skill operationalizes)
+- ETH Zurich: How to Build Your AGENTS.md -- https://tessl.io/patterns/agentic-development-workflow/context-engineering/ (auto-generated/redundant AGENTS.md raised inference cost 20-23% for worse results; justifies the AGENTS.md budget gate -- keep it a router of non-discoverable specifics only)

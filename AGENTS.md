@@ -78,8 +78,8 @@ Executable evidence (command + exit code + actual output) for every done claim. 
 
 **The repository is the system of record -- not conversation memory.** Restart work from files, never recollection.
 
-- **Context engineering:** smallest high-signal token window; lazy loading and progressive disclosure over inlined bodies.
-- **Memory engineering:** decisions → decision log; progress → state.json; next action → latest turn.
+- **Context engineering:** smallest high-signal token window; lazy loading and progressive disclosure over inlined bodies. A line is signal only if the agent cannot discover it itself (command, constraint, tooling, invariant) -- redundant context costs tokens for worse results.
+- **Memory engineering:** three layers, each with a generate/store/retrieve/update/forget lifecycle -- **episodic** (what happened: handoff summaries, `retro.md`), **semantic** (facts and conventions: `AGENTS.md`, `decision-log.md`), **procedural** (skills and routines: `skills/`). State lives on disk; the conversation window is a cache that resets, not a memory.
 - **WIP = 1.** Finish and verify one unit before starting the next.
 - **Clean exit.** Startup+verification pass; speculative edits reverted; next action stated.
 

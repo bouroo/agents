@@ -126,6 +126,7 @@ Then restart your coding tool so it picks up the new config.
 ├── skills/                  # On-demand skill modules (load via the skill tool)
 │   ├── commit-message/
 │   ├── effective-code-craft/
+│   ├── go-essential/
 │   ├── harness-engineering/
 │   ├── performance-patterns/
 │   ├── repo-documentation/
@@ -172,6 +173,7 @@ Focused modules the agent loads on demand when a task matches. Each ships a ters
 | Skill | Trigger |
 |-----------------------------|------------------------------------------------------------------------------------------|
 | `effective-code-craft` | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
+| `go-essential` | Writing, refactoring, or reviewing Go (Golang) code: error handling, naming, concurrency, context, testing, performance  |
 | `harness-engineering` | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
 | `performance-patterns` | Optimizing for speed, throughput, latency, or memory after correctness is proven |
 | `repo-documentation` | Repo keeps a `docs/` tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change |

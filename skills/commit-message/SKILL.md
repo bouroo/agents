@@ -1,6 +1,6 @@
 ---
 name: commit-message
-description: Generate a conventional commit message based on staged changes in the PROVE and GROW phases.
+description: Generate a conventional commit message based on staged changes in the PROVE and GROW phases. Use this skill when asked to write a commit message, generate a commit, or summarize staged git changes.
 ---
 
 # Commit Message Generator
