@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """scripts/checks.py - Repo validator for the agents config.
 
-Thirteen deterministic gates; exits non-zero on any failure.
+Fourteen deterministic gates; exits non-zero on any failure.
 
 Gates that depend on optional files (plugin.json, marketplace.json, eval/,
 and new skills not yet on disk) WARN (not FAIL) when those files are absent,
@@ -842,6 +842,111 @@ def g13_plugin_symlinks() -> GateResult:
     return ok, msgs
 
 
+def g14_frontmatter_colon_safe() -> GateResult:
+    """G14: top-level frontmatter scalar values must not contain ': ' unquoted.
+
+    A plain (unquoted) YAML scalar that contains a colon followed by whitespace
+    is a hard error for strict YAML parsers (pyyaml, the runtime). The lenient
+    `_parse_block` parser accepted these as strings, so earlier gates passed
+    while the value would crash a real loader. This gate fails on the exact
+    class that shipped in v2.3.0 (unquoted `description:` values containing
+    `: `) so it can never land again. Quoted values, block scalars (`>`/`|`),
+    and nested mapping lines are exempt by design.
+    """
+    msgs: List[Msg] = []
+    ok = True
+    fm_top_re = re.compile(r"^([A-Za-z0-9_-]+):(.*)$")
+    colon_ws_re = re.compile(r":\s")
+
+    def _scan_dir(dir_path: str, label: str, file_predicate) -> None:
+        nonlocal ok
+        if not os.path.isdir(dir_path):
+            _add(msgs, "WARN", f"{label} absent; skipped")
+            return
+        dir_ok = True
+        for root, _dirs, files in os.walk(dir_path):
+            for fname in sorted(files):
+                fpath = os.path.join(root, fname)
+                if not file_predicate(fpath):
+                    continue
+                try:
+                    with open(fpath, encoding="utf-8") as f:
+                        text = f.read()
+                except (OSError, UnicodeDecodeError) as e:
+                    _add(msgs, "FAIL", f"{fpath}: read error: {e}")
+                    ok = False
+                    dir_ok = False
+                    continue
+                if not text.startswith("---\n"):
+                    continue
+                lines = text.split("\n")
+                if len(lines) < 3 or lines[0] != "---":
+                    continue
+                # Find the closing `---` line (at indent 0).
+                end = None
+                for idx in range(1, len(lines)):
+                    if lines[idx] == "---":
+                        end = idx
+                        break
+                if end is None:
+                    continue
+                relpath = os.path.relpath(fpath, REPO)
+                for lineno, line in enumerate(lines[1:end], start=2):
+                    if line.startswith((" ", "\t")):
+                        # Nested mapping line; only top-level scalars are in scope.
+                        continue
+                    m = fm_top_re.match(line)
+                    if not m:
+                        continue
+                    key = m.group(1)
+                    rest = m.group(2)
+                    v = rest.strip()
+                    if v == "":
+                        # Nested mapping or empty value; not this gate's concern.
+                        continue
+                    if v.startswith((">", "|")):
+                        # Block scalar; safe.
+                        continue
+                    if len(v) >= 2 and v[0] == v[-1] and v[0] in ('"', "'"):
+                        # Quoted scalar; safe -- may legitimately contain ': '.
+                        continue
+                    if colon_ws_re.search(v) or v.rstrip().endswith(":"):
+                        _add(msgs, "FAIL",
+                             f"{relpath}:{lineno}: unquoted frontmatter value for {key!r} "
+                             f"contains ': ' (colon-space) which strict YAML rejects; "
+                             f"wrap the value in double quotes")
+                        ok = False
+                        dir_ok = False
+        if dir_ok:
+            _add(msgs, "PASS", f"{label}: frontmatter colon-safe")
+
+    def _is_skill_md(p: str) -> bool:
+        head, tail = os.path.split(p)
+        if tail != "SKILL.md":
+            return False
+        # skills/<name>/SKILL.md
+        parent = os.path.basename(head)
+        if not parent:
+            return False
+        # Only top-level skill dirs under SKILLS_DIR; skip nested SKILL.md files.
+        return os.path.dirname(head) == SKILLS_DIR
+
+    def _is_command_md(p: str) -> bool:
+        if not p.endswith(".md"):
+            return False
+        return os.path.dirname(p) == COMMANDS_DIR
+
+    def _is_agent_md(p: str) -> bool:
+        if not p.endswith(".md"):
+            return False
+        return os.path.dirname(p) == AGENTS_DIR
+
+    _scan_dir(SKILLS_DIR, "skills/", _is_skill_md)
+    _scan_dir(COMMANDS_DIR, "commands/", _is_command_md)
+    _scan_dir(AGENTS_DIR, "agents/", _is_agent_md)
+    return ok, msgs
+
+
 GATES: List[Tuple[str, Callable[[], GateResult]]] = [
     ("G1_manifests_parse", g1_manifests_parse),
     ("G2_versions_agree", g2_versions_agree),
@@ -856,6 +961,7 @@ GATES: List[Tuple[str, Callable[[], GateResult]]] = [
     ("G11_cursor_plugin_manifests", g11_cursor_plugin_manifests),
     ("G12_gemini_extension_manifest", g12_gemini_extension_manifest),
     ("G13_plugin_symlinks", g13_plugin_symlinks),
+    ("G14_frontmatter_colon_safe", g14_frontmatter_colon_safe),
 ]
 
 
@@ -879,6 +985,8 @@ HELP_EPILOG = """Gates (in order):
   G13_plugin_symlinks       discovery-path manifests (.claude-plugin/*, .cursor-plugin/*,
                             gemini-extension.json, plugin.json, marketplace.json) are symlinks
                             into .agents/plugins/<tool>/ -- the source-of-truth location
+  G14_frontmatter_colon_safe  frontmatter (skills/, commands/, agents/) top-level scalar
+                              values must not contain ': ' unquoted (strict-YAML safe)
 
 Optional-file gates (G1, G2, G7 cross-ref half, G8, G10, G11, G12) WARN (not
 FAIL) when the expected file or directory is absent, so this validator can run
@@ -892,7 +1000,7 @@ gate and report all failures before exiting non-zero.
 def main(argv: List[str]) -> int:
     parser = argparse.ArgumentParser(
         prog="checks.py",
-        description="Repo validator for the agents config (13 deterministic gates).",
+        description="Repo validator for the agents config (14 deterministic gates).",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=HELP_EPILOG,
     )
