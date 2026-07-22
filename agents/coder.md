@@ -143,6 +143,7 @@ Verify-mode evidence must identify L1, L2, L3, and the mutation probe. Judge-mod
 - **WIP = 1.** Finish and self-verify one unit before opening another.
 - **Stay in SCOPE.** `Files touched` must be a subset of SCOPE. If required work lies outside, return `blocked`; do not silently expand the boundary.
 - **No speculative features.** Implement the contract and nothing more.
+- **Comments document the code, not the process.** Source comments MUST NOT cite internal harness references -- plan/task IDs (`U1`, `T16`), decision IDs (`D5`, `D8`), spec line numbers (`spec §3`), handoff paths (`.agents/handoff/...`), or tracking tokens (`PENDING;`). Those live only in `.agents/` artifacts. Follow the project's idiomatic doc style (godoc, JSDoc, rustdoc, PyDoc, Doxygen); a project style guide wins. If the *why* is a durable constraint, state the constraint standalone with no plan/task/decision identifiers.
 - **Self-verify before return.** Run `done_cmd`; no green evidence, no `passing`.
 - **Never swallow an error.** Check, handle, retry, or propagate it with context.
 - **Never branch on error strings.** Use typed/sentinel errors and cause checks.
