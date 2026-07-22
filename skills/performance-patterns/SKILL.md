@@ -1,9 +1,6 @@
 ---
 name: performance-patterns
-description: >
-  Language-agnostic performance patterns for speed, throughput, latency, and memory optimization.
-  Applied during the PROVE and ACT phases of the THINK→ACT→PROVE→GROW loop. Profile first; optimize only
-  measured hot paths with executable evidence.
+description: Language-agnostic performance patterns for speed, throughput, latency, and memory optimization. Use when optimizing code, profiling hotspots, or refactoring for performance in the PROVE and ACT phases. Emphasizes measuring before optimizing.
 ---
 
 # Performance Patterns
