@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-07-23
+
+### Changed
+- Tightened the comment policy across the prompt surface to address user reports that the agent added too many source comments. New default posture: **comments are the exception, not the rule** -- add one only when a clearer name or named helper cannot convey the *why* (a non-obvious constraint, invariant, external contract, or historical gotcha); prefer fixing clarity over annotating it. Propagated to the `coder` agent Hard Rules (new "Concise comments" rule), `AGENTS.md` Hard Constraints (new rule), `effective-code-craft` skill §3 "Code for Reading" (default-no stance, "can a name/helper make this self-evident?" decision test, "never annotate the obvious" bullet) and its smell table (strengthened "comment that restates the code" row + new "over-commenting" row), and `review-phase` readability lens (flag restating/obvious/narrating comments and over-commenting as SHOULD FIX). A reader of the source should see code that explains itself, with prose reserved for what names cannot.
+
 ## [2.3.1] - 2026-07-22
 
 ### Fixed

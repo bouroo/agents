@@ -35,7 +35,7 @@ Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loo
 ## 3. The Loop: THINK → ACT → PROVE → GROW
 
 - **THINK (discover):** Classify ask, define done condition, gather context/evidence, plan testable units.
-- **ACT (coder):** Surgical implementation within SCOPE, one bounded change at a time.
+- **ACT (coder):** Surgical implementation within SCOPE, one bounded change at a time, delegate independent tasks to subagents, maintain versioned checkpoints.
 - **PROVE (coder verify + discover review):** Three-layer verification (L1/L2/L3), mutation testing probe, adversarial judgment.
 - **GROW (self-improving harness):** Catalog failure modes in retro log, build deterministic gates from recurring failures, continuously improve the surrounding harness system.
 
@@ -97,6 +97,7 @@ Executable evidence (command + exit code + actual output) for every done claim. 
 - Never branch on error strings.
 - Never log secrets.
 - Never build speculative features.
+- Never add a comment that restates the code. Comments are the exception, not the default: add one only when a clearer name or helper cannot convey the *why*. Prefer fixing clarity over annotating it.
 - Never declare done without executable evidence at L1, L2, L3.
 - Never optimize without measurement.
 - Never put deterministic logic in the model.
