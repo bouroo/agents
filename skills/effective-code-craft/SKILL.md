@@ -141,7 +141,8 @@ Before sending the report, mechanically check whether this run owed `INTENT:`, `
 - Name length scales with scope: short for locals (`i`, `buf`, `err`), longer at module level. Single-word names first; add words only to disambiguate.
 - Omit type-like words (`users` over `userList`) and context the surrounding API already provides (`count`, not `userCount`, inside `UserCount`).
 - Avoid redundant `get`/`Get` prefixes; start with the noun. Don't repeat module names in exported symbols (`widget.create`, not `widget.createWidget`).
-- Arrange code to explain itself: clear names, short functions, named helpers carry intent so the reader rarely needs prose. Reserve comments for the *why* the code cannot show -- non-obvious rationale, constraints, history.
+- Arrange code to explain itself: clear names, short functions, named helpers carry intent so the reader rarely needs prose. **The default is no comment.** A comment is justified only when the code cannot show the *why* itself -- a non-obvious constraint, invariant, external contract, or historical gotcha. Before adding a comment, ask: *can a clearer name, a named helper, or a local constant make this self-evident?* If yes, fix the code and add no comment. If no, add the minimum prose that conveys the missing *why*.
+- **Never annotate the obvious.** Restating the code (`// loop over users`, `# increment i`), describing what names already say, or narrating your implementation steps is noise that the next reader must skip or maintain. Such comments get stale faster than the code they decorate.
 - When a comment is warranted, keep it terse and follow the project's idiomatic doc style -- godoc, JSDoc, rustdoc, PyDoc, or Doxygen (a project style guide wins): full sentences for exported symbols, beginning with the symbol's name; never restate what the code says.
 - **Comments document the code, not the process.** Source comments MUST NOT reference internal harness artifacts: plan IDs (`U1`, `T16`), decision IDs (`D5`, `D8`), spec line numbers (`spec §3 L319-335`), handoff paths (`.agents/handoff/...`), or tracking tokens (`PENDING;`, `decision D5`). Those belong only in `.agents/` artifacts. A reader of the source must never need to know the agent's planning vocabulary to understand the code. If the *why* is genuinely a durable design constraint, rewrite it as a standalone statement of the constraint (e.g. "the network gateway authenticates this webhook upstream; the handler validates body fields only") -- no plan/task/decision identifiers.
 
@@ -191,7 +192,8 @@ Before sending the report, mechanically check whether this run owed `INTENT:`, `
 | `else` after a terminating `if` (`return`, `break`) | Drop the `else`; keep the happy path unindented |
 | Function with 5+ parameters | Group related parameters into a struct/record/options object |
 | Deeply nested conditionals | Extract named booleans; early-return guards; switch over if-else chains |
-| Comment that restates the code | Delete it; reserve comments for *why* the code cannot show |
+| Comment that restates the code (`// loop over users`, `# increment i`) or narrates an obvious step | Delete it; the default is no comment -- add one only for a *why* the code cannot show |
+| Over-commenting -- every function/branch annotated, or prose where a name would do | Cut the comments; fix clarity with clearer names, named helpers, or local constants first |
 | Comment cites internal harness refs (`D5`, `T16`, `spec §3`, `PENDING;`, `.agents/handoff/...`) | Rewrite as a standalone statement of the durable constraint; plan/task/decision identifiers live only in `.agents/`, never in source |
 | Unexported/private symbol that is actually part of the contract | Make the contract explicit; export the symbol or document it as internal |
 | Returning a live reference to internal state | Return a defensive copy; callers must not mutate your internals |
