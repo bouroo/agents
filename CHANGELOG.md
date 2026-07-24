@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-07-24
+
+### Added
+- New **right-sizing** reference, `skills/harness-engineering/references/right-sizing.md`: a two-axis complexity map (Action Complexity x Context Complexity) and a control dial telling the agent how many verification layers to run and whether mutation testing, adversarial judging, or a GROW retro are warranted. Distilled from O'Reilly Radar, *Stop Overengineering Your Agent Harness* (the Average Answer Trap and the Kirby Effect). Routed from `harness-engineering` SKILL.md, `AGENTS.md`, `coder.md`, `conductor.md`, and `verify-phase`.
+
+### Changed
+- Verification is now **complexity-proportional**, not universal. L1 (static) runs on every source change; L2 (runtime) runs when the change has runtime behavior; L3 (end-to-end) runs when the change crosses a real boundary (`n/a` allowed with a one-line reason). The mutation probe runs only when the unit bears behavior under test, not "at least one per run." Executable evidence is still never optional -- the dial chooses which layers, never the evidence standard. Replaces the prior "skip none" stance in `harness-engineering` §7 + Appendix A, `coder` Verify mode, `AGENTS.md` §6, and `verify-phase`.
+- **Conductor planner/actor split softened.** Delegation remains the default (separating planning from execution is a real reliability gain), but the hard "never mutate source / structural harness failure" stance is replaced by a narrow **trivial-work escape hatch**: for Low/Low units (typo, rename, format-only, one-line fix, no cross-file spread) the conductor may make that one edit and run the single relevant check directly instead of paying a full round-trip, provided it still self-verifies and preserves WIP = 1. The safety floor (installs, full builds, test suite, commits, destructive git, outward side effects) is unchanged and never relaxed. Recognizes the Kirby Effect: the strict split encoded a model-limitation assumption that becomes dead weight as models improve; revisit when a stronger model arrives.
+- **harness-engineering** skill gains a "Right-size, don't overengineer" stance naming the Average Answer Trap and the Kirby Effect, with the O'Reilly article added to References.
+- `AGENTS.md` (also the global `CLAUDE.md`) gains a **scope guard**: it is coding-agent doctrine and should not be auto-applied to non-coding or low-complexity jobs (support, sales, Q&A). Points at the right-sizing map.
+
 ## [2.4.0] - 2026-07-23
 
 ### Changed

@@ -13,7 +13,7 @@
       "name": "coder-agents",
       "source": "./",
       "description": "Seven on-demand skills plus a conductor orchestrator. Targets deterministic, executable-completion workflows over speculative AI assistance. Compatible with Claude Code, Cursor, Codex, OpenCode, Kilo, Gemini, and any Agent Skills-compatible runtime.",
-       "version": "2.4.0",
+       "version": "2.5.0",
       "skills": [
         "./skills/commit-message",
         "./skills/effective-code-craft",

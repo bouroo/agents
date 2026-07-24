@@ -1,11 +1,11 @@
 {
   "name": "coder-agents",
   "owner": "bouroo",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "plugins": [
     {
       "name": "agents",
-      "version": "2.4.0",
+      "version": "2.5.0",
       "source": "https://github.com/bouroo/agents",
       "description": "Language-agnostic coding-agent configuration for OpenCode and Kilo-compatible runtimes. Ships a router AGENTS.md encoding repo-as-record doctrine, seven on-demand skills (commit-message, effective-code-craft, go-essential, harness-engineering, performance-patterns, repo-documentation, spec-driven-development), five slash commands (document-phase, judge-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the think/act/prove/grow loop. Targets deterministic, executable-completion workflows over speculative AI assistance."
     }
