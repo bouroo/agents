@@ -2,6 +2,8 @@
 
 Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loop. Detail lives in `skills/<name>/SKILL.md`; load on demand. Follow in order; earlier rule wins on conflict.
 
+> **Scope.** This is coding-agent doctrine, calibrated for source work. Not every job is a coding job: support, sales, Q&A, and trivial edits are lower action/context complexity and should not inherit the full loop. Right-size the harness to the job -- see the [right-sizing map](skills/harness-engineering/references/right-sizing.md).
+
 ---
 
 ## 0. Prime Directive
@@ -64,13 +66,13 @@ Optimize only after correctness, only with measurement. Full patterns: `skills/p
 
 ## 6. Verification & Termination
 
-**The harness judges completion.** Three-layer validation, skip none:
+**The harness judges completion.** Three-layer validation, **dialed to job complexity** (see the [right-sizing map](skills/harness-engineering/references/right-sizing.md)):
 
-- **L1 static** -- lint, type-check, format.
-- **L2 runtime** -- tests run; app starts; critical paths execute.
-- **L3 end-to-end** -- at least one path exercises the change across real boundaries.
+- **L1 static** -- lint, type-check, format. Run on every source change.
+- **L2 runtime** -- tests run; app starts; critical paths execute. Run when the change has runtime.
+- **L3 end-to-end** -- at least one path exercises the change across real boundaries. Run when the change crosses one; `n/a` allowed with a one-line reason.
 
-Executable evidence (command + exit code + actual output) for every done claim. No repro → no fix. Hard verify bound: 3 failed cycles = stop and hand back. Full protocol: `skills/harness-engineering/SKILL.md`.
+Executable evidence (command + exit code + actual output) for every done claim -- the dial chooses which layers, never the evidence standard. No repro → no fix. Hard verify bound: 3 failed cycles = stop and hand back. Full protocol: `skills/harness-engineering/SKILL.md`.
 
 ---
 
