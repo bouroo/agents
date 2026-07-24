@@ -11,6 +11,8 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 
 **Stance:** You treat "done" as the most common lie an agent tells. Verification is observed evidence, not narrated confidence; a gate that can fail is worth ten reminders that cannot.
 
+**Right-size, don't overengineer.** The controls below exist because real failures once demanded them -- not because every job needs all of them. Two anti-patterns to refuse: the **Average Answer Trap** (treating high-complexity controls as defaults -- a typo does not need L3, a mutation probe, a judge, and a GROW retro) and the **Kirby Effect** (a component that encodes a model-limitation assumption and turns into dead weight as models improve). Dial every control to the job's action and context complexity; add a control only when a failure demands it, and revisit each one when a stronger model arrives. See [Right-sizing the harness](./references/right-sizing.md).
+
 **Modes:**
 
 - **Build mode** -- designing or extending an agent harness. Walk the THINK→ACT→PROVE→GROW lifecycle; emit gates, handoff artifacts, and failure-mode controls. Sequential.
@@ -85,13 +87,13 @@ The agent harness operates in a continuous loop:
 
 ## 7. Three-Layer Termination (PROVE Phase)
 
-**Why:** "Done" is the most common lie an agent tells. Executable evidence (command + exit code + actual output) is required at every layer; skip none.
+**Why:** "Done" is the most common lie an agent tells. Executable evidence (command + exit code + actual output) is required -- but *how many layers* you run is **dialed to job complexity**, not applied wholesale. See [Right-sizing the harness](./references/right-sizing.md).
 
-- **L1 Static:** Lint, type-check, format. Cheap, fast, catches static errors.
-- **L2 Runtime:** Unit/integration tests run; application starts; critical paths execute.
-- **L3 End-to-End:** At least one path exercises the change across real boundaries (subprocess, network, DB, HTTP, FS).
+- **L1 Static:** Lint, type-check, format. Run on every source change.
+- **L2 Runtime:** Unit/integration tests run; application starts; critical paths execute. Run when the change has runtime behavior.
+- **L3 End-to-End:** At least one path exercises the change across real boundaries (subprocess, network, DB, HTTP, FS). Run when the change crosses such a boundary; `n/a` is allowed with a one-line reason.
 
-No repro -> no fix. Reproductions are executable evidence, not narrative summaries.
+The dial chooses which layers; it never lowers the evidence standard -- whatever you run, you capture command + exit code + output. No repro -> no fix. Reproductions are executable evidence, not narrative summaries.
 
 ## 8. Grade the Tests & Mutation Testing (PROVE Phase)
 
@@ -188,14 +190,14 @@ Deliver exactly one verdict: **VERIFIED**, **VERIFIED WITH CAVEATS**, or **REFUT
 
 ## Appendix A: Convergence Checklist
 
-Before declaring a unit complete, verify every gate:
+Before declaring a unit complete, verify every gate. Layers and the mutation probe are **dialed to job complexity** ([right-sizing map](./references/right-sizing.md)): mark a layer `n/a` with a one-line reason when the change cannot reach it, rather than forcing it.
 
 1. **Spec is current** -- spec matches implementation; no un-documented behavior changes.
 2. **Scope is pinned** -- modified files match `task.md` SCOPE exactly.
 3. **L1 static passes** -- linting, type-checking, formatting clean.
-4. **L2 runtime passes** -- tests pass, runtime executes; output captured in report.
-5. **L3 end-to-end passes** -- real boundaries exercised; output captured in report.
-6. **Mutation probe verified** -- at least one probe run and reverted cleanly.
+4. **L2 runtime passes** -- tests pass, runtime executes; output captured in report (or `n/a` with reason).
+5. **L3 end-to-end passes** -- real boundaries exercised; output captured in report (or `n/a` with reason).
+6. **Mutation probe verified (when owed)** -- for units that bear behavior under test, a probe was run and reverted cleanly; trivial/format-only units skip with a one-line note.
 7. **Artifact gates present** -- `INTENT:`, `TWINS:`, `AUTH:`, `PENDING:` written where owed.
 8. **Decision log updated** -- durable choices recorded in `decisions.md`.
 9. **Progress log updated** -- `progress.md` current; next action stated.
@@ -217,6 +219,7 @@ Before declaring a unit complete, verify every gate:
 ## Cross-References
 
 - [Verification theater in depth](./references/verification-theater.md) -- load when §8 (Grade the Tests) or §10 (Adversarial Judge) needs the full mutation testing protocol.
+- [Right-sizing the harness](./references/right-sizing.md) -- two-axis complexity map; load when deciding how many layers to run and whether mutation, judging, or a GROW retro are warranted.
 - [effective-code-craft](../effective-code-craft/SKILL.md) -- code craft commandments, artifact gates (`INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`)
 - [spec-driven-development](../spec-driven-development/SKILL.md) -- specification-first workflow for THINK phase
 
@@ -231,3 +234,4 @@ Before declaring a unit complete, verify every gate:
 - Learn Harness Engineering (12 lectures) -- https://walkinglabs.github.io/learn-harness-engineering/en/
 - Tessl Patterns: Agentic Development Workflow -- https://tessl.io/patterns/themes/agentic-development-workflow/ (loop, memory, context, evals patterns this skill operationalizes)
 - ETH Zurich: How to Build Your AGENTS.md -- https://tessl.io/patterns/agentic-development-workflow/context-engineering/ (auto-generated/redundant AGENTS.md raised inference cost 20-23% for worse results; justifies the AGENTS.md budget gate -- keep it a router of non-discoverable specifics only)
+- O'Reilly Radar: *Stop Overengineering Your Agent Harness* -- https://www.oreilly.com/radar/stop-overengineering-your-agent-harness/ (the Average Answer Trap and the Kirby Effect; right-size controls to action/context complexity -- source for the [right-sizing map](./references/right-sizing.md))

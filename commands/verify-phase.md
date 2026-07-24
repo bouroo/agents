@@ -20,7 +20,7 @@ Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat u
 2. **Lint**  --  run the linter with warnings-as-errors; auto-fix where the toolchain supports it.
 3. **Type-check**  --  run the static type checker with strict settings; no auto-fix, so move directly to review on issues.
 4. **Scan**  --  run secret/SAST/vulnerability scanners; fail on findings above threshold. Never auto-fix security findings  --  review and escalate.
-5. **Test**  --  run the full suite (unit + integration); coverage must meet the spec's Safeguards. A green suite is one signal, not proof  --  for high-trust changes, **grade the tests** with mutation testing (a suite that stays green after mutation is decoration, not coverage). See [harness-engineering](../skills/harness-engineering/SKILL.md) §12.
+5. **Test**  --  run the full suite (unit + integration); coverage must meet the spec's Safeguards. A green suite is one signal, not proof  --  for high-trust changes, **grade the tests** with mutation testing (a suite that stays green after mutation is decoration, not coverage). See [harness-engineering](../skills/harness-engineering/SKILL.md) §8 and the [right-sizing map](../skills/harness-engineering/references/right-sizing.md) for when this full sweep applies vs. a lighter touch.
 
 ## Fix/Review Loop
 

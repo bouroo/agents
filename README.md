@@ -144,15 +144,15 @@ Then restart your coding tool so it picks up the new config.
 
 ### Agents
 
-Orchestrators that think, dispatch, and verify  --  they never edit code themselves.
+Orchestrators that think, dispatch, and verify  --  they delegate code edits by default (a narrow trivial-work escape hatch lets the conductor fix a typo or rename directly).
 
 | Agent | Mode | Purpose |
 |----------------|---------|------------------------------------------------------------------------------------------|
-| `conductor` | primary | Self-organizing orchestrator. Owns Plan Mode (unit-graph decomposition, `done_cmd`, `INTENT:` gate, writes `canvas.md`/`state.json` under `.agents/`), delegates to subagents, validates outcomes, and steers its own harness. Decisive: chooses the industry-standard option, records the assumption, and proceeds. Never executes work directly. |
+| `conductor` | primary | Self-organizing orchestrator. Owns Plan Mode (unit-graph decomposition, `done_cmd`, `INTENT:` gate, writes `canvas.md`/`state.json` under `.agents/`), delegates to subagents, validates outcomes, and steers its own harness. Decisive: chooses the industry-standard option, records the assumption, and proceeds. Delegates execution by default; a narrow trivial-work escape hatch lets it apply a one-line fix (typo, rename) directly when self-verification still holds. |
 | `coder` | subagent | Mutating specialist. Implements source changes, fixes narrow bugs with a repro, runs L1/L2/L3 verification and the mutation probe, and delivers adversarial VERIFIED / CAVEATS / REFUTED judgments. Owns its own permissive `edit`/`bash` permission block. |
 | `discover` | subagent | Read-only specialist. Consolidates Explorer / Scout / Reviewer into explore, lookup, and review modes. Never edits source or runs the toolchain; writes only under `.agents/**`. Issues the fixed seven-grade review rubric. |
 
-The conductor is non-coding: it plans, dispatches, verifies, and steers through the two named subagents (`coder` for mutation and toolchain, `discover` for exploration, external lookup, and read-only review). It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
+The conductor is non-coding by default: it plans, dispatches, verifies, and steers through the two named subagents (`coder` for mutation and toolchain, `discover` for exploration, external lookup, and read-only review). A narrow trivial-work escape hatch lets it apply a one-line fix (typo, rename) directly when self-verification still holds. It shares canonical Convergence Gates and On-Disk State (see [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md) Appendix A & B).
 
 ### Commands
 
@@ -227,14 +227,14 @@ Everything in this repo is plain markdown  --  the symlinks make it look like ea
 The core operational loop is grounded in the Fable Method:
 - **THINK (discover):** Classify the ask, define done conditions, gather context and executable evidence, plan testable units.
 - **ACT (coder):** Surgical implementation within explicit SCOPE bounds, one unit at a time.
-- **PROVE (coder verify + discover review):** Three-layer verification (L1 static, L2 runtime, L3 end-to-end), mutation test probe, and adversarial judgment.
+- **PROVE (coder verify + discover review):** Three-layer verification (L1 static, L2 runtime, L3 end-to-end), mutation test probe, and adversarial judgment  --  **dialed to job complexity** via the [right-sizing map](skills/harness-engineering/references/right-sizing.md) (a typo does not need the full apparatus).
 - **GROW (self-improving harness):** Catalog failure modes in retro logs, build deterministic gates from recurring failures, and continuously improve the surrounding harness system.
 
 ### Harness Engineering
 
-These configs embody the harness-engineering canon, not merely reference it: the repo is the operational record of truth; instructions are split into focused, agent-loadable modules; WIP is one verified task at a time; completion requires executable evidence; every task runs static + runtime + end-to-end verification; and state persists across sessions via explicit clock-in/out checklists.
+These configs embody the harness-engineering canon, not merely reference it: the repo is the operational record of truth; instructions are split into focused, agent-loadable modules; WIP is one verified task at a time; completion requires executable evidence; verification is dialed to the task's complexity  --  right-sized, not universal (see the right-sizing map); and state persists across sessions via explicit clock-in/out checklists.
 
-The `harness-engineering` skill adds the design vocabulary for *building* these controls  --  feedforward **guides** vs feedback **sensors**, **computational** vs **inferential** controls  --  and the disciplines that keep agent output trustworthy: **gates enforce**, **separate reasoning from computation**, **grade the tests** (mutation testing  --  an agent-authored green suite is a signal, not proof), and **engineer the whole lifecycle** (improve the harness, not the prompt; deliberate friction is leverage). Norms + clock-in/out checklist: [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md).
+The `harness-engineering` skill adds the design vocabulary for *building* these controls  --  feedforward **guides** vs feedback **sensors**, **computational** vs **inferential** controls  --  and the disciplines that keep agent output trustworthy: **gates enforce**, **separate reasoning from computation**, **grade the tests** (mutation testing  --  an agent-authored green suite is a signal, not proof), and **engineer the whole lifecycle** (improve the harness, not the prompt; deliberate friction is leverage). It also carries the **right-sizing** discipline  --  dial controls to the job's complexity, and refuse the Average Answer Trap (every control on every task) and the Kirby Effect (controls that encode obsolete model limits). Norms + clock-in/out checklist: [skills/harness-engineering/SKILL.md](skills/harness-engineering/SKILL.md).
 
 ### SPDD Methodology
 

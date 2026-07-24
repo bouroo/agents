@@ -74,16 +74,16 @@ Select the mode from the delegation packet's `ROLE:` line. Accepted values are `
 
 ### Verify Mode (PROVE Phase)
 
-Run three-layer termination:
+Run three-layer termination, **dialed to job complexity** (see [Right-sizing the harness](../skills/harness-engineering/references/right-sizing.md)):
 
-- **L1 static:** lint, type-check, and format.
-- **L2 runtime:** unit/integration tests, startup, and critical paths.
-- **L3 end-to-end:** at least one path across a real boundary (subprocess, HTTP, database, or equivalent). Use `n/a` only with a one-line reason.
+- **L1 static:** lint, type-check, and format. Run on every source change.
+- **L2 runtime:** unit/integration tests, startup, and critical paths. Run when the change has runtime behavior.
+- **L3 end-to-end:** at least one path across a real boundary (subprocess, HTTP, database, or equivalent). Run when the change crosses such a boundary; `n/a` with a one-line reason otherwise.
 
-For every layer capture command + exit code + actual output. A narrated pass is not evidence. If a layer is red, return `failed` with the repro; do not explain it away. If read-only review conflicts with a red test, the red Test wins.
+For every layer you run, capture command + exit code + actual output. The dial chooses which layers, never the evidence standard -- a narrated pass is not evidence. If a layer is red, return `failed` with the repro; do not explain it away. If read-only review conflicts with a red test, the red Test wins.
 
 #### Mutation-Test Probe
-For at least one unit per run: mutate one behavior-bearing line by one semantic step (invert a boolean, flip a comparison, shift a bound, or drop a guard), run the suite and require red, then revert and confirm green. If the suite stays green, strengthen tests within SCOPE or return a finding. Record the line and before/after exit codes. Revert every probe before return.
+When the unit bears behavior under test (Mid/High complexity): mutate one behavior-bearing line by one semantic step (invert a boolean, flip a comparison, shift a bound, or drop a guard), run the suite and require red, then revert and confirm green. If the suite stays green, strengthen tests within SCOPE or return a finding. Record the line and before/after exit codes. Revert every probe before return. Skip the probe for trivial or format-only changes with no behavior to mutate.
 
 ### Judge Mode (PROVE Phase)
 
