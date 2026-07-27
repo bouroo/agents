@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.1] - 2026-07-27
+
+### Fixed
+- Resolves user-reported **`Tool call not found`** errors when this repo's agent config loads into a runtime whose tool names differ from the names the doctrine prescribed. Operating doctrine previously routed work by **host-specific tool names** (`read`, `grep`/`glob`, `semantic_search`, `explore`, `websearch`/`webfetch` -- Kilo/OpenCode-style); when the same `AGENTS.md` loaded into Claude Code, Cursor, Codex, and others, the agent followed the instruction and emitted a call to a tool that did not exist in that host. All such instruction text is now **capability-based** rather than name-based -- "open and read the file", "search by string or filename", "semantic/code search if your host offers it, else a narrow string search", "web search or fetch" -- with a defensive clause: *only call tools that actually exist in your runtime; never invoke a capability by a name borrowed from another tool.* Changed in `AGENTS.md` §2, `harness-engineering` SKILL.md §6 (plus a backticked `read` noun in §1), `conductor` permitted direct actions, the four phase commands' capability refs, and the `README` context-management note. Agent `permission:` frontmatter blocks are intentionally unchanged -- they are host config (consumed by hosts that understand them, silently ignored by those that don't) and never cause the model to emit a tool call.
+
 ## [2.5.0] - 2026-07-24
 
 ### Added
