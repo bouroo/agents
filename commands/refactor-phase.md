@@ -6,7 +6,7 @@ description: Refactor phase (ACT loop)  --  analyze, plan, baseline, execute, an
 
 A language-agnostic refactoring workflow operating within the **ACT** phase of the THINK→ACT→PROVE→GROW loop. Apply engineering norms and performance patterns **after** correctness is proven; measure before and after; keep only what the data supports.
 
-> **Agent:** requires `edit` + `bash`  --  run on the implementing/build agent, not `plan` or `conductor`.
+> **Agent:** requires file-edit + shell access  --  run on the implementing/build agent, not `plan` or `conductor`.
 
 Target area (optional): **$ARGUMENTS**. If empty, ask the user which module/package/path to target before analyzing.
 

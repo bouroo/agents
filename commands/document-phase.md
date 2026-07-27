@@ -6,7 +6,7 @@ description: Document phase  --  bootstrap repo docs or sync an existing docs/ t
 
 Bootstrap or update the repo's `docs/` documentation so it stays in sync with the code as part of the THINK→ACT→PROVE→GROW loop. Docs and code must agree  --  a stale doc is a bug.
 
-> **Agent:** requires `edit` + `bash` (read)  --  run on the implementing/build agent, not `plan` or `conductor`.
+> **Agent:** requires file-edit + shell access (to read the tree)  --  run on the implementing/build agent, not `plan` or `conductor`.
 
 Target area (optional): **$ARGUMENTS**. Interpret as the system, flow, ADR, or glossary area to document (e.g. `auth`, `email-verification flow`, `session-vs-token ADR`). If empty, detect what changed with `git diff`/`git diff --cached` and document the affected system or flow.
 
