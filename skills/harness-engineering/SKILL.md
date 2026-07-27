@@ -38,7 +38,7 @@ The agent harness operates in a continuous loop:
 
 - Treat the repository as the only durable memory. Restart work from files; never from recollection of prior turns.
 - Every assumption that influences a decision lives on disk: commit message, spec, ADR, decision log entry. Invisible decisions are un-auditable.
-- Compaction resilience: critical state is flushed to the repo (`plan.md`, `decisions.md`, evidence, next action) at the end of every turn so post-compaction resume is a `read`, not a guess.
+- Compaction resilience: critical state is flushed to the repo (`plan.md`, `decisions.md`, evidence, next action) at the end of every turn so post-compaction resume is a file read, not a guess.
 - Prefer **decision logs** (`progress.md`, `decisions.md`) and **handoff notes** over embedded prose in instructions.
 
 ## 2. Split Instructions & Minimal Live Context (THINK Phase)
@@ -79,7 +79,7 @@ The agent harness operates in a continuous loop:
 
 **Why:** Reliability depends on selecting the right tool for each sub-task and handling failures cleanly.
 
-- **Specialized over generic:** Use lowest-cost tool that fits: known path -> `read`; known pattern -> `grep`/`glob`; concept -> `semantic_search`; unfamiliar surface -> `explore`; external fact -> `websearch`/`webfetch`.
+- **Specialized over generic (route by capability, not tool name -- names vary by host):** a known path -> open and read the file; a known pattern -> search by string or filename; a concept or unfamiliar surface -> semantic/code search if your host offers it, else a narrow string search; an external fact -> web search or fetch. Pick the lowest-cost capability that fits, mapped to whatever tool your host exposes. Never call a tool by a name from another runtime.
 - **Fail gracefully:** Handle tool/MCP errors explicitly with retries or fallbacks. Never swallow an error.
 - **Actionable feedback:** Error feedback must name the root cause and next action.
 
