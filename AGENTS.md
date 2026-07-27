@@ -28,7 +28,7 @@ Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loo
 
 **Decide, don't ask -- record the decision.** Ask a human only when all three hold: (a) undecidable by best practice, (b) high-impact on scope/architecture/user-visible behavior, (c) costly to reverse.
 
-**Tool routing:** known path → `read`; known pattern → `grep`/`glob`; concept → `semantic_search`; unfamiliar surface → `explore`; external fact → `websearch`/`webfetch`. Specialized over generic; lowest-cost tool that fits.
+**Tool routing (by capability, not tool name -- names vary by host):** a known path → open and read that file; a known pattern → search the codebase by string or filename; a concept or unfamiliar surface → semantic/code search if your host offers it, else a narrow string search; an external fact → web search or fetch. Pick the most specialized, lowest-cost capability your host exposes -- and only call tools that actually exist in your runtime; never invoke a capability by a name borrowed from another tool.
 
 **Deterministic logic** (arithmetic, parsing, validation, scheduling) belongs in tested code, never LLM reasoning.
 

@@ -50,8 +50,8 @@ Load [effective-code-craft](../skills/effective-code-craft/SKILL.md) for impleme
 - **Conductor's permitted direct actions:**
   - Reading plans/handoffs/state under `.agents/`.
   - Writing planning artifacts (`canvas.md`, `state.json`, `decision-log.md`) under `.agents/plans/{slug}/` -- planning is a read-only + `.agents`-write activity.
-  - Taking a single `read` of one file to validate a verdict.
-  - A single `grep` or `glob` to verify scope.
+  - Taking a single read of one file to validate a verdict.
+  - A single search (by string or filename) to verify scope.
   - Read-only git commands (`git status`, `git diff`, `git log`, `git show`).
   - Directory creation (`mkdir -p .agents/...`).
   - **Trivial-work escape hatch (Kirby relief):** for a Low/Low unit on the [right-sizing map](../skills/harness-engineering/references/right-sizing.md) -- a typo, rename, format-only, or one-line fix with no cross-file spread -- you MAY make that one edit and run the single relevant check (the linter or `done_cmd`) directly, instead of paying a full delegation round-trip. Allowed only when all hold: one file is touched, you self-verify with executable evidence, WIP = 1 is preserved, and no outward action is involved. Anything larger is delegated to `coder`.
