@@ -2,8 +2,8 @@
   "$schema": "https://cursor.com/schemas/cursor-plugin/plugin.json",
   "name": "coder-agents",
   "displayName": "Coder Agents",
-  "version": "2.5.1",
-  "description": "Language-agnostic coding-agent skills and a primary conductor orchestrator. Ships a router AGENTS.md encoding repo-as-record doctrine, seven on-demand skills (commit-message, effective-code-craft, go-essential, harness-engineering, performance-patterns, repo-documentation, spec-driven-development), and a think/act/prove/grow conductor agent. Targets deterministic, executable-completion workflows over speculative AI assistance.",
+  "version": "2.6.0",
+  "description": "Language-agnostic coding-agent skills and a primary conductor orchestrator. Ships a router AGENTS.md encoding repo-as-record doctrine, eight on-demand skills (commit-message, effective-code-craft, go-essential, harness-engineering, openapi-spec, performance-patterns, repo-documentation, spec-driven-development), and a think/act/prove/grow conductor agent. Targets deterministic, executable-completion workflows over speculative AI assistance.",
   "author": {
     "name": "bouroo"
   },
@@ -25,6 +25,7 @@
     "skills/effective-code-craft/SKILL.md",
     "skills/go-essential/SKILL.md",
     "skills/harness-engineering/SKILL.md",
+    "skills/openapi-spec/SKILL.md",
     "skills/performance-patterns/SKILL.md",
     "skills/repo-documentation/SKILL.md",
     "skills/spec-driven-development/SKILL.md"
@@ -35,6 +36,7 @@
   "commands": [
     "commands/document-phase.md",
     "commands/judge-phase.md",
+    "commands/openapi-phase.md",
     "commands/refactor-phase.md",
     "commands/review-phase.md",
     "commands/verify-phase.md"
