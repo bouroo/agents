@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-07-30
+
+### Added
+- New **`openapi-spec`** skill and **`openapi-phase`** command: generate or repair an OpenAPI 3.2 contract into the working project's `docs/openapi.yaml` and validate it against the canonical OAS meta-schema. The skill carries verified external facts (OpenAPI 3.2.0 is the latest stable, released 2025-09-19; the immutable meta-schema is `https://spec.openapis.org/oas/3.2/schema/2025-11-23`, a JSON Schema 2020-12 document) and documents the **root-key directive trap**: that meta-schema sets `unevaluatedProperties: false` at the document root and forbids `$schema`/`$ref` there, so the requested two-line header is a *validation directive* -- stripped from the instance before validation, not spec content. Auto-detects **introspect mode** (reads framework route/handler signatures across Express/Fastify/Koa, Flask/Django/FastAPI, Spring, ASP.NET, Go net/http/gin/echo/chi, Rails) vs **interview mode** (greenfield or off-repo API). Ships two copy-in artifacts: `skills/openapi-spec/references/openapi-template.yaml` (an OpenAPI 3.2.0 skeleton with the inline directive header) and `skills/openapi-spec/references/validate-openapi.mjs` (fetches the meta-schema, dereferences its single `$dynamicRef "#meta"` to a local `$ref` because Ajv does not reliably resolve same-document dynamic anchors, strips the directive, and validates with Ajv 2020-12; deps `ajv` + `js-yaml`). The validator was proven against a valid template (exit 0), a deliberately broken spec (exit 1, reporting both the `unevaluatedProperties` violation and the missing `openapi` field), and a directive-less document (exit 2, refuses to run).
+- Registered `openapi-spec` + `openapi-phase` across all plugin manifests (Claude, Cursor, legacy/OpenCode/Kilo, Gemini) and bumped the package version `2.5.1` -> `2.6.0`.
+
+### Fixed
+- The two Claude plugin manifests (`.agents/plugins/claude/plugin.json`, surfaced at the repo root via the `.claude-plugin/plugin.json` symlink) listed only six of seven skills in their `skills` array -- `go-essential` was present in the description text and in every other manifest (Cursor, legacy, Claude marketplace) but absent from this one array. Added `go-essential` (alongside `openapi-spec`) so the array matches its own description and the sibling manifests.
+
 ## [2.5.1] - 2026-07-27
 
 ### Fixed
