@@ -120,6 +120,7 @@ Then restart your coding tool so it picks up the new config.
 ├── commands/                # Slash commands (reusable prompt workflows)
 │   ├── document-phase.md
 │   ├── judge-phase.md
+│   ├── openapi-phase.md
 │   ├── refactor-phase.md
 │   ├── review-phase.md
 │   └── verify-phase.md
@@ -128,6 +129,7 @@ Then restart your coding tool so it picks up the new config.
 │   ├── effective-code-craft/
 │   ├── go-essential/
 │   ├── harness-engineering/
+│   ├── openapi-spec/
 │   ├── performance-patterns/
 │   ├── repo-documentation/
 │   └── spec-driven-development/
@@ -161,6 +163,7 @@ Reusable prompt workflows you trigger with a slash command.
 | Command | Description |
 |--------------------|----------------------------------------------------------------------|
 | `document-phase` | Document phase  --  bootstrap repo docs or sync docs/ with code changes |
+| `openapi-phase` | OpenAPI phase  --  generate or update docs/openapi.yaml (OpenAPI 3.2) from API code or requirements and validate it against the canonical OAS meta-schema |
 | `refactor-phase` | Refactor phase  --  analyze, plan, baseline, execute, verify |
 | `review-phase` | Review phase  --  review code changes for correctness, safety, performance |
 | `verify-phase` | Verify phase  --  format, lint, type-check, scan, test, githook gate |
@@ -175,6 +178,7 @@ Focused modules the agent loads on demand when a task matches. Each ships a ters
 | `effective-code-craft` | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
 | `go-essential` | Writing, refactoring, or reviewing Go (Golang) code: error handling, naming, concurrency, context, testing, performance  |
 | `harness-engineering` | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
+| `openapi-spec` | Generating or repairing an OpenAPI 3.2 contract into docs/openapi.yaml and validating it against the canonical OAS meta-schema |
 | `performance-patterns` | Optimizing for speed, throughput, latency, or memory after correctness is proven |
 | `repo-documentation` | Repo keeps a `docs/` tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change |
 | `spec-driven-development` | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
