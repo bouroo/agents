@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Generated manifests from a single source.** New `scripts/gen-manifests.py` (stdlib-only: `json`/`pathlib`/`argparse`) renders all seven host manifests under `.agents/plugins/<tool>/` from three derivable sources: the on-disk inventory (`skills/*`, `commands/*.md`, and `agents/*.md` filtered to `mode: primary`), a new root `VERSION` file, and embedded per-host templates. The skill/command/agent arrays and the version were previously hand-copied across four manifest files in three formats (bare names, `./skills/<n>`, `skills/<n>/SKILL.md`) and seven version locations; adding or removing one skill meant editing four files by hand. They are now derived and cannot drift. First generation is byte-identical to the checked-in files (proven by `gen-manifests.py --check`). New **`G15_manifests_generated`** gate in `scripts/checks.py` re-runs the generator in `--check` mode and fails if any checked-in manifest diverges, so a hand-edit or stale regeneration cannot silently ship; it pairs with `G7`/`G10`-`G13` (which validate that the generated output is well-formed).
+
+### Changed
+- **Single validator.** `scripts/validate-agents.sh` (a 258-line bash re-implementation of `checks.py` gates G3-G5 frontmatter and G9 line-budget) is now an 11-line shim that `exec`s `scripts/checks.py`. Two validators in two languages could diverge; the documented entrypoint name is preserved while the duplicate logic is removed. CI (`.github/workflows/validate.yml`) now runs `checks.py --all` once instead of both scripts. The gate count is no longer hand-maintained in prose (it had drifted to "9 gates" in CI, "13-gate" in the README, "14"/"Fourteen" in the `checks.py` docstring); `--help` derives it from the `GATES` registry, and it is referenced as such everywhere else.
+
 ## [2.6.0] - 2026-07-30
 
 ### Added

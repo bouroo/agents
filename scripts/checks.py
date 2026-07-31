@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """scripts/checks.py - Repo validator for the agents config.
 
-Fourteen deterministic gates; exits non-zero on any failure.
+Deterministic gates; exits non-zero on any failure. The gate count is
+authoritative only via `--help` (derived from the GATES registry), never
+hand-maintained in prose.
 
 Gates that depend on optional files (plugin.json, marketplace.json, eval/,
 and new skills not yet on disk) WARN (not FAIL) when those files are absent,
@@ -21,6 +23,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from typing import Any, Callable, Dict, Iterable, List, Tuple
 
@@ -947,6 +950,40 @@ def g14_frontmatter_colon_safe() -> GateResult:
     return ok, msgs
 
 
+def g15_manifests_generated() -> GateResult:
+    """Generated-manifest determinism gate.
+
+    The host plugin manifests (.agents/plugins/<tool>/*) are generated from
+    VERSION plus the on-disk inventory by scripts/gen-manifests.py, never
+    hand-edited. This gate re-runs the generator in --check mode and FAILs if
+    any checked-in manifest has drifted from generated output, so a hand-edit
+    or a stale regeneration cannot silently ship. It is the source-of-truth
+    gate; G7 and G10-G13 validate that the generated output is well-formed.
+    """
+    ok, msgs = True, []
+    gen = os.path.join(REPO, "scripts", "gen-manifests.py")
+    if not os.path.isfile(gen):
+        _add(msgs, "FAIL", "scripts/gen-manifests.py missing; cannot verify manifests are generated")
+        return False, msgs
+    try:
+        proc = subprocess.run(
+            [sys.executable, gen, "--check"],
+            capture_output=True, text=True, cwd=REPO,
+        )
+    except OSError as e:
+        _add(msgs, "FAIL", f"gen-manifests.py --check failed to run: {e}")
+        return False, msgs
+    if proc.returncode == 0:
+        lines = (proc.stdout or proc.stderr or "").strip().splitlines()
+        _add(msgs, "PASS", lines[-1] if lines else "all manifests current")
+    else:
+        ok = False
+        detail = (proc.stderr or proc.stdout or "").strip()
+        _add(msgs, "FAIL", "checked-in manifests differ from generated output; regenerate "
+              "with 'python3 scripts/gen-manifests.py'" + (f": {detail}" if detail else ""))
+    return ok, msgs
+
+
 GATES: List[Tuple[str, Callable[[], GateResult]]] = [
     ("G1_manifests_parse", g1_manifests_parse),
     ("G2_versions_agree", g2_versions_agree),
@@ -962,6 +999,7 @@ GATES: List[Tuple[str, Callable[[], GateResult]]] = [
     ("G12_gemini_extension_manifest", g12_gemini_extension_manifest),
     ("G13_plugin_symlinks", g13_plugin_symlinks),
     ("G14_frontmatter_colon_safe", g14_frontmatter_colon_safe),
+    ("G15_manifests_generated", g15_manifests_generated),
 ]
 
 
@@ -987,6 +1025,8 @@ HELP_EPILOG = """Gates (in order):
                             into .agents/plugins/<tool>/ -- the source-of-truth location
   G14_frontmatter_colon_safe  frontmatter (skills/, commands/, agents/) top-level scalar
                               values must not contain ': ' unquoted (strict-YAML safe)
+  G15_manifests_generated     .agents/plugins/<tool>/* match gen-manifests.py output (VERSION +
+                              disk inventory -> generated; no hand-edits silently ship)
 
 Optional-file gates (G1, G2, G7 cross-ref half, G8, G10, G11, G12) WARN (not
 FAIL) when the expected file or directory is absent, so this validator can run
@@ -1000,7 +1040,7 @@ gate and report all failures before exiting non-zero.
 def main(argv: List[str]) -> int:
     parser = argparse.ArgumentParser(
         prog="checks.py",
-        description="Repo validator for the agents config (14 deterministic gates).",
+        description=f"Repo validator for the agents config ({len(GATES)} deterministic gates).",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=HELP_EPILOG,
     )
