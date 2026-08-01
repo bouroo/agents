@@ -20,7 +20,7 @@ Before anything else, load the **`repo-documentation` skill** via the skill tool
 
 ## When to document (and when not to)
 
-Document when behavior is central, risky, frequently changed, hard to infer from a single file, or has security, billing, data-integrity, or user-visible implications. **Do not document every file.** Skip purely local helpers, generated code, or trivial utilities. Prefer one well-written system or flow doc over many shallow ones.
+Apply the skill's *When to Use* criteria -- central, risky, frequently changed, hard to infer, or security/billing/data-integrity/user-visible. **Do not document every file**; prefer one well-written system or flow doc over many shallow ones.
 
 ---
 
@@ -45,12 +45,7 @@ Check whether the target repo already has a `docs/` tree; the answer dictates th
 
 ## 3. Choose Type
 
-Pick exactly one type for the new or updated doc; resist creating new categories. Doc types, granularity rules, and when to promote system → flow live in the `repo-documentation` skill. Brief:
-
-- **System**  --  coherent area of application behavior (module, package, service, feature area).
-- **Flow**  --  behavior that crosses systems, has several steps/states, is frequently changed or debugged, involves external services, or has security/billing/data-integrity/user-visible implications.
-- **ADR**  --  durable technical decision shaping more than one system. Status: `Proposed` until approved, then `Accepted`. Never rewrite an accepted ADR to change the decision; create a new ADR and mark the old one `Superseded` with `superseded_by`.
-- **Glossary**  --  Title Case domain term reused across systems and easy to misunderstand.
+Pick exactly one type for the new or updated doc; resist creating new categories. The four types (system / flow / ADR / glossary), their granularity rules, and when to promote system → flow live in the `repo-documentation` skill -- choose there, not from memory. ADR lifecycle rules (Proposed → Accepted; never rewrite an accepted ADR, supersede it with `superseded_by`) are defined in the skill.
 
 ---
 
@@ -59,13 +54,7 @@ Pick exactly one type for the new or updated doc; resist creating new categories
 - If `docs/templates/` exists, prefer it  --  the repo may have customized the templates. The skill's sibling templates remain the canonical reference.
 - If `docs/templates/` is absent (a pre-existing `docs/` tree never bootstrapped via this command), reference the skill's sibling templates directly without creating a tree in the working repo.
 
-Hard requirements (full wording in the skill):
-
-- **Source map**  --  include a `## Source map` with Markdown relative links to the most important source files (entry points, state definitions, handlers, services, jobs, key tests). Do not list every file unless the system is small.
-- **Related docs**  --  link to other systems, flows, ADRs, and glossary entries via relative Markdown links.
-- **Mark uncertainty**  --  if behavior is hard to infer, write `[NEEDS CLARIFICATION]` or "uncertain  --  verify against code" rather than inventing an explanation. Unsupported guesses are worse than gaps.
-- **ADRs**  --  every ADR begins with YAML frontmatter: `status` (Proposed/Accepted/Superseded/Deprecated/Rejected), `date` (`YYYY-MM-DD`), and `superseded_by` (required only when Superseded). Do not add other frontmatter fields.
-- **Glossary**  --  Title Case headings; use the same Title Case form in finished prose when it improves clarity.
+The skill owns the structural rules -- Source map contents, ADR frontmatter fields, related-docs linking, glossary Title-Case form, and the `[NEEDS CLARIFICATION]` convention. Reference it while drafting; do not re-derive the field lists here.
 
 ---
 
