@@ -134,15 +134,18 @@ Subagents start with a clean turn context. Vague instructions cause subagent fai
 
 ### Delegation Packet Template
 ```
-ROLE:    coder (implement | fix | verify | judge) OR discover (plan | explore | lookup | review)
-GOAL:    <one sentence -- user-visible outcome or question to answer>
-CONTEXT: <3-7 bullets -- key facts, repro details, or prior unit handoffs>
-SPEC:    <authoritative behavior contract or spec reference>
-SCOPE:   <file paths or globs the agent is permitted to touch/inspect>
-DONE:    <single shell command whose exit 0 = pass>
-EVIDENCE:<required output artifacts, test runs, or citations>
-HANDOFF: <path to .agents/handoff/<unit-id>.summary.md>
+ROLE:       coder (implement | fix | verify | judge) OR discover (plan | explore | lookup | review)
+GOAL:       <one sentence -- user-visible outcome or question to answer>
+CONTEXT:    <3-7 bullets -- key facts, repro details, or prior unit handoffs>
+CONSTRAINTS:<non-negotiable engineering rules a cold subagent cannot derive from the repo -- perf budgets, security boundaries, dependency limits, backward-compat. Omit if none.>
+SPEC:       <authoritative behavior contract or spec reference -- what the code must DO>
+SCOPE:      <file paths or globs the agent is permitted to touch/inspect>
+DONE:       <single shell command whose exit 0 = pass>
+EVIDENCE:   <required output artifacts, test runs, or citations>
+HANDOFF:    <path to .agents/handoff/<unit-id>.summary.md>
 ```
+
+`SPEC` is the *behavior contract* (what the code must do); `CONSTRAINTS` are the *rules it must obey while doing it* (budgets, security, dependencies) that a cold subagent cannot infer. Keep it right-sized -- omit the line entirely when nothing applies, so trivial packets stay lean.
 
 ---
 

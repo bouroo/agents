@@ -134,15 +134,16 @@ Then restart your coding tool so it picks up the new config.
 │   ├── repo-documentation/
 │   └── spec-driven-development/
 ├── scripts/
-│   ├── checks.py            # 13-gate repo validator (manifests, frontmatter, dash, symlinks, AGENTS.md budget)
-│   └── validate-agents.sh   # Frontmatter + skill-name pattern gate
+│   ├── checks.py            # Repo validator (deterministic gates; count via `checks.py --help`)
+│   ├── gen-manifests.py     # Generates host manifests from VERSION + disk inventory (single source of truth)
+│   └── validate-agents.sh   # Thin shim that execs checks.py (preserves the documented entrypoint)
 └── .agents/                 # Per-project runtime dir (plans/, handoff/ created on use IN THE TARGET
                              # PROJECT, never in this repo; gitignored here except .agents/plugins/)
     ├── plans/               # Spec drafts, REASONS canvases, plan trackers, retros
     └── handoff/             # Subagent reports and summaries
 ```
 
-> **Manifest layout.** Tool-specific plugin manifests live canonically under `.agents/plugins/<tool>/` and are surfaced at their tool-discovery paths (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`, root `plugin.json`/`marketplace.json`) via symlinks. The `G13_plugin_symlinks` gate in `scripts/checks.py` enforces this contract so a future edit at the discovery path cannot silently fork from the source of truth.
+> **Manifest layout.** Tool-specific plugin manifests live canonically under `.agents/plugins/<tool>/` and are surfaced at their tool-discovery paths (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`, root `plugin.json`/`marketplace.json`) via symlinks. The `G13_plugin_symlinks` gate in `scripts/checks.py` enforces this contract so a future edit at the discovery path cannot silently fork from the source of truth. The manifests themselves are generated from `VERSION` plus the on-disk skill/command/agent inventory by `scripts/gen-manifests.py`; the `G15_manifests_generated` gate fails if any checked-in manifest drifts from generated output, so the inventory and version can never drift across the four host formats.
 
 ### Agents
 
@@ -178,6 +179,7 @@ Focused modules the agent loads on demand when a task matches. Each ships a ters
 | `effective-code-craft` | Writing, reviewing, or refactoring code for clarity, safety, testability, or efficiency  |
 | `go-essential` | Writing, refactoring, or reviewing Go (Golang) code: error handling, naming, concurrency, context, testing, performance  |
 | `harness-engineering` | Designing agent workflows, checkpoints, verification rules, or orchestrator agents; lifecycle controls; preventing overreach, premature victory, or context loss |
+| `memory-engineering` | Persisting cross-session learnings, configuring agent memory, or deciding where memory artifacts live (Instruction vs. Learning separation; the `.agents/memory/` fallback) |
 | `openapi-spec` | Generating or repairing an OpenAPI 3.2 contract into docs/openapi.yaml and validating it against the canonical OAS meta-schema |
 | `performance-patterns` | Optimizing for speed, throughput, latency, or memory after correctness is proven |
 | `repo-documentation` | Repo keeps a `docs/` tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change |
@@ -296,9 +298,9 @@ This repo follows the [opencode](https://opencode.ai/docs/) artifact format so i
 
 ### Context Management
 
-**AGENTS.md is a router, not a dump.** Keep global rules terse; load detail from skills on demand (Kilo: "Keep custom instructions concise and actionable"; OpenCode: lazy-load instructions). **Semantic codebase index.** When the host tool offers semantic/code search (e.g. Kilo "Codebase Indexing"), prefer it over broad string-search fan-out for unfamiliar surfaces -- but route by capability, never by a tool name borrowed from another host. **Context condensing discipline.** Long sessions auto-compact; put the next executable action and current blocker in the latest turn or a tracked file, because the verbatim tail is what survives (Kilo: "Context Condensing"; OpenCode: `compaction` config). **Variable substitution for secrets.** Use `{env:VAR}` / `{file:path}` so keys never live in config files (OpenCode config doc). See `AGENTS.md` §7 and `skills/harness-engineering` for the full doctrine  --  this section summarizes, does not duplicate.
+**AGENTS.md is a router, not a dump.** Keep global rules terse; load detail from skills on demand (Kilo: "Keep custom instructions concise and actionable"; OpenCode: lazy-load instructions). **Semantic codebase index.** When the host tool offers semantic/code search (e.g. Kilo "Codebase Indexing"), prefer it over broad string-search fan-out for unfamiliar surfaces -- but route by capability, never by a tool name borrowed from another host. **Context condensing discipline.** Long sessions auto-compact; put the next executable action and current blocker in the latest turn or a tracked file, because the verbatim tail is what survives (Kilo: "Context Condensing"; OpenCode: `compaction` config). **Memory discipline.** Keep instruction memory (human-authored `AGENTS.md`/`CLAUDE.md`) separate from learning memory (agent-accumulated corrections); learning that leaks into instruction files drifts behavior silently. Harnesses with no native recall store fall back to `.agents/memory/` (a `MEMORY.md` index plus one fact per file)  --  see `skills/memory-engineering`. **Variable substitution for secrets.** Use `{env:VAR}` / `{file:path}` so keys never live in config files (OpenCode config doc). See `AGENTS.md` §7 and `skills/harness-engineering` for the full doctrine  --  this section summarizes, does not duplicate.
 
-Validate the repo's artifacts at any time with `./scripts/validate-agents.sh`.
+Validate the repo's artifacts at any time with `python3 scripts/checks.py --all` (the `./scripts/validate-agents.sh` shim execs it).
 
 ## Kilo/Opencode config example
 

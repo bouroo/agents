@@ -12,7 +12,7 @@ Scope (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole wor
 
 ## Pipeline
 
-**Gates enforce; prompts only request.** Each stage is a gate: a failure stops progression until the code satisfies the rule. See [harness-engineering](../skills/harness-engineering/SKILL.md) §10.
+**Gates enforce; prompts only request.** Each stage is a gate: a failure stops progression until the code satisfies the rule. See [harness-engineering](../skills/harness-engineering/SKILL.md) §4 (Gates Over Prompts).
 
 Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat until clean or no more auto-fixes are possible, then advance.
 
@@ -24,7 +24,7 @@ Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat u
 
 ## Fix/Review Loop
 
-After any stage with remaining issues: apply the safest, narrowest auto-fixes first (never band-aid; correct the root cause); if findings are legitimate, patch and re-run; if false positives, document the exception and escalate to the spec's Safeguards; re-run the stage; stop after three iterations and escalate unresolved issues. The failed-edit recovery ladder lives in [harness-engineering](../skills/harness-engineering/SKILL.md) §15  --  do not retry verbatim; re-read, adjust, retry once, then widen, then fall back with an explicit note.
+After any stage with remaining issues: apply the safest, narrowest auto-fixes first (never band-aid; correct the root cause); if findings are legitimate, patch and re-run; if false positives, document the exception and escalate to the spec's Safeguards; re-run the stage; stop after three iterations and escalate unresolved issues. The failed-edit recovery ladder lives in [harness-engineering](../skills/harness-engineering/SKILL.md) §9 (Hard Verify Bound)  --  do not retry verbatim; re-read, adjust, retry once, then widen, then fall back with an explicit note.
 
 ## Githook Gate
 

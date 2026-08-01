@@ -20,11 +20,7 @@ Before anything else, load the **`openapi-spec` skill** via the skill tool. It c
 
 ## 1. Detect the mode
 
-Decide introspect vs interview from the repo, not from the user.
-
-- **Introspect mode**  --  the repo contains an HTTP API. Search for framework signatures (capability-based): Express/Fastify/Koa route registrations; Flask `@app.route`; Django `urlpatterns`; Spring `@RestController`/`@RequestMapping`; ASP.NET `[ApiController]`; Go `net/http`/gin/echo/chi; Rails `config/routes.rb`; FastAPI decorators.
-- **Interview mode**  --  no HTTP surface found (greenfield, or the API lives elsewhere). Author from a minimal interview.
-- **Repair/Sync mode**  --  `docs/openapi.yaml` already exists. Do not rewrite it; update the affected operations and re-validate.
+Pick introspect, interview, or repair -- and the detection rule (decided from the repo, not the user) -- from the `openapi-spec` skill. In short: introspect if the repo has an HTTP surface, interview if it does not, repair if a spec already exists (update, don't rewrite).
 
 If a spec already exists, run the validator first (step 5) to establish a baseline before editing.
 
@@ -39,7 +35,7 @@ If a spec already exists, run the validator first (step 5) to establish a baseli
 - Auth  --  map middleware/decorators to `securitySchemes` + per-operation `security`.
 - Map language types to JSON Schema (`Instant` -> `string`/`date-time`; `UUID` -> `string`/`uuid`; `int64` -> `integer`/`int64`). Reuse via `components/schemas`.
 
-**Interview**  --  ask the smallest set: resources + verbs, auth model, pagination/filtering, the shared error envelope, and id/date/money formats. Author directly into the template; mark every assumption `[NEEDS CLARIFICATION]`.
+**Interview**  --  run the skill's minimal interview (resources + verbs, auth, pagination/filtering, error envelope, id/date/money formats); author into the template and mark every assumption `[NEEDS CLARIFICATION]`.
 
 ---
 
