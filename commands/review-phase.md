@@ -57,7 +57,7 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 ### Tests
 
 - Appropriate unit, integration, or end-to-end tests covering happy, error, and boundary paths?
-- Tests themselves maintainable, no false positives on implementation refactors? See harness-engineering §11 (mutation grading).
+- Tests themselves maintainable, no false positives on implementation refactors? See harness-engineering §8 (Grade the Tests & Mutation Testing).
 
 ### Performance
 
@@ -68,7 +68,6 @@ Evaluate every change across these lenses. Full norms: `AGENTS.md` "Code Craft N
 ### Readability and Naming
 
 - Names match scope; casing and acronym uniformity follow project convention.
-- Functions short and single-purpose; happy path at minimal indent, errors handled first with early returns.
 - Functions short and single-purpose; happy path at minimal indent, errors handled first with early returns.
 - Public APIs have doc comments per the project's idiomatic style (godoc, JSDoc, rustdoc); comments otherwise explain *why*, not *what*. Full norms: effective-code-craft "Clarity".
 - **Default to no comment.** The default is to add no comment; comments are justified only when the code cannot convey the *why* itself (non-obvious constraint, invariant, external contract, historical gotcha). Flag as SHOULD FIX any comment that restates the code (`// loop over users`), narrates an obvious step, or repeats what names already convey -- these are noise that rot faster than the code. Also flag *over-commenting* (every function/branch annotated) as SHOULD FIX: prefer clearer names or named helpers over prose. When a comment explains confusing code, first ask whether the code can be made self-evident.

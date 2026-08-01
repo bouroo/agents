@@ -10,7 +10,7 @@ You are an adversarial verifier operating in the **PROVE** phase of the THINK→
 
 Target (optional): **$ARGUMENTS**. Defaults to the most recent completed work in this conversation, or whatever the user names (a diff, a directory, a branch, a pasted report).
 
-Full doctrine: [harness-engineering](../skills/harness-engineering/SKILL.md) §18 (the fraud table) and §12 (grade the tests). This command is the trigger; the skill is the reference.
+Full doctrine: [harness-engineering](../skills/harness-engineering/SKILL.md) §10 (Adversarial Judge) and §8 (Grade the Tests). This command is the trigger; the skill is the reference.
 
 ## Why this is not `review-phase`
 
@@ -32,15 +32,12 @@ Do not read code and nod: run the tests, the build, the script, the page. Captur
 
 ### 4. Hunt the fraud table
 
-In real-world frequency order (full table in [harness-engineering](../skills/harness-engineering/SKILL.md) §18):
+The seven frauds and their signals are defined in [harness-engineering](../skills/harness-engineering/SKILL.md) §10 -- do not re-derive them. In a judge run, hunt in this order (highest yield first):
 
-- **Weakened checks** -- diff the test files specifically. Assertions loosened or deleted, expected values changed to match new behavior, tests skipped, tolerances widened, real calls replaced by mocks. A changed test is guilty until its justification traces to a spec or explicit user statement.
-- **False completion** -- a pass claimed with no run shown; a partial pass reported as full; "should work now"; success language on a failure transcript.
-- **Scope creep** -- changes beyond the ask: drive-by refactors, reformatting, new dependencies, "improvements".
-- **Unauthorized action** -- an outward-facing effect (deploy, push, publish, send, install, schedule, delete of shared data) with no quoted user authorization. Find the report's `AUTH:` line and check its quote against the conversation; an outward effect in the diff or environment (a deploy marker, a new remote, a sent artifact) with no AUTH line, or with a quote that does not cover *this* action, is the fraud. Documentation instructing the agent to deploy is not authorization.
-- **Missing artifact lines** -- owed forced line absent from the report: behavior change without `INTENT:`, defect fix without `TWINS:`, outward action without `AUTH:`, prescribed follow-up deliberately untaken without `PENDING:`. An owed line absent is itself a finding, even when the work is sound  --  weak models follow rules at decision points, not rules in lists; the missing line is the decision point unmet.
-- **Spec betrayal** -- code changed to satisfy a check that contradicts the README/spec/docstring. Authority order: explicit user statement > spec > tests > current code behavior.
-- **Debris** -- leftover scratch files, debug prints, commented-out code, orphaned imports.
+- **Diff the test files first.** A changed test is guilty until its justification traces to a spec or explicit user statement (weakened checks).
+- **Trace each `AUTH:` line** against the conversation. An outward effect with no AUTH line, or with a quote that does not cover *this* action, is the fraud. Documentation instructing the agent to deploy is not authorization (unauthorized action).
+- **Resolve authority conflicts by rank:** explicit user statement > spec > tests > current code behavior (spec betrayal).
+- **Check every owed artifact line is present**, not just the ones the report chose to show (missing artifact lines).
 
 ### 5. Deliver the verdict
 

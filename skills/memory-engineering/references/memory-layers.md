@@ -13,7 +13,7 @@ What *kind* of thing the fact is (§7's three layers):
 | Type | What it holds | Example | Typical on-disk form |
 |---|---|---|---|
 | **semantic** | facts and conventions | "this repo uses tabs", "the API gateway is at `:8080`" | `MEMORY.md` index + one fact per file |
-| **episodic** | what happened | a debugging root cause, a strategy that worked, a failed attempt + remedy | `retro.md`, handoff summaries, one fact per file |
+| **episodic** | what happened | a debugging root cause, a strategy that worked, a failed attempt + remedy | `.agents/plans/{slug}/retro.md`, handoff summaries, one fact per file |
 | **procedural** | skills and routines | how to run a verification gate, a reusable workflow | `skills/<name>/SKILL.md` |
 
 Most *learning* memory is semantic or episodic. Procedural memory is already served by the `skills/`
@@ -59,12 +59,17 @@ Pick the home from both axes together:
 | repo uses tabs; gateway on `:8080` | semantic | project | learning | `.agents/memory/` (+ `MEMORY.md` line) |
 | user prefers commit messages under 72 chars | semantic | user | learning | user config dir (uncommitted) |
 | a machine-local scratch path | semantic | local | learning | `.agents/memory/*.local.md` |
-| root cause of last week's build break | episodic | project | learning | `.agents/memory/` or `retro.md` |
+| root cause of last week's build break | episodic | project | learning | `.agents/plans/{slug}/retro.md`; promote to `.agents/memory/` if it must outlive the task |
 | "never push to main" (a governing rule) | semantic | project | **instruction** | `AGENTS.md` -- never learning memory |
 | how to run the verify gate | procedural | project | instruction | `skills/verify-phase/...` |
 
 If a fact could go in two places, prefer the more specific scope and the non-instruction axis --
 learning memory is auditable and forgettable; instruction memory is not.
+
+**`retro.md` is plan-scoped, not a second learning-memory home.** A per-task failure analysis is
+captured first in `.agents/plans/{slug}/retro.md` and is transient with that plan. Graduate a lesson
+that must survive the task to `.agents/memory/` (one fact per file plus a `MEMORY.md` line) so the
+*durable* subset is auditable and forgettable while the plan-scoped working notes are not.
 
 ## Cross-References
 

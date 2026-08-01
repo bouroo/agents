@@ -38,8 +38,8 @@ The agent harness operates in a continuous loop:
 
 - Treat the repository as the only durable memory. Restart work from files; never from recollection of prior turns.
 - Every assumption that influences a decision lives on disk: commit message, spec, ADR, decision log entry. Invisible decisions are un-auditable.
-- Compaction resilience: critical state is flushed to the repo (`plan.md`, `decisions.md`, evidence, next action) at the end of every turn so post-compaction resume is a file read, not a guess.
-- Prefer **decision logs** (`progress.md`, `decisions.md`) and **handoff notes** over embedded prose in instructions.
+- Compaction resilience: critical state is flushed to the repo (`canvas.md`, `decision-log.md`, evidence, next action) at the end of every turn so post-compaction resume is a file read, not a guess.
+- Prefer persisted ledgers (`state.json`, `decision-log.md`) and **handoff notes** over embedded prose in instructions.
 
 ## 2. Split Instructions & Minimal Live Context (THINK Phase)
 
@@ -123,19 +123,19 @@ The dial chooses which layers; it never lowers the evidence standard -- whatever
 
 | Fraud | Signal |
 | --- | --- |
-| Weakened checks | Test thresholds loosened, asserts dropped, mocks broadened |
-| False completion | Pass claimed with no output shown; "should work now"; success language on red test |
-| Scope creep | Files modified outside active task scope |
-| Unauthorized action | Unquoted side effects, pushes, deploys, destructive actions |
-| Missing artifact lines | Missing `INTENT:`, `TWINS:`, `AUTH:`, or `PENDING:` markers |
-| Spec betrayal | Implementation diverges from spec without spec update |
-| Debris | Debug prints, commented code, speculative TODOs left in tree |
+| Weakened checks | Test thresholds loosened, asserts dropped or changed to match new behavior, tests skipped, tolerances widened, real calls replaced by mocks |
+| False completion | Pass claimed with no run shown; "should work now"; success language on a red transcript |
+| Scope creep | Changes beyond the ask: drive-by refactors, reformatting, new deps, files outside active task scope |
+| Unauthorized action | Unquoted outward-facing side effects -- pushes, deploys, publishes, sends, installs, destructive actions |
+| Missing artifact lines | Owed forced line absent: behavior change without `INTENT:`, defect fix without `TWINS:`, outward action without `AUTH:`, untaken follow-up without `PENDING:` |
+| Spec betrayal | Code changed to satisfy a check that contradicts the README/spec/docstring |
+| Debris | Leftover scratch files, debug prints, commented-out code, orphaned imports, speculative TODOs |
 
 Deliver exactly one verdict: **VERIFIED**, **VERIFIED WITH CAVEATS**, or **REFUTED**.
 
 ## 11. Structured Handoffs & Clean-Session Exit (PROVE Phase)
 
-- **Handoff Artifacts:** Ensure `decisions.md`, `progress.md`, and latest turn state current blocker and next action.
+- **Handoff Artifacts:** Ensure `decision-log.md` and `state.json` are current with the latest turn's blocker and next action.
 - **Clean Exit:** All standard startup checks pass; L1/L2/L3 pass; speculative edits reverted; no debris.
 
 ---
@@ -158,13 +158,13 @@ Deliver exactly one verdict: **VERIFIED**, **VERIFIED WITH CAVEATS**, or **REFUT
 | Failure mode | What it looks like | Primary fix | Supporting artifact |
 |---|---|---|---|
 | Unprompted fixing | Editing files when user asked "why?" | Classify Ask gate (§THINK) | `effective-code-craft` §Ask shape |
-| Silent step-dropping | Step omitted in multi-step task | Progress ledger checkpoint | `progress.md` |
+| Silent step-dropping | Step omitted in multi-step task | Progress ledger checkpoint | `state.json` |
 | Retry thrash | 3+ edit attempts with small variations | Hard verify bound (§9) | §9 Hand-back payload |
 | Verification theater | Green test suite that tests nothing | Mutation testing probe (§8) | `references/verification-theater.md` |
 | Premature victory | Claiming "fixed" without proof | Three-layer termination (§7) | Captured command + output |
-| Context loss | Constraints forgotten post-compaction | Repo as system of record (§1) | `progress.md` + `decisions.md` |
+| Context loss | Constraints forgotten post-compaction | Repo as system of record (§1) | `state.json` + `decision-log.md` |
 | Fragile startup | Fresh checkout build/test fails | Standard startup check (§11) | L1 static gate |
-| Scope sprawl | Unrelated files edited | WIP = 1 & Scope pin (§5) | `task.md` scope boundary |
+| Scope sprawl | Unrelated files edited | WIP = 1 & Scope pin (§5) | `canvas.md` / delegation SCOPE |
 | Subjective review | Reviewer narratives over red tests | Conflict rule: red test wins | Adversarial judge verdict (§10) |
 
 ---
@@ -193,14 +193,14 @@ Deliver exactly one verdict: **VERIFIED**, **VERIFIED WITH CAVEATS**, or **REFUT
 Before declaring a unit complete, verify every gate. Layers and the mutation probe are **dialed to job complexity** ([right-sizing map](./references/right-sizing.md)): mark a layer `n/a` with a one-line reason when the change cannot reach it, rather than forcing it.
 
 1. **Spec is current** -- spec matches implementation; no un-documented behavior changes.
-2. **Scope is pinned** -- modified files match `task.md` SCOPE exactly.
+2. **Scope is pinned** -- modified files match the pinned SCOPE (`canvas.md` / delegation packet) exactly.
 3. **L1 static passes** -- linting, type-checking, formatting clean.
 4. **L2 runtime passes** -- tests pass, runtime executes; output captured in report (or `n/a` with reason).
 5. **L3 end-to-end passes** -- real boundaries exercised; output captured in report (or `n/a` with reason).
 6. **Mutation probe verified (when owed)** -- for units that bear behavior under test, a probe was run and reverted cleanly; trivial/format-only units skip with a one-line note.
 7. **Artifact gates present** -- `INTENT:`, `TWINS:`, `AUTH:`, `PENDING:` written where owed.
-8. **Decision log updated** -- durable choices recorded in `decisions.md`.
-9. **Progress log updated** -- `progress.md` current; next action stated.
+8. **Decision log updated** -- durable choices recorded in `decision-log.md`.
+9. **State current** -- `state.json` reflects unit status; next action stated.
 10. **Repo clean of debris** -- no leftover probes, debug prints, or untracked files.
 11. **Verify bound honored** -- max 3 cycles; hand-back payload emitted if blocked.
 12. **Adversarial judge passed** -- verdict is VERIFIED or VERIFIED WITH CAVEATS.
@@ -209,7 +209,7 @@ Before declaring a unit complete, verify every gate. Layers and the mutation pro
 
 ## Operating Standards (always-on)
 
-- **Repo as Record:** All plan state lives on disk (`task.md`, `progress.md`, `decisions.md`, `retro.md`).
+- **Repo as Record:** All plan state lives on disk (`canvas.md`, `state.json`, `decision-log.md`, `retro.md`).
 - **Clean exit:** Startup and verification pass; speculative edits reverted.
 - **No secret leakage:** Never log tokens, keys, or credentials.
 - **Executable evidence required:** "Done" requires captured command + exit code + actual output.
