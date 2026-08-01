@@ -85,6 +85,8 @@ Executable evidence (command + exit code + actual output) for every done claim -
   - **Instruction ≠ Learning.** Never write agent-learned corrections or preferences into instruction files (`AGENTS.md`, `CLAUDE.md`, build docs) -- they drift behavior silently and resist removal. Learning memory has its own files.
   - **Retrieve before, update after.** Pull relevant memory before a task; persist durable learnings (and forget stale ones) after. A fact held only in conversation is lost at compaction.
   - **No native memory?** If the harness has no recall store, fall back to `.agents/memory/` in the project root -- a `MEMORY.md` index (one line per fact) plus one fact per file.
+- **One task per session/conversation.** Start a fresh session for unrelated branch or exploration work rather than stacking it onto an in-progress task; mixing tasks degrades the reasoning path and wastes context tokens.
+- **Long sessions compress safely.** The repo -- not the conversation -- is the system of record: state, decisions, and evidence already live in `.agents/`. When a window grows heavy, summarize and restart from the on-disk artifacts rather than piling onto a long session.
 - **WIP = 1.** Finish and verify one unit before starting the next.
 - **Clean exit.** Startup+verification pass; speculative edits reverted; next action stated.
 
