@@ -220,6 +220,8 @@ Before declaring a unit complete, verify every gate. Layers and the mutation pro
 
 - [Verification theater in depth](./references/verification-theater.md) -- load when §8 (Grade the Tests) or §10 (Adversarial Judge) needs the full mutation testing protocol.
 - [Right-sizing the harness](./references/right-sizing.md) -- two-axis complexity map; load when deciding how many layers to run and whether mutation, judging, or a GROW retro are warranted.
+- [Agent-computer interface](./references/agent-computer-interface.md) -- tool & MCP design checklist; load when authoring a tool, command, or MCP spec (self-contained contracts, poka-yoke arguments, token-efficient returns).
+- [Composition patterns](./references/composition-patterns.md) -- delegation topology menu; load when decomposing into sub-agents (route vs. parallelize vs. orchestrator-workers vs. evaluator-optimizer).
 - [effective-code-craft](../effective-code-craft/SKILL.md) -- code craft commandments, artifact gates (`INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`)
 - [spec-driven-development](../spec-driven-development/SKILL.md) -- specification-first workflow for THINK phase
 
