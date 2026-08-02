@@ -2,7 +2,7 @@
 
 Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loop. Detail lives in `skills/<name>/SKILL.md`; load on demand. Follow in order; earlier rule wins on conflict.
 
-> **Scope.** This is coding-agent doctrine, calibrated for source work. Not every job is a coding job: support, sales, Q&A, and trivial edits are lower action/context complexity and should not inherit the full loop. Right-size the harness to the job -- see the [right-sizing map](skills/harness-engineering/references/right-sizing.md).
+> **Scope.** This is coding-agent doctrine, calibrated for source work. Not every job is a coding job: support, sales, Q&A, and trivial edits are lower complexity and should not inherit the full loop. Right-size the harness on two axes -- **action complexity** and **context complexity**. Low on both → skip the full loop. Load the [right-sizing map](skills/harness-engineering/references/right-sizing.md) when deciding how many layers a task warrants.
 
 ---
 
@@ -36,20 +36,22 @@ Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loo
 
 ## 3. The Loop: THINK → ACT → PROVE → GROW
 
-- **THINK (discover):** Classify ask, define done condition, gather context/evidence, plan testable units.
+Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** -- temporary specifics live in the prompt; long-lived rules live in repo config (`AGENTS.md`, `skills/`). Then run the loop:
+
+- **THINK (discover):** Classify the ask, define the done condition, gather evidence in parallel from primary sources, and **decide** -- commit to one recommendation, not a survey of options.
 - **ACT (coder):** Surgical implementation within SCOPE, one bounded change at a time, delegate independent tasks to subagents, maintain versioned checkpoints.
-- **PROVE (coder verify + discover review):** Three-layer verification (L1/L2/L3), mutation testing probe, adversarial judgment.
-- **GROW (self-improving harness):** Catalog failure modes in retro log, build deterministic gates from recurring failures, continuously improve the surrounding harness system.
+- **PROVE (coder verify + adversarial review):** Three-layer verification (L1/L2/L3), mutation-testing probe, adversarial judgment. **Report outcome-first with honest caveats** -- state what passed, what did not, and what is still unverified.
+- **GROW (self-improving harness):** Catalog failure modes in a retro log, build deterministic gates from recurring failures, continuously improve the surrounding harness system.
 
 ### Artifact Gates
 
-`INTENT:` / `TWINS:` / `AUTH:` / `PENDING:` owed at decision points -- see `skills/effective-code-craft/SKILL.md`. Trivial edits (typo, rename, format-only) skip INTENT but note the skip.
+`INTENT:` / `TWINS:` / `AUTH:` / `PENDING:` owed at decision points (§4 owns the definitions). Trivial edits (typo, rename, format-only) skip INTENT but note the skip.
 
 ---
 
 ## 4. Code Craft (language-agnostic)
 
-Full norms: `skills/effective-code-craft/SKILL.md`. Hard rules (always enforced):
+Load `skills/effective-code-craft/SKILL.md` when writing, reviewing, or refactoring code. Hard rules (always enforced):
 
 - **Explicit error returns** -- functions that can fail return a separate error/ok value; never in-band sentinels.
 - **Never swallow an error** -- every error is checked, handled, retried, or propagated with context.
@@ -60,11 +62,13 @@ Full norms: `skills/effective-code-craft/SKILL.md`. Hard rules (always enforced)
 
 ## 5. Performance
 
-Optimize only after correctness, only with measurement. Full patterns: `skills/performance-patterns/SKILL.md`.
+Optimize only after correctness, only with measurement. Load `skills/performance-patterns/SKILL.md` when profiling, or refactoring a hot path for speed, throughput, or memory.
 
 ---
 
 ## 6. Verification & Termination
+
+**Guides steer before you act; sensors detect after.** Favor feedforward **guides** (doctrine, constraints, gates) that prevent errors on the first try, and **sensors** (lint, tests, type-checks, reviews) that catch what slips through. **Keep quality left** -- run the cheapest check earliest, and prefer **computational** sensors (deterministic, fast, every change) over **inferential** ones (LLM judgment, costly).
 
 **The harness judges completion.** Three-layer validation, **dialed to job complexity** (see the [right-sizing map](skills/harness-engineering/references/right-sizing.md)):
 
@@ -72,7 +76,7 @@ Optimize only after correctness, only with measurement. Full patterns: `skills/p
 - **L2 runtime** -- tests run; app starts; critical paths execute. Run when the change has runtime.
 - **L3 end-to-end** -- at least one path exercises the change across real boundaries. Run when the change crosses one; `n/a` allowed with a one-line reason.
 
-Executable evidence (command + exit code + actual output) for every done claim -- the dial chooses which layers, never the evidence standard. No repro → no fix. Hard verify bound: 3 failed cycles = stop and hand back. Full protocol: `skills/harness-engineering/SKILL.md`.
+Executable evidence (command + exit code + actual output) for every done claim -- the dial chooses which layers, never the evidence standard. No repro → no fix. Hard verify bound: 3 failed cycles = stop and hand back. Load `skills/harness-engineering/SKILL.md` when verifying beyond L1, building the verify stack, or when a verify cycle fails.
 
 ---
 
@@ -81,8 +85,8 @@ Executable evidence (command + exit code + actual output) for every done claim -
 **The repository is the system of record -- not conversation memory.** Restart work from files, never recollection.
 
 - **Context engineering:** smallest high-signal token window; lazy loading and progressive disclosure over inlined bodies. A line is signal only if the agent cannot discover it itself (command, constraint, tooling, invariant) -- redundant context costs tokens for worse results.
-- **Memory engineering:** three layers, each with a generate/store/retrieve/update/forget lifecycle -- **episodic** (what happened: handoff summaries, `retro.md`), **semantic** (facts and conventions: `AGENTS.md`, `decision-log.md`), **procedural** (skills and routines: `skills/`). State lives on disk; the conversation window is a cache that resets, not a memory. For cross-session *learning* memory (full taxonomy + workflow: `skills/memory-engineering`):
-  - **Instruction ≠ Learning.** Never write agent-learned corrections or preferences into instruction files (`AGENTS.md`, `CLAUDE.md`, build docs) -- they drift behavior silently and resist removal. Learning memory has its own files.
+- **Memory engineering:** three layers, each with a generate/store/retrieve/update/forget lifecycle -- **episodic** (what happened: handoff summaries, `retro.md`), **semantic** (facts and conventions: `AGENTS.md`, `decision-log.md`), **procedural** (skills and routines: `skills/`). State lives on disk; the conversation window is a cache that resets, not a memory. Load `skills/memory-engineering/SKILL.md` when persisting cross-session learnings or configuring agent memory. Key split:
+  - **Instruction memory ≠ learning memory.** Instruction memory holds human directives (`AGENTS.md`, `CLAUDE.md`, build docs) and stays stable and predictable; learning memory holds agent-accumulated corrections and lives in its own files. Never write corrections or preferences into instruction files -- they drift behavior silently and resist removal.
   - **Retrieve before, update after.** Pull relevant memory before a task; persist durable learnings (and forget stale ones) after. A fact held only in conversation is lost at compaction.
   - **No native memory?** If the harness has no recall store, fall back to `.agents/memory/` in the project root -- a `MEMORY.md` index (one line per fact) plus one fact per file.
 - **One task per session/conversation.** Start a fresh session for unrelated branch or exploration work rather than stacking it onto an in-progress task; mixing tasks degrades the reasoning path and wastes context tokens.
@@ -114,8 +118,4 @@ Executable evidence (command + exit code + actual output) for every done claim -
 
 ## 9. Failure Recovery → GROW
 
-A recurring failure is a **harness problem, not a prompt problem.** Ask: what change to the surrounding system would make this failure harder to repeat? Catalog the failure mode, convert findings into executable gates, and update `.agents/plans/{slug}/retro.md`. Failure-Mode → Control map: `skills/harness-engineering/SKILL.md` §14.
-
----
-
-*Sources: Fable Method (think/act/prove/grow); harness-engineering canon (OpenAI, Anthropic, Fowler, Salesforce); structured prompt-driven development (SPDD, spec-kit); JetBrains 10x commandments; goperf.dev patterns; agents.md spec; agentskills.io.*
+A recurring failure is a **harness problem, not a prompt problem.** Ask: what change to the surrounding system would make this failure harder to repeat? Catalog the failure mode, convert findings into executable gates, and update `.agents/plans/{slug}/retro.md`. Load `skills/harness-engineering/SKILL.md` §13 (Failure-Mode → Control map) when a failure recurs.

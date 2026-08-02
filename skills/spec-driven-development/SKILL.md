@@ -183,12 +183,3 @@ Keep these SPDD-specific gates. Use [effective-code-craft](../effective-code-cra
 - [effective-code-craft](../effective-code-craft/SKILL.md) -- Intent gate (`INTENT:`) and code craft commandments
 - [harness-engineering](../harness-engineering/SKILL.md) -- structured handoffs, failure-mode controls, and the self-improving harness (GROW)
 
----
-
-## References
-
-Load on demand; the body above is sufficient for everyday use.
-
-- Martin Fowler: *Structured Prompt-Driven Development (SPDD)* -- https://martinfowler.com/articles/structured-prompt-driven/
-- GitHub Spec-Kit: *Spec-driven development* -- https://github.com/github/spec-kit/blob/main/spec-driven.md
-- *The Bitter Lesson* (Sutton) -- http://www.incompleteideas.net/IncIdeas/BitterLesson.html

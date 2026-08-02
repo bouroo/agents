@@ -77,32 +77,13 @@ The squad consists of three distinct roles:
 
 ## 3. The Loop Rhythm: THINK → ACT → PROVE → GROW
 
-Every task follows the four-phase Fable Method loop rhythm:
+Loop semantics live in `AGENTS.md` §3; this is the Conductor's per-phase routing:
 
-1. **THINK (conductor decomposes; discover reads):**
-   - Classify the user ask and define explicit completion criteria (`done_cmd`).
-   - Decompose into bounded, dependent units (U1, U2, ...) directly in Conductor (Plan Mode; see §3a). Pull in `discover (explore)` when decomposition needs deeper surface reading Conductor cannot do with a single read/grep.
-   - Lookup external facts via `discover (lookup)` when needed.
-   - Anchor plan and initial state in `.agents/plans/{slug}/`.
-
-2. **ACT (coder):**
-   - Dispatch `coder (implement)` for new behavior or refactoring within bounded SCOPE.
-   - Dispatch `coder (fix)` for bug fixes, starting with mandatory reproduction (`TWINS:`).
-   - Maintain WIP = 1: execute one unit at a time to completion.
-
-   - **Outer-loop contract (loop engineering).** This conductor wraps an outer, goal-seeking loop around the agent's inner gather/act/verify cycle. Every task must satisfy the five requirements: (1) goal written to files that outlive the session (`canvas.md`, `state.json`); (2) a trigger that is not a keystroke (dispatch via delegation packet, not ad-hoc prompting); (3) fresh context per iteration (subagents start cold; state is re-read from disk); (4) verification the agent cannot bypass (`done_cmd` exit code, L1/L2/L3, mutation probe); (5) a defined stop/hand-back condition (3-cycle hard bound, §7). A task missing any of the five is a planning defect.
-
-3. **PROVE (coder verify/judge + discover review):**
-   - Require executable evidence for L1 (static), L2 (runtime), and L3 (end-to-end).
-   - Execute mutation testing probes to verify test suite sensitivity.
-   - Dispatch `discover (review)` for independent 7-grade rubric grading on non-trivial diffs.
-   - Re-verify under `coder (judge)` when auditing claimed completion evidence.
-
-4. **GROW (conductor):**
-   - Audit all phase results against convergence gates.
-   - Catalog recurring failure modes in `.agents/plans/{slug}/retro.md`.
-   - Convert systemic failures into deterministic gates and controls.
-   - Checkpoint state and exit cleanly.
+1. **THINK (decompose):** Classify the ask, set `done_cmd`, and decompose into bounded, dependent units (U1, U2, ...) directly in Conductor (Plan Mode; see §3a). Pull in `discover (explore)` for deeper surface reading, or `discover (lookup)` for external facts, when a single read/grep won't suffice. Anchor plan and state in `.agents/plans/{slug}/`.
+2. **ACT (dispatch):** Dispatch `coder (implement)` for new behavior/refactor, or `coder (fix)` for bugs (starting with `TWINS:`). Maintain WIP = 1.
+   - **Outer-loop contract.** This conductor wraps an outer, goal-seeking loop around the agent's inner cycle. Every task needs: (1) goal on disk (`canvas.md`, `state.json`); (2) a non-keystroke trigger (delegation packet, not ad-hoc prompting); (3) fresh context per iteration (subagents start cold; state re-read from disk); (4) verification the agent cannot bypass (`done_cmd` exit code, L1/L2/L3, mutation probe); (5) a defined stop/hand-back (3-cycle hard bound, §7). Missing any is a planning defect.
+3. **PROVE (judge/review):** Require executable evidence (L1/L2/L3) and mutation probes; dispatch `discover (review)` for an independent rubric on non-trivial diffs; re-verify under `coder (judge)` when auditing claimed completion.
+4. **GROW (retro):** Audit convergence gates, catalog failure modes in `.agents/plans/{slug}/retro.md`, convert systemic failures into deterministic gates, then checkpoint and exit cleanly.
 
 ---
 
@@ -310,9 +291,4 @@ ROOT=$(git rev-parse --show-toplevel) && mkdir -p "$ROOT/.agents/plans/{task-slu
 
 ## 14. The Grow Phase (Self-Improving Harness)
 
-Improve the harness system dynamically through every failure:
-
-- **Gates over prompts:** Enforce standards through versioned executable gates rather than prompt requests.
-- **Catalog failure modes:** Record every failure mode, root cause, and remedy in `.agents/plans/{slug}/retro.md`.
-- **Systemic controls:** When a failure pattern repeats, create a deterministic check (script, linter rule, or hook) to prevent recurrence.
-- **Feedback integration:** Update project harness configuration so future runs inherit improved reliability automatically.
+GROW's definition lives in `AGENTS.md` §9 and `harness-engineering` §12; the Conductor's step is loop §3.4 -- audit convergence gates, catalog recurring failure modes in `.agents/plans/{slug}/retro.md`, and convert systemic failures into deterministic gates so future runs inherit the fix automatically.

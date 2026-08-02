@@ -223,15 +223,3 @@ Before declaring a unit complete, verify every gate. Layers and the mutation pro
 - [effective-code-craft](../effective-code-craft/SKILL.md) -- code craft commandments, artifact gates (`INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`)
 - [spec-driven-development](../spec-driven-development/SKILL.md) -- specification-first workflow for THINK phase
 
----
-
-## References
-
-- OpenAI: Harness Engineering -- https://openai.com/index/harness-engineering/
-- Anthropic: Effective Harnesses for Long-Running Agents -- https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
-- Martin Fowler: Harness Engineering for Coding Agent Users -- https://martinfowler.com/articles/harness-engineering.html
-- Salesforce: Maintaining Code Quality at Agent Speed -- https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/
-- Learn Harness Engineering (12 lectures) -- https://walkinglabs.github.io/learn-harness-engineering/en/
-- Tessl Patterns: Agentic Development Workflow -- https://tessl.io/patterns/themes/agentic-development-workflow/ (loop, memory, context, evals patterns this skill operationalizes)
-- ETH Zurich: How to Build Your AGENTS.md -- https://tessl.io/patterns/agentic-development-workflow/context-engineering/ (auto-generated/redundant AGENTS.md raised inference cost 20-23% for worse results; justifies the AGENTS.md budget gate -- keep it a router of non-discoverable specifics only)
-- O'Reilly Radar: *Stop Overengineering Your Agent Harness* -- https://www.oreilly.com/radar/stop-overengineering-your-agent-harness/ (the Average Answer Trap and the Kirby Effect; right-size controls to action/context complexity -- source for the [right-sizing map](./references/right-sizing.md))

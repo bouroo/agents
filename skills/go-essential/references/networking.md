@@ -1,6 +1,6 @@
 # Networking & I/O Patterns in Go
 
-Reference for `go-essential` §7. Synthesizes goperf.dev/02-networking with samber/cc-skills-golang context and observability skills.
+Reference for `go-essential` §7: client/server timeouts, transport tuning, long-lived connection deadlines, resilience patterns, and `httptrace` observability.
 
 ## 1. Timeouts Are Mandatory
 
@@ -156,7 +156,3 @@ Integrate `httptrace` spans with OpenTelemetry tracing so per-phase latency is c
 - [ ] Load shedding bounds in-flight work under overload.
 - [ ] `httptrace` spans feed structured logs + tracing for slow-client debugging.
 
-## Source Attribution
-
-- goperf.dev  --  "Practical Networking Patterns in Go": `long-lived-connections/`, `resilient-connection-handling/`, `efficient-net-use/`, `connection_observability/`, `10k-connections/`.
-- samber/cc-skills-golang  --  `golang-context`, `golang-observability` skills.
