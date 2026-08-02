@@ -367,6 +367,8 @@ Model names are examples; substitute your provider/model IDs.
 - [Harness Engineering  --  OpenAI](https://openai.com/index/harness-engineering/)  --  Repo as operational record; harness-driven reliability
 - [Effective Harnesses for Long-Running Agents  --  Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)  --  Small next steps, handoff files, context anxiety
 - [Harness Design for Long-Running Application Development  --  Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps)  --  Worker/checker separation, premature-victory prevention
+- [Building Effective Agents  --  Anthropic](https://www.anthropic.com/engineering/building-effective-agents)  --  Workflow vs. agent; composition patterns (route/parallelize/orchestrator-workers/evaluator-optimizer); tool design as ACI
+- [Effective Context Engineering for AI Agents  --  Anthropic](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)  --  Context as a finite resource; minimal high-signal windows; compaction and sub-agent context isolation
 - [Unrolling the Codex agent loop  --  OpenAI](https://openai.com/index/unrolling-the-codex-agent-loop/)  --  Agent loop structure and intervention points
 - [Demystifying evals for AI agents  --  Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)  --  Evaluator rubrics and self-judgment calibration
 - [Improving Deep Agents with harness engineering  --  LangChain](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)  --  Guides/sensors and lifecycle controls for deep agents
