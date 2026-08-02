@@ -148,13 +148,3 @@ The cycle: **Define -> Benchmark -> Diagnose -> Improve -> Compare**.
 - [effective-code-craft](../effective-code-craft/SKILL.md) -- correctness and clarity come before performance; artifact gates (`INTENT:`, `TWINS:`)
 - [harness-engineering](../harness-engineering/SKILL.md) -- deterministic logic in tested code; three-layer verification (L1/L2/L3)
 
----
-
-## References
-
-Load on demand; the body above is sufficient for everyday performance optimization.
-
-- Systems Performance: Enterprise and the Cloud (Gregg) -- methodology: measure, profile, then optimize based on data.
-- Google Style & Performance Guides -- https://google.github.io/styleguide/ (language-specific optimization guidelines).
-- Brendan Gregg: *The USE Method* -- https://www.brendangregg.com/usemethod.html (utilization, saturation, and errors methodology).
-- Rust Performance Book -- https://nnethercote.github.io/perf-book/ (patterns for memory, allocation, and compiler tuning).
