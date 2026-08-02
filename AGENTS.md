@@ -30,6 +30,8 @@ Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loo
 
 **Tool routing (by capability, not tool name -- names vary by host):** a known path → open and read that file; a known pattern → search the codebase by string or filename; a concept or unfamiliar surface → semantic/code search if your host offers it, else a narrow string search; an external fact → web search or fetch. Pick the most specialized, lowest-cost capability your host exposes -- and only call tools that actually exist in your runtime; never invoke a capability by a name borrowed from another tool.
 
+**Tool design** -- routing picks the capability; *building* a tool, slash command, or MCP follows the [agent-computer-interface](skills/harness-engineering/references/agent-computer-interface.md) checklist (self-contained contracts, poka-yoke arguments, token-efficient returns). Load it when you author a tool spec, not when you call one.
+
 **Deterministic logic** (arithmetic, parsing, validation, scheduling) belongs in tested code, never LLM reasoning.
 
 ---
@@ -39,7 +41,7 @@ Language-agnostic operating doctrine with a THINK → ACT → PROVE → GROW loo
 Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** -- temporary specifics live in the prompt; long-lived rules live in repo config (`AGENTS.md`, `skills/`). Then run the loop:
 
 - **THINK (discover):** Classify the ask, define the done condition, gather evidence in parallel from primary sources, and **decide** -- commit to one recommendation, not a survey of options.
-- **ACT (coder):** Surgical implementation within SCOPE, one bounded change at a time, delegate independent tasks to subagents, maintain versioned checkpoints.
+- **ACT (coder):** Surgical implementation within SCOPE, one bounded change at a time, delegate independent tasks to subagents under the fitting topology ([composition-patterns](skills/harness-engineering/references/composition-patterns.md)), maintain versioned checkpoints.
 - **PROVE (coder verify + adversarial review):** Three-layer verification (L1/L2/L3), mutation-testing probe, adversarial judgment. **Report outcome-first with honest caveats** -- state what passed, what did not, and what is still unverified.
 - **GROW (self-improving harness):** Catalog failure modes in a retro log, build deterministic gates from recurring failures, continuously improve the surrounding harness system.
 
@@ -85,6 +87,7 @@ Executable evidence (command + exit code + actual output) for every done claim -
 **The repository is the system of record -- not conversation memory.** Restart work from files, never recollection.
 
 - **Context engineering:** smallest high-signal token window; lazy loading and progressive disclosure over inlined bodies. A line is signal only if the agent cannot discover it itself (command, constraint, tooling, invariant) -- redundant context costs tokens for worse results.
+- **Calibrate, don't preload.** Start with the minimal context that could work; add a line only when an observed failure demands it -- never preemptively. Context answers the same failure-driven discipline as controls ([right-sizing](skills/harness-engineering/references/right-sizing.md)): a line no failure asked for taxes the window for nothing.
 - **Memory engineering:** three layers, each with a generate/store/retrieve/update/forget lifecycle -- **episodic** (what happened: handoff summaries, `retro.md`), **semantic** (facts and conventions: `AGENTS.md`, `decision-log.md`), **procedural** (skills and routines: `skills/`). State lives on disk; the conversation window is a cache that resets, not a memory. Load `skills/memory-engineering/SKILL.md` when persisting cross-session learnings or configuring agent memory. Key split:
   - **Instruction memory ≠ learning memory.** Instruction memory holds human directives (`AGENTS.md`, `CLAUDE.md`, build docs) and stays stable and predictable; learning memory holds agent-accumulated corrections and lives in its own files. Never write corrections or preferences into instruction files -- they drift behavior silently and resist removal.
   - **Retrieve before, update after.** Pull relevant memory before a task; persist durable learnings (and forget stale ones) after. A fact held only in conversation is lost at compaction.

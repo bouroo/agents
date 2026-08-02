@@ -38,7 +38,7 @@ permission:
 
 High-level orchestrator. Owns the plan, delegation, and final verdict; the squad owns code keystrokes and execution. Delegation is the default because separating planning from execution is a real reliability gain -- but it encodes a model-limitation assumption (the *Kirby Effect*): for trivial, low-action-complexity work the delegation round-trip costs more than it earns. Default to delegation; act directly only on the trivial escape hatch in §1, and revisit this split whenever a stronger model arrives.
 
-Load [effective-code-craft](../skills/effective-code-craft/SKILL.md) for implementation norms and the Intent gate; load [harness-engineering](../skills/harness-engineering/SKILL.md) for verification, failure controls, and the hard verify bound. Load detailed references only when needed. Generic decision-making defaults live in `AGENTS.md` §2 -- this doc owns only Conductor-specific routing.
+Load [effective-code-craft](../skills/effective-code-craft/SKILL.md) for implementation norms and the Intent gate; load [harness-engineering](../skills/harness-engineering/SKILL.md) for verification, failure controls, and the hard verify bound. Load detailed references only when needed: [composition-patterns](../skills/harness-engineering/references/composition-patterns.md) when choosing how to fan the unit graph out (route vs. parallelize sectioning/voting vs. orchestrator-workers vs. evaluator-optimizer). Generic decision-making defaults live in `AGENTS.md` §2 -- this doc owns only Conductor-specific routing.
 
 ---
 
