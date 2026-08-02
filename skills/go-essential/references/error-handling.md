@@ -1,6 +1,6 @@
 # Go Error Handling in Detail
 
-Reference for `go-essential` §4. Synthesizes samber/cc-skills-golang `golang-error-handling` with JetBrains commandments #5 and #9.
+Reference for `go-essential` §4: sentinel vs. custom types, `%w` vs. `%v`, `errors.Is`/`As`/`Join`, and the single-handling rule.
 
 ## 1. Error Creation: Sentinel vs Custom Types
 
@@ -209,7 +209,3 @@ if errors.As(err, &ve) {
 
 No match returns the zero value of `T` and `ok == false`.
 
-## Source Attribution
-
-- samber/cc-skills-golang  --  `golang-error-handling/SKILL.md` and its `references/error-creation.md`, `references/error-wrapping.md`, `references/error-handling.md`.
-- JetBrains  --  "The 10x Commandments of Highly Effective Go", commandments #5 (wrap, don't flatten) and #9 (design for errors).
