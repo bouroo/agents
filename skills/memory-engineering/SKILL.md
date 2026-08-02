@@ -94,8 +94,8 @@ use, so an upgrade to a native store carries over cleanly):
   Keep it under 200 lines; split into topic sub-files when it grows.
 - One fact per file so each can be retrieved, updated, and forgotten independently. Frontmatter
   tags the type and scope (see [memory-layers](./references/memory-layers.md)).
-- **Commit rules by scope:** *project* facts may be committed (they are shared, like Z.ai's
-  version-controlled project memory); *user* facts go to the user-level config dir and are never
+- **Commit rules by scope:** *project* facts may be committed (they are shared across the team);
+  *user* facts go to the user-level config dir and are never
   committed; *local* (machine-specific paths, tokens) use a `.local.md` suffix and are gitignored.
 
 Do not invent a third location. Two homes cover everything: native (if present) else
@@ -135,11 +135,3 @@ Do not invent a third location. Two homes cover everything: native (if present) 
 - [repo-documentation](../repo-documentation/SKILL.md) -- `docs/` as the *system-explanation* layer
   (distinct from learning memory, which records *agent experience*)
 
----
-
-## References
-
-- Z.ai -- Devpack Memory Mechanism: https://docs.z.ai/devpack/resources/memory-mechanism.md (layered
-  memory, instruction vs. learning separation, scope hierarchy, file hygiene, fallback conventions)
-- Anthropic -- Effective Harnesses for Long-Running Agents: https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
-- OpenAI -- Harness Engineering: https://openai.com/index/harness-engineering/
