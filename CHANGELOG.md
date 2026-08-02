@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [2.9.0] - 2026-08-03
+
+### Added
+
+- **Agent-Computer Interface (ACI) and composition-patterns references.** Two gaps that both [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) and [Effective Context Engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) stress hardest were absent from the doctrine, and are now closed as load-on-demand references under the existing `harness-engineering` skill (skill inventory unchanged at nine; the root `AGENTS.md` stays a lean router). New `skills/harness-engineering/references/agent-computer-interface.md` covers *designing* tools, slash commands, and MCPs -- the counterpart to `AGENTS.md` §2, which only covers *routing* which capability to call. Its checklist: self-contained contracts, non-overlapping responsibilities, poka-yoke arguments (absolute paths over relative, typed enums over free strings, required over optional where ambiguity is the failure mode), token-efficient returns (structure before bodies), and the feedback loop that a repeated tool misuse is a spec bug, not a model bug -- routed to the §13 Failure-Mode -> Control Map. New `skills/harness-engineering/references/composition-patterns.md` is the delegation topology menu -- prompt chaining, routing, parallelization (sectioning vs. voting), orchestrator-workers (the Conductor default), evaluator-optimizer (the coder judge mode) -- with explicit guidance to pick the smallest topology the job can hold and refuse the Average Answer Trap. Both references follow the repo's `## Source` convention: internal provenance only; external article citations live in `README.md`.
+- **Pointers wired and context loop calibrated.** `AGENTS.md` gains three one-liners: tool *design* routing in §2 (load the ACI reference when authoring a tool), topology selection in §3, and a §7 "calibrate, don't preload" bullet that puts context on the same failure-driven discipline as controls (start minimal, add a line only when an observed failure demands it). `agents/conductor.md` and the `harness-engineering` skill cross-references point to the new references. `README.md` further-reading cites both Anthropic source articles.
+
 ## [2.8.0] - 2026-08-02
 
 ### Changed
