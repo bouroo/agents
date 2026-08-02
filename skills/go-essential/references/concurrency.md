@@ -1,6 +1,6 @@
 # Go Concurrency & Context in Detail
 
-Reference for `go-essential` §5. Synthesizes samber/cc-skills-golang `golang-concurrency` and `golang-context` with JetBrains commandment #7.
+Reference for `go-essential` §5: channel ownership, channel-vs-mutex-vs-atomic, sync primitives, pipelines, and the pre-spawn checklist.
 
 ## 1. Context Propagation
 
@@ -201,9 +201,3 @@ Go 1.26 ships an experimental `goroutineleakprofile` gated by `GOEXPERIMENT=goro
 - [ ] `goleak.VerifyNone(t)` (or `TestMain`) runs in every package's tests.
 - [ ] CI runs `go test -race ./...` on every PR.
 
-## Source Attribution
-
-- samber/cc-skills-golang  --  `golang-concurrency/SKILL.md` and its references `channels-and-select.md`, `sync-primitives.md`, `pipelines.md`.
-- samber/cc-skills-golang  --  `golang-context/SKILL.md` and its reference `references/cancellation.md` (WithoutCancel, defer cancel idiom).
-- JetBrains  --  "The 10x Commandments of Highly Effective Go", commandment #7 (every goroutine needs a stop mechanism).
-- Go blog  --  "Pipelines and Cancellation".

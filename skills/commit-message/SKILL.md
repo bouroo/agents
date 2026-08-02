@@ -95,11 +95,3 @@ Generate Conventional Commits based on staged git diffs, serving as durable deci
 - [effective-code-craft](../effective-code-craft/SKILL.md) -- Intent, Twin, Auth, and Pending artifact gates
 - [harness-engineering](../harness-engineering/SKILL.md) -- decision log discipline and repo-as-record
 
----
-
-## References
-
-- Conventional Commits 1.0.0 spec -- https://www.conventionalcommits.org/en/v1.0.0/
-- Keep a Changelog (SemVer + change log discipline) -- https://keepachangelog.com/en/1.1.0/
-- Angular commit format -- https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit
-- `git-log` pretty formats for verification (`%s`, `%b`, `%(trailers)`) -- https://git-scm.com/docs/git-log#_pretty_formats

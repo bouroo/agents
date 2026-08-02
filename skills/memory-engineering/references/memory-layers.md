@@ -74,8 +74,4 @@ that must survive the task to `.agents/memory/` (one fact per file plus a `MEMOR
 ## Cross-References
 
 - [memory-engineering](../SKILL.md) -- §2 (Instruction vs. Learning), §4 (fallback layout), §5 (hygiene)
-- [harness-engineering](../../harness-engineering/SKILL.md) -- §7 state-on-disk, compaction resilience
-
-## Reference
-
-- Z.ai -- Devpack Memory Mechanism: https://docs.z.ai/devpack/resources/memory-mechanism.md
+- [harness-engineering](../../harness-engineering/SKILL.md) -- §1 state-on-disk, compaction resilience

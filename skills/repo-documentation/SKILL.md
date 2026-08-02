@@ -184,11 +184,3 @@ This skill ships three sibling templates that you can copy into the working repo
 - [harness-engineering](../harness-engineering/SKILL.md) -- Repository as system of record, self-improving harness (GROW)
 - [spec-driven-development](../spec-driven-development/SKILL.md) -- Specification-first workflow (THINK phase)
 
----
-
-## References
-
-- *Docs as a System* (lukewilson2002) -- the repo-local documentation model this skill encodes.
-- *Diátaxis* (Grand) -- https://diataxis.fr/
-- *Documenting Architecture Decisions* (Nygard) -- https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
-- Mermaid flowchart syntax -- https://mermaid.js.org/syntax/flowchart.html

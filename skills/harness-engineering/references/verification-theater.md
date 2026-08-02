@@ -1,8 +1,9 @@
 # Verification Theater in Depth
 
 The most expensive failure in agent work. The short callout lives in
-[harness-engineering](../SKILL.md) §11 and §12; the Failure-Mode -> Control
-Map row in §14; this file is the costume, the cost, the audit, and the fix.
+[harness-engineering](../SKILL.md) §8 (Grade the Tests) and §10 (Adversarial
+Judge); the Failure-Mode -> Control Map row in §13; this file is the costume,
+the cost, the audit, and the fix.
 
 ## The costume
 
@@ -108,7 +109,7 @@ claim that "tests pass" without an integration check is theater; a
 claim that "the endpoint returns 201" without a captured curl is
 theater. The three layers close the gaps.
 
-See [harness-engineering](../SKILL.md) §5 and Appendix A for the
+See [harness-engineering](../SKILL.md) §7 and Appendix A for the
 orchestrator-level convergence gates that bind completion to all three.
 
 ### 3. Mutation testing
@@ -126,9 +127,10 @@ verification theater, not part of the verification.
 
 ## Source
 
-Cross-link [harness-engineering](../SKILL.md) §5 (prevent premature victory), §11
-(explanations are not evidence), §12 (grade the tests), and the
-Failure-Mode -> Control Map row "Verification theater" in §14. The
-[Intent gate](../../effective-code-craft/SKILL.md) is the upstream
-control: a claim that an edit satisfies an Intent line without captured
-verification output is the canonical verification-theater shape.
+Cross-link [harness-engineering](../SKILL.md) §8 (grade the tests) and §10
+(adversarial judge), plus the Failure-Mode -> Control Map row "Verification
+theater" in §13. Explanations are not evidence -- the Prime Directive
+([AGENTS.md](../../../AGENTS.md) §0). The [Intent
+gate](../../effective-code-craft/SKILL.md) is the upstream control: a claim
+that an edit satisfies an Intent line without captured verification output is
+the canonical verification-theater shape.

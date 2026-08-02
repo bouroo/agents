@@ -230,10 +230,10 @@ Everything in this repo is plain markdown  --  the symlinks make it look like ea
 
 ### THINK→ACT→PROVE→GROW Loop
 
-The core operational loop is grounded in the Fable Method:
-- **THINK (discover):** Classify the ask, define done conditions, gather context and executable evidence, plan testable units.
+The core operational loop is grounded in the Fable Method. Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN**  --  temporary specifics in the prompt, long-lived rules in repo config  --  then run the loop:
+- **THINK (discover):** Classify the ask, define the done condition, gather evidence in parallel from primary sources, and **decide**  --  commit to one recommendation, not a survey of options.
 - **ACT (coder):** Surgical implementation within explicit SCOPE bounds, one unit at a time.
-- **PROVE (coder verify + discover review):** Three-layer verification (L1 static, L2 runtime, L3 end-to-end), mutation test probe, and adversarial judgment  --  **dialed to job complexity** via the [right-sizing map](skills/harness-engineering/references/right-sizing.md) (a typo does not need the full apparatus).
+- **PROVE (coder verify + adversarial review):** Three-layer verification (L1 static, L2 runtime, L3 end-to-end), mutation-testing probe, and adversarial judgment  --  **dialed to job complexity** via the [right-sizing map](skills/harness-engineering/references/right-sizing.md) (a typo does not need the full apparatus). Report outcome-first with honest caveats.
 - **GROW (self-improving harness):** Catalog failure modes in retro logs, build deterministic gates from recurring failures, and continuously improve the surrounding harness system.
 
 ### Harness Engineering
@@ -352,9 +352,14 @@ Model names are examples; substitute your provider/model IDs.
 ## References
 
 ### Methodology
+- [Fable Method](https://github.com/Sahir619/fable-method)  --  The THINK→ACT→PROVE→GROW loop and the evidence-over-explanation prime directive
 - [Structured Prompt-Driven Development (SPDD)  --  Martin Fowler](https://martinfowler.com/articles/structured-prompt-driven/)  --  REASONS Canvas, prompt-code bidirectional sync, phased-review rationale
 - [GitHub Spec-Kit  --  Spec-driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md)  --  Spec-as-truth, executable specs, constitutional gates
 - [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172)  --  Why instructions must be split, not bloated
+
+### Agent instruction & memory
+- [Z.ai  --  Devpack Best Practices](https://docs.z.ai/devpack/resources/best-practice.md)  --  GOAL/CONTEXT/CONSTRAINTS/DONE_WHEN task frame; long-lived rules live in config, not the prompt
+- [Z.ai  --  Devpack Memory Mechanism](https://docs.z.ai/devpack/resources/memory-mechanism.md)  --  Instruction vs. learning memory; episodic/semantic/procedural layers; scoped loading
 
 ### Harness engineering canon
 - [Learn Harness Engineering (12 lectures)](https://walkinglabs.github.io/learn-harness-engineering/en/)  --  Synthesized canon these configs are grounded in
@@ -369,6 +374,7 @@ Model names are examples; substitute your provider/model IDs.
 - [Decision-Time Guidance: Keeping Replit Agent Reliable  --  Replit](https://blog.replit.com/decision-time-guidance)  --  Situational guidance at the decision point
 - [Maintaining Code Quality at Agent Speed  --  Salesforce](https://engineering.salesforce.com/maintaining-code-quality-at-agent-speed-7-patterns-for-agentic-engineering/)  --  Gates over prompts, grade-the-tests, mutation testing
 - [How to Build Reliable AI Agents  --  Salesforce](https://engineering.salesforce.com/how-to-build-reliable-ai-agents-5-engineering-patterns-from-a-production-system/)  --  Separate reasoning from computation; explanations≠evidence
+- [Stop Overengineering Your Agent Harness  --  O'Reilly Radar](https://www.oreilly.com/radar/stop-overengineering-your-agent-harness/)  --  Right-size controls to action/context complexity; the Average Answer Trap and the Kirby Effect
 
 ### Language & performance
 - [10x Commandments of Highly Effective Go  --  JetBrains](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/)  --  Code quality and readability principles

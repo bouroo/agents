@@ -112,5 +112,5 @@ log line, side effect, timing, ordering -- must pass the gate.
 
 ## Source
 
-See also [harness-engineering](../../harness-engineering/SKILL.md) §11 (separate
-reasoning from computation) and §5 (prevent premature victory).
+See also [harness-engineering](../../harness-engineering/SKILL.md) §4 (separate
+reasoning from computation).

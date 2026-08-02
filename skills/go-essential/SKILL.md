@@ -5,12 +5,7 @@ description: Language-specific instructions for writing robust, high-performance
 
 # Go Essential Code Craft & Performance (go-essential)
 
-Language-specific operating doctrine for writing robust, high-performance, idiomatic Go. This skill synthesizes four authoritative sources:
-
-- **JetBrains "10x Commandments of Highly Effective Go"**  --  architecture, naming, safety, decoupling.
-- **samber/cc-skills-golang**  --  error handling, concurrency, context, performance skill set.
-- **goperf.dev/01-common-patterns**  --  allocation, pooling, preallocation, escape analysis.
-- **goperf.dev/02-networking**  --  timeouts, transports, resilience, connection observability.
+Language-specific operating doctrine for writing robust, high-performance, idiomatic Go  --  architecture, naming, safety, error craft, concurrency, memory, and networking. External sources are consolidated in the repo README.
 
 Use this skill whenever you are writing, refactoring, or reviewing Go code. Detail lives in the reference files under `./references/`; load only what the current task needs.
 
@@ -18,7 +13,7 @@ Use this skill whenever you are writing, refactoring, or reviewing Go code. Deta
 
 Correctness is verified by executable evidence (L1/L2/L3), never by reading code. Performance work begins with profiling, never intuition. Treat your own certainty about Go correctness or speed as the least trustworthy signal.
 
-## 1. Architecture & Package Design (JetBrains #1, #8)
+## 1. Architecture & Package Design
 
 - **Write packages, not programs.** Library/domain packages return data instead of printing and return errors instead of calling `panic` or `os.Exit`.
 - **Isolate `main`.** Its only job is parsing flags/arguments, wiring dependencies, handling outer-loop errors, and graceful exit. The real work lives in imported domain packages.
@@ -26,7 +21,7 @@ Correctness is verified by executable evidence (L1/L2/L3), never by reading code
 - **Decouple code from the environment.** Do not call `os.Getenv` or `os.Args` deep inside packages  --  accept config structurally at the boundary. Do not assume `$HOME`, disk writability, or root privileges.
 - **Bundle static assets** with `//go:embed`; do not require external config files at runtime. Distribute single binaries.
 
-## 2. Naming, Readability & Line of Sight (JetBrains #2, #3)
+## 2. Naming, Readability & Line of Sight
 
 - **Glanceability via conventional short names:** `err` errors, `data` arbitrary `[]byte`, `buf` buffers, `file` `*os.File`, `path` pathnames, `i` index, `req`/`resp` request/response, `ctx` contexts, `w` `http.ResponseWriter`, `r` `*http.Request`.
 - **Test names are sentences:** `TestUserService_ReturnsErrorWhenIDIsEmpty`. Test small units of user-visible behaviour; add integration tests for end-to-end paths.
@@ -48,7 +43,7 @@ Correctness is verified by executable evidence (L1/L2/L3), never by reading code
 - **Keep functions to ≤4 parameters.** Beyond that, group inputs into an options struct. Order `ctx`, inputs, then outputs.
 - **Prefer `range` over index loops.** Use `range n` (Go 1.22+) for simple counting.
 
-## 3. Safety by Default (JetBrains #4, #6)
+## 3. Safety by Default
 
 - **Make zero values useful.** Prefer `var items []string` over `items := []string{}` when no init logic is needed. A zero-value `sync.Mutex`, `bytes.Buffer`, `http.Server` must be ready to use.
 - **Validating constructors.** When a struct has invariants, expose an unexported zero value and a `NewX()` constructor that validates. Add configuration via `WithX` builders: `NewWidget().WithTimeout(time.Second)`.
@@ -63,7 +58,7 @@ Correctness is verified by executable evidence (L1/L2/L3), never by reading code
 - **Compare floats with epsilon.** Never use `==` for IEEE 754 values; use `math.Abs(a-b) < epsilon`.
 - **Use safe type assertions.** Prefer `v, ok := x.(T)`; in Go 1.25+ reflection, use `reflect.TypeAssert[T]` over `value.Interface().(T)`.
 
-## 4. Error Craft (samber golang-error-handling; JetBrains #5, #9)
+## 4. Error Craft
 
 Hard rules  --  full detail in `references/error-handling.md`.
 
@@ -75,7 +70,7 @@ Hard rules  --  full detail in `references/error-handling.md`.
 - **Single handling rule.** An error MUST be either logged OR returned, NEVER both. Log once at the top boundary (HTTP middleware, `main`); everywhere else wrap and return.
 - **`recover` at goroutine boundaries.** Wrap HTTP handlers and worker goroutines with deferred `recover()` that logs the panic + `debug.Stack()` and returns a 500.
 
-## 5. Context & Concurrency (samber golang-context, golang-concurrency; JetBrains #7)
+## 5. Context & Concurrency
 
 - **Propagate one context end-to-end.** `ctx context.Context` MUST be the first parameter of any blocking or long-running function. Same `ctx` flows HTTP handler → service → DB → outbound HTTP/gRPC.
 - **Keep context keys private.** Use an unexported key type to avoid cross-package collisions; context values carry request metadata (trace ID, user ID), never function parameters.
@@ -90,7 +85,7 @@ Hard rules  --  full detail in `references/error-handling.md`.
 - **Pick the right primitive.** Channel = ownership transfer/lifecycle; `sync.Mutex`/`RWMutex` = shared fields (never across I/O or upgrade `RLock` → `Lock`); `sync/atomic` = counters/flags; `sync.Map` = read-heavy map; `singleflight` = deduplicate calls; `sync.Pool` = short-lived object reuse (see §6).
 - **Structured concurrency.** Confine goroutines to the scope that created them. Track leaks in tests with `go.uber.org/goleak`.
 
-## 6. Performance & Memory (goperf.dev/01; samber golang-performance)
+## 6. Performance & Memory
 
 Full detail in `references/performance.md`. **Profile before optimizing**  --  intuition is wrong ~80% of the time.
 
@@ -104,7 +99,7 @@ Full detail in `references/performance.md`. **Profile before optimizing**  --  i
 - **Measure with the iterative cycle.** Define metric → baseline benchmark (`-benchmem -count=6`) → diagnose (pprof) → ONE change with explanatory comment → compare with `benchstat`. Commit `benchstat` output in the commit body.
 - **Tune the runtime in containers.** Set `GOMEMLIMIT` to 80 -- 90% of container memory; consider PGO (`-pgo=auto`) once benchmarks are stable.
 
-## 7. Networking & I/O (goperf.dev/02)
+## 7. Networking & I/O
 
 Full detail in `references/networking.md`.
 
@@ -118,7 +113,7 @@ Full detail in `references/networking.md`.
 - **Build for resilience.** Use circuit breakers (Closed / Open / Half-Open), load shedding (bounded queues + `errgroup.SetLimit`), backpressure, and graceful degradation (`503` + `Retry-After`) under overload.
 - **Observe the connection lifecycle.** Use `net/http/httptrace` to capture DNS, dial, TLS, and GotConn spans for slow-client debugging; integrate with `slog` and OpenTelemetry tracing.
 
-## 8. Logging & Observability (JetBrains #10; samber golang-observability)
+## 8. Logging & Observability
 
 - **Use `log/slog` (Go 1.21+).** Never `fmt.Println` or `log.Printf` for telemetry. Prefer `slog.LogAttrs` in hot paths to avoid `any` boxing allocations.
 - **Actionable, not chatty.** Log only events someone must act on. Do not log routine trivia; for request-scoped flow use tracing, not logging; for performance data use metrics, not logs.
@@ -136,7 +131,7 @@ Full detail in `references/networking.md`.
 - **Three-layer evidence (L1/L2/L3).** L1 `go vet` + `golangci-lint`; L2 `go test -race -cover`; L3 at least one path across real boundaries (`httptest.Server`, real DB transaction).
 - **Mock boundaries, not internals.** Mock external network/system I/O; do not mock internal types  --  that couples tests to implementation.
 - **Benchmarks gate performance claims.** `go test -bench=... -benchmem -count=6 | tee /tmp/report-1.txt`; compare with `benchstat`. No benchmark → no perf claim.
-- **Lint config in CI.** `govet`, `staticcheck`, `errcheck`, `gosec`, `gocritic` minimum; `-race` always on. See `samber/cc-skills-golang@golang-lint`.
+- **Lint config in CI.** `govet`, `staticcheck`, `errcheck`, `gosec`, `gocritic` minimum; `-race` always on.
 
 ## 10. Anti-Cheat Sheet (DO NOT)
 
@@ -187,9 +182,3 @@ Adopt these proactively when writing or reviewing Go; old-style equivalents are 
 - `references/performance.md`  --  escape analysis, preallocation, `sync.Pool`, interface boxing, pprof workflow, iterative benchmarking.
 - `references/networking.md`  --  client/server timeouts, transport tuning, long-lived connection deadlines, resilience patterns, `httptrace` observability.
 
-## Source Attribution
-
-- JetBrains  --  "The 10x Commandments of Highly Effective Go" (John Arundel / Bitfield Consulting, 2025-10-16).
-- samber/cc-skills-golang  --  skills `golang-error-handling`, `golang-concurrency`, `golang-context`, `golang-performance`, `golang-observability`, `golang-naming`, `golang-code-style`, `golang-safety`, `golang-testing`, `golang-modernize`.
-- samber/cc-skills-golang  --  https://github.com/samber/cc-skills-golang (MIT license, consulted 2026-07).
-- goperf.dev  --  "Common Go Patterns for Performance" and "Practical Networking Patterns in Go" (astavonin/go-optimization-guide).

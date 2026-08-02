@@ -1,6 +1,6 @@
 # Go Performance & Memory Optimization
 
-Reference for `go-essential` §6. Synthesizes goperf.dev/01-common-patterns with samber/cc-skills-golang `golang-performance`.
+Reference for `go-essential` §6: escape analysis, preallocation, `sync.Pool`, interface boxing, and the pprof workflow.
 
 ## 0. Methodology First
 
@@ -132,7 +132,3 @@ See `go-essential` §5 for the full concurrency rules.
 | Default `http.Client` Transport | Set `MaxIdleConnsPerHost` (default 2) to match concurrency |
 | Logging in hot loops | Logging prevents inlining and allocates even when disabled |
 
-## Source Attribution
-
-- goperf.dev  --  "Common Go Patterns for Performance": `object-pooling/`, `mem-prealloc/`, `stack-alloc/`, `worker-pool/`, `buffered-io/`.
-- samber/cc-skills-golang  --  `golang-performance/SKILL.md` and its references on memory, CPU, runtime, caching.
