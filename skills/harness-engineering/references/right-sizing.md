@@ -35,7 +35,3 @@ Rules of thumb:
 
 - [harness-engineering](../SKILL.md) -- §7 (Three-Layer Termination), §8 (Mutation Testing), §10 (Adversarial Judge)
 - [verification-theater](./verification-theater.md) -- when a Mid/High task's tests look theatrical
-
-## Reference
-
-- O'Reilly Radar: *Stop Overengineering Your Agent Harness* -- https://www.oreilly.com/radar/stop-overengineering-your-agent-harness/
