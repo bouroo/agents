@@ -36,18 +36,17 @@ External facts below were resolved against primary sources, not memory. Re-verif
 
 - **Latest stable: OpenAPI 3.2.0**, released 2025-09-19 (OpenAPI Initiative). Target `openapi: 3.2.0` at the document root.
 - **Canonical meta-schema (immutable, date-stamped):** `https://spec.openapis.org/oas/3.2/schema/2025-11-23`. It is a JSON Schema **2020-12** document; its `$id` is the URL itself, its `$schema` is `https://json-schema.org/draft/2020-12/schema`, and it targets "OpenAPI v3.2.x Documents". The date-stamped URL is frozen -- pin it for reproducible validation. (Prior series: `…/oas/3.1/schema/2022-10-07`.)
-- **The root-key trap.** The OAS 3.2 meta-schema sets `unevaluatedProperties: false` at the document root and permits **only**: `openapi`, `$self`, `info`, `jsonSchemaDialect`, `servers`, `paths`, `webhooks`, `components`, `security`, `tags`, `externalDocs`. It does **not** permit `$schema`, `$ref`, or `$id` there. Therefore the two-line header below is a **validation directive, not spec content**: a strict validator strips `$schema`/`$ref` before applying the meta-schema, or the document fails with an `unevaluatedProperties` violation.
+- **The root-key trap (and why the directive is a comment).** The OAS 3.2 meta-schema sets `unevaluatedProperties: false` at the document root and permits **only**: `openapi`, `$self`, `info`, `jsonSchemaDialect`, `servers`, `paths`, `webhooks`, `components`, `security`, `tags`, `externalDocs`. It does **not** permit `$schema`, `$ref`, or `$id` there. The schema directive therefore lives in a **modeline comment** -- outside the YAML data model -- so it can never collide with the instance root.
 
-### The validator directive (the requested header)
+### The validator directive (a yaml-language-server modeline)
 
-The document carries these two keys at the very top so any JSON-Schema-aware tool can find and apply the OAS schema:
+The document carries this single comment at the very top. Editors (Red Hat YAML language server, VS Code, IntelliJ) and the bundled validator ([validate-openapi.mjs](./references/validate-openapi.mjs)) read the **same** line, so there is one source of truth:
 
 ```yaml
-$schema: 'https://json-schema.org/draft/2020-12/schema'
-$ref: 'https://spec.openapis.org/oas/3.2/schema/2025-11-23'
+# yaml-language-server: $schema=https://spec.openapis.org/oas/3.2/schema/2025-11-23
 ```
 
-These keys are **metadata for the validator**. The bundled validator ([validate-openapi.mjs](./references/validate-openapi.mjs)) reads `$ref`, fetches the schema, drops `$schema`/`$ref`/`$id` from the instance root, and validates the remainder. The spec *body* starts with `openapi: 3.2.0`.
+In a modeline `$schema` is the **schema to validate against** (here the OpenAPI meta-schema), not the JSON-Schema dialect. The validator fetches it and validates the body, which starts with `openapi: 3.2.0`. The validator also accepts a legacy root `$ref` key (stripped before validation) for specs that predate the modeline.
 
 > **Trade-off, stated honestly.** Dedicated OpenAPI linters (Redocly, Spectral) give richer *semantic* rules (naming, examples, deprecations) but their 3.2 support is younger than 3.1 -- 3.2 is under a year old. Where a linter's 3.2 support is unconfirmed, the meta-schema validator is the portable source of truth for *structural* validity. Use a linter for semantics once you have confirmed its 3.2 support; never let it be the reason you skip structural validation.
 
@@ -95,7 +94,7 @@ Author directly into the template; mark every assumption `[NEEDS CLARIFICATION]`
 
 ## Hard rules (always enforced)
 
-- **`openapi: 3.2.0`** is the first spec key; the `$schema`/`$ref` directive precedes it.
+- **`openapi: 3.2.0`** is the first spec key; the `$schema` modeline precedes it as a comment.
 - **Every operation** has a unique `operationId` (camelCase), a `summary`, and a `responses` map containing at least its success code and the error codes it can return.
 - **Reuse, never duplicate** -- shared shapes live once in `components/schemas` and are referenced with `$ref: '#/components/schemas/Name'`.
 - **Examples are required** -- at least one `example` (or `examples`) on each response body and request body. A spec without examples is not usable by clients or mocks.
@@ -135,7 +134,7 @@ When code changes, update the spec to match and re-validate: new operations get 
 
 | Mistake | Fix |
 |---|---|
-| Putting `$schema`/`$ref` in the body and expecting strict validation to pass | They are a validator directive; the validator strips them before applying the meta-schema. The body starts at `openapi:`. |
+| Putting `$schema`/`$ref` root keys in the body and expecting strict validation to pass | The directive is a modeline *comment*, not instance data; legacy root keys are stripped before validation. The body starts at `openapi:`. |
 | Inventing endpoints not present in the code | Introspect mode adds only routes the server registers; mark unknowns `[NEEDS CLARIFICATION]`, never invented. |
 | Inlining the same schema in every response | Define once in `components/schemas`, `$ref` everywhere. |
 | `nullable: true` (3.0-ism) | 3.1+/3.2 dropped `nullable`; use `type: [string, "null"]`. |
