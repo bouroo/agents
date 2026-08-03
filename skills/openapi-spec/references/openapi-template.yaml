@@ -1,10 +1,9 @@
-# Validation directive -- $schema and $ref are NOT OpenAPI fields. They tell a
-# JSON-Schema-aware validator which dialect to use and where the OpenAPI
-# meta-schema lives. The bundled validator (validate-openapi.mjs) fetches $ref,
-# strips these keys from the instance root, then validates the body below.
-# Leave them at the very top; the spec body starts at `openapi:`.
-$schema: 'https://json-schema.org/draft/2020-12/schema'
-$ref: 'https://spec.openapis.org/oas/3.2/schema/2025-11-23'
+# Schema directive -- a yaml-language-server modeline. Editors (Red Hat YAML
+# language server, VS Code, IntelliJ) and the bundled validator
+# (validate-openapi.mjs) read the SAME line, so there is one source of truth.
+# In a modeline `$schema` is the schema to validate against -- here the frozen,
+# date-stamped OpenAPI 3.2 meta-schema. The spec body starts at `openapi:`.
+# yaml-language-server: $schema=https://spec.openapis.org/oas/3.2/schema/2025-11-23
 
 openapi: 3.2.0
 
