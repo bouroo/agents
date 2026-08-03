@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [2.9.1] - 2026-08-03
+
+### Fixed
+
+- **`validate-openapi.mjs` is modeline-compatible.** The bundled validator now resolves the OpenAPI meta-schema from a [yaml-language-server modeline](https://github.com/redhat-developer/yaml-language-server#using-a-modeline) at the top of the spec -- the same `# yaml-language-server: $schema=<url>` comment the Red Hat YAML language server reads in editors (VS Code, IntelliJ) -- so the directive is a single source of truth shared by tooling and the validator. A new `parseModeline()` reads both the standard form and the IntelliJ-compatible `# $schema: <url>` form from the leading comment block; a legacy root `$ref` key remains supported as a backward-compatible fallback, and `$schema=none` is honored as a disable. The JSON-Schema dialect is now taken from the fetched meta-schema's own `$schema` rather than from the instance root. This finished a migration that had been left half-done and inconsistent: the template already used modeline comments (one pointing at the dialect, one a non-standard `$ref=` the editor ignores), the validator read root data keys the template no longer carried, and `SKILL.md` documented a third form -- so the validator could not validate its own template.
+- **Template modeline corrected.** `openapi-template.yaml` replaces its two broken modeline lines with a single correct one pointing at the frozen OpenAPI 3.2 meta-schema.
+- **`SKILL.md` directive section synced** to the modeline form (standard + IntelliJ), with the root-key trap retained only as a legacy note; hard rule and mistake-table row updated.
+
 ## [2.9.0] - 2026-08-03
 
 ### Added
