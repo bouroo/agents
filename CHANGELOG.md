@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [2.10.0] - 2026-08-04
+
+### Changed
+
+- **Comment policy is now a strict default, not advice.** `effective-code-craft` skill §3 "Code for Reading" replaces three loose bullets with a three-gate test a comment must clear before it is written: (1) naming is exhausted -- no clearer name, named helper, or local constant would make the line self-evident; (2) it states *why*, never *what*; (3) the *why* is not derivable by a reader fluent in the language. Banner dividers (`// ===== helpers =====`), section headers, and tracker-duplicating `// TODO` markers are now named as noise and omitted. Addresses recurring user reports that coder agents generated too many source comments; a prior pass (2.4.0) softened the rule but did not make omission the path of least resistance.
+
+- **Doc comments must follow the language's official documentation convention strictly -- not freeform prose.** Added a per-language table (godoc, TSDoc / JSDoc, rustdoc, docstring, Javadoc / Doxygen) naming each convention's doc marker and the one rule the toolchain renders; a private helper takes no doc comment, an exported symbol takes a correct one. Propagated to `agents/coder.md` Hard Rules and `AGENTS.md` §8 Hard Constraints so the strict-convention requirement lands at the points that gate behavior.
+
+### Added
+
+- **godoc rule in `go-essential`.** Every exported identifier takes a `//` comment directly above it that opens with the identifier name as a complete sentence; `//` only (never `/* */`); exactly one package comment per package. The strongest codified doc convention was previously absent from the Go skill.
+
+- **Doc-convention linting in `verify-phase`.** The PROVE lint stage now runs the language's doc-convention linter (`golangci-lint` / `revive`, `eslint-plugin-jsdoc`, `ruff` / `pydocstyle`, `cargo clippy`) so missing or malformed doc comments fail computationally rather than by LLM judgment; if the project configures no doc linter, the stage notes the absence and proceeds. Turns the comment-noise rule into a gate, not a guideline.
+
 ## [2.9.1] - 2026-08-03
 
 ### Fixed
