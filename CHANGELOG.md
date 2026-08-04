@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [2.11.0] - 2026-08-04
+
+### Added
+
+- **`confluence` skill.** Durable operating doctrine for the `mcp-atlassian` server: surface and register the MCP tools when they do not load mid-session (a `mcp_bridge.py` stdio bridge calls the same server's real tools), resolve `/x/<id>` shortlinks to page ids, and author Confluence pages so code blocks and PlantUML diagrams render -- native storage format, never markdown. The Prime Directive is to use the configured MCP (not curl/REST) and to prove renders by decoding the stored body (the REST `body.view` returns a JS stub for macro-rendered content), never by trusting it. Ships four references (access, storage-format, plantuml, page-template) and a `page_template.py` generator matching the hand-built endpoint-page layout. The skill count in every host plugin manifest description is updated (eight to nine).
+
 ## [2.10.0] - 2026-08-04
 
 ### Changed

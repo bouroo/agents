@@ -1,8 +1,8 @@
 {
   "$schema": "https://github.com/anthropics/claude-code/raw/main/schema/plugin.json",
   "name": "coder-agents",
-  "version": "2.10.0",
-  "description": "Language-agnostic coding-agent configuration. Ships a router AGENTS.md encoding repo-as-record doctrine, eight on-demand skills (commit-message, effective-code-craft, go-essential, harness-engineering, openapi-spec, performance-patterns, repo-documentation, spec-driven-development), six slash commands (document-phase, judge-phase, openapi-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the think/act/prove/grow loop. Targets deterministic, executable-completion workflows over speculative AI assistance.",
+  "version": "2.11.0",
+  "description": "Language-agnostic coding-agent configuration. Ships a router AGENTS.md encoding repo-as-record doctrine, nine on-demand skills (commit-message, confluence, effective-code-craft, go-essential, harness-engineering, openapi-spec, performance-patterns, repo-documentation, spec-driven-development), six slash commands (document-phase, judge-phase, openapi-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the think/act/prove/grow loop. Targets deterministic, executable-completion workflows over speculative AI assistance.",
   "author": {
     "name": "bouroo",
     "url": "https://github.com/bouroo"
@@ -27,6 +27,7 @@
   ],
   "skills": [
     "./skills/commit-message",
+    "./skills/confluence",
     "./skills/effective-code-craft",
     "./skills/go-essential",
     "./skills/harness-engineering",
