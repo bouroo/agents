@@ -126,6 +126,7 @@ Then restart your coding tool so it picks up the new config.
 │   └── verify-phase.md
 ├── skills/                  # On-demand skill modules (load via the skill tool)
 │   ├── commit-message/
+│   ├── confluence/
 │   ├── effective-code-craft/
 │   ├── go-essential/
 │   ├── harness-engineering/
@@ -185,6 +186,7 @@ Focused modules the agent loads on demand when a task matches. Each ships a ters
 | `repo-documentation` | Repo keeps a `docs/` tree and a behavior/interface/invariant/domain-term change must update the affected doc in the same change |
 | `spec-driven-development` | Starting new features, resolving ambiguous requirements, bridging intent to implementation |
 | `commit-message` | Generating a conventional commit message from staged changes |
+| `confluence` | Operating the mcp-atlassian server end-to-end: surfacing/registering MCP tools, resolving `/x/` shortlinks, and authoring Confluence pages so code blocks and PlantUML diagrams render (native storage format, never markdown) |
 
 ## Compatibility
 
