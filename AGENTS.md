@@ -111,7 +111,7 @@ Executable evidence (command + exit code + actual output) for every done claim -
 - Never branch on error strings.
 - Never log secrets.
 - Never build speculative features.
-- Never add a comment that restates the code. Comments are the exception, not the default: add one only when a clearer name or helper cannot convey the *why*. Prefer fixing clarity over annotating it.
+- Never add a comment that restates the code. The default is no comment; add one only when naming or structure cannot convey the *why*. Doc comments on exported symbols must follow the language's official convention (godoc, TSDoc/JSDoc, rustdoc, docstring). Prefer fixing clarity over annotating it.
 - Never declare done without executable evidence at L1, L2, L3.
 - Never optimize without measurement.
 - Never put deterministic logic in the model.
