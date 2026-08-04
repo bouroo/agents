@@ -17,7 +17,7 @@ Scope (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole wor
 Run the stages in order. On findings, **auto-fix**, then **re-verify**; repeat until clean or no more auto-fixes are possible, then advance.
 
 1. **Format**  --  apply the project's formatter; fail if files would change after auto-fix.
-2. **Lint**  --  run the linter with warnings-as-errors; auto-fix where the toolchain supports it.
+2. **Lint**  --  run the linter with warnings-as-errors; auto-fix where the toolchain supports it. Include the language's **doc-convention linter** so comment noise and missing doc comments are caught computationally, not by judgment: `golangci-lint` / `revive` (godoc -- exported identifiers documented, doc begins with the name), `eslint-plugin-jsdoc` (TSDoc / JSDoc), `ruff` / `pydocstyle` (docstrings), `cargo clippy` (rustdoc). If the project configures no doc linter, note the absence and proceed.
 3. **Type-check**  --  run the static type checker with strict settings; no auto-fix, so move directly to review on issues.
 4. **Scan**  --  run secret/SAST/vulnerability scanners; fail on findings above threshold. Never auto-fix security findings  --  review and escalate.
 5. **Test**  --  run the full suite (unit + integration); coverage must meet the spec's Safeguards. A green suite is one signal, not proof  --  for high-trust changes, **grade the tests** with mutation testing (a suite that stays green after mutation is decoration, not coverage). See [harness-engineering](../skills/harness-engineering/SKILL.md) §8 and the [right-sizing map](../skills/harness-engineering/references/right-sizing.md) for when this full sweep applies vs. a lighter touch.

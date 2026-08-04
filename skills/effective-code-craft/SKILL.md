@@ -141,9 +141,21 @@ Before sending the report, mechanically check whether this run owed `INTENT:`, `
 - Name length scales with scope: short for locals (`i`, `buf`, `err`), longer at module level. Single-word names first; add words only to disambiguate.
 - Omit type-like words (`users` over `userList`) and context the surrounding API already provides (`count`, not `userCount`, inside `UserCount`).
 - Avoid redundant `get`/`Get` prefixes; start with the noun. Don't repeat module names in exported symbols (`widget.create`, not `widget.createWidget`).
-- Arrange code to explain itself: clear names, short functions, named helpers carry intent so the reader rarely needs prose. **The default is no comment.** A comment is justified only when the code cannot show the *why* itself -- a non-obvious constraint, invariant, external contract, or historical gotcha. Before adding a comment, ask: *can a clearer name, a named helper, or a local constant make this self-evident?* If yes, fix the code and add no comment. If no, add the minimum prose that conveys the missing *why*.
-- **Never annotate the obvious.** Restating the code (`// loop over users`, `# increment i`), describing what names already say, or narrating your implementation steps is noise that the next reader must skip or maintain. Such comments get stale faster than the code they decorate.
-- When a comment is warranted, keep it terse and follow the project's idiomatic doc style -- godoc, JSDoc, rustdoc, PyDoc, or Doxygen (a project style guide wins): full sentences for exported symbols, beginning with the symbol's name; never restate what the code says.
+- Arrange code to explain itself: clear names, short functions, and named helpers carry intent so a reader rarely needs prose. **The default is no comment** -- write one only after all three gates clear:
+  1. **Naming is exhausted.** No clearer name, named helper, or local constant could make the line self-evident.
+  2. **It states *why*, never *what*.** It records a non-obvious constraint, invariant, external contract, or historical gotcha -- not what the code does or the order of its steps.
+  3. **The *why* is not derivable.** A reader fluent in the language could not reconstruct it from the code. If they could, it is noise.
+  Most comments you reach for fail gate 1 -- fix the code and add no comment.
+- **Never annotate the obvious.** Restating the code (`// loop over users`, `# increment i`), repeating what names already say, narrating implementation steps, banner dividers (`// ===== helpers =====`), section headers, and tracker-duplicating `// TODO` markers are noise the next reader must skip or maintain. Such comments go stale faster than the code they decorate.
+- **Doc comments are required on exported / public symbols and follow the language's official documentation convention strictly -- not freeform prose.** A private helper takes no doc comment; an exported one takes a correct one. Use the convention's doc marker and the one rule each toolchain renders:
+  | Language | Convention | Rule most often broken |
+  |---|---|---|
+  | Go | godoc | `//` directly above the decl, opening with the identifier name as a complete sentence (`// UserByID returns ...`); one package comment per package. |
+  | TypeScript / JavaScript | TSDoc / JSDoc | `/** */` with `@param` / `@returns` / `@throws`; never retype a type already in the signature. |
+  | Rust | rustdoc | `///` for rendered docs (start `# Examples` for runnable ones), `//` for non-doc notes. |
+  | Python | docstring | Triple-quoted, imperative mood, first line a one-sentence summary. |
+  | Java / C++ / C# | Javadoc / Doxygen / XML | `/** */` with `@param` / `@return` on public API. |
+  A project style guide wins on conflict. A warranted private-implementation comment is a terse one-line `//` on the *why* only.
 - **Comments document the code, not the process.** Source comments MUST NOT reference internal harness artifacts: plan IDs (`U1`, `T16`), decision IDs (`D5`, `D8`), spec line numbers (`spec §3 L319-335`), handoff paths (`.agents/handoff/...`), or tracking tokens (`PENDING;`, `decision D5`). Those belong only in `.agents/` artifacts. A reader of the source must never need to know the agent's planning vocabulary to understand the code. If the *why* is genuinely a durable design constraint, rewrite it as a standalone statement of the constraint (e.g. "the network gateway authenticates this webhook upstream; the handler validates body fields only") -- no plan/task/decision identifiers.
 
 ### 4. Safe by Default
