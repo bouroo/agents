@@ -4,7 +4,7 @@ The short doctrine lives in [SKILL.md](../SKILL.md); this file is the concrete p
 
 ## Credentials
 
-`mcp-atlassian` is configured for `TENANT.atlassian.net` (space `ClientInstance`). Creds live in `~/.claude/settings.json` → `mcpServers.mcp-atlassian.env`:
+`mcp-atlassian` is configured for your Atlassian site (set `CONFLUENCE_BASE_URL` and `SPACE_KEY` to your instance -- e.g. `<your-domain>.atlassian.net`, space `<your-space-key>`). Creds live in the host's settings (e.g. `~/.claude/settings.json`) → `mcpServers.mcp-atlassian.env`:
 
 - `CONFLUENCE_URL` / `CONFLUENCE_USERNAME` / `CONFLUENCE_API_TOKEN`
 - `JIRA_URL` / `JIRA_USERNAME` / `JIRA_API_TOKEN` (same token value as Confluence)
@@ -19,9 +19,9 @@ The server command is `uvx mcp-atlassian`. It exposes ~98 tools incl. `confluenc
 USER=$(python3 -c "import json;d=json.load(open('$HOME/.claude/settings.json'))['mcpServers']['mcp-atlassian']['env'];print(d['CONFLUENCE_USERNAME'])")
 TOK=$(python3 -c "import json;d=json.load(open('$HOME/.claude/settings.json'))['mcpServers']['mcp-atlassian']['env'];print(d['CONFLUENCE_API_TOKEN'])")
 claude mcp add mcp-atlassian -s user \
-  -e "JIRA_URL=https://TENANT.atlassian.net" \
+  -e "JIRA_URL=https://<your-domain>.atlassian.net" \
   -e "JIRA_USERNAME=$USER" -e "JIRA_API_TOKEN=$TOK" \
-  -e "CONFLUENCE_URL=https://TENANT.atlassian.net/wiki" \
+  -e "CONFLUENCE_URL=https://<your-domain>.atlassian.net/wiki" \
   -e "CONFLUENCE_USERNAME=$USER" -e "CONFLUENCE_API_TOKEN=$TOK" \
   -- uvx mcp-atlassian
 claude mcp list   # → mcp-atlassian: uvx mcp-atlassian - ✔ Connected
@@ -56,9 +56,9 @@ The bridge reads creds from `~/.claude/settings.json` (or `CONF_USER`/`CONF_TOK`
 
 ```bash
 # direct REST lookup (needs user:token)
-curl -s -u "$USER:$TOK" "https://TENANT.atlassian.net/wiki/rest/api/shortlink/<id>"
+curl -s -u "$USER:$TOK" "https://<your-domain>.atlassian.net/wiki/rest/api/shortlink/<id>"
 # or follow the redirect chain and read the final /pages/<id>/ URL
-curl -s -u "$USER:$TOK" -L -o /dev/null -w "%{url_effective}" "https://TENANT.atlassian.net/wiki/x/<id>"
+curl -s -u "$USER:$TOK" -L -o /dev/null -w "%{url_effective}" "https://<your-domain>.atlassian.net/wiki/x/<id>"
 ```
 
 The redirect chain is `…/x/<id>` → `…/pages/tinyurl.action?urlIdentifier=<id>` → `…/spaces/<KEY>/pages/<pageId>/…`.

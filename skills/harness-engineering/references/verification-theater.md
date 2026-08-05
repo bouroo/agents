@@ -131,6 +131,6 @@ Cross-link [harness-engineering](../SKILL.md) §8 (grade the tests) and §10
 (adversarial judge), plus the Failure-Mode -> Control Map row "Verification
 theater" in §13. Explanations are not evidence -- the Prime Directive
 ([AGENTS.md](../../../AGENTS.md) §0). The [Intent
-gate](../../effective-code-craft/SKILL.md) is the upstream control: a claim
+gate](../../code-craft/SKILL.md) is the upstream control: a claim
 that an edit satisfies an Intent line without captured verification output is
 the canonical verification-theater shape.
