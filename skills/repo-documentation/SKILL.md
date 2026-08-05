@@ -5,182 +5,99 @@ description: "Repo-local documentation system for humans and agents: a docs/ tre
 
 # Repo-Local Documentation
 
-Source code is the implementation source of truth; `docs/` explains the system at a useful abstraction across the THINK→ACT→PROVE→GROW loop. The repo you are working in keeps its own `AGENTS.md` (or `docs/README.md`) as the routing/index layer.
+## Overview
 
-> **Precondition.** This skill applies to repos that maintain a `docs/` tree. When loaded from the `document-phase` command, it also covers bootstrapping `docs/` from scratch. When loaded passively (during review or refactor), it activates only if `docs/` already exists -- do not impose docs on a repo mid-review.
+Source code is the implementation source of truth; `docs/` explains the system at a useful abstraction for a reader who has never seen the codebase. Code shows *what* happens; docs explain *why* it exists, *when* it applies, and *what can go wrong*. The repo keeps `AGENTS.md` (or `docs/README.md`) as the routing and index layer: `AGENTS.md` tells agents where to look and how to work; `docs/` explains how the application works.
 
-> `AGENTS.md` tells agents where to look and how to work; `docs/` explains how the application works.
+Docs are plain Markdown, reviewed alongside code, with no separate publishing infrastructure. A comment that only restates the code wastes the reader's time.
 
-**Stance:** You treat documentation as a first-class deliverable written for the reader who has never seen this codebase. Code shows *what*; docs explain *why*, *when*, and *what can go wrong*. A comment that only restates the code wastes the reader's time.
+## When to Load
 
-**Modes:**
+Load when the repo maintains a `docs/` tree and a change touches any of:
 
-- **Write mode (THINK & ACT)** -- generating or filling in missing documentation (system/flow/ADR/glossary). Work sequentially through the Agent Workflow; or parallelize across independent docs using sub-agents.
-- **Review mode (PROVE)** -- auditing existing docs for completeness, accuracy, and style against current implementation. Use up to 5 parallel sub-agents, one per doc layer (systems, flows, architecture/ADR, glossary, README/index).
-- **Sync mode (GROW)** -- updating existing docs to match code changes and runtime evolution. Update only docs whose behavior/interface/invariant/domain-term changed.
+- system responsibility, runtime or user-visible behavior
+- internal workflow, data model, persistence, or external integration
+- public API, configuration, or error handling
+- security/auth behavior, a documented invariant, or a glossary-defined domain term
 
----
-
-## Integration with the THINK→ACT→PROVE→GROW Loop
-
-1. **THINK Phase:** Read `AGENTS.md` and `docs/` to gather context on system boundaries, domain entities, and ADR constraints before making edits.
-2. **ACT Phase:** Keep implementation surgical (WIP = 1). When code changes observable behavior or contracts, draft or update corresponding system/flow docs.
-3. **PROVE Phase:** Verify that documentation matches executable reality (L1/L2/L3 testing). Ensure markdown links resolve and diagrams reflect updated behavior.
-4. **GROW Phase:** Update glossary entries, ADR statuses (`Superseded`, `Accepted`), and system docs as the repo evolves to maintain a self-improving operational record.
-
----
-
-## Core Idea
-
-Durable repo-local docs close the context gap for both humans and agents. Without them, contributors have to infer behavior, boundaries, domain terms, and architectural constraints from scattered source and one-off comments. With them:
-
-- New readers onboard quickly without full-codebase exploration.
-- Reviews catch behavior changes, stale assumptions, and missing-impact bugs.
-- Agents make safer changes because invariants and interfaces are explicit.
-
-Docs are plain Markdown, reviewed alongside code, with no separate publishing infrastructure.
-
----
-
-## When to Use (and When Not To)
-
-Document behavior that is **central, risky, frequently changed, hard to infer, or user-visible / security / billing / data-integrity sensitive**. Don't document every file; skip trivial helpers and generated code.
+When loaded passively during a review or refactor, activate only if `docs/` already exists; do not impose docs on a repo mid-review. Document behavior that is central, risky, frequently changed, hard to infer, or sensitive (security, billing, data integrity). Skip trivia:
 
 | Document | Skip if |
 |---|---|
-| System doc | The area is trivial, auto-generated, or a thin wrapper over a well-known library |
-| Flow doc | The behavior stays inside one system and is already covered there |
-| ADR | The decision is a routine implementation detail, small refactor, or temporary workaround |
-| Glossary term | The word has no product-specific meaning beyond its common meaning |
+| System | trivial, auto-generated, or a thin wrapper over a well-known library |
+| Flow | stays inside one system and is already covered there |
+| ADR | a routine implementation detail, small refactor, or temporary workaround |
+| Glossary term | carries no product-specific meaning beyond its common meaning |
 
----
-
-## The `docs/` Layout
+## docs/ Layout
 
 ```
 docs/
-  README.md
-  STYLE.md
-  glossary.md
-  systems/
-  flows/
-  architecture/
-    README.md
-    decisions/
-      README.md
-  templates/
-    system.md
-    flow.md
-    adr.md
+  README.md          index and how to navigate the docs
+  systems/           one doc per system or subsystem
+  flows/             one doc per important cross-system flow
+  architecture/      architecture overviews and decisions/
+    decisions/       one ADR per decision
+  glossary.md        product-specific terms
+  templates/         copies of the sibling templates below
 ```
 
-Exact filenames can follow the host repo's conventions; the conceptual structure should remain clear.
+## Modes
 
----
+- **Write** -- generate or fill in missing docs (system, flow, ADR, glossary). Work the docs sequentially, or parallelize independent docs across sub-agents.
+- **Review** -- audit existing docs for completeness, accuracy, and style against the current implementation. Use up to five parallel sub-agents, one per layer (systems, flows, architecture/ADRs, glossary, index).
+- **Sync** -- update existing docs to match code and runtime changes. Update only docs whose behavior, interface, invariant, or domain term changed.
 
 ## Documentation Types
 
-| Type | Location | Purpose | Use when |
-|---|---|---|---|
-| **System** | `docs/systems/` | A coherent behavior area (a module, package, service, feature, integration, or domain concern) | A reader would otherwise inspect several files to understand how a part of the app works |
-| **Flow** | `docs/flows/` | Behavior crossing systems, with multi-step state transitions | Crosses multiple systems, has several steps, is frequently changed/debugged, involves external services, or has security/billing/data-integrity/user-visible implications |
-| **Architecture** | `docs/architecture/` | Cross-system structure, durable constraints, tradeoffs | Topic affects more than one system; explains *why* the app is shaped a certain way |
-| **ADR** | `docs/architecture/decisions/` | Durable architectural decisions with context and tradeoffs | Decision shapes the system beyond a single implementation detail |
-| **Glossary** | `docs/glossary.md` | Title Case domain terms used across the app | Word has product-specific meaning that is easy to misread |
+| Type | Location | Use when |
+|---|---|---|
+| System | `docs/systems/` | a reader would otherwise inspect several files to understand how a part of the app works |
+| Flow | `docs/flows/` | crosses multiple systems, has several steps, is frequently changed or debugged, or has security/billing/data-integrity/user-visible implications |
+| Architecture | `docs/architecture/` | a topic affects more than one system, or explains why the app is shaped a certain way |
+| ADR | `docs/architecture/decisions/` | a decision shapes the system beyond a single implementation detail |
+| Glossary | `docs/glossary.md` | a word has product-specific meaning that is easy to misread |
 
-**Promotion rule:** a system that grows complex, becomes cross-system, or meets a flow criterion gets promoted to `docs/flows/`. The system doc links to the new flow doc.
-
----
+A system that grows complex, becomes cross-system, or meets a flow criterion is promoted to `docs/flows/`; the system doc links to the new flow doc.
 
 ## ADR Rules
 
-Every ADR begins with YAML frontmatter:
+Every ADR carries YAML frontmatter:
 
-- `status` (required) -- one of `Proposed`, `Accepted`, `Superseded`, `Deprecated`, `Rejected`.
-- `date` (required) -- `YYYY-MM-DD`.
-- `superseded_by` (required only when `status: Superseded`) -- repo-relative path to the replacement ADR.
+- `status` (required): `Proposed`, `Accepted`, `Superseded`, `Deprecated`, or `Rejected`.
+- `date` (required): `YYYY-MM-DD`.
+- `superseded_by` (required only when `status: Superseded`): repo-relative path to the replacement ADR.
 
-Only **`Accepted`** ADRs are current guidance. Never rewrite an accepted ADR to change the decision -- create a new one and mark the old `Superseded`, linking with `superseded_by`. Small non-decision corrections (typos, links) are allowed.
-
-**Architectural decisions are human-owned.** Agents draft ADR text from accepted decisions and keep existing ADRs aligned with code; humans accept.
-
----
+Only `Accepted` ADRs are current guidance. Never rewrite an accepted ADR to change its decision: create a new ADR, mark the old one `Superseded`, and link it with `superseded_by`. Small non-decision corrections (typos, links) are allowed. Architectural decisions are human-owned: agents draft ADR text and keep ADRs aligned with code; humans accept them.
 
 ## Source Maps
 
-Every system and flow doc includes a **Source map** section that links the most important source files via relative Markdown links. Don't list every file -- prefer entry points, state definitions, handlers, services, jobs, tests, and integration files.
-
----
+Every system and flow doc includes a **Source map** section linking the most important source files via relative Markdown links. Do not list every file; prefer entry points, state definitions, handlers, services, jobs, tests, and integration files.
 
 ## Style
 
-Apply to every piece of documentation you write or review:
+Apply to everything you write or review:
 
-- **Concision** -- write the shortest version that carries the idea. Remove ornament and hollow transitions. Never drop facts, warnings, or user-requested depth.
-- **Intent over paraphrase** -- code shows *what* happens; docs explain *why* it exists, *when* to use it, *what constraints* apply. A comment that only restates the signature wastes the reader's time.
-- **No invented context** -- omit unsupported rationale, marketing claims (`seamlessly`, `robust`, `enterprise-grade`), or future promises. Leave gaps visible (`[NEEDS CLARIFICATION]`) rather than filling with speculation.
-- **Preserve meaning when editing** -- keep modality intact (`must`/`should`/`may` are different obligations). Preserve conditions, warnings, required actions. A cleaner sentence that changes obligations is wrong.
+- **Concision** -- the shortest version that carries the idea. Remove ornament and hollow transitions; never drop facts, warnings, or requested depth.
+- **Intent over paraphrase** -- docs explain *why*, *when*, and constraints, not *what* the signature says.
+- **No invented context** -- omit unsupported rationale, marketing words (`seamless`, `robust`), or future promises. Leave a gap as `[NEEDS CLARIFICATION]` rather than speculate.
+- **Preserve meaning when editing** -- keep modality intact (`must`/`should`/`may` are different obligations); preserve conditions, warnings, and required actions. A cleaner sentence that changes obligations is wrong.
+- Stable headings; relative Markdown links for related docs and source; glossary headings use Title Case (`## Email Verification`) in finished docs.
 
-Formatting:
+## Keeping Docs Updated
 
-- Clear, direct Markdown; stable headings.
-- Relative Markdown links for related docs and source files.
-- Explain behavior, responsibilities, flows (mermaid diagrams), invariants, pitfalls -- not every line.
-- Stay concise enough to read before making changes.
-- **Glossary headings use Title Case** (e.g. `## Email Verification`, `## Verification Token`). Prefer that Title Case form in finished docs when it improves clarity. Lowercase is fine in drafts, comments, identifiers, or informal notes.
+Docs are part of the diff. Every change that touches system behavior, workflows, data models, persistence, integrations, security/auth, invariants, APIs, or glossary terms must update the affected doc in the same change. If docs and code disagree, do one of: update the doc to match the code, fix the code to match the doc, or record the gap as a follow-up and flag it for review.
 
----
+## References
 
-## Keeping Docs Updated (GROW Phase Discipline)
+Three sibling templates, copied into the working repo's `docs/templates/`:
 
-Docs are part of the diff. Every change that touches any of the following must update the affected doc in the same change:
+- [system.md](references/system.md) -- for `docs/systems/`
+- [flow.md](references/flow.md) -- for `docs/flows/`
+- [adr.md](references/adr.md) -- for `docs/architecture/decisions/`
 
-- System responsibilities, runtime behavior, user-visible behavior.
-- Internal workflows, data models, persistence behavior, external integrations.
-- Public APIs, configuration, error handling.
-- Security or auth behavior, important invariants or assumptions.
-- Testing or debugging expectations.
-- Glossary-defined domain concepts.
+Related skills:
 
-Reviewers treat docs as part of the change. If docs and code disagree, do one of:
-
-1. Update the docs to match the code.
-2. Update the code to match the documented intent.
-3. Explicitly call out the mismatch for review.
-
----
-
-## Agent Workflow
-
-1. Read the working repo's `AGENTS.md`.
-2. Use `docs/README.md` to find relevant docs.
-3. Read the system / flow / architecture / glossary docs for the area.
-4. Inspect source files for implementation details.
-5. Make the code change (ACT phase).
-6. Update affected docs if behavior, responsibilities, flows, invariants, assumptions, interfaces, or glossary-defined concepts changed.
-7. Ensure docs and code agree before finishing (PROVE & GROW phases).
-
----
-
-## Validation
-
-Run the working repo's doc/link checks and validators (e.g. Markdown linters, link checkers, doc-style scripts). Verify after every change that affected docs render, links resolve, and `docs/` still matches code.
-
----
-
-## Templates
-
-This skill ships three sibling templates that you can copy into the working repo's `docs/templates/`:
-
-- [system.md](./references/system.md) -- for `docs/systems/`.
-- [flow.md](./references/flow.md) -- for `docs/flows/`.
-- [adr.md](./references/adr.md) -- for `docs/architecture/decisions/`.
-
----
-
-## Cross-References
-
-- [effective-code-craft](../effective-code-craft/SKILL.md) -- Code for reading, clear doc style
-- [harness-engineering](../harness-engineering/SKILL.md) -- Repository as system of record, self-improving harness (GROW)
-- [spec-driven-development](../spec-driven-development/SKILL.md) -- Specification-first workflow (THINK phase)
-
+- [code-craft](../code-craft/SKILL.md) -- clear doc style, artifact gates
+- [harness-engineering](../harness-engineering/SKILL.md) -- repo as system of record
+- [spec-driven-development](../spec-driven-development/SKILL.md) -- specification-first workflow

@@ -9,6 +9,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.0.0] - 2026-08-05
+
+A ground-up reimplementation into an architecture that is **completely agnostic** of programming languages, agent frameworks, and host tools, while shipping every artifact in each popular harness's **native** discovery format. The coder-squad doctrine (governance router + conductor/coder/discover squad + THINK-ACT-PROVE-GROW loop + skills + eval honesty layer) is preserved and concisely re-implemented; only its *home* and *form* change. This is a **breaking** release for filesystem consumers; the doctrine itself is continuous with v2. Compatibility verified against the official schemas for [opencode](https://opencode.ai/docs/agents/), [Claude Code](https://code.claude.com/docs/en/sub-agents), [kilo](https://kilo.ai/docs/customize/workflows), [skills.md](https://skills.md/docs), and [agents.md](https://agents.md/).
+
+### Added
+
+- **Native harness compatibility.** Artifacts ship in each harness's own discovery format, not a custom one: **agents** are flat `agents/<name>.md` (opencode identity-by-filename; Claude Code `.claude/agents/`); **commands** are flat `commands/<name>.md` with an `agent` binding (opencode + kilo `.kilo/commands/` + Claude Code); **skills** are nested `skills/<name>/SKILL.md` per the [Agent Skills standard](https://skills.md/docs); **AGENTS.md** is a plain root Markdown file per the open [agents.md](https://agents.md/) standard.
+
+- **Cross-host agent frontmatter.** Each agent carries a superset both kinds of harness read: `name` + `description` + `mode` (primary/subagent) + `tools` (for name-gated harnesses) + `permission` (a per-capability allow/ask/deny object for capability-gated harnesses). This enforces the read-only (`conductor`/`discover`) vs mutating (`coder`) boundary on every host -- a host that gates by tool name honors `tools`; one that gates by capability honors `permission`.
+
+- **Host-agnostic core.** `AGENTS.md`, `agents/*.md`, `commands/*.md`, and the seven core skills contain no host-binding tokens and no language-bias doctrine. A new gate **`G17_agnostic_core`** scans every core file for host tokens (dotdirs, host config filenames, plugin-manifest paths, tool names) and fails on any leak. The three domain adapters (`go-essential`, `openapi-spec`, `confluence`) are excluded -- they legitimately name their domain.
+
+- **Registries (single source of truth).** `registries/modules.json` (module registry: core squad + optional domain adapters) and `registries/hosts.json` (host-adapter registry: an abstract host contract + adapter instances). Adding a host is now an entry in a file, not a code change.
+
+- **Abstract host-adapter installer.** `adapters/install.sh` (and `adapters/install.ps1`, `adapters/link.sh` shim) read `registries/hosts.json`; no hardcoded tool list lives in the core. Same `install`/`uninstall`/`status`/`list` modes, same `--dry-run`/`--force`/`<adapter>` options, same eight hosts as v2 (gemini, antigravity, antigravity-ide, codex, claude, qwen, opencode, kilo) -- now data, not code.
+
+- **Three-tier customization resolver.** `scripts/resolve-customization.py` merges `customize.toml` base -> team (`.agents/custom/`) -> user layers with the bmad merge rules (scalars override; tables deep-merge; arrays-of-tables keyed by `code`/`id` replace+append). Optional -- artifacts function fully with inline defaults; a manual fallback is documented.
+
+- **New gates.** `G16_registries_parse` (both registries parse, adapter codes unique) and `G17_agnostic_core` (core free of host tokens). The gate count is now 17 (authoritative via `checks.py --list`).
+
+### Changed
+
+- **Repository layout.** `agents/<name>.md` (flat, native); `commands/<name>.md` (flat, native); `skills/<name>/SKILL.md` (nested, native). `AGENTS.md` is rewritten as a **governance agent persona + squad navigator** (120 lines, under the 220-line budget).
+
+- **Skill relocations.** `effective-code-craft` -> `code-craft` (frontmatter `name` and dir align with the lint label). The three language/tool skills are top-level siblings: `skills/go-essential`, `skills/openapi-spec`, `skills/confluence` -- all ten skills are one level deep so every one-level skill scanner (opencode, Claude Code) discovers them.
+
+- **Manifests relocated + generated.** `.agents/plugins/<tool>/` -> `adapters/manifests/<host>/`. The discovery-path symlinks (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`, root `plugin.json`/`marketplace.json`) now target `adapters/manifests/`. `scripts/gen-manifests.py` reads `VERSION` + on-disk inventory + registries and writes all seven host manifests (flat agent/command paths); `G15_manifests_generated` fails on hand-edit drift. The `confluence` adapter's hard-coded tenant was scrubbed to placeholders (URLs read from settings/env).
+
+### Removed
+
+- v2 flat agent files (`agents/*.md`), `commands/`, the root `install.sh`/`install.ps1`/`link.sh` (moved to `adapters/`), and `.agents/plugins/` (moved to `adapters/manifests/`). v2 content is preserved in git history.
+
+### Upgrade (breaking for filesystem consumers)
+
+- The native-format change (flat `agents/<name>.md` + `commands/<name>.md`) leaves **STALE** symlinks at hosts installed from v2. Run `adapters/install.sh install --force` (or `link.sh install --force`) to refresh; the installer detects STALE links and refuses to clobber real files without `--force`.
+- Skill paths changed for four skills (`effective-code-craft` -> `code-craft`; `go-essential`, `openapi-spec`, `confluence` now top-level). Re-run the installer or `npx skills add bouroo/agents` after upgrading.
+
 ## [2.11.0] - 2026-08-04
 
 ### Added
