@@ -16,6 +16,8 @@ name: validate
 #   G10-G13  per-host plugin manifest schemas + discovery-path symlinks
 #   G14      frontmatter colon-safe (strict-YAML)
 #   G15      plugin manifests match scripts/gen-manifests.py output (generated)
+#   G16      registries/{modules,hosts}.json parse
+#   G17      core (AGENTS.md, agents/, commands/, agnostic skills) is free of host-binding tokens
 
 on:
   push:

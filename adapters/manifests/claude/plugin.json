@@ -1,0 +1,34 @@
+{
+  "name": "coder-agents",
+  "version": "3.0.0",
+  "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a three-role squad (conductor/coder/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
+  "author": {
+    "name": "bouroo",
+    "url": "https://github.com/bouroo"
+  },
+  "homepage": "https://github.com/bouroo/agents",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bouroo/agents"
+  },
+  "keywords": [
+    "agents",
+    "coding-agent",
+    "skills",
+    "squad",
+    "harness"
+  ],
+  "license": "Apache-2.0",
+  "skills": [
+    "./skills/code-craft",
+    "./skills/commit-message",
+    "./skills/confluence",
+    "./skills/go-essential",
+    "./skills/harness-engineering",
+    "./skills/memory-engineering",
+    "./skills/openapi-spec",
+    "./skills/performance-patterns",
+    "./skills/repo-documentation",
+    "./skills/spec-driven-development"
+  ]
+}

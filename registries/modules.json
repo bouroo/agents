@@ -1,0 +1,64 @@
+{
+  "$comment": "Module registry. Single source of truth for which modules the repo offers. A module bundles agents + commands + skills delivering a capability. The core module is host- and language-agnostic; adapter modules carry language/tool specifics and are optional. Order = display order. Schema per module: code, name, description, default_selected, source, agents[], commands[], skills[].",
+  "modules": [
+    {
+      "code": "core",
+      "name": "Coder Squad Core",
+      "description": "Autonomous, self-improving, language-agnostic coder-agent squad: a governance router (AGENTS.md), a three-role squad (conductor/coder/discover), six phase commands, and the core skills that drive the think-act-prove-grow loop.",
+      "default_selected": true,
+      "source": "local",
+      "agents": [
+        "conductor",
+        "coder",
+        "discover"
+      ],
+      "commands": [
+        "document",
+        "judge",
+        "openapi",
+        "refactor",
+        "review",
+        "verify"
+      ],
+      "skills": [
+        "code-craft",
+        "harness-engineering",
+        "memory-engineering",
+        "spec-driven-development",
+        "performance-patterns",
+        "repo-documentation",
+        "commit-message"
+      ]
+    },
+    {
+      "code": "adapter-go",
+      "name": "Go Language Adapter",
+      "description": "Go-specific coding doctrine (errors, naming, concurrency, context, performance). Optional domain adapter.",
+      "default_selected": false,
+      "source": "local",
+      "skills": [
+        "go-essential"
+      ]
+    },
+    {
+      "code": "adapter-openapi",
+      "name": "OpenAPI Adapter",
+      "description": "OpenAPI 3.2 spec generation, repair, and validation. Optional domain adapter backing command/openapi.",
+      "default_selected": false,
+      "source": "local",
+      "skills": [
+        "openapi-spec"
+      ]
+    },
+    {
+      "code": "adapter-confluence",
+      "name": "Confluence Adapter",
+      "description": "Atlassian Confluence operations via the mcp-atlassian bridge. Optional domain adapter.",
+      "default_selected": false,
+      "source": "local",
+      "skills": [
+        "confluence"
+      ]
+    }
+  ]
+}
