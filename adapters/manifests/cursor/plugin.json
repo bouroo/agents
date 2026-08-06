@@ -1,0 +1,35 @@
+{
+  "name": "coder-agents",
+  "version": "3.0.0",
+  "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a three-role squad (conductor/coder/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
+  "author": {
+    "name": "bouroo"
+  },
+  "publisher": "bouroo",
+  "homepage": "https://github.com/bouroo/agents",
+  "repository": "https://github.com/bouroo/agents",
+  "license": "Apache-2.0",
+  "skills": [
+    "skills/code-craft/SKILL.md",
+    "skills/commit-message/SKILL.md",
+    "skills/confluence/SKILL.md",
+    "skills/go-essential/SKILL.md",
+    "skills/harness-engineering/SKILL.md",
+    "skills/memory-engineering/SKILL.md",
+    "skills/openapi-spec/SKILL.md",
+    "skills/performance-patterns/SKILL.md",
+    "skills/repo-documentation/SKILL.md",
+    "skills/spec-driven-development/SKILL.md"
+  ],
+  "agents": [
+    "agents/conductor.md"
+  ],
+  "commands": [
+    "commands/document.md",
+    "commands/judge.md",
+    "commands/openapi.md",
+    "commands/refactor.md",
+    "commands/review.md",
+    "commands/verify.md"
+  ]
+}

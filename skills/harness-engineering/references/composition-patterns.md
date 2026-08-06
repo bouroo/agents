@@ -1,6 +1,6 @@
 # Composition Patterns -- Choosing the Delegation Topology
 
-> Load on demand. The short pointer lives in `AGENTS.md` §3 (THINK) and [conductor.md](../../../agents/conductor.md); this file is the menu for deciding *how* to break work across sub-agents once you have decided *that* you will delegate.
+> Load on demand. The short pointer lives in `AGENTS.md` §3 (The Squad) and the [conductor](../../../agents/conductor.md) agent; this file is the menu for deciding *how* to break work across sub-agents once you have decided *that* you will delegate.
 
 Delegating is not one pattern -- it is a choice among five. Pick the **smallest topology the job can hold**: every fan-out costs latency, tokens, and a round-trip, and most tasks need none of them. The Conductor's unit graph is already the orchestrator-workers pattern; reach for the others only when the work refuses that shape.
 
