@@ -1,6 +1,6 @@
 ---
 name: repo-documentation
-description: "Repo-local documentation system for humans and agents: a docs/ tree of systems, flows, architecture/ADRs, and a glossary. Use when the repo maintains a docs/ tree and a behavior, interface, invariant, or domain-term change occurs that requires updating project documentation."
+description: "Repo-local documentation system for humans and agents: a docs/ tree of systems, flows, architecture/ADRs, API endpoint pages, and a glossary. Use when the repo maintains a docs/ tree and a behavior, interface, invariant, or domain-term change occurs that requires updating project documentation."
 ---
 
 # Repo-Local Documentation
@@ -28,6 +28,7 @@ When loaded passively during a review or refactor, activate only if `docs/` alre
 | Flow | stays inside one system and is already covered there |
 | ADR | a routine implementation detail, small refactor, or temporary workaround |
 | Glossary term | carries no product-specific meaning beyond its common meaning |
+| API | the endpoint is fully specified by the OpenAPI contract (`docs/openapi.yaml`) |
 
 ## docs/ Layout
 
@@ -36,6 +37,7 @@ docs/
   README.md          index and how to navigate the docs
   systems/           one doc per system or subsystem
   flows/             one doc per important cross-system flow
+  api/               one doc per HTTP endpoint (per-endpoint contract pages)
   architecture/      architecture overviews and decisions/
     decisions/       one ADR per decision
   glossary.md        product-specific terms
@@ -56,6 +58,7 @@ docs/
 | Flow | `docs/flows/` | crosses multiple systems, has several steps, is frequently changed or debugged, or has security/billing/data-integrity/user-visible implications |
 | Architecture | `docs/architecture/` | a topic affects more than one system, or explains why the app is shaped a certain way |
 | ADR | `docs/architecture/decisions/` | a decision shapes the system beyond a single implementation detail |
+| API | `docs/api/` | one HTTP endpoint's contract (method, path, auth, request/response, status codes, sequence) needs a standalone, human-readable page |
 | Glossary | `docs/glossary.md` | a word has product-specific meaning that is easy to misread |
 
 A system that grows complex, becomes cross-system, or meets a flow criterion is promoted to `docs/flows/`; the system doc links to the new flow doc.
@@ -95,6 +98,7 @@ Three sibling templates, copied into the working repo's `docs/templates/`:
 - [system.md](references/system.md) -- for `docs/systems/`
 - [flow.md](references/flow.md) -- for `docs/flows/`
 - [adr.md](references/adr.md) -- for `docs/architecture/decisions/`
+- [api.md](references/api.md) -- for `docs/api/` (one HTTP endpoint per file)
 
 Related skills:
 

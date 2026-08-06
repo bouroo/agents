@@ -10,6 +10,7 @@ docs/
   glossary.md                  # stub: short preamble + empty ## Terms
   systems/                     # one doc per system
   flows/                       # one doc per cross-system flow
+  api/                         # one doc per HTTP endpoint (per-endpoint)
   architecture/
     decisions/                 # ADRs
   templates/                   # copied-in templates (see below)
@@ -36,6 +37,7 @@ Copy the three templates from the `repo-documentation` skill into `docs/template
 - [system.md](../../../skills/repo-documentation/references/system.md) -> `docs/templates/system.md`
 - [flow.md](../../../skills/repo-documentation/references/flow.md) -> `docs/templates/flow.md`
 - [adr.md](../../../skills/repo-documentation/references/adr.md) -> `docs/templates/adr.md`
+- [api.md](../../../skills/repo-documentation/references/api.md) -> `docs/templates/api.md`
 
 These copies let the repo customize its own templates; the skill's siblings remain the canonical reference.
 
