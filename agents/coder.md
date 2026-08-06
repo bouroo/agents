@@ -5,7 +5,6 @@ mode: subagent
 color: "#3B82F6"
 # Tool allowlist for hosts that gate by tool name. Full mutating toolset for
 # implement/fix/verify/judge.
-tools: Read, Edit, Write, Grep, Glob, Bash, TodoWrite, WebFetch, WebSearch, Task
 # Per-capability allow/ask/deny object for hosts that gate by capability.
 # Mutating worker: edit/bash on; may not spawn further subagents.
 permission:

@@ -5,7 +5,6 @@ mode: primary
 color: "#F59E0B"
 # Tool allowlist for hosts that gate by tool name. No role lock: the conductor
 # can edit and run the toolchain directly when that is the natural path.
-tools: Read, Edit, Write, Grep, Glob, Bash, TodoWrite, WebFetch, WebSearch, Task
 # Per-capability allow/ask/deny object for hosts that gate by capability.
 # No mutating/toolchain lock; may delegate to coder/discover.
 permission:
