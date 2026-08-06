@@ -121,6 +121,8 @@ Then restart your coding tool so it picks up the new config.
 │   ├── gen-manifests.py     # generates adapters/manifests/ from VERSION + inventory + registries
 │   ├── resolve-customization.py  # three-tier customize.toml merge (optional)
 │   └── validate-agents.sh   # thin shim -> checks.py
+├── docs/                    # Repo-local docs (systems, flows, ADRs, glossary)
+│   └── README.md            # index: explains the layout
 └── eval/                    # Honesty layer: scenario seeds + null-committed results
 ```
 
