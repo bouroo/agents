@@ -1,0 +1,16 @@
+{
+  "round": 5,
+  "date": "2026-08-06",
+  "scenarios": ["s5-natural-delegation"],
+  "status": "seed",
+  "note": "Round 5 is a scenario seed, not a measured run. Full multi-round eval with transcripts is future work (see RESULTS.md).",
+  "results": [
+    {
+      "scenario": "s5-natural-delegation",
+      "model": null,
+      "passed": null,
+      "transcript": null,
+      "note": "not yet run"
+    }
+  ]
+}
