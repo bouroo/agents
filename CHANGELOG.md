@@ -9,6 +9,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.0.0-beta.3] - 2026-08-06
+
+Third beta of the v3 reimplementation. Continues the natural-delegation arc:
+the squad role lock is collapsed, the delegation dials are widened, and the
+doctrine header is de-linked. Beta-numbered only on the git tag and here;
+`VERSION` and every host manifest stay `3.0.0`, matching the beta.1/beta.2
+pattern.
+
+### Changed
+
+- **Squad role lock collapsed; delegation is now natural.** The enforced
+  mutating-vs-read-only boundary between `conductor`, `coder`, and `discover`
+  is removed. Roles become soft specialization defaults: the conductor and
+  discover default to planning/scouting but can edit and run the toolchain
+  directly when that is the natural path, instead of paying a forced
+  delegation round-trip on every mutation. Delegation remains the default for
+  non-trivial or parallel work (a fresh-context worker is still its value);
+  it is a dialed choice, not a mandate. The change moves on three layers at
+  once so the doctrine does not contradict itself: (1) `AGENTS.md` §3/§4 and
+  the conductor/discover overviews, operating boundaries, and constraints drop
+  the "never mutate / never run the toolchain / load-bearing split" language;
+  (2) the `tools:` allowlists converge -- conductor and discover gain
+  `Edit` / `Write` / `Bash`; (3) the per-capability `permission:` deny-locks on
+  `edit` / `bash` are removed. The universal hard constraints (`AGENTS.md`
+  §9), executable evidence, the hard verify bound, and the `AUTH:` /
+  decide-don't-ask gate on outward actions (commit / push / deploy /
+  destructive git) are unchanged and are now the sole guard where the tool
+  boundary used to sit. This is the Kirby Effect this project already
+  recognizes: the strict split encoded a model-limitation bet that turns into
+  forced round-trips as models improve. Trade-off accepted: the structural
+  poka-yoke that stopped a read-only pass from silently mutating is gone; the
+  substitute guard is evidence-and-scope discipline.
+- **Delegation dials widened for independent work.** The conductor's WIP=1
+  constraint now scopes to the active decision thread -- independent units
+  (`deps: []`, disjoint scope) may fan out under the sectioning pattern -- and
+  the PROVE step routes `discover (review)` and `coder (judge)` by the
+  right-sizing Control Dial (on demand at Mid/Mid) instead of blanket-requiring
+  review for every non-trivial diff. Removes two forced round-trips; High/High
+  rigor is unchanged.
+- **AGENTS.md §3 de-linked.** The per-agent bullets are removed from the squad
+  header; the three agent files remain the definition layer (linked from §11)
+  and still ship in every host manifest. The §3 intro paragraph stays.
+
+### Added
+
+- **Eval scenario `s5-natural-delegation` (round 5, seed).** Probes whether,
+  with the tool boundary removed, the agent acting on a bounded fix still
+  captures executable evidence and stays in scope. `eval/results/r5.json`
+  carries `passed: null`; `eval/RESULTS.md` marks round 5 a seed, per the
+  honesty rule -- every rule ships a fail-able scenario, and a seed is `null`,
+  not `pass`.
+
 ## [3.0.0] - 2026-08-05
 
 A ground-up reimplementation into an architecture that is **completely agnostic** of programming languages, agent frameworks, and host tools, while shipping every artifact in each popular harness's **native** discovery format. The coder-squad doctrine (governance router + conductor/coder/discover squad + THINK-ACT-PROVE-GROW loop + skills + eval honesty layer) is preserved and concisely re-implemented; only its *home* and *form* change. This is a **breaking** release for filesystem consumers; the doctrine itself is continuous with v2. Compatibility verified against the official schemas for [opencode](https://opencode.ai/docs/agents/), [Claude Code](https://code.claude.com/docs/en/sub-agents), [kilo](https://kilo.ai/docs/customize/workflows), [skills.md](https://skills.md/docs), and [agents.md](https://agents.md/).
