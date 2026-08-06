@@ -28,6 +28,8 @@ A ground-up reimplementation into an architecture that is **completely agnostic*
 - **Three-tier customization resolver.** `scripts/resolve-customization.py` merges `customize.toml` base -> team (`.agents/custom/`) -> user layers with the bmad merge rules (scalars override; tables deep-merge; arrays-of-tables keyed by `code`/`id` replace+append). Optional -- artifacts function fully with inline defaults; a manual fallback is documented.
 
 - **New gates.** `G16_registries_parse` (both registries parse, adapter codes unique) and `G17_agnostic_core` (core free of host tokens). The gate count is now 17 (authoritative via `checks.py --list`).
+- **Endpoint-documentation (API) doc type.** *(added in beta.2)* The `document` command and `repo-documentation` skill gain an API category: one HTTP endpoint per file at `docs/api/<service>/`, authored from the new [api.md](skills/repo-documentation/references/api.md) template. The command bootstraps the matching `docs/templates/api.md` and wires an API doc to the [confluence](skills/confluence/SKILL.md) adapter's endpoint-page template, translating the doc's mermaid sequence diagram to PlantUML source for that generator.
+- **Mermaid diagram support in the confluence adapter.** *(added in beta.2)* A new [mermaid.md](skills/confluence/references/mermaid.md) reference documents the native `mermaid` macro (raw CDATA body, no compression), its mirror-image newline rule (one statement per real newline -- the opposite of PlantUML sequence messages), and the byte-identical round-trip proof. The storage-format guide adds the macro template; the markdown-to-storage converter now renders mermaid fences.
 
 ### Changed
 
@@ -40,6 +42,7 @@ A ground-up reimplementation into an architecture that is **completely agnostic*
 ### Removed
 
 - v2 flat agent files (`agents/*.md`), `commands/`, the root `install.sh`/`install.ps1`/`link.sh` (moved to `adapters/`), and `.agents/plugins/` (moved to `adapters/manifests/`). v2 content is preserved in git history.
+- *(beta.2)* This config repo's own v2-era `docs/` tree (`README.md`, `ADR 0001`, the multi-host-install flow, the coder-squad system doc, the glossary, and the `docs/templates/`). The repo now documents itself via `AGENTS.md` + skills; a `docs/` tree is a concern of the *target* repo, bootstrapped on demand by the `document` command, not shipped here.
 
 ### Upgrade (breaking for filesystem consumers)
 
