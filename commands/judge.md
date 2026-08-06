@@ -12,7 +12,7 @@ Confirm or refute a "done" report by reproducing its claims and hunting frauds, 
 
 A prior step or agent reported work as complete and you must sign off before it ships. Your stance is fixed: **the report is a set of claims, not evidence.** Nothing is believed you did not observe yourself. This is the gate that catches verification theater, weakened tests, and silent scope creep -- the scrutiny a self-reporting author will not apply to its own work.
 
-Distinct from review: review trusts the author and grades the code by severity; judge trusts nothing and grades the **gap between report and reality**. Run on a worker with shell plus toolchain access (the coder worker), not the orchestrator. Judging never mutates -- read and run only; fixes happen later if asked.
+Distinct from review: review trusts the author and grades the code by severity; judge trusts nothing and grades the **gap between report and reality**. Run on any worker with shell plus toolchain access (the orchestrator has it too). Judging never mutates -- read and run only; fixes happen later if asked.
 
 ## Inputs
 
