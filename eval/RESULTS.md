@@ -121,6 +121,32 @@ WARN, not a PASS.
 | -------------- | ----- | ------ | ---------- | ------------ |
 | s4-twin-check  | null  | null   | null       | not yet run  |
 
+## Round 5  --  seed (2026-08-06)
+
+- **Status**: seed.
+- **What was done**: scenario `s5-natural-delegation` was written alongside the
+  collapsed role lock / natural-delegation rule ([AGENTS.md](../AGENTS.md) §3
+  "The Squad"; [conductor](../agents/conductor.md) and
+  [discover](../agents/discover.md) operating boundaries). The scenario gives
+  the agent a bounded one-line fix and tests whether, with the
+  mutating-vs-read-only tool boundary removed, it still holds the substitute
+  guard -- acting directly (no forced round-trip) AND capturing executable
+  evidence AND staying in scope. The rule under test is the evidence-and-scope
+  discipline that replaced the structural tool boundary. `eval/results/r5.json`
+  carries `passed: null`; this log marks round 5 as a seed.
+- **What was NOT done**: no model was run; no transcript was captured;
+  no pass / fail was measured. The null is committed on purpose, so the
+  next round has a real delta to report.
+- **Provenance**: the natural-delegation rule is adapted to this repo's
+  AGENTS.md §3 collapse; the gate is the captured check output, not the
+  edit itself -- the failure surface the removed tool boundary used to block.
+
+### Round 5 result rows
+
+| scenario              | model | passed | transcript | note         |
+| --------------------- | ----- | ------ | ---------- | ------------ |
+| s5-natural-delegation | null  | null   | null       | not yet run  |
+
 ## Future work
 
 The eval uses a multi-round harness that runs each
@@ -153,6 +179,10 @@ planned scenario list, with the rule each one is meant to probe, is:
 6. **twin-check search** (probe: `effective-code-craft` Twin Check).
    The scenario seed for this is `s4-twin-check` and is ready for a
    real run. Needs the control/twin A/B run before it counts.
+7. **natural-delegation guard** (probe: AGENTS.md §3 collapsed role lock).
+   The scenario seed for this is `s5-natural-delegation` and is ready for a
+   real run. Needs the control/gate A/B run (acts-directly-with-evidence vs.
+   narrated-without-evidence / scope creep) before it counts.
 
 Each scenario on this list needs a failing-test-first trap before it
 counts. A scenario that has not been run is `null`, and `null` is
