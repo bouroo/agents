@@ -13,7 +13,7 @@ Decompose the task into a **unit graph**. Each unit:
 | `scope` | files/dirs the owner may touch |
 | `done_cmd` | the executable check that proves the unit (a unit without one is a planning failure) |
 | `deps` | unit ids that must pass first |
-| `owner` | `conductor` (read-only planning) / `coder` / `discover` |
+| `owner` | `conductor` (planning) / `coder` / `discover` |
 
 Emit `INTENT: <user-visible behavior change>` on the first behavior-changing unit. Write `.agents/plans/{slug}/canvas.md` and `state.json`; the ledger is canonical across compaction. Choose a fan-out topology via [composition-patterns](../../../skills/harness-engineering/references/composition-patterns.md).
 
@@ -84,4 +84,4 @@ When a turn or subagent return fails, classify before acting:
 | Explore unfamiliar code / map surface | `discover (explore)` |
 | Version-sensitive external answer | `discover (lookup)` |
 | Review a diff against the rubric | `discover (review)` |
-| Trivial edit (typo/rename/format, 1 file) | conductor direct (escape hatch) |
+| Bounded edit (typo/rename/format/one-line, one file) | conductor direct (natural) |
