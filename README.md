@@ -9,7 +9,7 @@
 
 > Installable via the open Agent Skills ecosystem -- `npx skills add bouroo/agents` (see [skills.sh](https://skills.sh/b/bouroo/agents)) -- and via the bundled `adapters/install.sh` for filesystem-symlink installs.
 
-A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**. Drop one folder into your machine and ten different tools -- Gemini, Claude, OpenCode, Kilo, Codex, Qwen, Hermes, OpenClaw, and more -- pick up the same autonomous, self-improving coder-agent squad. The doctrine and its structure follow the [bmad-method](https://github.com/bmad-code-org/bmad-method) standards (persona agents, modular skills, reusable commands, single-source registries). No per-tool copy-paste, no drift between projects.
+A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**. Drop one folder into your machine and eleven different tools -- Gemini, Claude, OpenCode, Kilo, Codex, Qwen, Hermes, OpenClaw, Pi, and more -- pick up the same autonomous, self-improving coder-agent squad. The doctrine and its structure follow the [bmad-method](https://github.com/bmad-code-org/bmad-method) standards (persona agents, modular skills, reusable commands, single-source registries). No per-tool copy-paste, no drift between projects.
 
 ## Why use it
 
@@ -25,7 +25,7 @@ Pick an install path. All three land the same artifacts.
 
 ### A. Agent Skills install (skills.sh)
 
-The recommended cross-tool path: works with any Agent-Skills-compatible runtime (Claude Code, Cursor, Codex, OpenCode, Kilo, Gemini, Hermes, OpenClaw, Cline, Antigravity, AMP, Copilot, and 30+ others).
+The recommended cross-tool path: works with any Agent-Skills-compatible runtime (Claude Code, Cursor, Codex, OpenCode, Kilo, Gemini, Hermes, OpenClaw, Pi, Cline, Antigravity, AMP, Copilot, and 30+ others).
 
 ```bash
 npx skills add bouroo/agents            # project-local (skills land in ./<agent>/skills/)
@@ -51,7 +51,7 @@ Discovery is via `.cursor-plugin/*` (Cursor) and `gemini-extension.json` (Gemini
 
 ### C. Symlink install (`adapters/install.sh`)
 
-For the ten explicitly-targeted tools, the bundled installer symlinks `AGENTS.md` (renamed per host, e.g. `CLAUDE.md` / `SOUL.md`), `commands/`, `skills/`, and (where the host supports it) `agents/` into each tool's config directory. No Node.js required. The installer reads `registries/hosts.json` -- the host list is data, not code.
+For the eleven explicitly-targeted tools, the bundled installer symlinks `AGENTS.md` (renamed per host, e.g. `CLAUDE.md` / `SOUL.md`), `commands/`, `skills/`, and (where the host supports it) `agents/` into each tool's config directory. No Node.js required. The installer reads `registries/hosts.json` -- the host list is data, not code.
 
 ```bash
 adapters/install.sh install            # link into every adapter (default)
@@ -167,7 +167,7 @@ The artifacts ship in each harness's **native** discovery format, verified again
 |---|---|---|
 | **Agents** `agents/<name>.md` | flat `<name>.md`; frontmatter superset (`name`, `description`, `mode`, `permission`) | opencode, Claude Code (`.claude/agents/`), kilo (`agent/`) |
 | **Commands** `commands/<name>.md` | flat `<name>.md`; `description` + `agent` binding | opencode, kilo (`.kilo/commands/`), Claude Code |
-| **Skills** `skills/<name>/SKILL.md` | nested per the Agent Skills standard; `name` + `description` | skills.md / opencode / Claude Code / Hermes (`~/.hermes/skills`) / OpenClaw (`<workspace>/skills`) |
+| **Skills** `skills/<name>/SKILL.md` | nested per the Agent Skills standard; `name` + `description` | skills.md / opencode / Claude Code / Hermes (`~/.hermes/skills`) / OpenClaw (`<workspace>/skills`) / Pi (`~/.pi/agent/skills`) |
 | **AGENTS.md** | root Markdown, nearest-wins | the open AGENTS.md standard (Codex, Cursor, Gemini, opencode, kilo, OpenClaw, and 20+ others); Hermes loads it project-level (global identity is `SOUL.md`) |
 
 The installer (`adapters/install.sh`, reads `registries/hosts.json`) symlinks the doctrine as each host's config file and links `agents/` + `commands/` where the host surfaces them.

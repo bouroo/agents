@@ -11,16 +11,17 @@ _No changes yet._
 
 ## [3.1.0] - 2026-08-06
 
-First follow-on stable release: two new host adapters (Hermes, OpenClaw) join the registry. Backwards-compatible -- the host list is data, so existing installs are unaffected; `VERSION` and every host manifest bump to 3.1.0.
+First follow-on stable release: three new host adapters (Hermes, OpenClaw, Pi) join the registry. Backwards-compatible -- the host list is data, so existing installs are unaffected; `VERSION` and every host manifest bump to 3.1.0.
 
 ### Added
 
 - **Hermes Agent host adapter.** `registries/hosts.json` gains a `hermes` entry -- `config_dir` `$HOME/.hermes`, `config_file` `SOUL.md` (Hermes loads `SOUL.md` as the global identity doctrine from `$HERMES_HOME`; `AGENTS.md` is discovered project-level only), `surfaces` skills on, commands/agents off (Hermes slash commands are a built-in registry; subagents are runtime-only via the Subagent Lifecycle API, not a `~/.hermes/agents/` discovery tree). Contract sourced from the NousResearch/hermes-agent repo docs. Install: `adapters/install.sh install hermes` symlinks the doctrine as `~/.hermes/SOUL.md` and `~/.hermes/skills/` into the repo.
 - **OpenClaw host adapter.** `registries/hosts.json` gains an `openclaw` entry -- `config_dir` `$HOME/.openclaw/workspace` (OpenClaw's default agent workspace, created by `openclaw setup`; the global `$HOME/.openclaw` holds config/sessions only and does not load doctrine), `config_file` `AGENTS.md`, `surfaces` skills on, commands/agents off (OpenClaw slash commands are config-driven; multi-agent is `agents.entries.*` in `openclaw.json`, not a filesystem tree). Contract sourced from the openclaw/openclaw repo docs. Install: `adapters/install.sh install openclaw` symlinks `~/.openclaw/workspace/AGENTS.md` and `.../skills/` into the repo. Caveat: OpenClaw's sandbox seeding ignores symlinks, so on sandboxed workspaces the doctrine/skills must be copied, not linked -- the default (non-sandbox) workspace follows symlinks normally.
+- **Pi coding agent host adapter.** `registries/hosts.json` gains a `pi` entry -- `config_dir` `$HOME/.pi/agent`, `config_file` `AGENTS.md` (Pi loads `~/.pi/agent/AGENTS.md` globally at startup, then the current directory), `surfaces` skills on, commands/agents off (Pi skills follow the Agent Skills standard at `~/.pi/agent/skills/<name>/SKILL.md`; Pi has no native `commands/` surface -- its slash commands come from skills, prompt templates in `prompts/`, and extensions; and Pi ships with **no sub-agents** by design -- subagents are a third-party package, not a filesystem discovery tree). Contract sourced from the badlogic/pi-mono repo docs. Install: `adapters/install.sh install pi` symlinks `~/.pi/agent/AGENTS.md` and `~/.pi/agent/skills/` into the repo.
 
 ### Changed
 
-- README host tables and counts updated for the two new adapters; the agents-frontmatter row drops the stale `tools` field (removed in 3.0.0 for opencode compatibility). The adapter count is now ten (eight v2-era + Hermes + OpenClaw).
+- README host tables and counts updated for the three new adapters; the agents-frontmatter row drops the stale `tools` field (removed in 3.0.0 for opencode compatibility). The adapter count is now eleven (eight v2-era + Hermes + OpenClaw + Pi).
 
 ## [3.0.0-beta.3] - 2026-08-06
 
