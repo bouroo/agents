@@ -75,7 +75,7 @@ WARN, not a PASS.
 - **Status**: seed.
 - **What was done**: scenario `s3-artifact-gate` was written alongside the
   Artifact Gate rule ([AGENTS.md](../AGENTS.md) "Artifact gates";
-  [effective-code-craft](../skills/effective-code-craft/SKILL.md)
+  [effective-code-craft](../skills/code-craft/SKILL.md)
   "Artifact Gate Sweep"). The scenario tasks the agent with a correct fix
   that owes two forced lines -- `INTENT:` (behavior change on the write
   path) and `PENDING:` (a prescribed migration deliberately not run). The
@@ -101,7 +101,7 @@ WARN, not a PASS.
 - **Status**: seed.
 - **What was done**: scenario `s4-twin-check` was written alongside the
   Twin Check rule ([AGENTS.md](../AGENTS.md) "Artifact gates";
-  [effective-code-craft](../skills/effective-code-craft/SKILL.md)
+  [effective-code-craft](../skills/code-craft/SKILL.md)
   "Twin Check"). The scenario plants one reported defect (`//` integer
   division for money) that is copy-pasted across four files; the rule
   under test is whether, after fixing the reported site, the agent
