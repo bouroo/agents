@@ -3,25 +3,22 @@
 
 Three derivable sources of truth, no hand-copied inventory, no version drift:
 
-  inventory   the directories on disk   skills/*, commands/*.md, agents/*.md
+  inventory   directories on disk:  skills/**/SKILL.md, command/*/SKILL.md,
+                                   agents/*/SKILL.md (filtered to mode: primary)
   version     the VERSION file at repo root
-  static meta embedded host templates below  (descriptions, URLs, keywords)
+  static meta embedded host templates below  (descriptions, URLs)
 
-Renders the seven host manifests under .agents/plugins/<host>/ that the root
+Renders the host manifests under adapters/manifests/<host>/ that the discovery
 symlinks (.claude-plugin/, .cursor-plugin/, gemini-extension.json, root
-plugin.json/marketplace.json) already target. install.sh symlinks whole
-directories and never reads these arrays, so it is unaffected.
+plugin.json/marketplace.json) target. The installer (adapters/install.sh) reads
+registries/hosts.json and symlinks whole directories; it never reads these
+arrays, so it is unaffected by regeneration.
 
 Usage:
     python3 scripts/gen-manifests.py          # write all manifests in place
-    python3 scripts/gen-manifests.py --check  # exit 1 if any checked-in manifest
-                                             # differs from generated output (no write)
-
-Descriptions are authored prose and intentionally static; the skills[],
-commands[], and agents[] arrays (what hosts actually read) plus the version
-are always derived and current. If the inventory changes, the count-word
-("eight") the descriptions carry is a cosmetic follow-up, not a discovery bug.
+    python3 scripts/gen-manifests.py --check  # exit 1 if checked-in manifests drift
 """
+
 from __future__ import annotations
 
 import argparse
@@ -29,107 +26,93 @@ import json
 import pathlib
 import sys
 
-REPO = pathlib.Path(__file__).resolve().parent.parent
-PLUGINS = REPO / ".agents" / "plugins"
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+MANIFEST_DIR = ROOT / "adapters" / "manifests"
 
+NAME = "coder-agents"
+HOMEPAGE = "https://github.com/bouroo/agents"
+REPO_URL = "https://github.com/bouroo/agents"
 
-# --- static per-host metadata (authored prose; see module docstring) ------------
+DESC_PLUGIN = (
+    "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, "
+    "a three-role squad (conductor/coder/discover), phase commands, and on-demand "
+    "skills driving the think-act-prove-grow loop. Targets deterministic, "
+    "executable-completion workflows over speculative assistance."
+)
+DESC_MARKET = (
+    "Language- and host-agnostic coder-agent squad: governance doctrine, harness "
+    "engineering, code craft, performance, spec-driven development, and a primary "
+    "conductor orchestrator."
+)
 
-DESC_CLAUDE_PLUGIN = "Language-agnostic coding-agent configuration. Ships a router AGENTS.md encoding repo-as-record doctrine, nine on-demand skills (commit-message, confluence, effective-code-craft, go-essential, harness-engineering, openapi-spec, performance-patterns, repo-documentation, spec-driven-development), six slash commands (document-phase, judge-phase, openapi-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the think/act/prove/grow loop. Targets deterministic, executable-completion workflows over speculative AI assistance."
-
-DESC_LEGACY = "Language-agnostic coding-agent configuration for OpenCode and Kilo-compatible runtimes. Ships a router AGENTS.md encoding repo-as-record doctrine, nine on-demand skills (commit-message, confluence, effective-code-craft, go-essential, harness-engineering, openapi-spec, performance-patterns, repo-documentation, spec-driven-development), six slash commands (document-phase, judge-phase, openapi-phase, refactor-phase, review-phase, verify-phase), and a primary conductor orchestrator that drives the think/act/prove/grow loop. Targets deterministic, executable-completion workflows over speculative AI assistance."
-
-DESC_CURSOR_PLUGIN = "Language-agnostic coding-agent skills and a primary conductor orchestrator. Ships a router AGENTS.md encoding repo-as-record doctrine, nine on-demand skills (commit-message, confluence, effective-code-craft, go-essential, harness-engineering, openapi-spec, performance-patterns, repo-documentation, spec-driven-development), and a think/act/prove/grow conductor agent. Targets deterministic, executable-completion workflows over speculative AI assistance."
-
-DESC_GEMINI = "Language-agnostic coding-agent skills plus a primary conductor orchestrator. Ships a router AGENTS.md encoding repo-as-record doctrine, nine on-demand skills (commit-message, confluence, effective-code-craft, go-essential, harness-engineering, openapi-spec, performance-patterns, repo-documentation, spec-driven-development), and a think/act/prove/grow conductor agent. Targets deterministic, executable-completion workflows over speculative AI assistance."
-
-DESC_MARKETPLACE_META = "Language-agnostic coding-agent skills: repo-as-record doctrine, harness engineering, code craft, performance, spec-driven development, and a primary conductor orchestrator."
-
-DESC_CLAUDE_MARKETPLACE_PLUGIN = "Nine on-demand skills plus a conductor orchestrator. Targets deterministic, executable-completion workflows over speculative AI assistance. Compatible with Claude Code, Cursor, Codex, OpenCode, Kilo, Gemini, and any Agent Skills-compatible runtime."
-
-DESC_CURSOR_MARKETPLACE_PLUGIN = "Nine on-demand skills plus a conductor orchestrator. Targets deterministic, executable-completion workflows over speculative AI assistance. Compatible with Cursor, Claude Code, Codex, OpenCode, Kilo, Gemini, and any Agent Skills-compatible runtime."
-
-
-# --- derivable inventory from disk ----------------------------------------------
 
 def read_version() -> str:
-    return (REPO / "VERSION").read_text(encoding="utf-8").strip()
+    return (ROOT / "VERSION").read_text().strip()
 
 
 def _frontmatter_field(path: pathlib.Path, key: str) -> str | None:
-    """Return one frontmatter scalar value (flat YAML), or None.
-
-    Only `mode` is consumed by this generator, so a minimal parser suffices.
-    """
-    text = path.read_text(encoding="utf-8")
+    """Minimal YAML frontmatter reader for one scalar field (only `mode` is used)."""
+    try:
+        text = path.read_text()
+    except OSError:
+        return None
     if not text.startswith("---"):
         return None
-    body = text[3:]
-    nl = body.find("\n")
-    end = body.find("\n---", nl)
-    block = body[nl + 1:end] if end != -1 else body[nl + 1:]
-    for line in block.splitlines():
-        if line.startswith(key + ":"):
+    end = text.find("\n---", 3)
+    if end == -1:
+        return None
+    for line in text[3:end].splitlines():
+        line = line.strip()
+        if line.startswith(f"{key}:"):
             return line.split(":", 1)[1].strip().strip('"').strip("'")
     return None
 
 
-def skill_names() -> list[str]:
-    return sorted(md.parent.name for md in (REPO / "skills").glob("*/SKILL.md"))
+def skill_rels() -> list[str]:
+    """Paths relative to skills/ for every skills/*/SKILL.md (e.g. code-craft, openapi-spec)."""
+    out: list[str] = []
+    for md in sorted((ROOT / "skills").glob("*/SKILL.md")):
+        out.append(md.parent.name)
+    return out
 
 
 def command_names() -> list[str]:
-    return sorted(p.stem for p in (REPO / "commands").glob("*.md"))
+    """Command names from flat commands/<name>.md files."""
+    return sorted(p.stem for p in (ROOT / "commands").glob("*.md"))
 
 
 def primary_agents() -> list[tuple[str, str]]:
-    """[(name, mode)] for agents whose frontmatter mode == primary.
-
-    Sub-agents (coder/discover, mode: subagent) are intentionally excluded: the
-    manifests surface only the primary conductor as an installable agent.
-    """
+    """[(name, mode)] for flat agents/<name>.md whose frontmatter mode == primary."""
     out: list[tuple[str, str]] = []
-    for md in sorted((REPO / "agents").glob("*.md")):
-        mode = _frontmatter_field(md, "mode")
+    for md in sorted((ROOT / "agents").glob("*.md")):
+        mode = _frontmatter_field(md, "mode") or "primary"
         if mode == "primary":
             out.append((md.stem, mode))
     return out
 
 
-# --- renderers (dict key order matches existing files for a no-op first diff) ---
-
 def render_claude_plugin(v: str, skills: list[str]) -> dict:
     return {
-        "$schema": "https://github.com/anthropics/claude-code/raw/main/schema/plugin.json",
-        "name": "coder-agents",
-        "version": v,
-        "description": DESC_CLAUDE_PLUGIN,
+        "name": NAME, "version": v, "description": DESC_PLUGIN,
         "author": {"name": "bouroo", "url": "https://github.com/bouroo"},
-        "homepage": "https://github.com/bouroo/agents",
-        "repository": {"type": "git", "url": "https://github.com/bouroo/agents"},
+        "homepage": HOMEPAGE,
+        "repository": {"type": "git", "url": REPO_URL},
+        "keywords": ["agents", "coding-agent", "skills", "squad", "harness"],
         "license": "Apache-2.0",
-        "keywords": [
-            "agent-skills", "claude-code", "cursor", "codex",
-            "opencode", "kilo", "gemini", "harness-engineering",
-            "code-craft", "spec-driven",
-        ],
         "skills": [f"./skills/{s}" for s in skills],
     }
 
 
 def render_claude_marketplace(v: str, skills: list[str]) -> dict:
     return {
-        "$schema": "https://github.com/anthropics/claude-code/raw/main/schema/marketplace.json",
         "name": "bouroo-agents",
         "owner": {"name": "bouroo", "url": "https://github.com/bouroo"},
-        "metadata": {"description": DESC_MARKETPLACE_META},
         "plugins": [
             {
-                "name": "coder-agents",
-                "source": "./",
-                "description": DESC_CLAUDE_MARKETPLACE_PLUGIN,
-                "version": v,
+                "name": NAME, "source": "./",
+                "description": DESC_PLUGIN, "version": v,
                 "skills": [f"./skills/{s}" for s in skills],
+                "homepage": HOMEPAGE,
             }
         ],
     }
@@ -137,135 +120,107 @@ def render_claude_marketplace(v: str, skills: list[str]) -> dict:
 
 def render_cursor_plugin(v: str, skills: list[str], commands: list[str], agents: list[tuple[str, str]]) -> dict:
     return {
-        "$schema": "https://cursor.com/schemas/cursor-plugin/plugin.json",
-        "name": "coder-agents",
-        "displayName": "Coder Agents",
-        "version": v,
-        "description": DESC_CURSOR_PLUGIN,
-        "author": {"name": "bouroo"},
-        "publisher": "bouroo",
-        "homepage": "https://github.com/bouroo/agents",
-        "repository": "https://github.com/bouroo/agents",
+        "name": NAME, "version": v, "description": DESC_PLUGIN,
+        "author": {"name": "bouroo"}, "publisher": "bouroo",
+        "homepage": HOMEPAGE, "repository": REPO_URL,
         "license": "Apache-2.0",
-        "category": "agents",
-        "keywords": [
-            "agent-skills", "harness-engineering", "code-craft",
-            "spec-driven", "performance", "conductor",
-        ],
         "skills": [f"skills/{s}/SKILL.md" for s in skills],
-        "agents": [f"agents/{name}.md" for name, _ in agents],
+        "agents": [f"agents/{n}.md" for n, _ in agents],
         "commands": [f"commands/{c}.md" for c in commands],
     }
 
 
 def render_cursor_marketplace() -> dict:
     return {
-        "$schema": "https://cursor.com/schemas/cursor-plugin/marketplace.json",
         "name": "bouroo-coder-agents",
         "owner": {"name": "bouroo"},
-        "metadata": {"description": DESC_MARKETPLACE_META},
         "plugins": [
-            {
-                "name": "coder-agents",
-                "source": "./",
-                "description": DESC_CURSOR_MARKETPLACE_PLUGIN,
-            }
+            {"name": NAME, "source": "./", "description": DESC_PLUGIN}
         ],
     }
 
 
 def render_legacy_plugin(v: str, skills: list[str], commands: list[str], agents: list[tuple[str, str]]) -> dict:
     return {
-        "name": "coder-agents",
-        "version": v,
-        "description": DESC_LEGACY,
-        "author": "bouroo",
+        "name": NAME, "version": v, "description": DESC_PLUGIN,
+        "author": "bouroo", "homepage": HOMEPAGE, "repository": REPO_URL,
         "license": "Apache-2.0",
-        "homepage": "https://github.com/bouroo/agents",
-        "skills": list(skills),
-        "commands": list(commands),
-        "agents": [{"name": name, "mode": mode} for name, mode in agents],
+        "skills": skills,
+        "commands": commands,
+        "agents": [{"name": n, "mode": m} for n, m in agents],
     }
 
 
 def render_legacy_marketplace(v: str) -> dict:
     return {
-        "name": "coder-agents",
-        "owner": "bouroo",
-        "version": v,
+        "name": NAME, "owner": {"name": "bouroo"}, "version": v,
+        "description": DESC_MARKET,
         "plugins": [
-            {
-                "name": "agents",
-                "version": v,
-                "source": "https://github.com/bouroo/agents",
-                "description": DESC_LEGACY,
-            }
+            {"name": NAME, "source": REPO_URL, "description": DESC_PLUGIN}
         ],
     }
 
 
 def render_gemini(v: str) -> dict:
     return {
-        "$schema": "https://geminicli.com/docs/extensions/reference/schema.json",
-        "name": "coder-agents",
-        "version": v,
-        "description": DESC_GEMINI,
-        "contextFileName": "AGENTS.md",
-        "mcpServers": {},
+        "name": NAME, "version": v, "description": DESC_PLUGIN,
+        "contextFileName": "AGENTS.md", "mcpServers": {},
     }
 
 
 def build_all() -> list[tuple[pathlib.Path, dict]]:
     v = read_version()
-    skills = skill_names()
+    skills = skill_rels()
     commands = command_names()
     agents = primary_agents()
     return [
-        (PLUGINS / "claude" / "plugin.json", render_claude_plugin(v, skills)),
-        (PLUGINS / "claude" / "marketplace.json", render_claude_marketplace(v, skills)),
-        (PLUGINS / "cursor" / "plugin.json", render_cursor_plugin(v, skills, commands, agents)),
-        (PLUGINS / "cursor" / "marketplace.json", render_cursor_marketplace()),
-        (PLUGINS / "legacy" / "plugin.json", render_legacy_plugin(v, skills, commands, agents)),
-        (PLUGINS / "legacy" / "marketplace.json", render_legacy_marketplace(v)),
-        (PLUGINS / "gemini" / "gemini-extension.json", render_gemini(v)),
+        (MANIFEST_DIR / "claude" / "plugin.json", render_claude_plugin(v, skills)),
+        (MANIFEST_DIR / "claude" / "marketplace.json", render_claude_marketplace(v, skills)),
+        (MANIFEST_DIR / "cursor" / "plugin.json", render_cursor_plugin(v, skills, commands, agents)),
+        (MANIFEST_DIR / "cursor" / "marketplace.json", render_cursor_marketplace()),
+        (MANIFEST_DIR / "gemini" / "gemini-extension.json", render_gemini(v)),
+        (MANIFEST_DIR / "legacy" / "plugin.json", render_legacy_plugin(v, skills, commands, agents)),
+        (MANIFEST_DIR / "legacy" / "marketplace.json", render_legacy_marketplace(v)),
     ]
 
 
 def _serialize(d: dict) -> str:
-    return json.dumps(d, indent=2, ensure_ascii=False) + "\n"
+    return json.dumps(d, indent=2, sort_keys=False) + "\n"
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(
-        description="Generate host plugin manifests from VERSION + disk inventory.",
-    )
-    ap.add_argument("--check", action="store_true",
-                    help="exit 1 if any checked-in manifest differs from generated output; no writes")
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--check", action="store_true", help="exit 1 if checked-in manifests differ from generated")
     args = ap.parse_args(argv)
 
     targets = build_all()
-    drifted = []
+    drifted: list[tuple[pathlib.Path, str, str]] = []
+    written = 0
     for path, doc in targets:
-        generated = _serialize(doc)
+        new = _serialize(doc)
+        path.parent.mkdir(parents=True, exist_ok=True)
         if args.check:
-            on_disk = path.read_text(encoding="utf-8") if path.exists() else ""
-            if on_disk != generated:
-                drifted.append((path.relative_to(REPO), on_disk, generated))
+            old = path.read_text() if path.exists() else ""
+            if old != new:
+                drifted.append((path, old, new))
         else:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(generated, encoding="utf-8")
-            print(f"wrote {path.relative_to(REPO)}")
+            path.write_text(new)
+            written += 1
 
     if args.check:
         if drifted:
-            for rel, _old, _new in drifted:
-                print(f"[DRIFT] {rel} does not match generated output", file=sys.stderr)
-            print(f"{len(drifted)} manifest(s) drifted; regenerate with "
-                  f"'python3 scripts/gen-manifests.py'", file=sys.stderr)
+            for rel, _o, _n in drifted:
+                print(f"[DRIFT] {rel.relative_to(ROOT)} does not match generated output", file=sys.stderr)
+            print(f"{len(drifted)} manifest(s) drifted; regenerate with 'python3 scripts/gen-manifests.py'", file=sys.stderr)
             return 1
         print(f"all {len(targets)} manifests current (version={read_version()}, "
-              f"skills={len(skill_names())}, commands={len(command_names())}, "
+              f"skills={len(skill_rels())}, commands={len(command_names())}, "
               f"primary-agents={len(primary_agents())})")
+        return 0
+
+    print(f"wrote {written} manifest(s) under adapters/manifests/ (version={read_version()}, "
+          f"skills={len(skill_rels())}, commands={len(command_names())}, "
+          f"primary-agents={len(primary_agents())})")
     return 0
 
 

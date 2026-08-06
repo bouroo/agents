@@ -46,13 +46,29 @@ def _creds():
                  f"~/.claude/settings.json mcpServers.mcp-atlassian.env ({e})")
 
 
+def _site_urls():
+    """Resolve Confluence/Jira base URLs: settings.json env -> os.environ -> error."""
+    try:
+        senv = json.load(open(_SETTINGS))["mcpServers"]["mcp-atlassian"]["env"]
+    except (FileNotFoundError, KeyError, json.JSONDecodeError):
+        senv = {}
+    conf = senv.get("CONFLUENCE_URL") or os.environ.get("CONFLUENCE_URL")
+    jira = senv.get("JIRA_URL") or os.environ.get("JIRA_URL")
+    if not conf or not jira:
+        sys.exit("mcp_bridge: no site URLs. Set CONFLUENCE_URL/JIRA_URL in "
+                 "~/.claude/settings.json mcpServers.mcp-atlassian.env or the "
+                 "environment (e.g. https://<your-domain>.atlassian.net[/wiki]).")
+    return conf, jira
+
+
 def _server_env():
     user, tok = _creds()
+    conf_url, jira_url = _site_urls()
     env = dict(os.environ)
     env.update({
-        "CONFLUENCE_URL": "https://TENANT.atlassian.net/wiki",
+        "CONFLUENCE_URL": conf_url,
         "CONFLUENCE_USERNAME": user, "CONFLUENCE_API_TOKEN": tok,
-        "JIRA_URL": "https://TENANT.atlassian.net",
+        "JIRA_URL": jira_url,
         "JIRA_USERNAME": user, "JIRA_API_TOKEN": tok,
     })
     return env
