@@ -7,24 +7,24 @@ date: "YYYY-MM-DD"
 
 ## Context
 
-Describe the problem, forces, constraints, and relevant background.
+The problem, forces, constraints, and relevant background.
 
 ## Decision
 
-Describe the decision that was made.
+The decision that was made. Keep this to the decision and its direct rationale; alternatives belong below.
 
 ## Consequences
 
-Describe the expected benefits, costs, risks, and tradeoffs.
+Expected benefits, costs, risks, and tradeoffs.
 
 ## Alternatives considered
 
-List meaningful alternatives and why they were not chosen.
+Meaningful alternatives and why they were not chosen.
 
 ## Related code
 
-Link to important source files affected by this decision.
+Relative Markdown links to important source files affected by this decision.
 
 ## Related docs
 
-Link to related system docs, flow docs, ADRs, glossary entries, or external references.
+Links to related system docs, flow docs, ADRs, glossary entries, or external references.
