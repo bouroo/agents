@@ -5,7 +5,6 @@ mode: subagent
 color: "#10B981"
 # Tool allowlist for hosts that gate by tool name. No role lock: discover can
 # edit and run the toolchain directly when that is the natural path.
-tools: Read, Edit, Write, Grep, Glob, Bash, TodoWrite, WebFetch, WebSearch
 # Per-capability allow/ask/deny object for hosts that gate by capability.
 # No mutating/toolchain lock; still a leaf worker (does not spawn subagents).
 permission:
