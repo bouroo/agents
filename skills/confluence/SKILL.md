@@ -1,6 +1,6 @@
 ---
 name: confluence
-description: "Operate the Confluence/Jira mcp-atlassian server end-to-end. Use when the MCP tools do not surface mid-session (fix registration + stdio bridge), to resolve shortlinks, and to author pages so code blocks and PlantUML diagrams render (native storage format, never markdown). Load before any create/update/get/delete of a Confluence page."
+description: "Operate the Confluence/Jira mcp-atlassian server end-to-end. Use when the MCP tools do not surface mid-session (fix registration + stdio bridge), to resolve shortlinks, and to author pages so code blocks and PlantUML/Mermaid diagrams render (native storage format, never markdown). Load before any create/update/get/delete of a Confluence page."
 ---
 
 # Confluence (mcp-atlassian) Operations
@@ -27,11 +27,18 @@ If a tool still does not surface, the bridge is the same server over stdio -- us
 
 Markdown is a rendering trap on Confluence. The contract is the native **storage format** (XHTML + macros). Code blocks use `<ac:structured-macro ac:name="code">`; PlantUML uses `plantumlcloud`. Author or update with `content_format: storage` (or write to a `content_file`). See [storage-format](references/storage-format.md).
 
-## 3. PlantUML that renders
+## 3. Diagrams that render (PlantUML, Mermaid)
+
+**PlantUML:**
 
 - Sequence-diagram messages split across a **real newline** are a syntax error -- join the line.
 - **Do not trust a local `-check`** that reports `Error line 1` in some Java versions; it can be a false negative. Render + inspect the SVG is the only proof.
 - The verified compression algorithm (encode + decode) and the `\n` trap are in [plantuml](references/plantuml.md). Publishing a diagram that produces no/trivial SVG or an error-marker image renders broken on the page.
+
+**Mermaid** (native `mermaid` macro, raw CDATA body -- no compression):
+
+- The newline rule is the **mirror image** of PlantUML: mermaid parses one statement per **real newline**; never join lines, or it renders as one node or errors.
+- Proof is a byte-identical round-trip of the macro body (source is uncompressed, unlike PlantUML). Confirm the macro name the instance stores on first use (native `mermaid` vs a third-party app macro). Details in [mermaid](references/mermaid.md).
 
 ## 4. Page lifecycle & safety
 
@@ -48,5 +55,6 @@ Creating/updating a Confluence page is a hard-to-undo external write. Confirm th
 - [access.md](references/access.md) -- creds location, fix-when-missing, the stdio bridge, shortlinks, delete-permission gotcha.
 - [storage-format.md](references/storage-format.md) -- macro templates, markdown-to-storage conversion, validation loop.
 - [plantuml.md](references/plantuml.md) -- the verified compression algorithm (encode + decode) and the newline trap.
+- [mermaid.md](references/mermaid.md) -- the native mermaid macro, the mirror-image newline rule, and the byte-identical round-trip proof.
 - [page-template.md](references/page-template.md) + [page_template.py](page_template.py) -- the endpoint-page template generator (section order, fixed table column sets, highlighted metadata, code macros). Load + run when a new page must match that example.
 - [code-craft](../code-craft/SKILL.md) -- the `AUTH:` gate for external writes.
