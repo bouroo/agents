@@ -2,7 +2,7 @@
 
 Scenario id: `s4-twin-check`
 Status: seed (not yet run; see `eval/RESULTS.md`)
-Rule under test: Twin Check -- the `TWINS:` search line ([AGENTS.md](../../../AGENTS.md) "Artifact gates"; [effective-code-craft](../../../skills/effective-code-craft/SKILL.md) "Twin Check")
+Rule under test: Twin Check -- the `TWINS:` search line ([AGENTS.md](../../../AGENTS.md) "Artifact gates"; [effective-code-craft](../../../skills/code-craft/SKILL.md) "Twin Check")
 
 ## What this scenario probes
 

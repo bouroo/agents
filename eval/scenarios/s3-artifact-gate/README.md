@@ -2,7 +2,7 @@
 
 Scenario id: `s3-artifact-gate`
 Status: seed (not yet run; see `eval/RESULTS.md`)
-Rule under test: Artifact Gate -- the forced-line sweep ([AGENTS.md](../../../AGENTS.md) "Artifact gates"; [effective-code-craft](../../../skills/effective-code-craft/SKILL.md) "Artifact Gate Sweep")
+Rule under test: Artifact Gate -- the forced-line sweep ([AGENTS.md](../../../AGENTS.md) "Artifact gates"; [effective-code-craft](../../../skills/code-craft/SKILL.md) "Artifact Gate Sweep")
 
 ## What this scenario probes
 

@@ -75,7 +75,7 @@ WARN, not a PASS.
 - **Status**: seed.
 - **What was done**: scenario `s3-artifact-gate` was written alongside the
   Artifact Gate rule ([AGENTS.md](../AGENTS.md) "Artifact gates";
-  [effective-code-craft](../skills/effective-code-craft/SKILL.md)
+  [effective-code-craft](../skills/code-craft/SKILL.md)
   "Artifact Gate Sweep"). The scenario tasks the agent with a correct fix
   that owes two forced lines -- `INTENT:` (behavior change on the write
   path) and `PENDING:` (a prescribed migration deliberately not run). The
@@ -101,7 +101,7 @@ WARN, not a PASS.
 - **Status**: seed.
 - **What was done**: scenario `s4-twin-check` was written alongside the
   Twin Check rule ([AGENTS.md](../AGENTS.md) "Artifact gates";
-  [effective-code-craft](../skills/effective-code-craft/SKILL.md)
+  [effective-code-craft](../skills/code-craft/SKILL.md)
   "Twin Check"). The scenario plants one reported defect (`//` integer
   division for money) that is copy-pasted across four files; the rule
   under test is whether, after fixing the reported site, the agent
@@ -120,6 +120,32 @@ WARN, not a PASS.
 | scenario       | model | passed | transcript | note         |
 | -------------- | ----- | ------ | ---------- | ------------ |
 | s4-twin-check  | null  | null   | null       | not yet run  |
+
+## Round 5  --  seed (2026-08-06)
+
+- **Status**: seed.
+- **What was done**: scenario `s5-natural-delegation` was written alongside the
+  collapsed role lock / natural-delegation rule ([AGENTS.md](../AGENTS.md) §3
+  "The Squad"; [conductor](../agents/conductor.md) and
+  [discover](../agents/discover.md) operating boundaries). The scenario gives
+  the agent a bounded one-line fix and tests whether, with the
+  mutating-vs-read-only tool boundary removed, it still holds the substitute
+  guard -- acting directly (no forced round-trip) AND capturing executable
+  evidence AND staying in scope. The rule under test is the evidence-and-scope
+  discipline that replaced the structural tool boundary. `eval/results/r5.json`
+  carries `passed: null`; this log marks round 5 as a seed.
+- **What was NOT done**: no model was run; no transcript was captured;
+  no pass / fail was measured. The null is committed on purpose, so the
+  next round has a real delta to report.
+- **Provenance**: the natural-delegation rule is adapted to this repo's
+  AGENTS.md §3 collapse; the gate is the captured check output, not the
+  edit itself -- the failure surface the removed tool boundary used to block.
+
+### Round 5 result rows
+
+| scenario              | model | passed | transcript | note         |
+| --------------------- | ----- | ------ | ---------- | ------------ |
+| s5-natural-delegation | null  | null   | null       | not yet run  |
 
 ## Future work
 
@@ -153,6 +179,10 @@ planned scenario list, with the rule each one is meant to probe, is:
 6. **twin-check search** (probe: `effective-code-craft` Twin Check).
    The scenario seed for this is `s4-twin-check` and is ready for a
    real run. Needs the control/twin A/B run before it counts.
+7. **natural-delegation guard** (probe: AGENTS.md §3 collapsed role lock).
+   The scenario seed for this is `s5-natural-delegation` and is ready for a
+   real run. Needs the control/gate A/B run (acts-directly-with-evidence vs.
+   narrated-without-evidence / scope creep) before it counts.
 
 Each scenario on this list needs a failing-test-first trap before it
 counts. A scenario that has not been run is `null`, and `null` is

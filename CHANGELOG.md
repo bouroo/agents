@@ -9,6 +9,102 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.0.0-beta.3] - 2026-08-06
+
+Third beta of the v3 reimplementation. Continues the natural-delegation arc:
+the squad role lock is collapsed, the delegation dials are widened, and the
+doctrine header is de-linked. Beta-numbered only on the git tag and here;
+`VERSION` and every host manifest stay `3.0.0`, matching the beta.1/beta.2
+pattern.
+
+### Changed
+
+- **Squad role lock collapsed; delegation is now natural.** The enforced
+  mutating-vs-read-only boundary between `conductor`, `coder`, and `discover`
+  is removed. Roles become soft specialization defaults: the conductor and
+  discover default to planning/scouting but can edit and run the toolchain
+  directly when that is the natural path, instead of paying a forced
+  delegation round-trip on every mutation. Delegation remains the default for
+  non-trivial or parallel work (a fresh-context worker is still its value);
+  it is a dialed choice, not a mandate. The change moves on three layers at
+  once so the doctrine does not contradict itself: (1) `AGENTS.md` §3/§4 and
+  the conductor/discover overviews, operating boundaries, and constraints drop
+  the "never mutate / never run the toolchain / load-bearing split" language;
+  (2) the `tools:` allowlists converge -- conductor and discover gain
+  `Edit` / `Write` / `Bash`; (3) the per-capability `permission:` deny-locks on
+  `edit` / `bash` are removed. The universal hard constraints (`AGENTS.md`
+  §9), executable evidence, the hard verify bound, and the `AUTH:` /
+  decide-don't-ask gate on outward actions (commit / push / deploy /
+  destructive git) are unchanged and are now the sole guard where the tool
+  boundary used to sit. This is the Kirby Effect this project already
+  recognizes: the strict split encoded a model-limitation bet that turns into
+  forced round-trips as models improve. Trade-off accepted: the structural
+  poka-yoke that stopped a read-only pass from silently mutating is gone; the
+  substitute guard is evidence-and-scope discipline.
+- **Delegation dials widened for independent work.** The conductor's WIP=1
+  constraint now scopes to the active decision thread -- independent units
+  (`deps: []`, disjoint scope) may fan out under the sectioning pattern -- and
+  the PROVE step routes `discover (review)` and `coder (judge)` by the
+  right-sizing Control Dial (on demand at Mid/Mid) instead of blanket-requiring
+  review for every non-trivial diff. Removes two forced round-trips; High/High
+  rigor is unchanged.
+- **AGENTS.md §3 de-linked.** The per-agent bullets are removed from the squad
+  header; the three agent files remain the definition layer (linked from §11)
+  and still ship in every host manifest. The §3 intro paragraph stays.
+
+### Added
+
+- **Eval scenario `s5-natural-delegation` (round 5, seed).** Probes whether,
+  with the tool boundary removed, the agent acting on a bounded fix still
+  captures executable evidence and stays in scope. `eval/results/r5.json`
+  carries `passed: null`; `eval/RESULTS.md` marks round 5 a seed, per the
+  honesty rule -- every rule ships a fail-able scenario, and a seed is `null`,
+  not `pass`.
+
+## [3.0.0] - 2026-08-06
+
+A ground-up reimplementation into an architecture that is **completely agnostic** of programming languages, agent frameworks, and host tools, while shipping every artifact in each popular harness's **native** discovery format. The coder-squad doctrine (governance router + conductor/coder/discover squad + THINK-ACT-PROVE-GROW loop + skills + eval honesty layer) is preserved and concisely re-implemented; only its *home* and *form* change. This is a **breaking** release for filesystem consumers; the doctrine itself is continuous with v2. Compatibility verified against the official schemas for [opencode](https://opencode.ai/docs/agents/), [Claude Code](https://code.claude.com/docs/en/sub-agents), [kilo](https://kilo.ai/docs/customize/workflows), [skills.md](https://skills.md/docs), and [agents.md](https://agents.md/); agent load confirmed by running `opencode agent list` and `kilo agent list`, both of which enumerate `conductor`, `coder`, and `discover`. 3.0.0 supersedes the beta.1-beta.3 pre-releases (the natural-delegation arc: squad role-lock collapse, widened WIP/PROVE delegation dials, AGENTS.md S3 de-link); their entries follow this one.
+
+### Added
+
+- **Native harness compatibility.** Artifacts ship in each harness's own discovery format, not a custom one: **agents** are flat `agents/<name>.md` (opencode identity-by-filename; Claude Code `.claude/agents/`); **commands** are flat `commands/<name>.md` with an `agent` binding (opencode + kilo `.kilo/commands/` + Claude Code); **skills** are nested `skills/<name>/SKILL.md` per the [Agent Skills standard](https://skills.md/docs); **AGENTS.md** is a plain root Markdown file per the open [agents.md](https://agents.md/) standard.
+
+- **Cross-host agent frontmatter.** Each agent carries `name` + `description` + `mode` (primary/subagent) + `permission` (a per-capability allow/ask/deny object). Roles are **soft specialization defaults**, not a tool-gated boundary: any agent may edit and run the toolchain when that is the natural path (see the natural-delegation changes below). The `tools:` field was dropped -- opencode's schema treats it as a deprecated boolean and rejected the comma-string form, breaking agent load; per-capability `permission` is the single, host-native gating surface.
+
+- **Host-agnostic core.** `AGENTS.md`, `agents/*.md`, `commands/*.md`, and the seven core skills contain no host-binding tokens and no language-bias doctrine. A new gate **`G17_agnostic_core`** scans every core file for host tokens (dotdirs, host config filenames, plugin-manifest paths, tool names) and fails on any leak. The three domain adapters (`go-essential`, `openapi-spec`, `confluence`) are excluded -- they legitimately name their domain.
+
+- **Registries (single source of truth).** `registries/modules.json` (module registry: core squad + optional domain adapters) and `registries/hosts.json` (host-adapter registry: an abstract host contract + adapter instances). Adding a host is now an entry in a file, not a code change.
+
+- **Abstract host-adapter installer.** `adapters/install.sh` (and `adapters/install.ps1`, `adapters/link.sh` shim) read `registries/hosts.json`; no hardcoded tool list lives in the core. Same `install`/`uninstall`/`status`/`list` modes, same `--dry-run`/`--force`/`<adapter>` options, same eight hosts as v2 (gemini, antigravity, antigravity-ide, codex, claude, qwen, opencode, kilo) -- now data, not code.
+
+- **Three-tier customization resolver.** `scripts/resolve-customization.py` merges `customize.toml` base -> team (`.agents/custom/`) -> user layers with the bmad merge rules (scalars override; tables deep-merge; arrays-of-tables keyed by `code`/`id` replace+append). Optional -- artifacts function fully with inline defaults; a manual fallback is documented.
+
+- **New gates.** `G16_registries_parse` (both registries parse, adapter codes unique) and `G17_agnostic_core` (core free of host tokens). The gate count is now 17 (authoritative via `checks.py --list`).
+- **Endpoint-documentation (API) doc type.** *(added in beta.2)* The `document` command and `repo-documentation` skill gain an API category: one HTTP endpoint per file at `docs/api/<service>/`, authored from the new [api.md](skills/repo-documentation/references/api.md) template. The command bootstraps the matching `docs/templates/api.md` and wires an API doc to the [confluence](skills/confluence/SKILL.md) adapter's endpoint-page template, translating the doc's mermaid sequence diagram to PlantUML source for that generator.
+- **Mermaid diagram support in the confluence adapter.** *(added in beta.2)* A new [mermaid.md](skills/confluence/references/mermaid.md) reference documents the native `mermaid` macro (raw CDATA body, no compression), its mirror-image newline rule (one statement per real newline -- the opposite of PlantUML sequence messages), and the byte-identical round-trip proof. The storage-format guide adds the macro template; the markdown-to-storage converter now renders mermaid fences.
+
+### Changed
+
+- **Repository layout.** `agents/<name>.md` (flat, native); `commands/<name>.md` (flat, native); `skills/<name>/SKILL.md` (nested, native). `AGENTS.md` is rewritten as a **governance agent persona + squad navigator** (120 lines, under the 220-line budget).
+
+- **Skill relocations.** `effective-code-craft` -> `code-craft` (frontmatter `name` and dir align with the lint label). The three language/tool skills are top-level siblings: `skills/go-essential`, `skills/openapi-spec`, `skills/confluence` -- all ten skills are one level deep so every one-level skill scanner (opencode, Claude Code) discovers them.
+
+- **Manifests relocated + generated.** `.agents/plugins/<tool>/` -> `adapters/manifests/<host>/`. The discovery-path symlinks (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`, root `plugin.json`/`marketplace.json`) now target `adapters/manifests/`. `scripts/gen-manifests.py` reads `VERSION` + on-disk inventory + registries and writes all seven host manifests (flat agent/command paths); `G15_manifests_generated` fails on hand-edit drift. The `confluence` adapter's hard-coded tenant was scrubbed to placeholders (URLs read from settings/env).
+
+### Removed
+
+- v2 flat agent files (`agents/*.md`), `commands/`, the root `install.sh`/`install.ps1`/`link.sh` (moved to `adapters/`), and `.agents/plugins/` (moved to `adapters/manifests/`). v2 content is preserved in git history.
+- *(beta.2)* This config repo's own v2-era `docs/` tree (`README.md`, `ADR 0001`, the multi-host-install flow, the coder-squad system doc, the glossary, and the `docs/templates/`). The repo now documents itself via `AGENTS.md` + skills; a `docs/` tree is a concern of the *target* repo, bootstrapped on demand by the `document` command, not shipped here.
+
+### Fixed
+
+- **opencode agent load broken by `tools` frontmatter.** opencode's config schema treats the `tools` field as a deprecated boolean, not a comma-separated string; the comma-string form made `opencode agent list` fail with `Configuration is invalid` and refuse to load any agent. Removed the `tools:` line from all three agent files -- tool gating now lives solely in the per-capability `permission` block. Verified: `opencode agent list` enumerates `conductor`/`coder`/`discover`; `kilo agent list` still enumerates all three (no regression).
+
+### Upgrade (breaking for filesystem consumers)
+
+- The native-format change (flat `agents/<name>.md` + `commands/<name>.md`) leaves **STALE** symlinks at hosts installed from v2. Run `adapters/install.sh install --force` (or `link.sh install --force`) to refresh; the installer detects STALE links and refuses to clobber real files without `--force`.
+- Skill paths changed for four skills (`effective-code-craft` -> `code-craft`; `go-essential`, `openapi-spec`, `confluence` now top-level). Re-run the installer or `npx skills add bouroo/agents` after upgrading.
+
 ## [2.11.0] - 2026-08-04
 
 ### Added
