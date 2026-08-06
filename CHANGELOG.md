@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_No changes yet._
+
+## [3.1.0] - 2026-08-06
+
+First follow-on stable release: two new host adapters (Hermes, OpenClaw) join the registry. Backwards-compatible -- the host list is data, so existing installs are unaffected; `VERSION` and every host manifest bump to 3.1.0.
+
 ### Added
 
 - **Hermes Agent host adapter.** `registries/hosts.json` gains a `hermes` entry -- `config_dir` `$HOME/.hermes`, `config_file` `SOUL.md` (Hermes loads `SOUL.md` as the global identity doctrine from `$HERMES_HOME`; `AGENTS.md` is discovered project-level only), `surfaces` skills on, commands/agents off (Hermes slash commands are a built-in registry; subagents are runtime-only via the Subagent Lifecycle API, not a `~/.hermes/agents/` discovery tree). Contract sourced from the NousResearch/hermes-agent repo docs. Install: `adapters/install.sh install hermes` symlinks the doctrine as `~/.hermes/SOUL.md` and `~/.hermes/skills/` into the repo.
