@@ -13,6 +13,9 @@
     { "code": "claude",         "config_dir": "$HOME/.claude",            "config_file": "CLAUDE.md", "surfaces": { "skills": true, "commands": true, "agents": true,  "agents_path": "agents" } },
     { "code": "qwen",           "config_dir": "$HOME/.qwen",              "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": false, "agents_path": null } },
     { "code": "opencode",       "config_dir": "$HOME/.config/opencode",   "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": true,  "agents_path": "agents" } },
-    { "code": "kilo",           "config_dir": "$HOME/.config/kilo",       "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": true,  "agents_path": "agent" } }
+    { "code": "kilo",           "config_dir": "$HOME/.config/kilo",       "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": true,  "agents_path": "agent" } },
+    { "code": "openclaw",      "config_dir": "$HOME/.openclaw/workspace", "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": false, "agents": false, "agents_path": null } },
+    { "code": "hermes",        "config_dir": "$HOME/.hermes",             "config_file": "SOUL.md",   "surfaces": { "skills": true, "commands": false, "agents": false, "agents_path": null } },
+    { "code": "pi",            "config_dir": "$HOME/.pi/agent",           "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": false, "agents": false, "agents_path": null } }
   ]
 }
