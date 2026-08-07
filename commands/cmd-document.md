@@ -27,7 +27,7 @@ A change touches system behavior, workflow, data model, persistence, integration
 
 1. **Load the skill.** Load `repo-documentation` before anything else. It owns doc-type doctrine, ADR lifecycle rules (Proposed -> Accepted; never rewrite an accepted ADR, supersede it with `superseded_by`), source maps, glossary form, and granularity rules (system until it crosses systems, then promote to flow). Refer back to it at each step.
 2. **Assess.** Does the target repo have a `docs/` tree?
-   - Absent -> bootstrap: create the layout, index, glossary stub, and copy in the templates. See [bootstrap](document/references/bootstrap.md).
+   - Absent -> bootstrap: create the layout, index, glossary stub, and copy in the templates. See [bootstrap](cmd-document/references/bootstrap.md).
    - Present -> use the existing tree as-is; do not rearrange or duplicate templates.
 3. **Locate.** Read `AGENTS.md` and/or `docs/README.md` for the docs map. Find the affected system doc (`docs/systems/`), related flows (`docs/flows/`), endpoint docs (`docs/api/`), governing ADRs (`docs/architecture/decisions/`), and Title Case terms in `docs/glossary.md`. If no doc exists, decide whether the area warrants one. A change that touches an HTTP endpoint warrants an endpoint doc in `docs/api/<service>/`.
 4. **Choose type.** Pick exactly one: system / flow / ADR / API / glossary. If `$ARGUMENTS` set `--type`, use that; otherwise choose from the skill, not memory, and resist inventing categories. For **API**, the doc covers one HTTP endpoint and lives at `docs/api/<service>/<endpoint>.md` (per-endpoint); publish the same endpoint to a wiki via the [confluence](../skills/confluence/SKILL.md) adapter's endpoint-page template (`page_template.py`), translating the doc's mermaid sequence to PlantUML source for that generator.
@@ -51,4 +51,4 @@ A change touches system behavior, workflow, data model, persistence, integration
 
 - [repo-documentation](../skills/repo-documentation/SKILL.md) -- doc types, ADR lifecycle, source maps, glossary, granularity rules; ships the templates.
 - Templates (copied into `docs/templates/`): [system.md](../skills/repo-documentation/references/system.md) | [flow.md](../skills/repo-documentation/references/flow.md) | [adr.md](../skills/repo-documentation/references/adr.md) | [api.md](../skills/repo-documentation/references/api.md).
-- [bootstrap](document/references/bootstrap.md) -- exact layout to create when `docs/` is absent.
+- [bootstrap](cmd-document/references/bootstrap.md) -- exact layout to create when `docs/` is absent.
