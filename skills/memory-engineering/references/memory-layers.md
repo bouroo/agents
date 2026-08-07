@@ -28,7 +28,7 @@ Whether it is a human directive (instruction, stable) or an agent correction (le
 | "user prefers tabs" | semantic | user | learning | user memory |
 | a debugging root cause from last task | episodic | project | learning | `.agents/memory/` then forget when stale |
 | "never push to main" (a governing rule) | semantic | project | **instruction** | `AGENTS.md` -- never learning memory |
-| how to run the verify gate | procedural | project | instruction | `commands/verify.md` |
+| how to run the verify gate | procedural | project | instruction | `commands/cmd-verify.md` |
 
 If a fact could go in two places, prefer the more specific scope and the non-instruction axis -- learning memory is auditable and forgettable; instruction memory is not.
 

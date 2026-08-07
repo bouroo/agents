@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.3.0] - 2026-08-07
+
+The six phase commands are renamed to a `cmd-` prefix and bundled with their reference files (`commands/cmd-<name>/`). This groups commands by surface, matches the skill-invocation names exposed to users, and unifies the on-disk layout with the `## Native harness compatibility` table. `VERSION` and every host manifest bump to 3.3.0.
+
+### Changed
+
+- **Command files renamed to `cmd-` prefix.** `commands/document.md` -> `commands/cmd-document.md` (and likewise `judge`, `openapi`, `refactor`, `review`, `verify`); each command's `references/` directory moves alongside (`commands/<name>/references/` -> `commands/cmd-<name>/references/`). Internal cross-references (README, AGENTS.md, skill bodies, eval scenarios) updated to the new names; the manifest generator and `G5_commands_frontmatter` read whatever filenames are on disk, so no gate logic changed. `registries/modules.json` command list synced to the `cmd-` names.
+
+### Fixed
+
+- `skills/memory-engineering` and `skills/openapi-spec` reference paths refreshed; eval scenario `s2-fraudulent-work` and `eval/RESULTS.md` updated to the renamed commands.
+
 ## [3.2.0] - 2026-08-07
 
 Backwards-compatible feature release: commands become extensible through the portable `$ARGUMENTS` channel, with autocomplete hints where a host shows them. A new gate makes the cross-host contract deterministic. `VERSION` and every host manifest bump to 3.2.0.
