@@ -88,12 +88,12 @@ Then restart your coding tool so it picks up the new config.
 │   ├── discover.md          # subagent, read-only (explore/lookup/review)
 │   └── <name>/references/   # progressive-disclosure depth per agent
 ├── commands/                # Standardized reusable workflows -- flat <name>.md
-│   ├── document.md          # ACT/GROW -- bootstrap/sync a docs tree
-│   ├── judge.md             # PROVE -- adversarial verification of "done"
-│   ├── openapi.md           # ACT -- generate/validate an OpenAPI 3.2 contract
-│   ├── refactor.md          # ACT -- analyze/plan/baseline/execute/verify a refactor
-│   ├── review.md            # PROVE -- code review (MUST/SHOULD/NIT/SUGGESTION)
-│   └── verify.md            # PROVE -- format/lint/type/test gate pipeline
+│   ├── cmd-document.md      # ACT/GROW -- bootstrap/sync a docs tree
+│   ├── cmd-judge.md         # PROVE -- adversarial verification of "done"
+│   ├── cmd-openapi.md       # ACT -- generate/validate an OpenAPI 3.2 contract
+│   ├── cmd-refactor.md      # ACT -- analyze/plan/baseline/execute/verify a refactor
+│   ├── cmd-review.md        # PROVE -- code review (MUST/SHOULD/NIT/SUGGESTION)
+│   └── cmd-verify.md        # PROVE -- format/lint/type/test gate pipeline
 ├── skills/                  # Modular capability definitions -- nested <name>/SKILL.md
 │   ├── code-craft/          # ten commandments + INTENT/TWINS/AUTH/PENDING gates
 │   ├── harness-engineering/ # L1/L2/L3 termination, mutation testing, GROW
@@ -142,7 +142,7 @@ The load-bearing safety split is **mutating vs read-only**: only `coder` touches
 
 ### Commands
 
-Six phase commands drive the THINK-ACT-PROVE-GROW loop: [document](commands/document.md) (ACT/GROW), [judge](commands/judge.md) (PROVE), [openapi](commands/openapi.md) (ACT), [refactor](commands/refactor.md) (ACT), [review](commands/review.md) (PROVE), [verify](commands/verify.md) (PROVE). Each carries `description` + `agent` (the worker it binds to) + `phase` frontmatter, When/Inputs/Steps, and executable Success/Failure metrics. Commands accept caller options through the portable `$ARGUMENTS` channel (a closed `key=value` grammar the command parses itself) plus an `argument-hint` for autocomplete on hosts that show it -- the `G18_portable_command_inputs` gate keeps this contract host-agnostic. See the [command-inputs doctrine](skills/harness-engineering/references/agent-computer-interface.md).
+Six phase commands drive the THINK-ACT-PROVE-GROW loop: [document](commands/cmd-document.md) (ACT/GROW), [judge](commands/cmd-judge.md) (PROVE), [openapi](commands/cmd-openapi.md) (ACT), [refactor](commands/cmd-refactor.md) (ACT), [review](commands/cmd-review.md) (PROVE), [verify](commands/cmd-verify.md) (PROVE). Each carries `description` + `agent` (the worker it binds to) + `phase` frontmatter, When/Inputs/Steps, and executable Success/Failure metrics. Commands accept caller options through the portable `$ARGUMENTS` channel (a closed `key=value` grammar the command parses itself) plus an `argument-hint` for autocomplete on hosts that show it -- the `G18_portable_command_inputs` gate keeps this contract host-agnostic. See the [command-inputs doctrine](skills/harness-engineering/references/agent-computer-interface.md).
 
 ### Skills
 

@@ -40,7 +40,7 @@ Executable evidence (command + exit code + actual output) for every done claim -
 
 **Mutation testing probe:** introduce a single semantic defect (flip a boolean, shift a bound, drop a guard); run the suite and require it to FAIL; revert and confirm it PASSES. A suite that cannot catch a deliberate defect is theater.
 
-**Adversarial judge:** treat a "done" report as claims; re-run at least one; hunt frauds; issue one verdict (VERIFIED / VERIFIED WITH CAVEATS / REFUTED). ([judge command](../../commands/judge.md).)
+**Adversarial judge:** treat a "done" report as claims; re-run at least one; hunt frauds; issue one verdict (VERIFIED / VERIFIED WITH CAVEATS / REFUTED). ([judge command](../../commands/cmd-judge.md).)
 
 **Hard verify bound:** on the **3rd failed cycle** on the same issue, STOP. Do not start a 4th attempt. ([coder](../../agents/coder.md).)
 
