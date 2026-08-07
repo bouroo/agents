@@ -9,7 +9,7 @@ The contract lives in the repo as `docs/openapi.yaml` (or the project's existing
 
 > **Precondition.** A spec is only worth generating when the project exposes an HTTP API (introspect) or is about to (interview). Do not impose an OpenAPI file on a library, CLI, or batch job with no HTTP surface.
 
-> **Domain adapter.** Backs the [openapi](../../commands/openapi.md) command; this skill holds the template, validator, and hard rules.
+> **Domain adapter.** Backs the [openapi](../../commands/cmd-openapi.md) command; this skill holds the template, validator, and hard rules.
 
 **Stance:** write for the caller who has never seen this server and the maintainer who must keep it honest. Every operation carries an `operationId`, a `summary`, the responses it can actually return, and at least one worked example. Never invent endpoints the code does not serve; never let the spec drift -- drift is a bug.
 

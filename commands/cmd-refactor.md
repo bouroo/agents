@@ -24,7 +24,7 @@ Restructure existing code that is correct but unclear, unsafe, or slow, without 
 
 ## Steps
 
-1. **Analyze.** Map the target area, its dependencies, and call sites. Identify the smell, not the symptom. Run CPU, memory, and I/O profilers; record heap profiles and allocation counts for the top contributors. Catalog smells via [refactor-checklist](refactor/references/refactor-checklist.md).
+1. **Analyze.** Map the target area, its dependencies, and call sites. Identify the smell, not the symptom. Run CPU, memory, and I/O profilers; record heap profiles and allocation counts for the top contributors. Catalog smells via [refactor-checklist](cmd-refactor/references/refactor-checklist.md).
 
 2. **Plan.** Write a REASONS canvas (see [spec-driven-development](../skills/spec-driven-development/SKILL.md)). Lock scope explicitly; mark unknowns. If `$ARGUMENTS` set `--goal`, let that goal weigh the plan (e.g. `performance` justifies profiler-driven targets, `safety` justifies error-path hardening) -- never to relax the behavior-preserving constraint. Tests and benchmarks are part of the plan, not an afterthought.
 
@@ -58,7 +58,7 @@ Abort and hand back to the orchestrator if:
 
 ## References
 
-- [refactor-checklist](refactor/references/refactor-checklist.md) -- structural, performance, and correctness smell catalog.
+- [refactor-checklist](cmd-refactor/references/refactor-checklist.md) -- structural, performance, and correctness smell catalog.
 - [code-craft](../skills/code-craft/SKILL.md) -- Architecture, Safety, State & Concurrency, Observability.
 - [performance-patterns](../skills/performance-patterns/SKILL.md) -- measure-before-optimize performance patterns.
 - [spec-driven-development](../skills/spec-driven-development/SKILL.md) -- REASONS canvas and spec/code sync.
