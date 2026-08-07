@@ -25,6 +25,44 @@ A tool is a contract, not a convenience wrapper. Every argument the model must g
 - **Complete spec contents.** One-line purpose; input shape with edge cases (empty, missing, very large); output shape; at least one worked example; and explicit **boundaries** -- what the tool will *not* do. Writing the spec is writing a docstring for a careful junior developer who has no other documentation.
 - **Minimal formatting overhead.** Keep the description close to natural prose the model has seen at scale. Avoid gimmicks the model must parse -- mandatory line-counting, custom escaping schemes, positional flags dressed as tokens. Cognitive overhead spent decoding the format is overhead spent not solving the task.
 
+## Command inputs -- passing arguments to a slash command
+
+Commands ship as flat `<name>.md` files surfaced as slash commands by the hosts that support them. A command author writes one input contract that works on every host -- no per-host copy, no host-only frontmatter.
+
+**The portable channel is `$ARGUMENTS`.** Every supported host substitutes it with the raw text the caller appended after the command name (`/review src/auth` -> `$ARGUMENTS` is `src/auth`). It is the only token with that property, so it is the only token that belongs in a command body.
+
+| Token / field                 | portable? | why |
+| ----------------------------- | :-------: | --- |
+| `$ARGUMENTS` (all args)       |   yes     | every host substitutes it; when absent from the body, a host appends `ARGUMENTS: <value>` so the model still sees it |
+| `$ARGUMENTS[N]` / `$N` index   |   no      | only some hosts substitute it, and the index origin differs across hosts (0-based vs. 1-based) -- a value silently shifts |
+| `$name` named placeholder     |   no      | host-only; needs a frontmatter list the spec does not define |
+| `argument-hint:` frontmatter   |   no      | host-only; not in the Agent Skills spec frontmatter set |
+| `arguments:` frontmatter       |   no      | host-only; not in the Agent Skills spec frontmatter set |
+
+Positional indexing is **not portable** even where two hosts implement it, because the index origin differs (0-based on one host, 1-based on another): `$1` means the second argument on one host and the first on another. Use it only in a command documented as single-host, never in the shared core.
+
+**No host-specific frontmatter in the core.** `argument-hint` and `arguments` are not in the Agent Skills spec frontmatter set (`name, description, license, compatibility, metadata, allowed-tools`). A skill or command carrying them fails packaging on hosted skill markets and the API. The repo's `G5` gate rejects unknown command frontmatter for the same reason, and `G18` rejects these keys on invokable surfaces. Hint text belongs in the `description` and the body's input section, not a field.
+
+**Structured options ride inside `$ARGUMENTS`.** When a command takes flags or named options, the body declares the option grammar and the command parses `$ARGUMENTS` itself -- it does not ask the host to parse. This keeps one contract across hosts:
+
+```
+## Inputs
+- `$ARGUMENTS` (optional): a target area, plus any of these flags (any order, `key=value`):
+  - `--strict`      fail on warnings, not just errors (default: off)
+  - `--focus=<area>` narrow the run to one system or path
+  - `--since=<ref>`  only consider changes after this git ref
+- If empty, <documented default>.
+```
+
+Declare the same grammar whether the caller writes `/verify --strict --focus=auth` or `/verify auth --strict`. Parsing is the command's job; the host only forwards the string.
+
+**Authoring rules:**
+
+- Put `$ARGUMENTS` in an `## Inputs` section near the top, with the default behavior when it is empty. If the body never references `$ARGUMENTS`, hosts that support argument appending still hand the text to the model -- but the contract is implicit. Make it explicit so the next host does not silently drop it.
+- One command, one positional shape. If a command needs two distinct positional values, split it or move the second into a named option rather than relying on `$1`/`$2`.
+- Keep the option set small and closed. Free-form flags multiply misuse surface; prefer one required target plus a few well-named toggles.
+- Default to the safe, no-argument behavior. A command invoked with empty `$ARGUMENTS` must do something useful and non-destructive (review the current diff, verify the whole tree), never error or block waiting for input it never named.
+
 ## The feedback loop
 
 A tool's spec is a hypothesis about how the model will use it. Validate it the way you validate code:
