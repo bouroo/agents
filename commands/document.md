@@ -1,5 +1,6 @@
 ---
 description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API, glossary) with code changes. Use when a behavior, interface, invariant, or domain-term change must be reflected in project documentation."
+argument-hint: "[system|flow|adr|api|glossary area] [--type=<system|flow|adr|api|glossary>]"
 agent: coder
 phase: ACT
 ---
@@ -18,6 +19,9 @@ A change touches system behavior, workflow, data model, persistence, integration
 
 - **$ARGUMENTS** (optional): the system, flow, ADR, or glossary area to document, e.g. `auth`, `email-verification flow`, `session-vs-token ADR`.
 - If empty, detect what changed with `git diff` / `git diff --cached` and document the affected system or flow.
+- **Options** (ride inside `$ARGUMENTS`, any order, `key=value`):
+  - `--type=<system|flow|adr|api|glossary>` -- force the doc type instead of choosing it from the skill's granularity rules. Use only when the change clearly maps to one type.
+- Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
 
 ## Steps
 
@@ -26,7 +30,7 @@ A change touches system behavior, workflow, data model, persistence, integration
    - Absent -> bootstrap: create the layout, index, glossary stub, and copy in the templates. See [bootstrap](document/references/bootstrap.md).
    - Present -> use the existing tree as-is; do not rearrange or duplicate templates.
 3. **Locate.** Read `AGENTS.md` and/or `docs/README.md` for the docs map. Find the affected system doc (`docs/systems/`), related flows (`docs/flows/`), endpoint docs (`docs/api/`), governing ADRs (`docs/architecture/decisions/`), and Title Case terms in `docs/glossary.md`. If no doc exists, decide whether the area warrants one. A change that touches an HTTP endpoint warrants an endpoint doc in `docs/api/<service>/`.
-4. **Choose type.** Pick exactly one: system / flow / ADR / API / glossary. Choose from the skill, not memory; resist inventing categories. For **API**, the doc covers one HTTP endpoint and lives at `docs/api/<service>/<endpoint>.md` (per-endpoint); publish the same endpoint to a wiki via the [confluence](../skills/confluence/SKILL.md) adapter's endpoint-page template (`page_template.py`), translating the doc's mermaid sequence to PlantUML source for that generator.
+4. **Choose type.** Pick exactly one: system / flow / ADR / API / glossary. If `$ARGUMENTS` set `--type`, use that; otherwise choose from the skill, not memory, and resist inventing categories. For **API**, the doc covers one HTTP endpoint and lives at `docs/api/<service>/<endpoint>.md` (per-endpoint); publish the same endpoint to a wiki via the [confluence](../skills/confluence/SKILL.md) adapter's endpoint-page template (`page_template.py`), translating the doc's mermaid sequence to PlantUML source for that generator.
 5. **Draft from template.** Prefer `docs/templates/` (the repo may have customized them); otherwise reference the skill's templates directly without creating a tree. Follow the skill's structural rules for source maps, ADR frontmatter, related-docs linking, and the `[NEEDS CLARIFICATION]` convention.
 6. **Sync surroundings.** Update linked docs, not just the target: a new Title Case term -> `glossary.md`; a new flow -> link from its system(s) and `README.md`; a new system -> register in the docs map; an accepted ADR -> propagate its consequence into affected docs. Reconcile any docs-vs-code disagreement by updating docs, fixing code, or flagging the gap.
 7. **Verify.** Confirm every relative link resolves, ADR frontmatter is valid, and the repo's own gate is green (see Success metrics).
