@@ -72,6 +72,6 @@ Clean exit (startup + verification pass; speculative edits reverted). No secret 
 
 - [right-sizing](references/right-sizing.md) -- the two-axis dial.
 - [verification-theater](references/verification-theater.md) -- the mutation-testing protocol and theater audit.
-- [agent-computer-interface](references/agent-computer-interface.md) -- tool & MCP design checklist.
+- [agent-computer-interface](references/agent-computer-interface.md) -- tool & MCP design checklist; also how slash commands receive `$ARGUMENTS` portably across hosts.
 - [composition-patterns](references/composition-patterns.md) -- delegation topology menu.
 - [code-craft](../code-craft/SKILL.md) | [memory-engineering](../memory-engineering/SKILL.md) | [spec-driven-development](../spec-driven-development/SKILL.md)

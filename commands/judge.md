@@ -18,12 +18,16 @@ Distinct from review: review trusts the author and grades the code by severity; 
 
 - **$ARGUMENTS** (optional): the work to judge -- a diff, directory, branch, or pasted report. Defaults to the most recent completed work in this conversation.
 - The "done" report -- its claims, explicit or reconstructed from the conversation.
+- **Options** (ride inside `$ARGUMENTS`, any order, `key=value`):
+  - `--against=<ref>` -- baseline ref to diff against when judging a branch (`main`, `develop`, a tag); default inferred from the target or the most recent work.
+  - `--claim=<text>` -- an explicit "done" claim to verify, when no report is in context; default reconstructed from the conversation.
+- Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
 
 ## Steps
 
 1. **Collect the claims.** Enumerate what was supposedly done, what was supposedly verified ("tests pass", "build green", "renders correctly"), and what was supposedly left untouched. Also inventory owed artifact lines: `INTENT:` (behavior change), `TWINS:` (defect fix), `AUTH:` (outward action), `PENDING:` (untaken follow-up). Each becomes a row to prove or refute.
 
-2. **Establish what changed.** Run `git diff` and `git status` (or a directory diff against a pristine reference when there is no repo). The diff is ground truth; the report is not. Any file touched outside the ask's blast radius is a scope-creep signal.
+2. **Establish what changed.** Run `git diff` and `git status` (or a directory diff against a pristine reference when there is no repo). If `$ARGUMENTS` set `--against`, diff against that ref (`git diff <ref>`). The diff is ground truth; the report is not. Any file touched outside the ask's blast radius is a scope-creep signal.
 
 3. **Re-run every claimed verification.** Do not read code and nod: run the tests, the build, the script, the page. Capture the real output (command, exit code, stdout/stderr). A claim that cannot be re-run -- missing environment, credentials, or something needing human eyes -- is **UNVERIFIABLE**, never assumed true.
 
