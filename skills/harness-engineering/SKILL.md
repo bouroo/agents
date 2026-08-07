@@ -26,7 +26,7 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 ## ACT -- surgical execution
 
 1. **WIP = 1.** Finish and verify one unit before starting the next.
-2. **Right tool by capability, handle failures cleanly.** Route by capability not name; fail gracefully -- handle tool/MCP errors explicitly with retries or fallbacks; never swallow an error.
+2. **Right tool by capability, built-in first; handle failures cleanly.** Route by capability not name; prefer the built-in Read/Grep/Glob/Edit/Write over bash for file and string operations (AGENTS.md §2); fail gracefully -- handle tool/MCP errors explicitly with retries or fallbacks; never swallow an error.
 3. **Separate reasoning from deterministic computation.** Arithmetic, parsing, validation, scheduling belong in tested code, never in model reasoning.
 
 ## PROVE -- three-layer termination, mutation, judging
@@ -57,6 +57,7 @@ A recurring failure is a **harness problem, not a prompt problem.** Prompt tweak
 
 | Failure mode | Looks like | Primary fix | Artifact |
 |---|---|---|---|
+| Tool-routing drift | `cat`/`grep`/`find` in bash instead of Read/Grep/Glob | Built-in tools first; bash for commands only | AGENTS.md §2 |
 | Verification theater | "tests pass" without output | Require captured evidence; mutation probe | L1/L2/L3 gate |
 | Scope creep / spec betrayal | edits outside SCOPE | SCOPE-bound handoff; `INTENT:` gate | [code-craft](../code-craft/SKILL.md) |
 | Context rot / premature victory | "done" on stale memory | Repo-as-record; checkpoint every turn | `state.json` |
