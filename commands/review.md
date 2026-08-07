@@ -1,5 +1,6 @@
 ---
 description: "Review phase (PROVE) -- review current code changes for quality, safety, and performance, grouped by severity with a verdict. Use to review a diff (trusts the author; for adversarial re-verification use judge)."
+argument-hint: "[target] [--against=<ref>] [--focus=<security|performance|correctness|tests>]"
 agent: discover
 phase: PROVE
 ---
@@ -12,11 +13,18 @@ A thorough, language-agnostic code review of the current changes, reported by se
 
 **Target** (optional): **$ARGUMENTS**. Otherwise review the current uncommitted changes (`git diff` / `git diff --cached`).
 
+**Options** (ride inside `$ARGUMENTS`, any order, `key=value`; empty keeps the default above):
+
+- `--against=<ref>` -- review the diff against this ref (`main`, `HEAD~1`, a branch) instead of the uncommitted changes.
+- `--focus=<dimension>` -- review one dimension only: `security`, `performance`, `correctness`, or `tests`. Default: all dimensions.
+
+Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
+
 ## Workflow
 
-1. **Understand the change.** Read the message/PR/summary. Does it make sense? Should it exist? Identify scope: bug fix, feature, refactor, cleanup.
+1. **Understand the change.** Read the message/PR/summary. Does it make sense? Should it exist? Identify scope: bug fix, feature, refactor, cleanup. If `$ARGUMENTS` set `--against`, derive the diff from that ref (`git diff <ref>`) instead of the uncommitted changes.
 2. **Read the diff plus neighbors.** Do not review in isolation; read enough surrounding code to judge coupling and convention.
-3. **Check against the rubric** (below).
+3. **Check against the rubric** (below). If `$ARGUMENTS` set `--focus`, restrict the rubric to that one dimension; otherwise cover all rows.
 4. **Group findings** by severity; every finding names `[file:line]` and a suggested resolution.
 
 ## Review rubric

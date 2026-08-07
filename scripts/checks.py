@@ -36,7 +36,7 @@ MANIFEST_DIR = ROOT / "adapters" / "manifests"
 
 ALLOWED_MODES = {"primary", "subagent"}
 ALLOWED_AGENT_PERM_KEYS = {"read", "glob", "grep", "edit", "bash", "task", "web", "external_directory", "color", "steps", "team", "icon"}
-ALLOWED_COMMAND_KEYS = {"name", "description", "phase", "invocable_as", "agent", "model"}
+ALLOWED_COMMAND_KEYS = {"name", "description", "phase", "invocable_as", "agent", "model", "argument-hint"}
 ALLOWED_PHASES = {"THINK", "ACT", "PROVE", "GROW", "ANYTIME"}
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 AGENTS_MD_BUDGET = 220
@@ -57,6 +57,28 @@ CORE_HOST_SCAN_GLOBS = ["AGENTS.md", "agents/*.md", "commands/*.md", "skills/*/S
 # OpenAPI tooling). They are excluded from the core-agnosticism scan.
 ADAPTER_SKILLS = {"go-essential", "openapi-spec", "confluence"}
 CORE_HOST_SCAN_EXCLUDE = [f"skills/{s}/" for s in ADAPTER_SKILLS]
+
+# G18: host-only argument features that break cross-host portability. The split
+# is behavioral vs. cosmetic:
+#   `arguments:`  defines Claude-only `$name` substitution opencode/others do not
+#                 perform -> a `$name` token silently leaks into the prompt.
+#                 FUNCTIONAL -> banned on every invokable surface.
+#   $ARGUMENTS[N] indexed access with a host-specific origin (0 vs 1 based).
+#                 FUNCTIONAL -> banned on every invokable surface.
+#   `argument-hint:` a cosmetic autocomplete hint. Claude Code reads it; every
+#                 other host ignores the unknown frontmatter key, and commands
+#                 are NOT Agent-Skills-spec artifacts, so it never hits the spec
+#                 validator. INERT on commands -> allowed there. On skills it IS
+#                 in the spec's frontmatter set ({name, description, license,
+#                 compatibility, metadata, allowed-tools}) and fails packaging on
+#                 hosted skill markets / the API -> banned there.
+BEHAVIORAL_ARG_FM = {"arguments"}              # banned on commands and skills
+SPEC_BREAKING_ARG_FM = {"argument-hint", "arguments"}  # banned on skills only
+NONPORTABLE_ARG_TOKEN_RE = re.compile(r"\$ARGUMENTS\[")
+INVOKABLE_SCAN_GLOBS = {
+    "commands/*.md": BEHAVIORAL_ARG_FM,
+    "skills/*/SKILL.md": SPEC_BREAKING_ARG_FM,
+}
 
 Msg = tuple[str, str]  # (level, message); level in {PASS, FAIL, WARN}
 _msgs: list[Msg] = []
@@ -101,8 +123,7 @@ def G1_manifests_parse() -> None:
             return
     try:
         plugin = json.loads(pj.read_text())
-        market = json.loads(mj.read_text())
-    except Exception as e:
+    except (ValueError, OSError) as e:  # JSONDecodeError/UnicodeDecodeError are ValueError
         _add("FAIL", f"{name}: parse error: {e}")
         return
     for req in ("name", "version", "description"):
@@ -127,7 +148,7 @@ def G2_versions_agree() -> None:
     try:
         pv = json.loads(pj.read_text()).get("version")
         mv = json.loads(mj.read_text()).get("version")
-    except Exception as e:
+    except (ValueError, OSError) as e:
         _add("FAIL", f"{name}: parse error: {e}")
         return
     if not pv or not mv:
@@ -159,7 +180,7 @@ def G3_skills_frontmatter() -> None:
         sname = md.parent.name
         try:
             fm, _ = _frontmatter(md)
-        except Exception as e:
+        except (ValueError, OSError) as e:
             _add("FAIL", f"{name}: {rel}: read error: {e}")
             ok = False
             continue
@@ -210,7 +231,7 @@ def G4_agents_frontmatter() -> None:
         aname = md.stem
         try:
             fm, _ = _frontmatter(md)
-        except Exception as e:
+        except (ValueError, OSError) as e:
             _add("FAIL", f"{name}: {rel}: read error: {e}")
             ok = False
             continue
@@ -250,10 +271,9 @@ def G5_commands_frontmatter() -> None:
     ok = True
     for md in cmds:
         rel = md.relative_to(ROOT)
-        cname = md.stem
         try:
             fm, _ = _frontmatter(md)
-        except Exception as e:
+        except (ValueError, OSError) as e:
             _add("FAIL", f"{name}: {rel}: read error: {e}")
             ok = False
             continue
@@ -293,7 +313,8 @@ def G6_no_dash_chars() -> None:
                 continue
             try:
                 text = p.read_text()
-            except Exception:
+            except (ValueError, OSError) as e:
+                _add("WARN", f"{name}: skip {p.relative_to(ROOT)} (unreadable: {e})")
                 continue
             for i, line in enumerate(text.splitlines(), 1):
                 for col, ch in enumerate(line):
@@ -328,7 +349,7 @@ def G7_no_orphan_skills() -> None:
         return
     try:
         skills = json.loads(pj.read_text()).get("skills", [])
-    except Exception as e:
+    except (ValueError, OSError) as e:
         _add("FAIL", f"{name}: legacy plugin.json parse error: {e}")
         return
     ok = True
@@ -338,13 +359,10 @@ def G7_no_orphan_skills() -> None:
             _add("FAIL", f"{name}: declared skill {s!r} -> {target.relative_to(ROOT)} missing")
             ok = False
     # every on-disk skill dir has a SKILL.md
-    for md in SKILLS_DIR.rglob("SKILL.md"):
-        pass
     for d in [p for p in SKILLS_DIR.rglob("*") if p.is_dir()]:
-        if not (d / "SKILL.md").exists():
-            # allow nested dirs that contain a skill deeper (e.g. adapters/ itself)
-            if not any((d).rglob("SKILL.md")) and d.parent != SKILLS_DIR:
-                continue
+        # allow nested dirs that contain a skill deeper (e.g. adapters/ itself)
+        if not (d / "SKILL.md").exists() and not any(d.rglob("SKILL.md")) and d.parent != SKILLS_DIR:
+            continue
     if ok:
         _add("PASS", f"{name}: {len(skills)} declared skill(s) resolve")
 
@@ -367,7 +385,7 @@ def G8_eval_json_parses() -> None:
     for f in files:
         try:
             json.loads(f.read_text())
-        except Exception as e:
+        except (ValueError, OSError) as e:
             _add("FAIL", f"{name}: eval/results/{f.name}: parse error: {e}")
             ok = False
     if ok:
@@ -406,7 +424,7 @@ def G10_claude_plugin_manifests() -> None:
         return
     try:
         plugin = json.loads(pj.read_text())
-    except Exception as e:
+    except (ValueError, OSError) as e:
         _add("FAIL", f"{name}: plugin.json parse error: {e}")
         return
     skills = plugin.get("skills", [])
@@ -430,7 +448,7 @@ def G10_claude_plugin_manifests() -> None:
         if cp_version != cm_version:
             _add("FAIL", f"{name}: version mismatch plugin={cp_version!r} market={cm_version!r}")
             ok = False
-    except Exception as e:
+    except (ValueError, OSError) as e:
         _add("FAIL", f"{name}: marketplace.json parse error: {e}")
         ok = False
     if ok:
@@ -450,7 +468,7 @@ def G11_cursor_plugin_manifests() -> None:
         return
     try:
         plugin = json.loads(pj.read_text())
-    except Exception as e:
+    except (ValueError, OSError) as e:
         _add("FAIL", f"{name}: plugin.json parse error: {e}")
         return
     if not NAME_RE.match(plugin.get("name", "")):
@@ -483,7 +501,7 @@ def G12_gemini_extension_manifest() -> None:
         return
     try:
         doc = json.loads(p.read_text())
-    except Exception as e:
+    except (ValueError, OSError) as e:
         _add("FAIL", f"{name}: parse error: {e}")
         return
     nm = doc.get("name")
@@ -564,7 +582,7 @@ def G14_frontmatter_colon_safe() -> None:
             s = line.strip()
             if not s or s.startswith("#") or ":" not in s:
                 continue
-            k, v = s.split(":", 1)
+            _, v = s.split(":", 1)
             v = v.strip()
             if v.startswith('"') and v.endswith('"'):
                 continue
@@ -619,7 +637,7 @@ def G16_registries_parse() -> None:
     try:
         hd = json.loads(hosts.read_text())
         md = json.loads(mods.read_text())
-    except Exception as e:
+    except (ValueError, OSError) as e:
         _add("FAIL", f"{name}: parse error: {e}")
         return
     if "adapters" not in hd or not isinstance(hd["adapters"], list) or not hd["adapters"]:
@@ -680,6 +698,44 @@ def G17_agnostic_core() -> None:
     _add("PASS", f"{name}: {len(files)} core file(s) free of host-binding tokens")
 
 
+# ---------------------------------------------------------------------------
+# G18  portable command inputs (no host-only argument features)
+# ---------------------------------------------------------------------------
+
+
+def G18_portable_command_inputs() -> None:
+    name = "G18_portable_command_inputs"
+    files: list[pathlib.Path] = []
+    for pat in INVOKABLE_SCAN_GLOBS:
+        files.extend(f for f in ROOT.glob(pat) if f.is_file())
+    if not files:
+        _add("WARN", f"{name}: no invokable files to scan")
+        return
+    bad_fm: list[tuple] = []   # (rel, key)
+    bad_tok: list[tuple] = []  # (rel, line)
+    for f in files:
+        rel = f.relative_to(ROOT)
+        # pick the banned-frontmatter set for this surface (glob pattern prefix)
+        banned = next(v for k, v in INVOKABLE_SCAN_GLOBS.items()
+                      if str(rel).startswith(k.split("*")[0].rstrip("/")))
+        fm, body = _frontmatter(f)
+        bad_fm.extend((rel, key) for key in fm if key in banned)
+        for i, line in enumerate(body.splitlines(), 1):
+            if NONPORTABLE_ARG_TOKEN_RE.search(line):
+                bad_tok.append((rel, i))
+                if len(bad_tok) > 50:
+                    break
+    msgs = []
+    if bad_fm:
+        msgs.append("host-only frontmatter " + ", ".join(f"{r}:{k}" for r, k in bad_fm[:10]))
+    if bad_tok:
+        msgs.append("indexed $ARGUMENTS[N] at " + "; ".join(f"{r}:{i}" for r, i in bad_tok[:10]))
+    if msgs:
+        _add("FAIL", f"{name}: " + "; ".join(msgs) + " -- use portable $ARGUMENTS (see skills/harness-engineering/references/agent-computer-interface.md)")
+        return
+    _add("PASS", f"{name}: {len(files)} invokable file(s) use the portable $ARGUMENTS channel")
+
+
 GATES = [
     ("G1_manifests_parse", G1_manifests_parse),
     ("G2_versions_agree", G2_versions_agree),
@@ -698,6 +754,7 @@ GATES = [
     ("G15_manifests_generated", G15_manifests_generated),
     ("G16_registries_parse", G16_registries_parse),
     ("G17_agnostic_core", G17_agnostic_core),
+    ("G18_portable_command_inputs", G18_portable_command_inputs),
 ]
 
 HELP_EPILOG = "Gates: " + ", ".join(n for n, _ in GATES)
@@ -721,7 +778,7 @@ def main(argv: list[str]) -> int:
         _msgs.clear()
         try:
             fn()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 -- top-level containment: a crashing gate reports FAIL, not a traceback
             _add("FAIL", f"{name}: gate crashed: {e}")
         for level, msg in _msgs:
             tag = {"PASS": "[PASS]", "FAIL": "[FAIL]", "WARN": "[WARN]"}[level]
@@ -733,8 +790,7 @@ def main(argv: list[str]) -> int:
                 n_fail += 1
             elif level == "WARN":
                 n_warn += 1
-        has_fail = any(l == "FAIL" for l, _ in _msgs)
-        if has_fail:
+        if any(level == "FAIL" for level, _ in _msgs):
             any_fail = True
             if not args.all:
                 print(f"\nGate {name} failed; aborting (use --all to run all gates).", file=sys.stderr)

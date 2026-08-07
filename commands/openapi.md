@@ -1,5 +1,6 @@
 ---
 description: "OpenAPI phase (ACT) -- generate or update docs/openapi.yaml (OpenAPI 3.2) from API code or requirements and validate it against the canonical OAS meta-schema. Use to produce, repair, or sync an API contract."
+argument-hint: "[resource|tag|endpoint-group] [--validate-only]"
 agent: coder
 phase: ACT
 ---
@@ -12,9 +13,15 @@ Produce or repair the project's OpenAPI 3.2 contract at `docs/openapi.yaml` (or 
 
 **Target area** (optional): **$ARGUMENTS** -- a resource, tag, or endpoint group (`orders`, `POST /webhooks`, `auth`). If empty, generate or sync the whole API surface.
 
+**Options** (ride inside `$ARGUMENTS`, any order, `key=value` or bare flag; empty keeps the default above):
+
+- `--validate-only` -- validate the existing spec against the meta-schema without generating or updating it.
+
+Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
+
 ## Steps
 
-1. **Load the adapter skill** -- [openapi-spec](../skills/openapi-spec/SKILL.md) holds the template, the validator, and the hard rules. Depth lives there; this command is the workflow.
+1. **Load the adapter skill** -- [openapi-spec](../skills/openapi-spec/SKILL.md) holds the template, the validator, and the hard rules. Depth lives there; this command is the workflow. If `$ARGUMENTS` set `--validate-only`, skip to step 4: validate the existing spec against the meta-schema, capture command + exit code + output, and report. Do not author or update.
 2. **Choose the mode:**
    - **Introspect** -- read the API code (routes, handlers, DTOs, middleware) to derive the contract from what is actually served. Preferred when code is authoritative.
    - **Interview** -- run the skill's minimal interview (resources + verbs, auth, pagination/filtering, error envelope, id/date/money formats); author into the template and mark every assumption `[NEEDS CLARIFICATION]`. Preferred for design-first.
