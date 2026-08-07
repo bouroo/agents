@@ -6,7 +6,8 @@ color: "#3B82F6"
 # Tool allowlist for hosts that gate by tool name. Full mutating toolset for
 # implement/fix/verify/judge.
 # Per-capability allow/ask/deny object for hosts that gate by capability.
-# Mutating worker: edit/bash on; may not spawn further subagents.
+# Mutating worker: edit/bash on; may not spawn further subagents. bash is for
+# commands the built-ins cannot run -- Read/Grep/Glob/Edit/Write first (AGENTS.md §2).
 permission:
   read: allow
   edit: allow
