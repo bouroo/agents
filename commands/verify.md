@@ -1,5 +1,6 @@
 ---
 description: "Verify phase (PROVE) -- format, lint, type-check, scan, test, and githook gate with a fix/review loop. Use to leave the working tree passing every quality gate."
+argument-hint: "[scope] [--level=<L1|L2|L3>]"
 agent: coder
 phase: PROVE
 ---
@@ -12,9 +13,15 @@ Leave the working tree in a state that passes every quality gate, including the 
 
 **Scope** (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole working tree.
 
+**Options** (ride inside `$ARGUMENTS`, any order, `key=value`; empty keeps the default above):
+
+- `--level=<L1|L2|L3>` -- cap the pipeline at this layer (L1 static, L2 runtime, L3 end-to-end) instead of dialing to the change's complexity. Lower layers still run.
+
+Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
+
 ## Pipeline
 
-Gates enforce; prompts only request. Each stage is a gate: a failure stops progression until the code satisfies the rule. Run in order; on findings, **auto-fix** then **re-verify**; repeat until clean or no more auto-fixes are possible, then advance. See [harness-engineering](../skills/harness-engineering/SKILL.md).
+Gates enforce; prompts only request. Each stage is a gate: a failure stops progression until the code satisfies the rule. Run in order; on findings, **auto-fix** then **re-verify**; repeat until clean or no more auto-fixes are possible, then advance. If `$ARGUMENTS` set `--level`, stop after that layer (L1 static, L2 runtime, L3 end-to-end) instead of dialing to the change's complexity. See [harness-engineering](../skills/harness-engineering/SKILL.md).
 
 1. **Format** -- apply the project's formatter; fail if files would change after auto-fix.
 2. **Lint** -- linter with warnings-as-errors; auto-fix where supported. Include the language's **doc-convention linter** so comment noise and missing doc comments are caught computationally (godoc, TSDoc/JSDoc, docstring, rustdoc linters). If none is configured, note the absence and proceed.

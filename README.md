@@ -117,7 +117,7 @@ Then restart your coding tool so it picks up the new config.
 ├── plugin.json              # discovery symlink -> adapters/manifests/legacy/plugin.json
 ├── marketplace.json         # discovery symlink -> adapters/manifests/legacy/marketplace.json
 ├── scripts/
-│   ├── checks.py            # 17 deterministic gates (count via `checks.py --list`)
+│   ├── checks.py            # 18 deterministic gates (count via `checks.py --list`)
 │   ├── gen-manifests.py     # generates adapters/manifests/ from VERSION + inventory + registries
 │   ├── resolve-customization.py  # three-tier customize.toml merge (optional)
 │   └── validate-agents.sh   # thin shim -> checks.py
@@ -142,7 +142,7 @@ The load-bearing safety split is **mutating vs read-only**: only `coder` touches
 
 ### Commands
 
-Six phase commands drive the THINK-ACT-PROVE-GROW loop: [document](commands/document.md) (ACT/GROW), [judge](commands/judge.md) (PROVE), [openapi](commands/openapi.md) (ACT), [refactor](commands/refactor.md) (ACT), [review](commands/review.md) (PROVE), [verify](commands/verify.md) (PROVE). Each carries `description` + `agent` (the worker it binds to) + `phase` frontmatter, When/Inputs/Steps, and executable Success/Failure metrics.
+Six phase commands drive the THINK-ACT-PROVE-GROW loop: [document](commands/document.md) (ACT/GROW), [judge](commands/judge.md) (PROVE), [openapi](commands/openapi.md) (ACT), [refactor](commands/refactor.md) (ACT), [review](commands/review.md) (PROVE), [verify](commands/verify.md) (PROVE). Each carries `description` + `agent` (the worker it binds to) + `phase` frontmatter, When/Inputs/Steps, and executable Success/Failure metrics. Commands accept caller options through the portable `$ARGUMENTS` channel (a closed `key=value` grammar the command parses itself) plus an `argument-hint` for autocomplete on hosts that show it -- the `G18_portable_command_inputs` gate keeps this contract host-agnostic. See the [command-inputs doctrine](skills/harness-engineering/references/agent-computer-interface.md).
 
 ### Skills
 
@@ -166,7 +166,7 @@ The artifacts ship in each harness's **native** discovery format, verified again
 | Artifact | Format | Compatible harnesses |
 |---|---|---|
 | **Agents** `agents/<name>.md` | flat `<name>.md`; frontmatter superset (`name`, `description`, `mode`, `permission`) | opencode, Claude Code (`.claude/agents/`), kilo (`agent/`) |
-| **Commands** `commands/<name>.md` | flat `<name>.md`; `description` + `agent` binding | opencode, kilo (`.kilo/commands/`), Claude Code |
+| **Commands** `commands/<name>.md` | flat `<name>.md`; `description` + `agent` + `phase` + optional `argument-hint` | opencode, kilo (`.kilo/commands/`), Claude Code |
 | **Skills** `skills/<name>/SKILL.md` | nested per the Agent Skills standard; `name` + `description` | skills.md / opencode / Claude Code / Hermes (`~/.hermes/skills`) / OpenClaw (`<workspace>/skills`) / Pi (`~/.pi/agent/skills`) |
 | **AGENTS.md** | root Markdown, nearest-wins | the open AGENTS.md standard (Codex, Cursor, Gemini, opencode, kilo, OpenClaw, and 20+ others); Hermes loads it project-level (global identity is `SOUL.md`) |
 
@@ -174,7 +174,7 @@ The installer (`adapters/install.sh`, reads `registries/hosts.json`) symlinks th
 
 ### Verification
 
-`scripts/checks.py` runs 17 deterministic gates (`--list` to see them; `--all` to run every gate). CI runs `python3 scripts/checks.py --all` on every push. Notable gates: `G13_plugin_symlinks`, `G15_manifests_generated`, `G16_registries_parse`, `G17_agnostic_core`.
+`scripts/checks.py` runs 18 deterministic gates (`--list` to see them; `--all` to run every gate). CI runs `python3 scripts/checks.py --all` on every push. Notable gates: `G13_plugin_symlinks`, `G15_manifests_generated`, `G16_registries_parse`, `G17_agnostic_core`, `G18_portable_command_inputs`.
 
 ## Upgrading from v2
 
