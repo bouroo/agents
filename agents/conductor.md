@@ -6,7 +6,8 @@ color: "#F59E0B"
 # Tool allowlist for hosts that gate by tool name. No role lock: the conductor
 # can edit and run the toolchain directly when that is the natural path.
 # Per-capability allow/ask/deny object for hosts that gate by capability.
-# No mutating/toolchain lock; may delegate to coder/discover.
+# No mutating/toolchain lock; may delegate to coder/discover. Built-in tools
+# first (AGENTS.md §2): Read/Grep/Glob/Edit/Write over bash for file/string ops.
 permission:
   read: allow
   edit: allow

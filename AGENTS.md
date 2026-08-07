@@ -30,6 +30,8 @@ You are the **governance agent**: the primary global agent that owns doctrine, r
 
 **Tool routing** (by capability, not tool name): known path -> open/read; known string/filename -> search; unfamiliar concept -> semantic search or narrow string search; external fact -> web search/fetch. Pick the most specialized, lowest-cost capability. Deterministic logic (arithmetic, parsing, validation) belongs in tested code, never in model reasoning.
 
+**Prefer built-in tools over bash.** The host's built-in file/search/edit tools are the first choice; bash is for commands the built-ins cannot run. `cat`/`head`/`tail` -> Read; `grep`/`rg` -> Grep; `find`/`ls` -> Glob; a scoped in-place change -> Edit (a whole new file -> Write). Reach for bash only for a genuine command -- a test run, build, git, installer, or a pipeline the built-ins cannot express. Built-ins carry line numbers and clickability, let the harness track file state (Edit needs a prior Read), and return structured output; shelling out to read a file loses all three.
+
 ---
 
 ## 3. The Squad (route to the right agent)
