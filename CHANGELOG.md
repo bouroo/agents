@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.2.0] - 2026-08-07
+
+Backwards-compatible feature release: commands become extensible through the portable `$ARGUMENTS` channel, with autocomplete hints where a host shows them. A new gate makes the cross-host contract deterministic. `VERSION` and every host manifest bump to 3.2.0.
+
+### Added
+
+- **Portable command options.** All six phase commands and the `commit-message` skill accept caller options through `$ARGUMENTS` -- the one token every supported host substitutes. Each command declares a small, closed `key=value` grammar (e.g. `--against=<ref>`, `--focus=<dimension>`, `--level=<L1|L2|L3>`, `--validate-only`) that the command parses itself, plus the documented default when no argument is given. Same input contract on Claude Code, opencode, kilo, and any Agent-Skills-compatible host. See the [command-inputs doctrine](skills/harness-engineering/references/agent-computer-interface.md).
+- **`argument-hint` on commands.** Each command carries an `argument-hint` echoing its input shape for autocomplete. It is cosmetic and behaviorally inert: Claude Code reads it; every other host ignores the unknown frontmatter key. Commands are not Agent-Skills-spec artifacts, so it never reaches the spec validator.
+- **`G18_portable_command_inputs` gate.** Enforces the portable-channel contract across every invokable surface: rejects the functional host-only `arguments:` frontmatter (wires `$name` substitution, which leaks on non-Claude hosts) and indexed `$ARGUMENTS[N]` tokens (origin differs 0- vs 1-based); allows cosmetic `argument-hint` on commands but bans it on skills, where it is a spec-breaking field. `$ARGUMENTS` (bare) remains the one portable channel.
+- **Command-inputs doctrine.** harness-engineering's [Agent-Computer Interface](skills/harness-engineering/references/agent-computer-interface.md) gains a portability matrix and authoring rules for slash-command arguments.
+
+### Changed
+
+- **Linter cleanup in `scripts/checks.py`.** Blind `except Exception` narrowed to `except (ValueError, OSError)` (covers `JSONDecodeError`/`UnicodeDecodeError` and file errors); removed unused locals (`market`, `cname`, unpacked `k`); merged a nested `if` and a no-op loop; the silent `try/except/continue` in the dash scan now logs a `WARN`; the top-level gate-containment `except Exception` is kept and `noqa`-sanctioned. File is now executable. Behavior unchanged -- all 18 gates pass.
+
 ## [3.1.0] - 2026-08-06
 
 First follow-on stable release: three new host adapters (Hermes, OpenClaw, Pi) join the registry. Backwards-compatible -- the host list is data, so existing installs are unaffected; `VERSION` and every host manifest bump to 3.1.0.
