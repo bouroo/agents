@@ -1,5 +1,6 @@
 ---
 description: "Verify phase (PROVE) -- format, lint, type-check, scan, test, and githook gate with a fix/review loop. Use to leave the working tree passing every quality gate."
+argument-hint: "[scope] [--level=<L1|L2|L3>]"
 agent: coder
 phase: PROVE
 ---
