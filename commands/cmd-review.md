@@ -7,7 +7,7 @@ phase: PROVE
 
 # Review -- Code Review
 
-A thorough, language-agnostic code review of the current changes, reported by severity. Part of the **PROVE** phase. (Review trusts the author's evidence; the [judge](judge.md) command trusts nothing and re-runs.)
+A thorough, language-agnostic code review of the current changes, reported by severity. Part of the **PROVE** phase. (Review trusts the author's evidence; the [judge](cmd-judge.md) command trusts nothing and re-runs.)
 
 > **Agent:** run on a reviewing worker ([discover](../agents/discover.md), review mode) or any read-only reviewer.
 
@@ -71,4 +71,4 @@ Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string.
 ## References
 
 - [code-craft](../skills/code-craft/SKILL.md) -- hard rules, the review checklist.
-- [judge](judge.md) -- when you need adversarial re-verification, not author-trusting review.
+- [judge](cmd-judge.md) -- when you need adversarial re-verification, not author-trusting review.
