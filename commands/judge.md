@@ -1,5 +1,6 @@
 ---
 description: "Adversarial verifier for the PROVE phase -- treats a finished-work report as untrusted claims, re-runs every verification, hunts frauds, and delivers a verdict. Use when a prior step reported work complete and you must confirm or refute it before shipping."
+argument-hint: "[diff|dir|branch|report] [--against=<ref>] [--claim=<text>]"
 agent: coder
 phase: PROVE
 ---

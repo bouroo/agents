@@ -1,5 +1,6 @@
 ---
 description: "Refactor phase (ACT loop): analyze, plan, baseline, execute, verify, and sync a behavior-preserving restructuring with before/after measurement. Use when restructuring existing code for clarity, safety, or performance without changing its observable behavior."
+argument-hint: "<module|package|path|file> [--goal=<readability|safety|performance>]"
 agent: coder
 phase: ACT
 ---
