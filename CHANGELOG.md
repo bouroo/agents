@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.4.0] - 2026-08-07
+
+Backwards-compatible doctrine release: agents now reach for the host's built-in file/search/edit tools before bash. The rule is a feedforward guide (§7: a static gate cannot detect the bash-vs-built-in preference, so the doctrine is the control). `VERSION` and every host manifest bump to 3.4.0.
+
+### Changed
+
+- **Prefer built-in tools over bash (AGENTS.md §2).** New routing rule maps every shell-as-file-reader pattern to its built-in: `cat`/`head`/`tail` -> Read, `grep`/`rg` -> Grep, `find`/`ls` -> Glob, a scoped in-place change -> Edit, a whole new file -> Write. Bash is reserved for genuine commands -- a test run, build, git, installer, or a pipeline the built-ins cannot express. Built-ins carry line numbers and clickability, let the harness track file state (Edit needs a prior Read), and return structured output; shelling out to read a file loses all three.
+- **Failure-Mode Control Map (GROW).** New *tool-routing drift* row: `cat`/`grep`/`find` in bash instead of Read/Grep/Glob -> built-in tools first -> AGENTS.md §2. Captures a recurring user-reported failure mode.
+- **Agent permission blocks** (`conductor`, `coder`, `discover`) carry a one-line note beside each `bash: allow`: built-in Read/Grep/Glob/Edit/Write over bash for file and string operations, citing §2. The `discover` explore mode directs scouting to Read/Grep/Glob rather than `cat`/`grep`/`find` in bash.
+
 ## [3.3.0] - 2026-08-07
 
 The six phase commands are renamed to a `cmd-` prefix and bundled with their reference files (`commands/cmd-<name>/`). This groups commands by surface, matches the skill-invocation names exposed to users, and unifies the on-disk layout with the `## Native harness compatibility` table. `VERSION` and every host manifest bump to 3.3.0.
