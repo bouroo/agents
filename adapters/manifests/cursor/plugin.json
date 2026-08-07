@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a three-role squad (conductor/coder/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
   "author": {
     "name": "bouroo"
@@ -25,11 +25,11 @@
     "agents/conductor.md"
   ],
   "commands": [
-    "commands/document.md",
-    "commands/judge.md",
-    "commands/openapi.md",
-    "commands/refactor.md",
-    "commands/review.md",
-    "commands/verify.md"
+    "commands/cmd-document.md",
+    "commands/cmd-judge.md",
+    "commands/cmd-openapi.md",
+    "commands/cmd-refactor.md",
+    "commands/cmd-review.md",
+    "commands/cmd-verify.md"
   ]
 }

@@ -13,12 +13,12 @@
         "discover"
       ],
       "commands": [
-        "document",
-        "judge",
-        "openapi",
-        "refactor",
-        "review",
-        "verify"
+        "cmd-document",
+        "cmd-judge",
+        "cmd-openapi",
+        "cmd-refactor",
+        "cmd-review",
+        "cmd-verify"
       ],
       "skills": [
         "code-craft",

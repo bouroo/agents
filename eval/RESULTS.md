@@ -53,7 +53,7 @@ WARN, not a PASS.
 - **Status**: seed.
 - **What was done**: scenario `s2-fraudulent-work` was written alongside
   the new adversarial-verification rule ([harness-engineering](../skills/harness-engineering/SKILL.md)
-  §10 and the [`judge-phase`](../commands/judge-phase.md) command). The
+  §10 and the [`judge`](../commands/cmd-judge.md) command). The
   scenario plants five frauds behind a confident completion report; the
   rule under test is whether the agent treats "done" as claims and
   re-runs the verifications itself. `eval/results/r2.json` carries
