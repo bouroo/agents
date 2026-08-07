@@ -58,6 +58,17 @@ CORE_HOST_SCAN_GLOBS = ["AGENTS.md", "agents/*.md", "commands/*.md", "skills/*/S
 ADAPTER_SKILLS = {"go-essential", "openapi-spec", "confluence"}
 CORE_HOST_SCAN_EXCLUDE = [f"skills/{s}/" for s in ADAPTER_SKILLS]
 
+# G18: host-only argument features that break cross-host portability. The Agent
+# Skills spec frontmatter set is {name, description, license, compatibility,
+# metadata, allowed-tools}; argument-hint/arguments are Claude Code-only and
+# fail packaging on claude.ai/the API. $ARGUMENTS[N] is indexed access that
+# opencode does not substitute. $ARGUMENTS (bare) is the one portable channel.
+NONPORTABLE_ARG_FM = {"argument-hint", "arguments"}
+NONPORTABLE_ARG_TOKEN_RE = re.compile(r"\$ARGUMENTS\[")
+# Invokable surfaces: commands and skill entry points. Reference docs may
+# *teach* these tokens, so they are not scanned here.
+INVOKABLE_SCAN_GLOBS = ["commands/*.md", "skills/*/SKILL.md"]
+
 Msg = tuple[str, str]  # (level, message); level in {PASS, FAIL, WARN}
 _msgs: list[Msg] = []
 
@@ -680,6 +691,46 @@ def G17_agnostic_core() -> None:
     _add("PASS", f"{name}: {len(files)} core file(s) free of host-binding tokens")
 
 
+# ---------------------------------------------------------------------------
+# G18  portable command inputs (no host-only argument features)
+# ---------------------------------------------------------------------------
+
+
+def G18_portable_command_inputs() -> None:
+    name = "G18_portable_command_inputs"
+    files: list[pathlib.Path] = []
+    for pat in INVOKABLE_SCAN_GLOBS:
+        files.extend(ROOT.glob(pat))
+    files = [f for f in files if f.is_file()]
+    if not files:
+        _add("WARN", f"{name}: no invokable files to scan")
+        return
+    bad_fm: list[tuple] = []   # (rel, key)
+    bad_tok: list[tuple] = []  # (rel, line, snippet)
+    for f in files:
+        rel = f.relative_to(ROOT)
+        fm, body = _frontmatter(f)
+        for key in fm:
+            if key in NONPORTABLE_ARG_FM:
+                bad_fm.append((rel, key))
+        for i, line in enumerate(body.splitlines(), 1):
+            m = NONPORTABLE_ARG_TOKEN_RE.search(line)
+            if m:
+                bad_tok.append((rel, i, line.strip()[:80]))
+                if len(bad_tok) > 50:
+                    break
+    msgs = []
+    if bad_fm:
+        msgs.append("host-only frontmatter " + ", ".join(f"{r}:{k}" for r, k in bad_fm[:10]))
+    if bad_tok:
+        sample = "; ".join(f"{r}:{i}" for r, i, _ in bad_tok[:10])
+        msgs.append(f"indexed $ARGUMENTS[N] at {sample}")
+    if msgs:
+        _add("FAIL", f"{name}: " + "; ".join(msgs) + " -- use portable $ARGUMENTS (see skills/harness-engineering/references/agent-computer-interface.md)")
+        return
+    _add("PASS", f"{name}: {len(files)} invokable file(s) use the portable $ARGUMENTS channel")
+
+
 GATES = [
     ("G1_manifests_parse", G1_manifests_parse),
     ("G2_versions_agree", G2_versions_agree),
@@ -698,6 +749,7 @@ GATES = [
     ("G15_manifests_generated", G15_manifests_generated),
     ("G16_registries_parse", G16_registries_parse),
     ("G17_agnostic_core", G17_agnostic_core),
+    ("G18_portable_command_inputs", G18_portable_command_inputs),
 ]
 
 HELP_EPILOG = "Gates: " + ", ".join(n for n, _ in GATES)

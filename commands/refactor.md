@@ -17,12 +17,15 @@ Restructure existing code that is correct but unclear, unsafe, or slow, without 
 ## Inputs
 
 - **$ARGUMENTS** -- target area (module, package, path, or file). If empty, ask the user which area to target before analyzing; do not guess.
+- **Options** (ride inside `$ARGUMENTS`, any order, `key=value`):
+  - `--goal=<readability|safety|performance>` -- what the refactor optimizes for. Default: behavior-preserving, data-driven (improve what measurement finds, change nothing observable).
+- Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
 
 ## Steps
 
 1. **Analyze.** Map the target area, its dependencies, and call sites. Identify the smell, not the symptom. Run CPU, memory, and I/O profilers; record heap profiles and allocation counts for the top contributors. Catalog smells via [refactor-checklist](refactor/references/refactor-checklist.md).
 
-2. **Plan.** Write a REASONS canvas (see [spec-driven-development](../skills/spec-driven-development/SKILL.md)). Lock scope explicitly; mark unknowns. Tests and benchmarks are part of the plan, not an afterthought.
+2. **Plan.** Write a REASONS canvas (see [spec-driven-development](../skills/spec-driven-development/SKILL.md)). Lock scope explicitly; mark unknowns. If `$ARGUMENTS` set `--goal`, let that goal weigh the plan (e.g. `performance` justifies profiler-driven targets, `safety` justifies error-path hardening) -- never to relax the behavior-preserving constraint. Tests and benchmarks are part of the plan, not an afterthought.
 
 3. **Baseline.** Before touching production code, capture or write tests and benchmarks that prove current behavior and, if performance is a goal, current metrics.
    - Tests that read as sentences about behavior: happy path, error path, edge cases.
