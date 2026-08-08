@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.4.1] - 2026-08-08
+
+Backwards-compatible doctrine refinement: reach for an atomic value before a mutex whenever the guarded state stands alone. `VERSION` and every host manifest bump to 3.4.1.
+
+### Changed
+
+- **Atomics over locks when possible.** The concurrency patterns now lead with the default: a single counter, flag, or pointer is an atomic value, not a mutex -- a lock around one independent value is a wasted lock. A mutex is justified only when the critical section spans multiple fields or guards an invariant; prefer a read/write split (`RWMutex` / reader-writer lock) when reads dominate writes.
+- **Go concurrency depth.** `go-essential` §4 gains an atomic-over-mutex pointer line; the reference table flags `sync/atomic` as "prefer over mutex" (typed `atomic.Int64` / `Bool` / `Pointer[T]`, `atomic.Value` for an arbitrary snapshot type). New subsection carries a concrete mutex -> atomic code swap, plus a Common-Mistakes row (mutex guarding one counter/flag) and a pre-spawn Checklist item (each stand-alone guarded value is a typed atomic, not a mutex).
+- **Language-agnostic `performance-patterns`** replaces the equivocal atomics bullet ("prefer lock-free when contention is low") with the atomic-first default and the multi-field mutex rule.
+
 ## [3.4.0] - 2026-08-07
 
 Backwards-compatible doctrine release: agents now reach for the host's built-in file/search/edit tools before bash. The rule is a feedforward guide (§7: a static gate cannot detect the bash-vs-built-in preference, so the doctrine is the control). `VERSION` and every host manifest bump to 3.4.0.

@@ -37,6 +37,7 @@ Correctness is verified by executable evidence (L1/L2/L3), never by reading code
 ## 4. Concurrency ([concurrency](references/concurrency.md))
 
 - **Prefer `errgroup`** (`golang.org/x/sync/errgroup`) with `WithContext` + `SetLimit(n)` for parallel work, first-error cancellation, and bounded concurrency. Do not hand-roll channel wait logic.
+- **Atomics over mutex when possible.** A single counter, flag, or pointer is a typed `atomic.Int64` / `atomic.Bool` / `atomic.Pointer[T]`, not a `sync.Mutex`; reach for a mutex only when the critical section spans multiple fields or guards an invariant.
 - **Prefer `wg.Go`** (Go 1.25+) for fire-and-wait; call `wg.Add(1)` before `go`, never inside.
 - **Channels: one owner.** The writer closes; readers never close. Pre-spawn checklist: who writes, who closes, what happens on close.
 - **Avoid `panic`/`recover` as control flow.** Panic allocates a stack trace and unwinds; use error returns.

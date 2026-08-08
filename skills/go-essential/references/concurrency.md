@@ -91,7 +91,7 @@ func generate(ctx context.Context) <-chan int { // receiver-only return
 | --- | --- | --- |
 | `sync.Mutex` | Protect shared state | Short critical sections; never across I/O |
 | `sync.RWMutex` | Many readers, few writers | Never upgrade `RLock` → `Lock` (deadlock); release then re-acquire |
-| `sync/atomic` | Counters, flags | Prefer typed atomics (Go 1.19+): `atomic.Int64`, `atomic.Bool`, `atomic.Pointer[T]` |
+| `sync/atomic` | Single-value state (counter, flag, pointer) -- prefer over a mutex | Typed atomics (Go 1.19+): `atomic.Int64`, `atomic.Bool`, `atomic.Pointer[T]`; `atomic.Value` for an arbitrary snapshot type. A `sync.Mutex` around one value is a wasted lock |
 | `sync.Map` | Concurrent map, read-heavy | Write-once/read-many or disjoint key sets; use `RWMutex`+map otherwise |
 | `sync.Pool` | Reuse temporary objects | `Reset()` before `Put()`; entries may be reclaimed at any GC |
 | `sync.Once` | One-time initialization | Go 1.21+: `OnceFunc`, `OnceValue`, `OnceValues` |
@@ -100,6 +100,27 @@ func generate(ctx context.Context) <-chan int { // receiver-only return
 | `x/sync/errgroup` | Goroutine group + errors | `SetLimit(n)` replaces hand-rolled worker pools |
 
 A panic in any goroutine crashes the whole process. Recover at goroutine boundaries in production code and log with a stack trace.
+
+### Atomic over mutex for single-value state
+
+A `sync.Mutex` around one counter or flag is a wasted lock -- the typed atomic is cheaper and cannot deadlock. Reach for a mutex only when the critical section spans multiple fields or guards an invariant.
+
+```go
+// Avoid: a lock around a single counter
+type Counter struct {
+    mu    sync.Mutex
+    count int
+}
+func (c *Counter) Add()      { c.mu.Lock(); c.count++; c.mu.Unlock() }
+func (c *Counter) Get() int  { c.mu.Lock(); defer c.mu.Unlock(); return c.count }
+
+// Prefer: a typed atomic (Go 1.19+)
+type Counter struct{ count atomic.Int64 }
+func (c *Counter) Add()     { c.count.Add(1) }
+func (c *Counter) Get() int { return int(c.count.Load()) }
+```
+
+Use `atomic.Pointer[T]` for a single pointer swapped as a unit, and `atomic.Value` only for an arbitrary snapshot type the typed atomics do not cover. `sync.Once` / `OnceValue` (§4) is the atomic answer for once-only initialization -- never a guarded `init bool`.
 
 ## 5. WaitGroup vs errgroup
 
@@ -186,6 +207,7 @@ Go 1.26 ships an experimental `goroutineleakprofile` gated by `GOEXPERIMENT=goro
 | `wg.Add` inside the goroutine | Call `Add` before `go`; `Wait` may return early otherwise |
 | Forgetting `-race` in CI | Always run `go test -race ./...` |
 | Mutex held across I/O | Keep critical sections short; never across network or channel ops |
+| Mutex guarding one counter/flag | Drop the lock; use a typed atomic (`atomic.Int64` / `Bool` / `Pointer[T]`) |
 
 ## 10. Checklist
 
@@ -197,6 +219,7 @@ Go 1.26 ships an experimental `goroutineleakprofile` gated by `GOEXPERIMENT=goro
 - [ ] Every goroutine can be waited on (`WaitGroup`, `wg.Go`, or `errgroup`).
 - [ ] Channels are directional (`chan<-` / `<-chan`) and sender-owned.
 - [ ] `errgroup.SetLimit` bounds parallel work; no hand-rolled worker pools.
+- [ ] Each guarded value that stands alone (one counter, flag, or pointer) is a typed atomic, not a mutex.
 - [ ] `select` always includes `ctx.Done()` when blocking on a channel.
 - [ ] `goleak.VerifyNone(t)` (or `TestMain`) runs in every package's tests.
 - [ ] CI runs `go test -race ./...` on every PR.
