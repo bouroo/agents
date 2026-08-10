@@ -3,7 +3,7 @@
   "owner": {
     "name": "bouroo"
   },
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "Language- and host-agnostic coder-agent squad: governance doctrine, harness engineering, code craft, performance, spec-driven development, and a primary conductor orchestrator.",
   "plugins": [
     {
