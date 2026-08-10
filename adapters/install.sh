@@ -13,7 +13,10 @@
 #   agents/     -> agents_path    (when surfaces.agents; e.g. agents/ or agent/)
 #
 # agents/ and commands/ ship in each host's NATIVE format: flat <name>.md files
-# (opencode/kilo/claude discover agents/<name>.md and commands/<name>.md).
+# (opencode/kilo discover agents/<name>.md and commands/<name>.md). claude is
+# excluded from the agents surface: its subagent frontmatter (name/description/
+# tools/model) differs from the opencode-native format in agents/, so symlinking
+# would conflict. claude still gets skills/ and commands/.
 # skills/ ship nested skills/<name>/SKILL.md (the Agent Skills standard).
 #
 # Modes:
@@ -156,12 +159,21 @@ while IFS='|' read -r code config_dir config_file sk cmd ag ap; do
       [[ "$sk" == "1" ]] && link_artifact "$REPO_DIR/skills" "$dir/skills" "skills"
       [[ "$cmd" == "1" ]] && link_artifact "$REPO_DIR/commands" "$dir/commands" "commands"
       [[ "$ag" == "1" && -n "$ap" ]] && link_artifact "$REPO_DIR/agents" "$dir/$ap" "agents"
+      # Migrate installs made before claude dropped the agents surface: a
+      # pre-3.4.2 `install claude` left ~/.claude/agents symlinked to this
+      # repo's opencode-native agents/, which conflicts with claude's own
+      # subagent frontmatter. Remove that stale symlink now; never touch a
+      # real dir the user owns -- only a symlink we created.
+      [[ "$code" == "claude" && -L "$dir/agents" ]] && unlink_artifact "$dir/agents" "agents-legacy"
       ;;
     uninstall)
       unlink_artifact "$dir/$config_file" "doctrine"
       [[ "$sk" == "1" ]] && unlink_artifact "$dir/skills" "skills"
       [[ "$cmd" == "1" ]] && unlink_artifact "$dir/commands" "commands"
       [[ "$ag" == "1" && -n "$ap" ]] && unlink_artifact "$dir/$ap" "agents"
+      # Same legacy cleanup on uninstall: the flag is off now, so the normal
+      # path above skips ~/.claude/agents, but a stale symlink may remain.
+      [[ "$code" == "claude" && -L "$dir/agents" ]] && unlink_artifact "$dir/agents" "agents-legacy"
       ;;
     status)
       status_artifact "$REPO_DIR/$DOCTRINE" "$dir/$config_file" "doctrine"
