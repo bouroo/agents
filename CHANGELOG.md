@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.4.2] - 2026-08-10
+
+Install fix: claude no longer receives the `agents/` surface. The repo's
+`agents/*.md` ship in opencode-native frontmatter (`mode`, `color`, `permission`
+blocks), which conflicts with claude's own subagent config format (`name` /
+`description` / `tools` / `model`). `registries/hosts.json` flips claude's
+`surfaces.agents` to `false` (matching gemini, codex, qwen, etc.); claude still
+gets `AGENTS.md` as `CLAUDE.md`, `skills/`, and `commands/`. opencode (`agents/`)
+and kilo (`agent/`) keep the agents surface. `install.sh install|uninstall
+claude` also removes any stale `~/.claude/agents` symlink left by a pre-3.4.2
+install, without touching a real directory the user owns. `VERSION` and every
+host manifest bump to 3.4.2.
+
 ## [3.4.1] - 2026-08-08
 
 Backwards-compatible doctrine refinement: reach for an atomic value before a mutex whenever the guarded state stands alone. `VERSION` and every host manifest bump to 3.4.1.
