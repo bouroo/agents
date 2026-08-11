@@ -1,6 +1,6 @@
 # Judge Protocol -- Fraud Hunt and Output
 
-On-demand detail for the Judge command. The seven frauds and their signals are defined in [harness-engineering](../../../skills/harness-engineering/SKILL.md) §10 (Adversarial Judge) and are **not re-derived here**. This file holds the judge-specific hunt order, the authority-resolution rule, the UNVERIFIABLE rule, and the verdict output template.
+On-demand detail for the Judge command. The fraud table and its probes are defined in [coder modes-and-judgment](../../../agents/coder/references/modes-and-judgment.md) and are **not re-derived here**. This file holds the judge-specific hunt order, the authority-resolution rule, the UNVERIFIABLE rule, and the verdict output template.
 
 ## Hunt order (highest yield first)
 

@@ -31,6 +31,16 @@ Rules of thumb:
 - **Add a control only when a real failure demands it**, not because the hardest job uses it. Remove it when a stronger model makes it redundant.
 - **Coding-agent doctrine only.** This is calibrated for source work. Support, sales, Q&A, and other low-complexity agents should not inherit this loop at all -- build the minimum viable harness for that job.
 
+## Reduce / Offload / Isolate
+
+When the window or scope strains (not every job), apply the cheapest pattern first:
+
+- **Reduce** -- fewer actions: collapse steps, batch tool calls, drop a handoff the model can do inline.
+- **Offload** -- move context out of the window: write state to `.agents/`, link a file body instead of inlining it, delegate to a fresh-context worker.
+- **Isolate** -- separate concerns: one bounded change at a time (WIP 1); split a unit graph so independent units fan out.
+
+Tactics for a strained job, not defaults for every task -- applying them to trivial work is the Average Answer Trap.
+
 ## Cross-References
 
 - [harness-engineering](../SKILL.md) -- §7 (Three-Layer Termination), §8 (Mutation Testing), §10 (Adversarial Judge)

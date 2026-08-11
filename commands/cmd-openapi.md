@@ -26,7 +26,7 @@ Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string.
    - **Introspect** -- read the API code (routes, handlers, DTOs, middleware) to derive the contract from what is actually served. Preferred when code is authoritative.
    - **Interview** -- run the skill's minimal interview (resources + verbs, auth, pagination/filtering, error envelope, id/date/money formats); author into the template and mark every assumption `[NEEDS CLARIFICATION]`. Preferred for design-first.
 3. **Author or update** the spec from the template. Replace the example resource with the real one. Hard rules: every operation has a unique `operationId`, a `summary`, responses for at least success + error codes, and at least one worked example; reuse schemas via `$ref`; model the error envelope once.
-4. **Validate** against the canonical OAS meta-schema using the skill's validator; capture command + exit code + output. Iterate until **SPEC VALIDATED**.
+4. **Validate** against the canonical OAS meta-schema using the skill's validator; capture command + exit code + output. Iterate until **SPEC VALIDATED**, bounded by the hard verify rule -- after 3 failed cycles on one error, stop and hand back the failing checks rather than looping.
 5. **Sync** -- if `docs/` follows the [repo-documentation](../skills/repo-documentation/SKILL.md) tree, register the spec under each affected system doc's *Interfaces and entry points*; note it in `docs/README.md` if primary. If a render/lint gate exists (Redocly, Spectral), run it; confirm its 3.2 support first.
 6. **Clean up** -- leave behind only intended files: the spec, the validator shim, and a dependency line if you added one.
 
