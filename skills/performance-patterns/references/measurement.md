@@ -41,4 +41,4 @@ Before optimizing code, verify the bottleneck is in your process. If 90% of late
 
 ## Source
 
-See also [harness-engineering](../../harness-engineering/SKILL.md) §6 (Three-Layer Verification) -- the same "executable evidence, not narration" standard applies to a performance claim.
+See also [harness-engineering](../../harness-engineering/SKILL.md) (Three-Layer Verification) -- the same "executable evidence, not narration" standard applies to a performance claim.

@@ -1,6 +1,6 @@
 # Go Concurrency & Context in Detail
 
-Reference for `go-essential` §5: channel ownership, channel-vs-mutex-vs-atomic, sync primitives, pipelines, and the pre-spawn checklist.
+Reference for `go-essential` §4: channel ownership, channel-vs-mutex-vs-atomic, sync primitives, pipelines, and the pre-spawn checklist.
 
 ## 1. Context Propagation
 
