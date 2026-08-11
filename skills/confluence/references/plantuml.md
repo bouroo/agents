@@ -110,7 +110,7 @@ A sequence-diagram message that spans a **real newline** is a syntax error (`Err
 
 ```
 # BROKEN -- line 2 is a syntax error
-Caller -> Adapter: POST /api/v1/cart/get
+Caller -> Adapter: POST /v1/example-resource/get
 (headerReq.reqID, headerReq.id)
 ```
 
@@ -118,7 +118,7 @@ PlantUML renders the **two-character escape `\n`** as a display line break when 
 
 ```
 # CORRECT -- one line; \n is a visual break
-Caller -> Adapter: POST /api/v1/cart/get\n(headerReq.reqID, headerReq.id)
+Caller -> Adapter: POST /v1/example-resource/get\n(headerReq.reqID, headerReq.id)
 ```
 
 **Rule:** never `.replace("\\n", "\n")` a plantuml body before compressing. Keep `\n` literal inside the message line. Validate by rendering to SVG after any transformation (see above -- `-check` is unreliable).

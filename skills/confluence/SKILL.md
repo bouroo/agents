@@ -27,18 +27,21 @@ If a tool still does not surface, the bridge is the same server over stdio -- us
 
 Markdown is a rendering trap on Confluence. The contract is the native **storage format** (XHTML + macros). Code blocks use `<ac:structured-macro ac:name="code">`; PlantUML uses `plantumlcloud`. Author or update with `content_format: storage` (or write to a `content_file`). See [storage-format](references/storage-format.md).
 
-## 3. Diagrams that render (PlantUML, Mermaid)
+## 3. Diagrams that render (PlantUML is the default; Mermaid only via UI)
+
+**Default diagrams to PlantUML.** On instances that render via the mxgraph **`plantumlcloud`** plugin, diagram source is stored **inline, compressed** in the `data` parameter -- the only diagram tech reproducible from page storage XML. **Default every diagram to PlantUML** unless a working native mermaid macro is proven on the instance. The endpoint-page template ([page-template](references/page-template.md)) uses it.
 
 **PlantUML:**
 
-- Sequence-diagram messages split across a **real newline** are a syntax error -- join the line.
+- Sequence-diagram messages split across a **real newline** are a syntax error -- keep each message on one line; a literal `\n` inside a message is a visual break.
 - **Do not trust a local `-check`** that reports `Error line 1` in some Java versions; it can be a false negative. Render + inspect the SVG is the only proof.
 - The verified compression algorithm (encode + decode) and the `\n` trap are in [plantuml](references/plantuml.md). Publishing a diagram that produces no/trivial SVG or an error-marker image renders broken on the page.
 
-**Mermaid** (native `mermaid` macro, raw CDATA body -- no compression):
+**Mermaid -- confirm before authoring from storage XML:**
 
-- The newline rule is the **mirror image** of PlantUML: mermaid parses one statement per **real newline**; never join lines, or it renders as one node or errors.
-- Proof is a byte-identical round-trip of the macro body (source is uncompressed, unlike PlantUML). Confirm the macro name the instance stores on first use (native `mermaid` vs a third-party app macro). Details in [mermaid](references/mermaid.md).
+- The native `ac:name="mermaid"` macro is **not installed on every instance** → renders **"error loading"** where absent (observed after publishing a page whose only diagram was the native `mermaid`).
+- The third-party `ac:name="mermaid-cloud"` app **does** render, but stores its source **out-of-band as a rendered image attachment** (macro body is empty; only `<filename>` + `<revision>`). It **cannot** be created by writing page XML -- it must be inserted via the Confluence UI. Treat mermaid as manual-only; for any programmatic diagram, use PlantUML.
+- Details (native vs `mermaid-cloud`, newline rule, why inline authoring fails) in [mermaid](references/mermaid.md).
 
 ## 4. Page lifecycle & safety
 
