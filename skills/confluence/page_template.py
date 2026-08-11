@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Generator: emit a Confluence storage-format endpoint page that matches the
-hand-built example `adapter-mbf-ais - POST /api/v1/cart/get` (page 6082560274,
-/wiki/x/EoGMagE) byte-for-byte in structure. See references/page-template.md.
+"""Generator: emit a Confluence storage-format endpoint page in the canonical
+endpoint-page layout: 3-col metadata table, H1 Change Log / TOC / Sequence
+Diagram (plantumlcloud) / Request / Response / Field-To-Field Mapping. See
+references/page-template.md.
 
 USAGE
     from page_template import build_page, compress_plantuml
@@ -61,22 +62,48 @@ def meta_row(label, value, highlight=True):
     label_cell = f'<td data-highlight-colour="#f4f5f7" colspan="2">{_p(label)}</td>' if highlight else f'<td colspan="2">{_p(label)}</td>'
     return f"<tr>{label_cell}<td>{_p(value)}</td></tr>"
 
+
+def _meta_table(rows_html):
+    """Metadata table: centered layout, auto-sized (no fixed colgroup/width)."""
+    return f'<table data-layout="center"><tbody>{rows_html}</tbody></table>'
+
+
+def _meta_overview_row(label, value):
+    """Overview row: highlighted label cell (td) + value."""
+    return (f'<tr><td colspan="2" data-highlight-colour="#f4f5f7"><p><strong>{esc(label)}</strong></p></td>'
+            f'<td><p>{inline(value)}</p></td></tr>')
+
+
+def _meta_th_row(label, value):
+    """Metadata row: bold label in <th colspan="2"> + value in <td><p>."""
+    return (f'<tr><th colspan="2"><p><strong>{esc(label)}</strong></p></th>'
+            f'<td><p>{inline(value)}</p></td></tr>')
+
+
+def expand_macro(title, inner_html, breakout_width=None):
+    """Collapsible 'expand' macro (rich-text body holds a code block, etc.)."""
+    params = [f'<ac:parameter ac:name="title">{esc(title)}</ac:parameter>']
+    if breakout_width:
+        params.append(f'<ac:parameter ac:name="breakoutWidth">{breakout_width}</ac:parameter>')
+    return ('<ac:structured-macro ac:name="expand" ac:schema-version="1">' + "".join(params) +
+            f'<ac:rich-text-body>{inner_html}</ac:rich-text-body></ac:structured-macro>')
+
 def meta_table(spec):
-    """3-col highlighted metadata table. spec['overview'] is the intro paragraph."""
-    rows = meta_row("Overview", spec["overview"])
+    """3-col metadata table matching the canonical endpoint-page layout: centered,
+    fixed colgroup, bold <th colspan="2"> labels, <p>-wrapped values."""
     md = spec["metadata"]
-    rows += meta_row("Layer", md.get("layer", "Adapter Microservice"))
-    rows += meta_row("Microservice", md.get("microservice", "adapter-mbf-ais"))
-    rows += meta_row("Authentication Level", md.get("auth",
-              "- (no caller-auth check in v1; trust boundary at network/gateway edge)"))
-    rows += meta_row("Dependency overview", "")  # section divider label
-    rows += meta_row("Inbound component", spec.get("inbound", "bff-mobile-mbf (and other internal callers)"))
-    rows += meta_row("Outbound component", spec["outbound"])
-    rows += meta_row("Expose to Mobile", md.get("expose_to_mobile", "N"))
-    rows += meta_row("Access token required", md.get("access_token_required", "N"))
-    rows += meta_row("Language", md.get("language", "Golang"))
-    rows += meta_row("JIRA", md.get("jira", ""))
-    return _table(rows)
+    rows = _meta_overview_row("Overview", spec["overview"])
+    rows += _meta_th_row("Layer", md.get("layer", "adapter"))
+    rows += _meta_th_row("Microservice", md.get("microservice", "adapter"))
+    rows += _meta_th_row("Authentication Level", md.get("auth", ""))
+    rows += _meta_th_row("Dependency overview", "")  # section divider label
+    rows += _meta_th_row("Inbound component", spec.get("inbound", ""))
+    rows += _meta_th_row("Outbound component", spec["outbound"])
+    rows += _meta_th_row("Expose to Mobile", md.get("expose_to_mobile", "N"))
+    rows += _meta_th_row("Access token required", md.get("access_token_required", "N"))
+    rows += _meta_th_row("Language", md.get("language", "Golang"))
+    rows += _meta_th_row("JIRA", md.get("jira", ""))
+    return _meta_table(rows)
 
 def code_macro(body, language="none", wide=False):
     safe = body.replace("]]>", "]]]]><![CDATA[>")
@@ -95,9 +122,9 @@ def plantuml_macro(source, filename):
             '<ac:parameter ac:name="compressed">true</ac:parameter>'
             '<ac:parameter ac:name="revision">1</ac:parameter></ac:structured-macro>')
 
-FIELD_HDR = ["Field Name", "Datatype", "Mandatory  M/C/O", "Description", "Remark"]
-STATUS_HDR = ["HTTP Code", "Custom Status Code", "Status Description", "Scenario"]
-MAP_HDR = ["Input / Output", "Target", "Source", "Mapping Logic", "Remark"]
+FIELD_HDR = ["Field Name", "Data Type", "Mandatory (M) /Optional (O) /Conditional (C)", "Description", "Remark"]
+STATUS_HDR = ["HTTP Code", "Custom Status Code", "Scenario", "Status Description"]
+MAP_HDR = ["Input/ Output", "Field Name", "Type", "Mandatory (M) /Optional (O) /Conditional (C)", "Source Field", "Remarks"]
 
 def build_page(spec) -> str:
     """spec keys: title, overview, inbound, outbound, metadata{}, changelog[[Date,By,Desc,Status]],
@@ -105,79 +132,90 @@ def build_page(spec) -> str:
     response_fields[[5]], sample_200(str), sample_err(str), status_rows[[4]],
     upstream_name(str), mapping_rows[[5]], svg_filename(opt)."""
     parts = []
-    parts.append(f"<h1>{esc(spec['title'])}</h1>")
+    # Canonical layout: no leading H1 title (page title carries it);
+    # top-level sections are H1. See references/page-template.md.
     parts.append(meta_table(spec))
-    # Change logs
-    parts.append("<h2>Change logs</h2>")
-    parts.append(data_table(["Date", "Update By", "Description", "Status"], spec["changelog"]))
-    # TOC (optional macro)
-    parts.append("<h2>Table of Contents</h2>")
-    parts.append('<ac:structured-macro ac:name="toc"><ac:parameter ac:name="maxLevel">3</ac:parameter></ac:structured-macro>')
-    # Sequence diagram: rendered macro + raw source code block (wide, language none)
-    parts.append("<h2>Sequence diagram</h2>")
+    # Change Log
+    parts.append("<h1>Change Log</h1>")
+    parts.append(data_table(["Date", "Updated By", "Description", "Status"], spec["changelog"]))
+    # Table of Contents
+    parts.append("<h1>Table of Contents</h1>")
+    parts.append('<ac:structured-macro ac:name="toc"><ac:parameter ac:name="minLevel">1</ac:parameter><ac:parameter ac:name="maxLevel">3</ac:parameter></ac:structured-macro>')
+    # Sequence diagram: rendered plantumlcloud macro + raw source collapsed in an expand
+    parts.append("<h1>Sequence Diagram</h1>")
     svg = spec.get("svg_filename") or (spec["title"].split("/")[-1].strip().lower().replace(" ", "-").replace("/", "-") + ".svg")
     parts.append(plantuml_macro(spec["sequence"], svg))
-    parts.append(code_macro(spec["sequence"], language="none", wide=True))
+    parts.append(expand_macro("Raw sequence diagram source", code_macro(spec["sequence"], language="none", wide=False)))
     # Logic
-    parts.append("<h2>Logic</h2>")
-    items = "".join(f"<li>{_p(s)}</li>" for s in spec["logic"])
-    parts.append(f"<ol>{items}</ol>")
+    if spec.get("logic"):
+        parts.append("<h1>Logic</h1>")
+        items = "".join(f"<li>{_p(s)}</li>" for s in spec["logic"])
+        parts.append(f"<ol>{items}</ol>")
     # Request
-    parts.append("<h2>Request</h2>")
-    parts.append("<h3>Request Body</h3>")
+    parts.append("<h1>Request</h1>")
+    if spec.get("request_header_fields"):
+        parts.append("<h2>Request Header Schema</h2>")
+        parts.append(data_table(FIELD_HDR, spec["request_header_fields"]))
+    parts.append("<h2>Request Body Schema</h2>")
     parts.append(data_table(FIELD_HDR, spec["request_fields"]))
-    parts.append("<h3>Sample request</h3>")
+    parts.append("<h2>Example Request</h2>")
     parts.append(code_macro(spec["sample_request"], language=spec.get("sample_request_lang", "json"), wide=True))
     # Response
-    parts.append("<h2>Response</h2>")
-    parts.append("<h3>Response Body</h3>")
-    parts.append(data_table(FIELD_HDR, spec["response_fields"]))
-    parts.append("<h3>Sample response</h3>")
-    parts.append(_table(hdr_table(["HTTP 200 - Success"])))
-    parts.append(code_macro(spec["sample_200"], language="json", wide=True))
-    if spec.get("sample_err"):
-        parts.append(_table(hdr_table(["HTTP 409 - Business error"])))
-        parts.append(code_macro(spec["sample_err"], language="json", wide=False))
-    # Status Code
-    parts.append("<h2>Status Code</h2>")
+    parts.append("<h1>Response</h1>")
+    parts.append("<h2>Custom HTTP Response Code</h2>")
     parts.append(data_table(STATUS_HDR, spec["status_rows"]))
+    parts.append("<h2>Response Schema</h2>")
+    parts.append(data_table(FIELD_HDR, spec["response_fields"]))
+    parts.append("<h2>Example Response</h2>")
+    parts.append(_table(hdr_table(["Case HTTP 200 Success"])))
+    parts.append(code_macro(spec["sample_200"], language="json", wide=True))
+    if spec.get("sample_400"):
+        parts.append(_table(hdr_table(["Case HTTP 400 Bad Request"])))
+        parts.append(code_macro(spec["sample_400"], language="json", wide=False))
+    if spec.get("sample_err"):
+        parts.append(_table(hdr_table([spec.get("error_case_title", "Case HTTP 409 Business Error")])))
+        parts.append(code_macro(spec["sample_err"], language="json", wide=False))
+    if spec.get("sample_500"):
+        parts.append(_table(hdr_table(["Case HTTP 500 System Error"])))
+        parts.append(code_macro(spec["sample_500"], language="json", wide=False))
     # Field to Field Mapping
-    parts.append("<h2>Field to Field Mapping</h2>")
-    parts.append(f"<h3>When calling the upstream {esc(spec['upstream_name'])}</h3>")
+    parts.append("<h1>Field-To-Field Mapping</h1>")
+    parts.append(f'<h2>Field Mapping when calling to {esc(spec["upstream_name"])}</h2>')
     parts.append(data_table(MAP_HDR, spec["mapping_rows"]))
     return "\n".join(parts)
 
 
-# ---- demo / self-test ----
+# ---- demo / self-test (generic placeholder content; no real service data) ----
 _DEMO = {
-    "title": "adapter-mbf-ais - POST /api/v1/cart/get",
-    "overview": "Adapter API to fetch an AIS cart by id, loan application id, or selection token. "
-                "Wraps the upstream GET /v1/carts/{id}?type=<type> call in the standard envelope.",
-    "inbound": "bff-mobile-mbf (and other internal callers)",
-    "outbound": "External Service: AIS Cart API (via AIS ESB, OAuth2 client_credentials) -- cart-api.md §2",
+    "title": "POST - /v1/example-resource/get",
+    "overview": "Example adapter endpoint: fetch a resource by id from an upstream service and "
+                "return it in the standard envelope. Illustrative only.",
+    "inbound": "internal callers (BFF / orchestrator)",
+    "outbound": "External Service: Example Upstream API",
     "metadata": {"jira": ""},
-    "changelog": [["2026-08-04", "Kawin.V", "Initial -- matches dev implementation", "Initial"]],
-    "sequence": "@startuml\nparticipant Caller\nparticipant \"adapter-mbf-ais\" as Adapter\n"
-                "participant \"AIS Cart API\" as AIS\nCaller -> Adapter: POST /api/v1/cart/get\\n(content.type, content.id)\n"
-                "Adapter -> AIS: GET /v1/carts/{id}?type=<type>\nAIS -> Adapter: 200, cart\n"
-                "Adapter -> Caller: HTTP 200, statusCd 0000\n@enduml",
-    "logic": ["Validate content.type (id|loan-app-id|selection-token) and content.id present (else HTTP 422 AIS4001).",
-              "Obtain AIS OAuth2 token via TokenManager (else HTTP 500 AIS5003).",
-              "GET {cart.baseURL}/v1/carts/{id}?type=<type>; return upstream body verbatim (resultCode 20000 → 0000)."],
-    "request_fields": [["content.type", "Enum", "M", "Which identifier content.id is.", "id / loan-app-id / selection-token."],
-                       ["content.id", "String", "M", "Cart UUID / loan app id / selection token.", ""]],
-    "sample_request": '{\n  "headerReq": { "reqID": "req-1" },\n  "content": { "type": "id", "id": "50d80b8b-…" }\n}',
-    "response_fields": [["content.resultCode", "String", "M", "Upstream result code.", "20000 on success."],
-                        ["content.data", "Object", "M", "Full cart object, verbatim.", ""]],
-    "sample_200": '{\n  "headerResp": { "statusCd": "0000", "statusDesc": "success" },\n  "content": { "resultCode": "20000", "data": { "id": "50d80b8b-…" } }\n}',
-    "sample_err": '{\n  "headerResp": { "statusCd": "AIS4091", "statusDesc": "upstream cart business error: Not found" }\n}',
-    "status_rows": [["200", "0000", "success", "Cart found; resultCode 20000."],
-                    ["422", "AIS4001", "<field> is required", "type|id missing/invalid."],
-                    ["409", "AIS4091", "upstream cart business error: …", "Non-20000 resultCode."]],
-    "upstream_name": "AIS Cart API",
-    "mapping_rows": [["I", "{id} (URL path)", "req.content.id", "", ""],
-                     ["I", "type (query)", "req.content.type", "", ""],
-                     ["O", "content (body)", "upstream response", "Verbatim, no re-shaping.", ""]],
+    "changelog": [["2026-08-04", "Author", "Initial template example.", "Initial"]],
+    "sequence": "@startuml\nTitle adapter API - example - POST /v1/example-resource/get\nhide footbox\n"
+                "actor Requester as requester #85E3FF\nbox \"adapter MS\" #DFFDFF\n"
+                "entity \"adapter\" as adapter #85E3FF\nendbox\nbox \"Upstream\" #F7E5EC\n"
+                "entity \"Upstream\" as upstream #FB9EBB\nendbox\n"
+                "requester -> adapter : POST /v1/example-resource/get (content.id)\n"
+                "adapter -> upstream : GET /resources/{id}\nupstream --> adapter : 200 resource\n"
+                "adapter --> requester : HTTP 200 statusCd 0000\n@enduml",
+    "logic": ["Validate content.id present (else HTTP 400 bad request).",
+              "Fetch {resource.baseURL}/resources/{id} via the configured HTTP client.",
+              "Map the upstream response into the standard envelope (statusCd 0000 on success)."],
+    "request_fields": [["content.id", "String", "M", "Resource identifier.", ""]],
+    "sample_request": '{\n  "headerReq": { "reqID": "req-1" },\n  "content": { "id": "ex-001" }\n}',
+    "response_fields": [["content.resultCode", "String", "M", "Upstream result code.", "0000 on success."],
+                        ["content.data", "Object", "M", "Resource object, verbatim.", ""]],
+    "sample_200": '{\n  "headerResp": { "statusCd": "0000", "statusDesc": "success" },\n  "content": { "resultCode": "0000", "data": { "id": "ex-001" } }\n}',
+    "sample_err": '{\n  "headerResp": { "statusCd": "E4091", "statusDesc": "upstream business error: not found" }\n}',
+    "status_rows": [["200", "0000", "success", "Resource found."],
+                    ["400", "0001", "bad request", "content.id missing/invalid."],
+                    ["409", "E4091", "business error", "Non-success upstream result."]],
+    "upstream_name": "Example Upstream API",
+    "mapping_rows": [["I", "{id} (URL path)", "String", "M", "req.content.id", "Direct."],
+                     ["O", "content (body)", "Object", "M", "upstream response", "Verbatim, no re-shaping.", ""]],
 }
 
 if __name__ == "__main__" and __import__("sys").argv[-1] == "demo":
