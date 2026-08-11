@@ -18,7 +18,7 @@ Set `content_format: "storage"` on create/update.
 ```xml
 <ac:structured-macro ac:name="code">
   <ac:parameter ac:name="language">bash</ac:parameter>
-  <ac:plain-text-body><![CDATA[curl -X POST http://localhost:1323/api/v1/cart/get]]></ac:plain-text-body>
+  <ac:plain-text-body><![CDATA[curl -X POST http://localhost:1323/v1/example-resource/get]]></ac:plain-text-body>
 </ac:structured-macro>
 ```
 
@@ -35,6 +35,8 @@ If the body contains `]]>`, split the CDATA: `]]></ac:plain-text-body><ac:plain-
 </ac:structured-macro>
 ```
 
+**Sequence diagrams need BOTH macros.** Emit the `plantumlcloud` macro above (the rendered SVG) **plus** the raw `@startuml…@enduml` source collapsed in an `expand > code` block, so the page shows the rendered diagram but keeps an editable source. A `code` macro on its own renders as a **code panel of literal text, not a diagram** -- older sibling pages that hold only the `code` panel are wrong; do not copy them. Full snippet + verification in [page-template.md](./page-template.md) step 4.
+
 **Mermaid diagram** (raw source in a plain-text body -- no compression; see [mermaid.md](./mermaid.md)):
 
 ```xml
@@ -48,12 +50,14 @@ If the body contains `]]>`, split the CDATA: `]]></ac:plain-text-body><ac:plain-
 
 The macro name is the native Cloud mermaid macro. A third-party "Mermaid for Confluence" app installs a different macro name (`mermaid-cloud`, etc.) -- confirm the name against the instance on first use (see [mermaid.md](./mermaid.md)). Mermaid source needs **real newlines** between statements (the opposite of PlantUML sequence messages), so never join its lines.
 
+**Diagram default:** prefer **`plantumlcloud`** (inline compressed source) for any diagram authored from storage XML. The native `mermaid` macro is not installed on every instance (it error-loads where absent); the third-party `mermaid-cloud` renders but stores its source out-of-band as an image attachment, so it is UI-insert-only and not authorable from page XML. See [SKILL.md §3](../SKILL.md) + [mermaid.md](./mermaid.md).
+
 **Page link** (links to another page by exact title):
 
 ```xml
 <ac:link>
-  <ri:page ri:content-title="adapter-mbf-ais - POST /api/v1/cart/get"/>
-  <ac:plain-text-link-body><![CDATA[POST /api/v1/cart/get]]></ac:plain-text-link-body>
+  <ri:page ri:content-title="example-adapter - POST /v1/example-resource/get"/>
+  <ac:plain-text-link-body><![CDATA[POST /v1/example-resource/get]]></ac:plain-text-link-body>
 </ac:link>
 ```
 

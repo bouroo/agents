@@ -20,7 +20,7 @@ Credentials are read from ~/.claude/settings.json -> mcpServers.mcp-atlassian.en
 
 EXAMPLES
     python3 mcp_bridge.py schema confluence_create_page
-    python3 mcp_bridge.py call confluence_get_page '{"page_id":"6082560274","convert_to_markdown":false}'
+    python3 mcp_bridge.py call confluence_get_page '{"page_id":"123456789","convert_to_markdown":false}'
     python3 mcp_bridge.py call confluence_update_page '{"page_id":"…","content_format":"storage","content_file":"/tmp/page.xml"}'
 """
 import json

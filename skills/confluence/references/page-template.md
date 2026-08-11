@@ -1,109 +1,123 @@
-# adapter-mbf-ais endpoint page template (extracted from EoGMagE)
+# Endpoint page template (canonical layout)
 
-The exact structure of the hand-built example page
-`adapter-mbf-ais - POST /api/v1/cart/get` (`/wiki/x/EoGMagE`, page `6082560274`).
-Use this when authoring a new endpoint/spec page so it matches the example
-byte-for-byte in structure. The companion generator `../page_template.py` emits
-this layout from structured data. Authoring mechanics (macros, compression,
-storage format) live in [storage-format.md](./storage-format.md) +
-[plantuml.md](./plantuml.md).
+The standard structure for an endpoint/spec page, derived by decoding a real,
+correctly-rendering sibling endpoint page on the target Confluence instance.
+Match this when authoring any new endpoint/spec page. The companion generator
+`../page_template.py` (`build_page`) emits this layout from a structured spec
+dict. Authoring mechanics (macros, compression, storage format) live in
+[storage-format.md](./storage-format.md) + [plantuml.md](./plantuml.md).
 
-## Document order (verbatim from the example)
+## Why decode a real page
 
-1. **Metadata table** -- a 3-column table (`data-table-width`, `data-layout="default"`)
-   whose label cells are `colspan="2"` + highlighted `#f4f5f7`, content in the 3rd cell.
-2. `## Change logs` → 4-col table (`Date | Update By | Description | Status`).
-3. `## Table of Contents` (heading; an `ac:name="toc"` macro is optional).
-4. `## Sequence diagram` → `plantumlcloud` macro (rendered) → a `code` macro
-   (`language=none`, `breakoutMode=wide`, `breakoutWidth=4000`, `wrap=true`)
-   holding the raw `@startuml…@enduml` source so it stays readable.
-5. `## Logic` → ordered list of numbered steps.
-6. `## Request`
-   - `### Request Body` → field table (5 cols, see below).
-   - `### Sample request` → `code` macro. **The example shows the request as a JSON body (`language=json`), not a curl command.**
-7. `## Response`
-   - `### Response Body` → field table (same 5 cols).
-   - `### Sample response` → a single-cell header table `HTTP 200 - Success` → `code` (`language=json`, wide) → single-cell header table `HTTP 409 - Business error` → `code` (`language=json`) error body.
-8. `## Status Code` → 4-col table (`HTTP Code | Custom Status Code | Status Description | Scenario`).
-9. `## Field to Field Mapping` → `### When calling the upstream {NAME}` → 5-col table (`Input/Output | Target | Source | Mapping Logic | Remark`).
+Confluence page structure (macro forms, table attributes, heading levels) is
+learned by fetching a **known-good** sibling page in the same space/folder,
+reading its **storage body** (not `body.view`), and recording the structure. The
+result below is the abstract layout; it carries no host, space, page id, or
+endpoint name -- plug those in per target. Re-derive from a new sibling page if
+the target instance's layout differs.
 
-## Canonical column sets
+## Diagram tech: PlantUML (`plantumlcloud`), not mermaid
 
-- **Request Body / Response Body** (identical 5 cols):
-  `Field Name | Datatype | Mandatory  M/C/O | Description | Remark`
-  (note the *two spaces* in `Mandatory  M/C/O` -- preserved verbatim from the example).
-- **Status Code**: `HTTP Code | Custom Status Code | Status Description | Scenario`.
-- **Field to Field Mapping**: `Input / Output | Target | Source | Mapping Logic | Remark`.
-- **Change logs**: `Date | Update By | Description | Status`.
+On instances that render via the mxgraph **`plantumlcloud`** plugin, diagram
+source is stored **inline, compressed** in the macro's `data` parameter
+(decode/encode verified; see [plantuml.md](./plantuml.md)) and is the only
+diagram tech reproducible from page storage XML. Confirm the instance's diagram
+macro on first use (see [SKILL.md §3](../SKILL.md) + [mermaid.md](./mermaid.md));
+**default diagrams to PlantUML** unless a working native mermaid macro is proven
+on the instance.
 
-## Exact markup patterns
+## Document order
 
-**Every table** opens the same way (1761 px wide, default layout):
+1. **Metadata table** -- a 3-column table, centered layout (`data-layout="center"`),
+   auto-sized (no fixed `data-table-width`, no `<colgroup>` pixel widths -- let it
+   size to content). Label cells are bold
+   `<th colspan="2"><p><strong>Label</strong></p></th>`; values are
+   `<td><p>value</p></td>`. The Overview row is the exception: a highlighted
+   `<td colspan="2" data-highlight-colour="#f4f5f7">` label + value. Rows: Overview,
+   Layer, Microservice, Authentication Level, Dependency overview (divider, empty
+   value), Inbound component, Outbound component, Expose to Mobile, Access token
+   required, Language, JIRA.
+2. **H1 `Change Log`** → 4-col table `Date | Updated By | Description | Status`.
+3. **H1 `Table of Contents`** → `ac:name="toc"` macro (`minLevel` 1, `maxLevel` 3).
+4. **H1 `Sequence Diagram`** → **two** macros, in this order:
+   1. `plantumlcloud` with the compressed `data` param -- the only form Confluence
+      **renders** server-side into an SVG.
+   2. an `expand` macro holding the **raw `@startuml…@enduml` source** in a `code`
+      block (collapsed by default), so the diagram is editable without recompression.
 
-```xml
-<table data-table-width="1761" data-layout="default"><tbody>
-  <tr><th><p><strong>Field Name</strong></p></th>…</tr>
-  <tr><td><p>…</p></td>…</tr>
-</tbody></table>
+   ```xml
+   <h1>Sequence Diagram</h1>
+   <ac:structured-macro ac:name="plantumlcloud" ac:schema-version="1">
+     <ac:parameter ac:name="filename">diagram-name.svg</ac:parameter>
+     <ac:parameter ac:name="data">{COMPRESSED}</ac:parameter>
+   </ac:structured-macro>
+   <ac:structured-macro ac:name="expand" ac:schema-version="1">
+     <ac:parameter ac:name="title">Raw sequence diagram source</ac:parameter>
+     <ac:rich-text-body>
+       <ac:structured-macro ac:name="code" ac:schema-version="1">
+         <ac:parameter ac:name="language">none</ac:parameter>
+         <ac:plain-text-body><![CDATA[@startuml ... @enduml]]></ac:plain-text-body>
+       </ac:structured-macro>
+     </ac:rich-text-body>
+   </ac:structured-macro>
+   ```
+
+   In the generator: `plantuml_macro(seq, svg)` then
+   `expand_macro("Raw sequence diagram source", code_macro(seq, language="none"))`.
+
+   **Trap:** a plain `code` macro holding `@startuml` source renders as a **code
+   panel of literal text**, NOT a diagram -- only `plantumlcloud` renders. Sibling
+   pages are inconsistent: older pages sometimes keep only the `code` panel; **do
+   not copy that form**. Hand-authoring must emit both, exactly as the generator
+   does. Verify by decoding the stored `data` back to valid `@startuml…@enduml`
+   source -- `body.view` returns only a macro stub for `plantumlcloud`, so it is
+   **not** proof of a render.
+5. **H1 `Request`**
+   - **H2 `Request Header Schema`** → 5-col field table.
+   - **H2 `Request Body Schema`** → 5-col field table.
+   - **H2 `Example Request`** → wide `code` block (language `json`).
+6. **H1 `Response`**
+   - **H2 `Custom HTTP Response Code`** → 4-col table.
+   - **H2 `Response Schema`** → 5-col field table.
+   - **H2 `Example Response`** → single-cell header tables `Case HTTP 200 Success`
+     / `Case HTTP 400 Bad Request` / `Case HTTP 409 Business Error` /
+     `Case HTTP 500 System Error`, each over a `code` (language `json`) body.
+7. **H1 `Field-To-Field Mapping`** → **H2 `Field Mapping when calling to <upstream>`**
+   → 6-col table.
+
+Top-level sections are **H1** (no leading H1 title -- the page title carries the
+endpoint name). All headings start at H1, not H2.
+
+## Fixed table column sets (match exactly)
+
+| Section | Headers |
+| --- | --- |
+| Field schema (header/body/response) | Field Name · Data Type · Mandatory (M) /Optional (O) /Conditional (C) · Description · Remark |
+| Custom HTTP Response Code | HTTP Code · Custom Status Code · Scenario · Status Description |
+| Field-To-Field Mapping | Input/ Output · Field Name · Type · Mandatory (M) /Optional (O) /Conditional (C) · Source Field · Remarks |
+| Change Log | Date · Updated By · Description · Status |
+
+`build_page` exposes these as `FIELD_HDR`, `STATUS_HDR`, `MAP_HDR`.
+
+## PlantUML sequence style
+
+```
+@startuml
+Title adapter API - <microservice> - POST /<path>
+hide footbox
+actor Requester as requester #85E3FF
+box "<adapter> MS" #DFFDFF
+entity "<adapter>" as adapter #85E3FF
+endbox
+box "<Upstream>" #F7E5EC
+entity "<upstream>" as upstream #FB9EBB
+endbox
+requester -> adapter : POST /<path>
+...
+@enduml
 ```
 
-Header cells: `<th><p><strong>HEADER</strong></p></th>`. Body cells: `<td><p>…</p></td>`
-(wrap inline content in `<p>`; use `<code>` for identifiers).
-
-**Metadata label cells** (the distinctive highlighted look) -- first cell spans two columns and is grey:
-
-```xml
-<td data-highlight-colour="#f4f5f7" colspan="2"><p><strong>Layer</strong></p></td>
-<td><p>Adapter</p></td>
-```
-
-The first row is the overview intro under a `Overview` label:
-
-```xml
-<td data-highlight-colour="#f4f5f7" colspan="2"><p><strong>Overview</strong></p></td>
-<td><p>{one-paragraph description of the endpoint}</p></td>
-```
-
-Metadata keys (in order): `Overview`, `Layer`, `Microservice`, `Authentication Level`,
-`Dependency overview` (section label), `Inbound component`, `Outbound component`,
-`Expose to Mobile`, `Access token required`, `Language`, `JIRA` (and optional
-`Design` / `Implementation` / `Unit-Test` / `Integration` status rows).
-
-**Wide code block** (sequence source + JSON samples) carries breakout params so it
-spans the page width and wraps:
-
-```xml
-<ac:structured-macro ac:name="code">
-  <ac:parameter ac:name="language">json</ac:parameter>
-  <ac:parameter ac:name="breakoutMode">wide</ac:parameter>
-  <ac:parameter ac:name="breakoutWidth">4000</ac:parameter>
-  <ac:parameter ac:name="wrap">true</ac:parameter>
-  <ac:plain-text-body><![CDATA[ … ]]></ac:plain-text-body>
-</ac:structured-macro>
-```
-
-**Sample-response sub-heading** is itself a single-cell header table (not an `<hN>`):
-
-```xml
-<table data-table-width="1761" data-layout="default"><tbody>
-  <tr><th><p><strong>HTTP 200 - Success</strong></p></th></tr>
-</tbody></table>
-```
-
-## What the generator does
-
-`page_template.py` takes a Python dict (overview, metadata, sequence plantuml,
-logic steps, request/response field rows + samples, status rows, mapping rows)
-and emits this exact storage-format XML. Defaults match the example: request
-shown as JSON body, responses as JSON, wide breakout code blocks, highlighted
-metadata labels, the fixed 4/5-col table headers. Override anything per-page.
-
-## Divergence from the already-published adapter pages
-
-The 8 endpoint pages built earlier render correctly but differ from the example
-in three cosmetic ways (fixable by regenerating with `page_template.py` if exact
-fidelity is wanted):
-
-1. They show the **sample request as a curl command** (`language=bash`); the example shows it as a **JSON body** (`language=json`).
-2. Their code blocks omit `breakoutMode`/`breakoutWidth`/`wrap` (so they are page-width, not wide-breakout).
-3. Their metadata table is a plain 2-col table, not the highlighted 3-col `colspan` layout.
+Sequence-message rule: keep each message on **one source line**; a literal `\n`
+inside a message is a visual break -- never turn it into a real newline (see
+[plantuml.md](./plantuml.md) `\n` trap). Render every authored diagram to SVG and
+assert non-trivial output before publishing.

@@ -37,7 +37,7 @@ MCP tools connect at session startup; a server added mid-session is not hot-load
 cd <skill dir>
 python3 mcp_bridge.py list                                   # tool names
 python3 mcp_bridge.py schema confluence_create_page          # inputSchema
-python3 mcp_bridge.py call confluence_get_page '{"page_id":"6082560274","convert_to_markdown":false}'
+python3 mcp_bridge.py call confluence_get_page '{"page_id":"123456789","convert_to_markdown":false}'
 python3 mcp_bridge.py call confluence_update_page '{"page_id":"…","content_format":"storage","content_file":"/tmp/page.xml","version_comment":"…"}'
 ```
 

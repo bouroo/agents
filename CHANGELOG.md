@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.5.2] - 2026-08-11
+
+### Changed
+
+- **`confluence` skill: diagram doctrine corrected.** Default every diagram to **PlantUML** (`plantumlcloud`, inline compressed source) when authoring from page storage XML -- it is the only diagram tech reproducible from storage. The native `ac:name="mermaid"` macro is **not installed on every instance** (renders "error loading" where absent); the third-party `mermaid-cloud` app renders but stores its source **out-of-band as a rendered image attachment**, so it is **UI-insert-only and not authorable from page XML**. Mermaid is now manual-only. Surfaced in SKILL.md §3 + the `mermaid` and `storage-format` references.
+- **`page_template.py` refactored.** The metadata table now emits bold `<th colspan="2">` label rows + `<td>` values in a centered, auto-sized layout (no fixed `colgroup`/pixel widths), generalized off a specific tenant to generic defaults. New helpers (`_meta_table`, `_meta_overview_row`, `_meta_th_row`, `expand_macro`). Matches the canonical endpoint-page layout decoded from a real sibling page (`references/page-template.md`).
+- **Tenant scrub.** `mcp_bridge.py` example `page_id` changed from a real value to a placeholder (`123456789`) -- same family as the v3.0.0 hard-coded-tenant cleanup.
+
+### Fixed
+
+- Em/en-dash characters introduced by editor auto-conversion in three `confluence` references (`page-template.md`, `storage-format.md`, `mermaid.md`) replaced with `--` to satisfy the `G6_no_dash_chars` gate.
+
 ## [3.5.1] - 2026-08-11
 
 ### Fixed
