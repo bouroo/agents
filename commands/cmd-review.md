@@ -7,7 +7,7 @@ phase: PROVE
 
 # Review -- Code Review
 
-A thorough, language-agnostic code review of the current changes, reported by severity. Part of the **PROVE** phase. (Review trusts the author's evidence; the [judge](cmd-judge.md) command trusts nothing and re-runs.)
+A thorough, language-agnostic code review of the current changes, reported by severity. Part of the **PROVE** phase. (Review trusts the author's evidence; the [judge](cmd-judge.md) command trusts nothing and re-runs.) Right-size on action and context complexity: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences. Flag any owed artifact line the author skipped -- an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:` ([code-craft](../skills/code-craft/SKILL.md)) -- as a SHOULD FIX; full fraud hunting is the judge's job, not review's.
 
 > **Agent:** run on a reviewing worker ([discover](../agents/discover.md), review mode) or any read-only reviewer.
 
