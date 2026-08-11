@@ -9,6 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.5.0] - 2026-08-11
+
+Doctrine rewrite integrating six source methodologies -- the Fable method
+(think/act/prove), the O'Reilly "stop overengineering your agent harness"
+argument, the KiloCode AGENTS.md standard and context-condensing guide, the
+JetBrains 10x commandments, and goperf.dev -- without bloat. The six sources
+are surfaced where every load sees the high-value primitives, then linked to
+skills for depth. No doctrine duplicated: the skills already owned ~90% of the
+mechanism (harness-engineering carries Kirby/right-sizing, code-craft carries
+the commandments + intent gate, performance-patterns carries measure-first).
+
+### Changed
+
+- **AGENTS.md rewritten** (stable §0-§11 numbering preserved; no external cross-reference breaks, frozen eval fixtures stay valid):
+  - **Front-loaded autonomy (§2):** new Ask-Shape intake (`Question` / `Plan-first` / `Task`) and a Trivial Path (one file, <10 lines, no new behavior -> fix, check, report in two sentences; skip ceremony). Low-complexity work no longer inherits the full loop.
+  - **Fit gate (§2):** "where does the answer live?" -- reachable source -> read; unknown -> search; only-own-inference -> STOP and ask (never fabricate); recurring specialized procedure -> make a skill. Two-fruitless-lookups bound.
+  - **Self-aware anti-overengineering (preamble):** the Kirby Effect (a component that bets on a model limitation and becomes dead weight as models improve), the two-axis right-sizing (action x context complexity), and the Reduce / Offload / Isolate toolkit. The doctrine now explicitly polices its own weight.
+  - **GROW gains a prune mechanism (§4, §10):** at each model upgrade or after a control never fires, re-audit and cut dead-weight controls. Self-improving was asserted before; it is now executable (the harness can shrink, not only grow).
+  - **All three Fable hard bounds present (§7):** the third -- "if you cannot name a single executable check confirming DONE, stop and ask exactly one question" -- was missing and is now added alongside the 3-cycle bound.
+  - **§5/§9 dedup:** code-craft hard rules had one home each. §5 loads the skill and points at §9; §9 is the single canonical "never" shortlist. Removed a self-violation of Principle #4 (Concision).
+  - **§6 de-Go-ified:** cut language-specific jargon ("escape analysis", "stack over heap") that leaked into the self-declared language-agnostic core; kept the agnostic principle (allocation cost on the measured hot path, reuse buffers where the runtime charges). Dropped an unsourced "~80%" statistic the doctrine's own Fit gate forbids.
+  - **AUTH gate enacted inline (§4)** to match INTENT, so outward/irreversible/destructive actions are gated on the doctrine page, not only after loading code-craft.
+
+### Fixed
+
+- **Dangling judge fraud-rubric references.** `cmd-judge.md` and `judge-protocol.md` pointed at a non-existent "harness-engineering §10" for the fraud table; it actually lives in `agents/coder/references/modes-and-judgment.md`. References now resolve.
+- **Stale `effective-code-craft` display names** (renamed to `code-craft` in 3.0.0) in `refactor-checklist.md` and `performance-patterns/references/memory-cpu.md`.
+- **Wrong code-craft section names** in `refactor-checklist.md` ("Structure & Coupling", "Hard Rules" -> "Ten commandments", "Common mistakes") and `cmd-refactor.md`.
+- **`cmd-refactor` profiled unconditionally.** CPU/memory/I/O profiling now runs only for `--goal=performance` or a measured hot path -- profiling a readability/safety refactor was dead weight (Average Answer Trap).
+- **`cmd-openapi` validate loop had no iteration bound.** Now bounded by the 3-cycle hard-verify rule for consistency with `cmd-verify` / `cmd-judge`.
+- **`cmd-review` added a trivial-diff escape and artifact-gate awareness** so a clean diff still gets caught if it owes an `AUTH:` / `INTENT:` / `TWINS:` line.
+
+### Added
+
+- **Reduce / Offload / Isolate section** in `skills/harness-engineering/references/right-sizing.md` -- the named right-sizing toolkit was the one genuinely missing primitive from the O'Reilly source.
+
 ## [3.4.2] - 2026-08-10
 
 Install fix: claude no longer receives the `agents/` surface. The repo's
