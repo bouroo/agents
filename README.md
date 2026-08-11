@@ -4,7 +4,7 @@
 [![Stars](https://img.shields.io/github/stars/bouroo/agents?logo=github)](https://github.com/bouroo/agents)
 [![skills.sh](https://skills.sh/b/bouroo/agents)](https://skills.sh/b/bouroo/agents)
 ![Type](https://img.shields.io/badge/type-AI%20agent%20config-blue)
-![Tools](https://img.shields.io/badge/tools-8-success)
+![Tools](https://img.shields.io/badge/tools-11-success)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE.md)
 
 > Installable via the open Agent Skills ecosystem -- `npx skills add bouroo/agents` (see [skills.sh](https://skills.sh/b/bouroo/agents)) -- and via the bundled `adapters/install.sh` for filesystem-symlink installs.

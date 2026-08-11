@@ -1,6 +1,6 @@
 # Go Error Handling in Detail
 
-Reference for `go-essential` §4: sentinel vs. custom types, `%w` vs. `%v`, `errors.Is`/`As`/`Join`, and the single-handling rule.
+Reference for `go-essential` §3: sentinel vs. custom types, `%w` vs. `%v`, `errors.Is`/`As`/`Join`, and the single-handling rule.
 
 ## 1. Error Creation: Sentinel vs Custom Types
 
