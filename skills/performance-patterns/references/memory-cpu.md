@@ -31,4 +31,4 @@
 
 ## Source
 
-Apply only after [effective-code-craft](../../code-craft/SKILL.md) correctness holds. Confirm each change helped via [Measurement methodology](./measurement.md), not intuition.
+Apply only after [code-craft](../../code-craft/SKILL.md) correctness holds. Confirm each change helped via [Measurement methodology](./measurement.md), not intuition.

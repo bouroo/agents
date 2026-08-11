@@ -59,7 +59,7 @@ Abort and hand back to the orchestrator if:
 ## References
 
 - [refactor-checklist](cmd-refactor/references/refactor-checklist.md) -- structural, performance, and correctness smell catalog.
-- [code-craft](../skills/code-craft/SKILL.md) -- Architecture, Safety, State & Concurrency, Observability.
+- [code-craft](../skills/code-craft/SKILL.md) -- hard rules, ten commandments, common mistakes.
 - [performance-patterns](../skills/performance-patterns/SKILL.md) -- measure-before-optimize performance patterns.
 - [spec-driven-development](../skills/spec-driven-development/SKILL.md) -- REASONS canvas and spec/code sync.
 - [repo-documentation](../skills/repo-documentation/SKILL.md) -- keeping the `docs/` tree in sync.
