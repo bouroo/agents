@@ -1,6 +1,6 @@
 # Refactor Smell Checklist
 
-Catalog of structural, performance, and correctness smells to scan for during the **Analyze** step. These are the top signals; the full sets live in [effective-code-craft](../../../skills/code-craft/SKILL.md) and [performance-patterns](../../../skills/performance-patterns/SKILL.md). Treat a match as a hypothesis to confirm with profiling or tests, not a verdict.
+Catalog of structural, performance, and correctness smells to scan for during the **Analyze** step. These are the top signals; the full sets live in [code-craft](../../../skills/code-craft/SKILL.md) and [performance-patterns](../../../skills/performance-patterns/SKILL.md). Treat a match as a hypothesis to confirm with profiling or tests, not a verdict.
 
 ## Structural smells
 
@@ -10,7 +10,7 @@ Symptoms of coupling, hidden state, and misplaced responsibility.
 - **Tight coupling to environment** -- env vars, CLI args, or FS paths read deep inside domain packages instead of injected at the boundary.
 - **Monolithic entry points** doing real work instead of parsing input, delegating to focused units, and handling errors at the boundary.
 
-Full set: [effective-code-craft](../../../skills/code-craft/SKILL.md) "Structure & Coupling".
+Full set: [code-craft](../../../skills/code-craft/SKILL.md) -- "Ten commandments" and "Common mistakes".
 
 ## Performance smells
 
@@ -30,11 +30,11 @@ Symptoms of errors handled unsafely. These violate the Code Craft hard rules -- 
 - **In-band errors** -- sentinel values like `-1`, `null`, or empty string instead of an explicit error return.
 - **Error string inspection** -- comparing messages with equality or substring tests instead of typed or sentinel matching.
 
-Full rules: [effective-code-craft](../../../skills/code-craft/SKILL.md) "Hard Rules".
+Full rules: [code-craft](../../../skills/code-craft/SKILL.md) -- "Common mistakes" (the hard-rules table).
 
 ## Profiling discipline
 
-Record, do not guess. These measurements are the basis for every later decision: which smell is real, what to change, and whether the change helped.
+Record, do not guess -- when performance is in scope. Capture these baselines only for `--goal=performance` or when a smell names a measured hot path; profiling a pure readability or safety refactor is dead weight. The measurements then drive every later decision: which smell is real, what to change, and whether the change helped.
 
 - **CPU profile** -- top functions by self and cumulative time; find the loops that dominate.
 - **Memory/heap profile** -- allocation count and bytes per call site; find where GC pressure originates.
