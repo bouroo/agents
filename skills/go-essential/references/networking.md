@@ -1,6 +1,6 @@
 # Networking & I/O Patterns in Go
 
-Reference for `go-essential` §7: client/server timeouts, transport tuning, long-lived connection deadlines, resilience patterns, and `httptrace` observability.
+Reference for `go-essential`: client/server timeouts, transport tuning, long-lived connection deadlines, resilience patterns, and `httptrace` observability.
 
 ## 1. Timeouts Are Mandatory
 

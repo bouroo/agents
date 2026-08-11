@@ -69,10 +69,9 @@ When a turn or subagent return fails, classify before acting:
 
 1. **Semantic** (`done_cmd` exit != 0 after claimed pass): route to `coder (fix)` with the failing output and repro.
 2. **Structural** (unit fails >= 2 times): decompose finer (re-plan) or reassign mode; pull in `discover (explore)` for surface reading.
-3. **Self-Execution** (conductor touched source or ran toolchain): log the bug in `retro.md`, revert the edits, delegate to the squad.
-4. **Environment / Tooling** (missing tools, permissions, network): return `blocked` with an environment hypothesis.
-5. **Spec Ambiguity** (contradictory/missing requirements): route to `discover (explore)`, or present precise choices to the user if undecidable.
-6. **Recurring** (same class across >= 2 units): halt; append the pattern to `retro.md`; upgrade harness controls.
+3. **Environment / Tooling** (missing tools, permissions, network): return `blocked` with an environment hypothesis.
+4. **Spec Ambiguity** (contradictory/missing requirements): route to `discover (explore)`, or present precise choices to the user if undecidable.
+5. **Recurring** (same class across >= 2 units): halt; append the pattern to `retro.md`; upgrade harness controls.
 
 ## Routing cheatsheet
 
