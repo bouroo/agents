@@ -1,6 +1,6 @@
 # Go Performance & Memory Optimization
 
-Reference for `go-essential` §6: escape analysis, preallocation, `sync.Pool`, interface boxing, and the pprof workflow.
+Reference for `go-essential` §5: escape analysis, preallocation, `sync.Pool`, interface boxing, and the pprof workflow.
 
 ## 0. Methodology First
 
@@ -109,7 +109,7 @@ Document why the lifetime is safe (the original string must remain live and immu
 - `errgroup.SetLimit(n)` provides a bounded worker pool with first-error cancellation  --  do not hand-roll one with channels.
 - Send copies on channels, not pointers  --  pointers create invisible shared state.
 
-See `go-essential` §5 for the full concurrency rules.
+See `go-essential` §4 for the full concurrency rules.
 
 ## 7. Runtime Tuning
 

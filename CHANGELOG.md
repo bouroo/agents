@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No changes yet._
 
+## [3.5.1] - 2026-08-11
+
+### Fixed
+
+- **Cross-reference drift sweep.** Stale `§N` pointers corrected across the `harness-engineering` references (`verification-theater`, `right-sizing`, `composition-patterns`, `agent-computer-interface`) and `performance-patterns/measurement`. The `harness-engineering` SKILL.md uses named sections (no numbered `§N`), so bare numbers there resolved nowhere -- dropped in favor of the named anchors. Two `AGENTS.md` references were off-by-one (`§6` -> `§7` for the hard verify bound; `§7` -> `§8` for context), residue of the §0/§5 insertions that shifted later sections down one. A dangling "Appendix A" was removed.
+- **`go-essential` cross-references corrected.** Same off-by-one residue in the four `go-essential` references (`error-handling`, `concurrency`, `performance`, `networking`): `§4` -> `§3`, `§5` -> `§4`, `§6` -> `§5`, and a bogus `§7` on `networking` (§7 is Testing; there is no Networking section) dropped.
+- **Stale "Self-Execution" failure class removed** from `agents/conductor/references/plan-and-convergence.md`. Introduced in v3.1.0 when the conductor was hard-locked, it survived the v3.5.0 flip to dialed-choice and contradicted the current `conductor.md` ("not locked out of source or the toolchain"). The convergence gates (revert probes, clean tree) already cover its one legitimate kernel; the remaining classes were renumbered. This is the single Kirby-Effect dead-weight cut surfaced by the doctrine audit.
+- **README badge** `tools-8` -> `tools-11` to match the 11 adapters in `registries/hosts.json`.
+- **`bootstrap` doc** "three templates" -> "four" (the list enumerates system, flow, adr, api).
+- **eval scenario `s1-intent-gate`** broken path `skills/effective-code-craft/...` -> `skills/code-craft/...` (renamed in v3.0.0; the path 404'd).
+- **`performance-patterns` description quoted** for frontmatter consistency with the other nine skills.
+
 ## [3.5.0] - 2026-08-11
 
 Doctrine rewrite integrating six source methodologies -- the Fable method
