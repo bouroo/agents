@@ -32,7 +32,7 @@ Add Title Case terms here as they are introduced.
 
 ## Templates
 
-Copy the three templates from the `repo-documentation` skill into `docs/templates/`:
+Copy the four templates from the `repo-documentation` skill into `docs/templates/`:
 
 - [system.md](../../../skills/repo-documentation/references/system.md) -> `docs/templates/system.md`
 - [flow.md](../../../skills/repo-documentation/references/flow.md) -> `docs/templates/flow.md`

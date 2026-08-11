@@ -2,7 +2,7 @@
 
 Scenario id: `s1-intent-gate`
 Status: seed (not yet run; see `eval/RESULTS.md`)
-Rule under test: Intent Gate (`skills/effective-code-craft/references/intent-gate.md`)
+Rule under test: Intent Gate (`skills/code-craft/references/intent-gate.md`)
 
 ## What this scenario probes
 

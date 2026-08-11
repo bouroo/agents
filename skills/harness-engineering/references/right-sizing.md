@@ -1,6 +1,6 @@
 # Right-Sizing the Harness to the Job
 
-> Load on demand. The short pointer lives in [harness-engineering](../SKILL.md) §7 (termination) and `AGENTS.md` §6 (verification); this file is the two-axis map and the control dial.
+> Load on demand. The short pointer lives in [harness-engineering](../SKILL.md) (termination) and `AGENTS.md` §7 (verification); this file is the two-axis map and the control dial.
 
 The right harness depends on the job. Every control in this skill -- three-layer termination, mutation probes, adversarial judging, GROW retros -- exists because some failure once demanded it. Applying all of them to every task is the **Average Answer Trap**: assuming you need the full apparatus just because the hardest jobs do. The cost is real -- token spend, latency, and delegation round-trips on work that never needed them.
 
@@ -43,5 +43,5 @@ Tactics for a strained job, not defaults for every task -- applying them to triv
 
 ## Cross-References
 
-- [harness-engineering](../SKILL.md) -- §7 (Three-Layer Termination), §8 (Mutation Testing), §10 (Adversarial Judge)
+- [harness-engineering](../SKILL.md) -- (Three-Layer Termination), (Mutation Testing), (Adversarial Judge)
 - [verification-theater](./verification-theater.md) -- when a Mid/High task's tests look theatrical

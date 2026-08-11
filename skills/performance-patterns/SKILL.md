@@ -1,6 +1,6 @@
 ---
 name: performance-patterns
-description: Language-agnostic performance patterns for allocation, concurrency, I/O, resilience, and caching. Use when profiling hotspots, optimizing a measured hot path, or auditing a module for structural performance defects in the ACT or PROVE phases.
+description: "Language-agnostic performance patterns for allocation, concurrency, I/O, resilience, and caching. Use when profiling hotspots, optimizing a measured hot path, or auditing a module for structural performance defects in the ACT or PROVE phases."
 ---
 
 # Performance Patterns
