@@ -4,7 +4,7 @@
 
 | Mistake | Fix |
 |---|---|
-| Optimizing without profiling | Profile first -- intuition is wrong ~80% of the time |
+| Optimizing without profiling | Profile first; intuition is wrong ~80% of the time |
 | Default HTTP/DB client without transport tuning | Defaults cap idle connections at low numbers; size to concurrency |
 | Logging in hot loops | Guard log evaluation with an enabled-check or lazy attributes |
 | Exceptions/panics as control flow in hot path | Stack unwinding allocates; use explicit error returns |

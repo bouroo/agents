@@ -1,7 +1,7 @@
-# Schema directive -- a yaml-language-server modeline. Editors (Red Hat YAML
+# Schema directive: a yaml-language-server modeline. Editors (Red Hat YAML
 # language server, VS Code, IntelliJ) and the bundled validator
 # (validate-openapi.mjs) read the SAME line, so there is one source of truth.
-# In a modeline `$schema` is the schema to validate against -- here the frozen,
+# In a modeline `$schema` is the schema to validate against; here the frozen,
 # date-stamped OpenAPI 3.2 meta-schema. The spec body starts at `openapi:`.
 # yaml-language-server: $schema=https://spec.openapis.org/oas/3.2/schema/2025-11-23
 

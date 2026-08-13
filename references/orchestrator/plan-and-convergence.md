@@ -1,6 +1,6 @@
 # Plan Mode, Convergence, and Failure Handling
 
-Detail for the orchestrator. The [SKILL.md](../../orchestrator.md) owns the contract; this owns the depth, loaded on demand.
+Detail for the orchestrator. The [SKILL.md](../../agents/orchestrator.md) owns the contract; this owns the depth, loaded on demand.
 
 ## Plan Mode (unit graph)
 
@@ -15,7 +15,7 @@ Decompose the task into a **unit graph**. Each unit:
 | `deps` | unit ids that must pass first |
 | `owner` | `orchestrator` (planning) / `worker` / `validator` / `discover` |
 
-Emit `INTENT: <user-visible behavior change>` on the first behavior-changing unit. Write `.agents/plans/{slug}/canvas.md` and `state.json`; the ledger is canonical across compaction. Choose a fan-out topology via [composition-patterns](../../../skills/harness-engineering/references/composition-patterns.md).
+Emit `INTENT: <user-visible behavior change>` on the first behavior-changing unit. Write `.agents/plans/{slug}/canvas.md` and `state.json`; the ledger is canonical across compaction. Choose a fan-out topology via [composition-patterns](../../skills/harness-engineering/references/composition-patterns.md).
 
 ## State (on disk, canonical)
 
@@ -65,7 +65,7 @@ Before issuing a final verdict, pass **Hard** (all required) and review **Adviso
 - [ ] Error norms respected (no swallowed errors; no branching on error strings).
 - [ ] Decision log current.
 
-## Failure classes -- classify, then act
+## Failure classes classify, then act
 
 When a turn or subagent return fails, classify before acting:
 

@@ -4,22 +4,22 @@ Reference for `go-essential` §4: channel ownership, channel-vs-mutex-vs-atomic,
 
 ## 1. Context Propagation
 
-`context.Context` is the "session" of a request  --  propagate the same `ctx` end-to-end: HTTP handler → service → DB → outbound HTTP/gRPC. Cancellations then halt every downstream automatically.
+`context.Context` is the "session" of a request   propagate the same `ctx` end-to-end: HTTP handler → service → DB → outbound HTTP/gRPC. Cancellations then halt every downstream automatically.
 
 Core rules: `ctx` is always the first parameter, named `ctx context.Context`. Never store it in a struct. Never pass `nil`; use `context.TODO()`. `context.Background()` only at the top boundary (`main`, `init`, tests). `cancel()` MUST run on every control-flow path for `WithCancel` / `WithTimeout` / `WithDeadline`, or timer/cancel state leaks.
 
 ```go
-// Bad  --  breaks the chain mid-request
+// Bad   breaks the chain mid-request
 func (s *OrderService) Create(ctx context.Context, o Order) error {
     return s.db.ExecContext(context.Background(), "INSERT ...", o.ID)
 }
 
-// Good  --  propagates the caller's ctx
+// Good   propagates the caller's ctx
 func (s *OrderService) Create(ctx context.Context, o Order) error {
     return s.db.ExecContext(ctx, "INSERT ...", o.ID)
 }
 
-// Idiom for scoped work  --  defer cancel immediately
+// Idiom for scoped work   defer cancel immediately
 func fetch(ctx context.Context) error {
     ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
     defer cancel()
@@ -29,7 +29,7 @@ func fetch(ctx context.Context) error {
 
 ### `context.WithoutCancel` (Go 1.21+) for background work
 
-Background work that must outlive the request (audit logs, async dispatch) needs the request's *values* but not its *cancellation*. `context.WithoutCancel` keeps values like `trace_id` while detaching cancellation  --  better than `context.Background()` (loses values) or the parent ctx (kills the audit when the handler returns):
+Background work that must outlive the request (audit logs, async dispatch) needs the request's *values* but not its *cancellation*. `context.WithoutCancel` keeps values like `trace_id` while detaching cancellation   better than `context.Background()` (loses values) or the parent ctx (kills the audit when the handler returns):
 
 ```go
 auditCtx := context.WithoutCancel(ctx)
@@ -38,7 +38,7 @@ go h.auditService.LogOrderCreated(auditCtx, order)
 
 ### Context values
 
-Values carry request-scoped metadata only  --  trace ID, user ID, request ID. Never function parameters. Keys MUST be unexported types to prevent cross-package collisions:
+Values carry request-scoped metadata only   trace ID, user ID, request ID. Never function parameters. Keys MUST be unexported types to prevent cross-package collisions:
 
 ```go
 type traceKey struct{}
@@ -63,7 +63,7 @@ Concurrent read/write on a plain `map` is a **hard crash** (`fatal error: concur
 ## 3. Channel Ownership & Direction
 
 - Only the **sender** closes. Closing from the receiver panics if the sender writes after close; closing twice panics unconditionally.
-- Always specify direction (`chan<-`, `<-chan`)  --  the compiler prevents misuse at build time.
+- Always specify direction (`chan<-`, `<-chan`)   the compiler prevents misuse at build time.
 - Default to **unbuffered**. Larger buffers mask backpressure; use them only with measured justification (signal channels of size 1, or measured burst absorption).
 - Send **copies**, not pointers. Pointers through a channel create invisible shared memory, defeating the channel's purpose.
 - Include `ctx.Done()` in every `select` that could block, or the goroutine leaks after caller cancellation.
@@ -91,7 +91,7 @@ func generate(ctx context.Context) <-chan int { // receiver-only return
 | --- | --- | --- |
 | `sync.Mutex` | Protect shared state | Short critical sections; never across I/O |
 | `sync.RWMutex` | Many readers, few writers | Never upgrade `RLock` → `Lock` (deadlock); release then re-acquire |
-| `sync/atomic` | Single-value state (counter, flag, pointer) -- prefer over a mutex | Typed atomics (Go 1.19+): `atomic.Int64`, `atomic.Bool`, `atomic.Pointer[T]`; `atomic.Value` for an arbitrary snapshot type. A `sync.Mutex` around one value is a wasted lock |
+| `sync/atomic` | Single-value state (counter, flag, pointer), prefer over a mutex | Typed atomics (Go 1.19+): `atomic.Int64`, `atomic.Bool`, `atomic.Pointer[T]`; `atomic.Value` for an arbitrary snapshot type. A `sync.Mutex` around one value is a wasted lock |
 | `sync.Map` | Concurrent map, read-heavy | Write-once/read-many or disjoint key sets; use `RWMutex`+map otherwise |
 | `sync.Pool` | Reuse temporary objects | `Reset()` before `Put()`; entries may be reclaimed at any GC |
 | `sync.Once` | One-time initialization | Go 1.21+: `OnceFunc`, `OnceValue`, `OnceValues` |
@@ -103,7 +103,7 @@ A panic in any goroutine crashes the whole process. Recover at goroutine boundar
 
 ### Atomic over mutex for single-value state
 
-A `sync.Mutex` around one counter or flag is a wasted lock -- the typed atomic is cheaper and cannot deadlock. Reach for a mutex only when the critical section spans multiple fields or guards an invariant.
+A `sync.Mutex` around one counter or flag is a wasted lock; the typed atomic is cheaper and cannot deadlock. Reach for a mutex only when the critical section spans multiple fields or guards an invariant.
 
 ```go
 // Avoid: a lock around a single counter
@@ -120,7 +120,7 @@ func (c *Counter) Add()     { c.count.Add(1) }
 func (c *Counter) Get() int { return int(c.count.Load()) }
 ```
 
-Use `atomic.Pointer[T]` for a single pointer swapped as a unit, and `atomic.Value` only for an arbitrary snapshot type the typed atomics do not cover. `sync.Once` / `OnceValue` (§4) is the atomic answer for once-only initialization -- never a guarded `init bool`.
+Use `atomic.Pointer[T]` for a single pointer swapped as a unit, and `atomic.Value` only for an arbitrary snapshot type; the typed atomics do not cover. `sync.Once` / `OnceValue` (§4) is the atomic answer for once-only initialization never a guarded `init bool`.
 
 ## 5. WaitGroup vs errgroup
 
@@ -133,7 +133,7 @@ Use `atomic.Pointer[T]` for a single pointer swapped as a unit, and `atomic.Valu
 
 ```go
 g, ctx := errgroup.WithContext(parentCtx)
-g.SetLimit(10) // bounded worker pool  --  no hand-rolled semaphore
+g.SetLimit(10) // bounded worker pool   no hand-rolled semaphore
 for _, task := range tasks {
     task := task
     g.Go(func() error { return process(ctx, task) })
@@ -145,17 +145,17 @@ return g.Wait()
 
 Before every `go func(){...}` or `go method()`, answer five questions:
 
-- **How will it exit?**  --  context cancellation, done channel, or explicit signal.
-- **Can I signal it to stop?**  --  pass `context.Context` or a done channel it selects on.
-- **Can I wait for it?**  --  `sync.WaitGroup`, `wg.Go`, or `errgroup`.
-- **Who owns the channels?**  --  the creator/sender owns and closes.
-- **Should this be synchronous instead?**  --  don't add concurrency without a measured need. Goroutines are cheap but not free; every one is a lifecycle you must manage.
+- **How will it exit?**  context cancellation, done channel, or explicit signal.
+- **Can I signal it to stop?**  pass `context.Context` or a done channel it selects on.
+- **Can I wait for it?**  `sync.WaitGroup`, `wg.Go`, or `errgroup`.
+- **Who owns the channels?**  the creator/sender owns and closes.
+- **Should this be synchronous instead?**  don't add concurrency without a measured need. Goroutines are cheap but not free; every one is a lifecycle you must manage.
 
 If any answer is "I don't know", write the synchronous version first; add concurrency only after it is correct and profiled.
 
 ## 7. Pipelines & Worker Pools
 
-A pipeline chains stages  --  each receives from an upstream channel, processes, and sends to a downstream channel. Three rules:
+A pipeline chains stages   each receives from an upstream channel, processes, and sends to a downstream channel. Three rules:
 
 - Producer closes its output channel (`defer close(out)`); receivers terminate on `ok == false`.
 - Every `select` inside a stage includes `ctx.Done()`.
@@ -192,7 +192,7 @@ func TestSomething(t *testing.T) {
 func TestMain(m *testing.M) { goleak.VerifyTestMain(m) }
 ```
 
-Go 1.26 ships an experimental `goroutineleakprofile` gated by `GOEXPERIMENT=goroutineleakprofile`  --  useful for production diagnostics but **not** a stable default. Treat goleak + `go test -race ./...` as standard, plus `runtime.NumGoroutine()` and `/debug/pprof/goroutine?debug=2` for ad-hoc inspection.
+Go 1.26 ships an experimental `goroutineleakprofile` gated by `GOEXPERIMENT=goroutineleakprofile`   useful for production diagnostics but **not** a stable default. Treat goleak + `go test -race ./...` as standard, plus `runtime.NumGoroutine()` and `/debug/pprof/goroutine?debug=2` for ad-hoc inspection.
 
 ## 9. Common Mistakes
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# link.sh  --  backward-compat shim that execs install.sh (verb translation).
+# link.sh: backward-compat shim that execs install.sh (verb translation).
 #
 # Legacy vocabulary:   link     -> install       |  unlink  -> uninstall
 #                      status                      |  list / help  pass through

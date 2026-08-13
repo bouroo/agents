@@ -14,10 +14,10 @@ Generate Conventional Commits from staged diffs -- durable decision records the 
 ## Inputs
 
 - `$ARGUMENTS` (optional): caller hints that override inference from the diff.
-  - `--type=<feat|fix|perf|refactor|...>` -- force the commit type instead of classifying the dominant change.
-  - `--scope=<area>` -- force the scope; must match a real area in the repo, else omit.
+  - `--type=<feat|fix|perf|refactor|...>` force the commit type instead of classifying the dominant change.
+  - `--scope=<area>` force the scope; must match a real area in the repo, else omit.
 - If empty, classify type and scope from `git diff --cached` (current behavior).
-- Parsing `$ARGUMENTS` is this skill's job -- the host only forwards the string. See [command inputs](../harness-engineering/references/agent-computer-interface.md).
+- Parsing `$ARGUMENTS` is this skill's job; the host only forwards the string. See [command inputs](../harness-engineering/references/agent-computer-interface.md).
 
 ## Format
 
@@ -48,8 +48,8 @@ Generate Conventional Commits from staged diffs -- durable decision records the 
 
 ## Steps
 
-1. `git diff --cached` -- read the staged change; if nothing staged, say so and stop.
-2. Classify the dominant change into one type; if `$ARGUMENTS` set `--type`, use it (validate it matches the diff -- do not claim `fix` for a change that adds behavior). If it spans many, split into one commit per logical change (each rolls back cleanly alone).
+1. `git diff --cached` read the staged change; if nothing staged, say so and stop.
+2. Classify the dominant change into one type; if `$ARGUMENTS` set `--type`, use it (validate it matches the diff, do not claim `fix` for a change that adds behavior). If it spans many, split into one commit per logical change (each rolls back cleanly alone).
 3. Write the headline: imperative mood, lowercase first word, specific (not "update code"), <=72 chars, no trailing period. If `$ARGUMENTS` set `--scope`, use it; otherwise use the repo's existing area name, or omit scope if none fits.
 4. Write the body: *what* and *why*, not *how* (the diff shows how). Wrap at 72.
 5. Add a footer for breaking changes and attribution.
@@ -68,5 +68,5 @@ Generate Conventional Commits from staged diffs -- durable decision records the 
 
 ## References
 
-- [code-craft](../code-craft/SKILL.md) -- INTENT/TWINS/AUTH/PENDING artifact gates.
-- [harness-engineering](../harness-engineering/SKILL.md) -- decision-log discipline, repo-as-record.
+- [code-craft](../code-craft/SKILL.md) INTENT/TWINS/AUTH/PENDING artifact gates.
+- [harness-engineering](../harness-engineering/SKILL.md) decision-log discipline, repo-as-record.
