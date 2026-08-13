@@ -51,7 +51,7 @@ HOST_TOKEN_RE = re.compile(
     re.IGNORECASE,
 )
 # Core files scanned for host tokens. registries/, adapters/, eval/, scripts/,
-# README, CHANGELOG are excluded -- they are the data/distribution/docs layer.
+# README, CHANGELOG are excluded; they are the data/distribution/docs layer.
 CORE_HOST_SCAN_GLOBS = ["AGENTS.md", "agents/*.md", "commands/*.md", "skills/*/SKILL.md", "skills/*/references/*.md"]
 # Domain adapters may name their host/tool legitimately (Go, Confluence/Atlassian,
 # OpenAPI tooling). They are excluded from the core-agnosticism scan.
@@ -220,7 +220,7 @@ def G3_skills_frontmatter() -> None:
 
 def G4_agents_frontmatter() -> None:
     name = "G4_agents_frontmatter"
-    # flat agents/<name>.md (native discovery); exclude nested references/*.md
+    # flat agents/<name>.md (native discovery); depth docs live in references/
     agents = sorted(p for p in AGENTS_DIR.glob("*.md"))
     if not agents:
         _add("WARN", f"{name}: no agents found")
@@ -731,7 +731,7 @@ def G18_portable_command_inputs() -> None:
     if bad_tok:
         msgs.append("indexed $ARGUMENTS[N] at " + "; ".join(f"{r}:{i}" for r, i in bad_tok[:10]))
     if msgs:
-        _add("FAIL", f"{name}: " + "; ".join(msgs) + " -- use portable $ARGUMENTS (see skills/harness-engineering/references/agent-computer-interface.md)")
+        _add("FAIL", f"{name}: " + "; ".join(msgs) + ". Use portable $ARGUMENTS (see skills/harness-engineering/references/agent-computer-interface.md)")
         return
     _add("PASS", f"{name}: {len(files)} invokable file(s) use the portable $ARGUMENTS channel")
 
@@ -778,7 +778,7 @@ def main(argv: list[str]) -> int:
         _msgs.clear()
         try:
             fn()
-        except Exception as e:  # noqa: BLE001 -- top-level containment: a crashing gate reports FAIL, not a traceback
+        except Exception as e:  # noqa: BLE001; top-level containment: a crashing gate reports FAIL, not a traceback
             _add("FAIL", f"{name}: gate crashed: {e}")
         for level, msg in _msgs:
             tag = {"PASS": "[PASS]", "FAIL": "[FAIL]", "WARN": "[WARN]"}[level]

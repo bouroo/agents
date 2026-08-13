@@ -1,7 +1,7 @@
-# Runtime ledger -- must live in the target project, not this config repo.
+# Runtime ledger must live in the target project, not this config repo.
 # Ignore all of .agents/ (runtime state, custom overrides, memory) EXCEPT
 # .agents/plans/, which holds committed migration plans and retros for
-# traceability. Host plugin manifests no longer live here -- they are generated
+# traceability. Host plugin manifests no longer live here; they are generated
 # under adapters/manifests/ (a normal tracked directory).
 .agents/*
 !.agents/plans/

@@ -3,7 +3,7 @@
 > **One endpoint per file** at `docs/api/<service>/<method>-<path>.md` (e.g.
 > `docs/api/cart/POST-v1-cart-get.md`). This is the human/agent-readable contract
 > for a single endpoint. It is complementary to, not a replacement for, the
-> machine-readable OpenAPI contract (`docs/openapi.yaml`) -- if the OpenAPI spec
+> machine-readable OpenAPI contract (`docs/openapi.yaml`) if the OpenAPI spec
 > already fully specifies the endpoint, a separate API doc may be unnecessary.
 
 ## Metadata

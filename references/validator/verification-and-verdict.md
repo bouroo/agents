@@ -1,10 +1,10 @@
 # Verification, Mutation Probe, and Verdict
 
-Depth for the validator. The [SKILL.md](../../validator.md) owns the contract; this owns the detail. For deeper adversarial audits, align with the [judge protocol](../../../commands/cmd-judge/references/judge-protocol.md).
+Depth for the validator. The [SKILL.md](../../agents/validator.md) owns the contract; this owns the detail. For deeper adversarial audits, align with the [judge protocol](../../commands/cmd-judge/references/judge-protocol.md).
 
 ## verify (PROVE)
 
-Independently re-run the worker's claimed L1/L2/L3 evidence. Do not trust the handoff narrative -- re-execute.
+Independently re-run the worker's claimed L1/L2/L3 evidence. Do not trust the handoff narrative re-execute.
 
 - **L1 static:** lint, type-check, format.
 - **L2 runtime:** tests run; app starts; critical paths execute.
@@ -14,9 +14,9 @@ For every claim re-run: capture command + exit code + actual output and compare 
 
 ## Mutation probe
 
-Make a targeted change that should break `done_cmd` (flip a condition, delete a guard). If `done_cmd` still passes, the test is theater -- the verification is invalid and the verdict is REFUTED with the theater as the repro. Revert the probe before returning. A leftover probe is a structural failure.
+Make a targeted change that should break `done_cmd` (flip a condition, delete a guard). If `done_cmd` still passes, the test is theater the verification is invalid and the verdict is REFUTED with the theater as the repro. Revert the probe before returning. A leftover probe is a structural failure.
 
-## judge (PROVE) -- fraud hunt
+## judge (PROVE) fraud hunt
 
 Treat the "done" report as **claims**, not facts. Independently re-run at least one claimed check. Hunt frauds:
 
@@ -35,9 +35,9 @@ Treat the "done" report as **claims**, not facts. Independently re-run at least 
 ## Verdict (not negotiated)
 
 Issue exactly one:
-- **VERIFIED** -- every claim holds under independent re-run; executable evidence present; mutation probe caught; probes reverted; tree clean.
-- **VERIFIED WITH CAVEATS** -- reproducible evidence plus documented non-blocking findings; name every caveat.
-- **REFUTED** -- any claim fails under re-run, or the mutation probe exposes test theater. Include the repro and route to `worker (fix)`.
+- **VERIFIED** every claim holds under independent re-run; executable evidence present; mutation probe caught; probes reverted; tree clean.
+- **VERIFIED WITH CAVEATS** reproducible evidence plus documented non-blocking findings; name every caveat.
+- **REFUTED** any claim fails under re-run, or the mutation probe exposes test theater. Include the repro and route to `worker (fix)`.
 
 Temporary probes may edit scaffolding but every probe must be reverted.
 

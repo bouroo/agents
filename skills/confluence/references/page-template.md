@@ -28,8 +28,8 @@ on the instance.
 
 ## Document order
 
-1. **Metadata table** -- a 3-column table, centered layout (`data-layout="center"`),
-   auto-sized (no fixed `data-table-width`, no `<colgroup>` pixel widths -- let it
+1. **Metadata table** a 3-column table, centered layout (`data-layout="center"`),
+   auto-sized (no fixed `data-table-width`, no `<colgroup>` pixel widths, let it
    size to content). Label cells are bold
    `<th colspan="2"><p><strong>Label</strong></p></th>`; values are
    `<td><p>value</p></td>`. The Overview row is the exception: a highlighted
@@ -40,7 +40,7 @@ on the instance.
 2. **H1 `Change Log`** → 4-col table `Date | Updated By | Description | Status`.
 3. **H1 `Table of Contents`** → `ac:name="toc"` macro (`minLevel` 1, `maxLevel` 3).
 4. **H1 `Sequence Diagram`** → **two** macros, in this order:
-   1. `plantumlcloud` with the compressed `data` param -- the only form Confluence
+   1. `plantumlcloud` with the compressed `data` param the only form Confluence
       **renders** server-side into an SVG.
    2. an `expand` macro holding the **raw `@startuml…@enduml` source** in a `code`
       block (collapsed by default), so the diagram is editable without recompression.
@@ -66,11 +66,11 @@ on the instance.
    `expand_macro("Raw sequence diagram source", code_macro(seq, language="none"))`.
 
    **Trap:** a plain `code` macro holding `@startuml` source renders as a **code
-   panel of literal text**, NOT a diagram -- only `plantumlcloud` renders. Sibling
+   panel of literal text**, NOT a diagram; only `plantumlcloud` renders. Sibling
    pages are inconsistent: older pages sometimes keep only the `code` panel; **do
    not copy that form**. Hand-authoring must emit both, exactly as the generator
    does. Verify by decoding the stored `data` back to valid `@startuml…@enduml`
-   source -- `body.view` returns only a macro stub for `plantumlcloud`, so it is
+   source; `body.view` returns only a macro stub for `plantumlcloud`, so it is
    **not** proof of a render.
 5. **H1 `Request`**
    - **H2 `Request Header Schema`** → 5-col field table.
@@ -85,7 +85,7 @@ on the instance.
 7. **H1 `Field-To-Field Mapping`** → **H2 `Field Mapping when calling to <upstream>`**
    → 6-col table.
 
-Top-level sections are **H1** (no leading H1 title -- the page title carries the
+Top-level sections are **H1** (no leading H1 title; the page title carries the
 endpoint name). All headings start at H1, not H2.
 
 ## Fixed table column sets (match exactly)
@@ -118,6 +118,6 @@ requester -> adapter : POST /<path>
 ```
 
 Sequence-message rule: keep each message on **one source line**; a literal `\n`
-inside a message is a visual break -- never turn it into a real newline (see
+inside a message is a visual break, never turn it into a real newline (see
 [plantuml.md](./plantuml.md) `\n` trap). Render every authored diagram to SVG and
 assert non-trivial output before publishing.

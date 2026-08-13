@@ -46,9 +46,9 @@ docs/
 
 ## Modes
 
-- **Write** -- generate or fill in missing docs (system, flow, ADR, glossary). Work the docs sequentially, or parallelize independent docs across sub-agents.
-- **Review** -- audit existing docs for completeness, accuracy, and style against the current implementation. Use up to five parallel sub-agents, one per layer (systems, flows, architecture/ADRs, glossary, index).
-- **Sync** -- update existing docs to match code and runtime changes. Update only docs whose behavior, interface, invariant, or domain term changed.
+- **Write** generate or fill in missing docs (system, flow, ADR, glossary). Work the docs sequentially, or parallelize independent docs across sub-agents.
+- **Review** audit existing docs for completeness, accuracy, and style against the current implementation. Use up to five parallel sub-agents, one per layer (systems, flows, architecture/ADRs, glossary, index).
+- **Sync** update existing docs to match code and runtime changes. Update only docs whose behavior, interface, invariant, or domain term changed.
 
 ## Documentation Types
 
@@ -81,10 +81,10 @@ Every system and flow doc includes a **Source map** section linking the most imp
 
 Apply to everything you write or review:
 
-- **Concision** -- the shortest version that carries the idea. Remove ornament and hollow transitions; never drop facts, warnings, or requested depth.
-- **Intent over paraphrase** -- docs explain *why*, *when*, and constraints, not *what* the signature says.
-- **No invented context** -- omit unsupported rationale, marketing words (`seamless`, `robust`), or future promises. Leave a gap as `[NEEDS CLARIFICATION]` rather than speculate.
-- **Preserve meaning when editing** -- keep modality intact (`must`/`should`/`may` are different obligations); preserve conditions, warnings, and required actions. A cleaner sentence that changes obligations is wrong.
+- **Concision** the shortest version that carries the idea. Remove ornament and hollow transitions; never drop facts, warnings, or requested depth.
+- **Intent over paraphrase** docs explain *why*, *when*, and constraints, not *what* the signature says.
+- **No invented context** omit unsupported rationale, marketing words (`seamless`, `robust`), or future promises. Leave a gap as `[NEEDS CLARIFICATION]` rather than speculate.
+- **Preserve meaning when editing** keep modality intact (`must`/`should`/`may` are different obligations); preserve conditions, warnings, and required actions. A cleaner sentence that changes obligations is wrong.
 - Stable headings; relative Markdown links for related docs and source; glossary headings use Title Case (`## Email Verification`) in finished docs.
 
 ## Keeping Docs Updated
@@ -95,13 +95,13 @@ Docs are part of the diff. Every change that touches system behavior, workflows,
 
 Three sibling templates, copied into the working repo's `docs/templates/`:
 
-- [system.md](references/system.md) -- for `docs/systems/`
-- [flow.md](references/flow.md) -- for `docs/flows/`
-- [adr.md](references/adr.md) -- for `docs/architecture/decisions/`
-- [api.md](references/api.md) -- for `docs/api/` (one HTTP endpoint per file)
+- [system.md](references/system.md) for `docs/systems/`
+- [flow.md](references/flow.md) for `docs/flows/`
+- [adr.md](references/adr.md) for `docs/architecture/decisions/`
+- [api.md](references/api.md) for `docs/api/` (one HTTP endpoint per file)
 
 Related skills:
 
-- [code-craft](../code-craft/SKILL.md) -- clear doc style, artifact gates
-- [harness-engineering](../harness-engineering/SKILL.md) -- repo as system of record
-- [spec-driven-development](../spec-driven-development/SKILL.md) -- specification-first workflow
+- [code-craft](../code-craft/SKILL.md) clear doc style, artifact gates
+- [harness-engineering](../harness-engineering/SKILL.md) repo as system of record
+- [spec-driven-development](../spec-driven-development/SKILL.md) specification-first workflow

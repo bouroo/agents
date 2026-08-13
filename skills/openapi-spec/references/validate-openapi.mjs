@@ -1,10 +1,10 @@
 // Reference validator for an OpenAPI 3.2 spec whose meta-schema is declared via
-// a yaml-language-server modeline at the top of the file -- the same directive
+// a yaml-language-server modeline at the top of the file; the same directive
 // the Red Hat YAML language server reads in editors:
 //
 //   # yaml-language-server: $schema=https://spec.openapis.org/oas/3.2/schema/<date>
 //
-// In the modeline, `$schema` is the OpenAPI META-schema URL -- the schema the
+// In the modeline, `$schema` is the OpenAPI META-schema URL; the schema the
 // file is validated against, which is what an editor uses. It is NOT the
 // JSON-Schema dialect; the dialect is read from the fetched meta-schema's own
 // `$schema`.
@@ -44,8 +44,8 @@ function summarizeError(e) {
 }
 
 // Parse the yaml-language-server modeline from the leading comment block to find
-// the validation schema URL. The modeline -- read by editors (Red Hat YAML
-// language server, VS Code, IntelliJ) and this validator alike -- is the single
+// the validation schema URL. The modeline, read by editors (Red Hat YAML
+// language server, VS Code, IntelliJ) and this validator alike, is the single
 // source of truth, so a spec is configured once for both. Two top-of-file
 // comment forms are supported:
 //   # yaml-language-server: $schema=<url>     (standard)
@@ -84,7 +84,7 @@ function parseModeline(rawText) {
 // schema as application/octet-stream, which pure-JS validators that fetch it
 // themselves reject. We fetch it (JSON), and because there is exactly ONE
 // `meta` anchor, the dynamic reference is statically equivalent to a plain
-// local reference -- so we dereference it. This does not change what is valid.
+// local reference so we dereference it. This does not change what is valid.
 function dereferenceDynamicMeta(meta) {
   const text = JSON.stringify(meta);
   const rewritten = text.replace(
@@ -111,7 +111,7 @@ if (typeof doc !== 'object' || doc === null) {
 
 // 2. Read the directive. The modeline (read by editors too) is preferred; a
 //    root `$ref` key is the legacy fallback. `$schema` in the modeline is the
-//    schema to validate against -- here the OpenAPI meta-schema.
+//    schema to validate against; here the OpenAPI meta-schema.
 const metaSchemaUrl = parseModeline(raw) ?? doc.$ref;
 if (!metaSchemaUrl) {
   fail(`${path} has no schema directive: expected a '# yaml-language-server: $schema=<url>' modeline at the top, or a root '$ref' key`, 2);
@@ -137,14 +137,14 @@ const dialect = meta.$schema ?? doc.$schema ?? 'https://json-schema.org/draft/20
 
 // 4. Strip legacy directive keys from the instance root before validating. The
 //    modeline form carries the directive in a comment, so there is nothing to
-//    strip -- this is a no-op for modeline specs and only matters for the
+//    strip; this is a no-op for modeline specs and only matters for the
 //    legacy root-key fallback.
 const body = { ...doc };
 for (const key of DIRECTIVE_KEYS) delete body[key];
 
 // Collect every `format` keyword the meta-schema uses and register any Ajv does
 // not yet know as pass-through, so unknown OAS-specific formats (e.g.
-// `media-range`) don't spam warnings -- they are not our concern here.
+// `media-range`) don't spam warnings; they are not our concern here.
 function collectFormats(schema, found = new Set()) {
   if (Array.isArray(schema)) {
     schema.forEach((s) => collectFormats(s, found));
