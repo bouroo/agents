@@ -20,7 +20,7 @@ A change touches system behavior, workflow, data model, persistence, integration
 - **$ARGUMENTS** (optional): the system, flow, ADR, or glossary area to document, e.g. `auth`, `email-verification flow`, `session-vs-token ADR`.
 - If empty, detect what changed with `git diff` / `git diff --cached` and document the affected system or flow.
 - **Options** (ride inside `$ARGUMENTS`, any order, `key=value`):
-  - `--type=<system|flow|adr|api|glossary>` -- force the doc type instead of choosing it from the skill's granularity rules. Use only when the change clearly maps to one type.
+  - `--type=<system|flow|adr|api|glossary>` force the doc type instead of choosing it from the skill's granularity rules; use only when the change clearly maps to one type.
 - Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
 
 ## Steps
@@ -49,6 +49,6 @@ A change touches system behavior, workflow, data model, persistence, integration
 
 ## References
 
-- [repo-documentation](../skills/repo-documentation/SKILL.md) -- doc types, ADR lifecycle, source maps, glossary, granularity rules; ships the templates.
+- [repo-documentation](../skills/repo-documentation/SKILL.md) doc types, ADR lifecycle, source maps, glossary, granularity rules; ships the templates.
 - Templates (copied into `docs/templates/`): [system.md](../skills/repo-documentation/references/system.md) | [flow.md](../skills/repo-documentation/references/flow.md) | [adr.md](../skills/repo-documentation/references/adr.md) | [api.md](../skills/repo-documentation/references/api.md).
-- [bootstrap](cmd-document/references/bootstrap.md) -- exact layout to create when `docs/` is absent.
+- [bootstrap](cmd-document/references/bootstrap.md) exact layout to create when `docs/` is absent.

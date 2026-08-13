@@ -29,7 +29,7 @@ Correctness is verified by executable evidence (L1/L2/L3), never by reading code
 - **Check every error.** NEVER discard with `_`. Reserve `panic` for invariant violations.
 - **Wrap, don't flatten.** `fmt.Errorf("doing X: %w", err)` preserves the chain. Use `%v` only at system boundaries to hide internals.
 - **Sentinels & types.** `var ErrNotFound = errors.New("not found")` for expected flows; custom types when callers need rich data. Lowercase, no trailing punctuation.
-- **Inspect via the chain.** `errors.Is` -- never `==`. `errors.As` (or `errors.AsType[T]`, Go 1.26+) -- never bare type assertions or string matching.
+- **Inspect via the chain.** `errors.Is` never `==`; `errors.As` (or `errors.AsType[T]`, Go 1.26+) never bare type assertions or string matching.
 - **Combine with `errors.Join`** (Go 1.20+) for independent failures; joined errors stay inspectable.
 - **Single handling rule.** An error is logged OR returned, NEVER both. Log once at the top boundary; elsewhere wrap and return.
 - **Lowercase error strings, including acronyms** ("invalid message id", not "invalid message ID").
@@ -76,7 +76,7 @@ Correctness is verified by executable evidence (L1/L2/L3), never by reading code
 
 ## References
 
-- [error-handling](references/error-handling.md) -- sentinels vs types, `%w` vs `%v`, `errors.Is`/`As`/`Join`, single handling rule.
-- [concurrency](references/concurrency.md) -- channel ownership, channel vs mutex vs atomic, sync primitives, pipelines, `goleak`.
-- [performance](references/performance.md) -- escape analysis, preallocation, `sync.Pool`, pprof workflow.
-- [networking](references/networking.md) -- client/server timeouts, transport tuning, resilience, `httptrace`.
+- [error-handling](references/error-handling.md) sentinels vs types, `%w` vs `%v`, `errors.Is`/`As`/`Join`, single handling rule.
+- [concurrency](references/concurrency.md) channel ownership, channel vs mutex vs atomic, sync primitives, pipelines, `goleak`.
+- [performance](references/performance.md) escape analysis, preallocation, `sync.Pool`, pprof workflow.
+- [networking](references/networking.md) client/server timeouts, transport tuning, resilience, `httptrace`.

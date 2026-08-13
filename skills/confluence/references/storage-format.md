@@ -35,9 +35,9 @@ If the body contains `]]>`, split the CDATA: `]]></ac:plain-text-body><ac:plain-
 </ac:structured-macro>
 ```
 
-**Sequence diagrams need BOTH macros.** Emit the `plantumlcloud` macro above (the rendered SVG) **plus** the raw `@startuml…@enduml` source collapsed in an `expand > code` block, so the page shows the rendered diagram but keeps an editable source. A `code` macro on its own renders as a **code panel of literal text, not a diagram** -- older sibling pages that hold only the `code` panel are wrong; do not copy them. Full snippet + verification in [page-template.md](./page-template.md) step 4.
+**Sequence diagrams need BOTH macros.** Emit the `plantumlcloud` macro above (the rendered SVG) **plus** the raw `@startuml…@enduml` source collapsed in an `expand > code` block, so the page shows the rendered diagram but keeps an editable source. A `code` macro on its own renders as a **code panel of literal text, not a diagram**. Older sibling pages that hold only the `code` panel are wrong; do not copy them. Full snippet + verification in [page-template.md](./page-template.md) step 4.
 
-**Mermaid diagram** (raw source in a plain-text body -- no compression; see [mermaid.md](./mermaid.md)):
+**Mermaid diagram** (raw source in a plain-text body, no compression; see [mermaid.md](./mermaid.md)):
 
 ```xml
 <ac:structured-macro ac:name="mermaid" ac:schema-version="1">
@@ -48,7 +48,7 @@ If the body contains `]]>`, split the CDATA: `]]></ac:plain-text-body><ac:plain-
 </ac:structured-macro>
 ```
 
-The macro name is the native Cloud mermaid macro. A third-party "Mermaid for Confluence" app installs a different macro name (`mermaid-cloud`, etc.) -- confirm the name against the instance on first use (see [mermaid.md](./mermaid.md)). Mermaid source needs **real newlines** between statements (the opposite of PlantUML sequence messages), so never join its lines.
+The macro name is the native Cloud mermaid macro. A third-party "Mermaid for Confluence" app installs a different macro name (`mermaid-cloud`, etc.); confirm the name against the instance on first use (see [mermaid.md](./mermaid.md)). Mermaid source needs **real newlines** between statements (the opposite of PlantUML sequence messages), so never join its lines.
 
 **Diagram default:** prefer **`plantumlcloud`** (inline compressed source) for any diagram authored from storage XML. The native `mermaid` macro is not installed on every instance (it error-loads where absent); the third-party `mermaid-cloud` renders but stores its source out-of-band as an image attachment, so it is UI-insert-only and not authorable from page XML. See [SKILL.md §3](../SKILL.md) + [mermaid.md](./mermaid.md).
 
@@ -61,7 +61,7 @@ The macro name is the native Cloud mermaid macro. A third-party "Mermaid for Con
 </ac:link>
 ```
 
-**Children macro** (auto-list child pages -- keep on a landing page):
+**Children macro** (auto-list child pages, keep on a landing page):
 
 ```xml
 <ac:structured-macro ac:name="children" ac:schema-version="2" data-layout="default">
@@ -75,7 +75,7 @@ The macro name is the native Cloud mermaid macro. A third-party "Mermaid for Con
 - Tables: `<table><tbody><tr><th>…</th></tr><tr><td>…</td></tr>…</tbody></table>`.
 - `<ol>`/`<ul>` + `<li>`; `<p>` for paragraphs; `<br/>` for hard breaks.
 - Inline code: `<code>…</code>`; escape `&`/`<`/`>`.
-- Every table row must have the same cell count as its header, or Confluence misrenders -- validate (see below).
+- Every table row must have the same cell count as its header, or Confluence misrenders; validate (see below).
 
 ## Markdown → storage converter (Python, stdlib only)
 
@@ -99,7 +99,7 @@ def code_macro(body, lang="none"):
             f'</ac:structured-macro>')
 
 def mermaid_macro(body):
-    safe = body.replace("]]>", "]]]]><![CDATA[>")   # no compression -- source stored raw
+    safe = body.replace("]]>", "]]]]><![CDATA[>")   # no compression; source stored raw
     return ('<ac:structured-macro ac:name="mermaid" ac:schema-version="1">'
             f'<ac:plain-text-body><![CDATA[{safe}]]></ac:plain-text-body>'
             '</ac:structured-macro>')
@@ -152,11 +152,11 @@ def table_to_xhtml(md_lines):
     return h + "</tbody></table>"
 ~~~
 
-`plantuml_macro(body, filename, compress_plantuml)` wraps `compress_plantuml(body)` in the macro template above. **Do not** `.replace("\\n","\n")` the plantuml body -- see the trap in [plantuml.md](./plantuml.md).
+`plantuml_macro(body, filename, compress_plantuml)` wraps `compress_plantuml(body)` in the macro template above. **Do not** `.replace("\\n","\n")` the plantuml body; see the trap in [plantuml.md](./plantuml.md).
 
 ## Validate before publishing
 
 1. **Table alignment** (cheap, every page): every row's cell count must equal the header's.
 2. **PlantUML** (see plantuml.md): decode the `data` param → write `.puml` → `java -jar plantuml.jar -check file.puml` (exit 0). Component/package diagrams also need Graphviz (`brew install graphviz`).
-3. **Mermaid** (see mermaid.md): source is uncompressed CDATA, so proof is a byte-identical round-trip of the `mermaid` macro body after fetch -- no decode step. Confirm the macro name the instance stores matches what you wrote.
+3. **Mermaid** (see mermaid.md): source is uncompressed CDATA, so proof is a byte-identical round-trip of the `mermaid` macro body after fetch; no decode step. Confirm the macro name the instance stores matches what you wrote.
 4. **Round-trip after publish**: fetch the page storage body, re-read each diagram, confirm it equals what you intended. `body.view` is NOT proof (it returns a macro JS stub).

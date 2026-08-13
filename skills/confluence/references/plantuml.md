@@ -7,7 +7,7 @@ The short doctrine lives in [SKILL.md](../SKILL.md); this file is the verified a
 Reverse-engineered from a hand-built page's stored `data` param: it decodes/inflates cleanly and a re-encode round-trips. The `plantumlcloud` macro's `data` param is produced by:
 
 1. **`%`-encode** the PlantUML source, keeping RFC-3986 unreserved `- . _ ~` and `/` literal (Python `urllib.parse.quote(text, safe="/-._~")`). Note `/` stays literal; space → `%20`.
-2. **Raw DEFLATE** the UTF-8 bytes -- `zlib.compressobj(9, zlib.DEFLATED, -15)` (negative wbits = no zlib header/footer).
+2. **Raw DEFLATE** the UTF-8 bytes: `zlib.compressobj(9, zlib.DEFLATED, -15)` (negative wbits = no zlib header/footer).
 3. **Base64** with the standard `A-Za-z0-9+/` alphabet, **strip trailing `=` padding**.
 
 Pure-stdlib encoder:
@@ -36,7 +36,7 @@ def compress_plantuml(text: str) -> str:
     return _encode64(cz.compress(data) + cz.flush())
 ```
 
-Pure-stdlib **decoder** (inverse -- use to verify/inspect a published diagram):
+Pure-stdlib **decoder** (inverse, use to verify/inspect a published diagram).
 
 ```python
 import urllib.parse as up, zlib
@@ -75,7 +75,7 @@ def plantuml_macro(source: str, filename: str) -> str:
 
 **⚠ `-check` is unreliable in this environment** (Java 25 + plantuml.jar): it prints
 `Error line 1 in file: …` / exits non-zero even for diagrams that render
-perfectly -- confirmed against already-published pages that render correctly on
+perfectly, confirmed against already-published pages that render correctly on
 Confluence. **Do not trust `-check`.** The authoritative proof is to **render to
 SVG and inspect the text labels**:
 
@@ -88,8 +88,8 @@ brew install graphviz        # only if diagrams use component/package/activity
 python3 -c "from page_template import compress_plantuml; import zlib,urllib.parse as up; \
  d=open('/tmp/data.txt').read(); B='A-Za-z0-9+/'; ..."   # (use decompress_plantuml from this file)
 
-# 2. render to SVG -- THIS is the proof
-java -jar /tmp/plantuml.jar -tsvg /tmp/d.puml -o /tmp/out    # exit 0 + non-trivial .svg = renders
+# 2. render to SVG; THIS is the proof
+java -jar /tmp/plantuml.jar -tsvg /tmp/d.puml -o /tmp/out    # exit 0 + non-trivial .svg = renders.
 ```
 
 Then verify the SVG is a real diagram, not a placeholder:
@@ -119,7 +119,7 @@ The `plantumlcloud` macro is an **extension** node, NOT old `<ac:structured-macr
 - `<COMPRESSED>` = `compress_plantuml(source)` (the algorithm above). The whole `data-parameters` value is a JSON string with `"` escaped as `&quot;` (the page stores it that way).
 - Do NOT omit `compressed: true` or the plugin tries to treat `data` as raw text.
 - The reliable publish path (because the remote gateway 502s on large writes): create the page with a minimal body, then `updateConfluencePage` with the full body containing the macro. See SKILL.md §5a.
-- The old skill warned macros need storage XML -- that was the `<ac:structured-macro>` form. The `data-type="extension"` HTML+ form above is what the remote MCP / Cloud editor uses and accepts. Confirmed on an instance whose plugin placeholder icon is `https://puml4cc.stratus-addons.com/images/plant-uml-atlas.png`.
+- The old skill warned macros need storage XML; that was the `<ac:structured-macro>` form. The `data-type="extension"` HTML+ form above is what the remote MCP / Cloud editor uses and accepts. Confirmed on an instance whose plugin placeholder icon is `https://puml4cc.stratus-addons.com/images/plant-uml-atlas.png`.
 
 ### Always pair the macro with a raw-source expand (team convention)
 
@@ -145,7 +145,7 @@ The sibling pages do NOT ship a bare `plantumlcloud` macro. They follow it **imm
 A sequence-diagram message that spans a **real newline** is a syntax error (`Error line N`). This happens when a converter helpfully turns a literal `\n` (backslash-n) inside a message into a real newline:
 
 ```
-# BROKEN -- line 2 is a syntax error
+# BROKEN line 2 is a syntax error.
 Caller -> Adapter: POST /v1/example-resource/get
 (headerReq.reqID, headerReq.id)
 ```
@@ -153,13 +153,13 @@ Caller -> Adapter: POST /v1/example-resource/get
 PlantUML renders the **two-character escape `\n`** as a display line break when it stays inside a **single source line**:
 
 ```
-# CORRECT -- one line; \n is a visual break
+# CORRECT one line; \n is a visual break.
 Caller -> Adapter: POST /v1/example-resource/get\n(headerReq.reqID, headerReq.id)
 ```
 
-**Rule:** never `.replace("\\n", "\n")` a plantuml body before compressing. Keep `\n` literal inside the message line. Validate by rendering to SVG after any transformation (see above -- `-check` is unreliable).
+**Rule:** never `.replace("\\n", "\n")` a plantuml body before compressing. Keep `\n` literal inside the message line. Validate by rendering to SVG after any transformation (see above; `-check` is unreliable).
 
 ## Notes
 
 - `!theme plain` and other theme directives are optional and may differ by server/plugin version; omit if a diagram fails to render on the plugin but passes locally.
-- This compression is the **mxgraph Confluence PlantUML plugin** format (addon `com.mxgraph.confluence.plugins.plantuml`), NOT the public `plantuml.com/server` text-encoding (which uses the `-_` alphabet). They are different encodings -- don't mix them.
+- This compression is the **mxgraph Confluence PlantUML plugin** format (addon `com.mxgraph.confluence.plugins.plantuml`), NOT the public `plantuml.com/server` text-encoding (which uses the `-_` alphabet). They are different encodings, don't mix them.
