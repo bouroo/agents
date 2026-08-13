@@ -7,16 +7,16 @@
 ![Tools](https://img.shields.io/badge/tools-11-success)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE.md)
 
-> Installable via the open Agent Skills ecosystem -- `npx skills add bouroo/agents` (see [skills.sh](https://skills.sh/b/bouroo/agents)) -- and via the bundled `adapters/install.sh` for filesystem-symlink installs.
+> Installable via the open Agent Skills ecosystem `npx skills add bouroo/agents` (see [skills.sh](https://skills.sh/b/bouroo/agents)) and via the bundled `adapters/install.sh` for filesystem-symlink installs.
 
-A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**. Drop one folder into your machine and eleven different tools -- Gemini, Claude, OpenCode, Kilo, Codex, Qwen, Hermes, OpenClaw, Pi, and more -- pick up the same autonomous, self-improving coder-agent squad. The doctrine and its structure follow the [bmad-method](https://github.com/bmad-code-org/bmad-method) standards (persona agents, modular skills, reusable commands, single-source registries). No per-tool copy-paste, no drift between projects.
+A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**. Drop one folder into your machine and eleven different tools Gemini, Claude, OpenCode, Kilo, Codex, Qwen, Hermes, OpenClaw, Pi, and more pick up the same autonomous, self-improving coder-agent squad. The doctrine and its structure follow the [bmad-method](https://github.com/bmad-code-org/bmad-method) standards (persona agents, modular skills, reusable commands, single-source registries). No per-tool copy-paste, no drift between projects.
 
 ## Why use it
 
 - **Agnostic core.** `AGENTS.md`, `agents/`, `command/`, and `skills/` contain no host-binding tokens and no language-bias doctrine. The `G17_agnostic_core` gate enforces it.
 - **One squad, many tools.** A four-role autonomous squad (orchestrator / worker / validator / discover) drives the THINK-ACT-PROVE-GROW loop; link it everywhere via one data-driven installer.
 - **bmad-method structure.** Agents are persona artifacts; commands are reusable workflows; skills are modular capabilities; everything is declarative Markdown + frontmatter.
-- **Hosts are data, not code.** Adding a tool is one entry in `registries/hosts.json` -- never a code change to the core.
+- **Hosts are data, not code.** Adding a tool is one entry in `registries/hosts.json` never a code change to the core.
 - **Self-improving.** Every recurring failure becomes a deterministic gate (GROW); learnings persist on disk, not in the chat.
 
 ## Quick Start
@@ -51,7 +51,7 @@ Discovery is via `.cursor-plugin/*` (Cursor) and `gemini-extension.json` (Gemini
 
 ### C. Symlink install (`adapters/install.sh`)
 
-For the eleven explicitly-targeted tools, the bundled installer symlinks `AGENTS.md` (renamed per host, e.g. `CLAUDE.md` / `SOUL.md`), `commands/`, `skills/`, and (where the host supports it) `agents/` into each tool's config directory. No Node.js required. The installer reads `registries/hosts.json` -- the host list is data, not code.
+For the eleven explicitly-targeted tools, the bundled installer symlinks `AGENTS.md` (renamed per host, e.g. `CLAUDE.md` / `SOUL.md`), `commands/`, `skills/`, and (where the host supports it) `agents/` into each tool's config directory. No Node.js required. The installer reads `registries/hosts.json` the host list is data, not code.
 
 ```bash
 adapters/install.sh install            # link into every adapter (default)
@@ -82,20 +82,24 @@ Then restart your coding tool so it picks up the new config.
 ├── registries/              # Single-source-of-truth registries
 │   ├── modules.json         # Module registry (core squad + optional domain adapters)
 │   └── hosts.json           # Host-adapter registry (abstract contract + adapter instances)
-├── agents/                  # Squad agent definitions -- flat <name>.md (native discovery)
+├── agents/                  # Squad agent definitions flat <name>.md (native discovery)
 │   ├── orchestrator.md      # primary orchestrator (plans, delegates, converges)
 │   ├── worker.md            # subagent, mutating (implement/fix/verify)
 │   ├── validator.md         # subagent, independent verifier (verify/judge)
-│   ├── discover.md          # subagent, read-only scout (explore/lookup/review)
-│   └── <name>/references/   # progressive-disclosure depth per agent
-├── commands/                # Standardized reusable workflows -- flat <name>.md
-│   ├── cmd-document.md      # ACT/GROW -- bootstrap/sync a docs tree
-│   ├── cmd-judge.md         # PROVE -- adversarial verification of "done"
-│   ├── cmd-openapi.md       # ACT -- generate/validate an OpenAPI 3.2 contract
-│   ├── cmd-refactor.md      # ACT -- analyze/plan/baseline/execute/verify a refactor
-│   ├── cmd-review.md        # PROVE -- code review (MUST/SHOULD/NIT/SUGGESTION)
-│   └── cmd-verify.md        # PROVE -- format/lint/type/test gate pipeline
-├── skills/                  # Modular capability definitions -- nested <name>/SKILL.md
+│   └── discover.md          # subagent, read-only scout (explore/lookup/review)
+├── references/              # Progressive-disclosure depth per agent sibling of agents/
+│   ├── orchestrator/        # plan-and-convergence, completion-audit
+│   ├── worker/              # modes-and-verification
+│   ├── validator/           # verification-and-verdict (fraud rubric table)
+│   └── discover/            # modes-and-review
+├── commands/                # Standardized reusable workflows flat <name>.md
+│   ├── cmd-document.md      # ACT/GROW bootstrap/sync a docs tree
+│   ├── cmd-judge.md         # PROVE adversarial verification of "done"
+│   ├── cmd-openapi.md       # ACT generate/validate an OpenAPI 3.2 contract
+│   ├── cmd-refactor.md      # ACT analyze/plan/baseline/execute/verify a refactor
+│   ├── cmd-review.md        # PROVE code review (MUST/SHOULD/NIT/SUGGESTION)
+│   └── cmd-verify.md        # PROVE format/lint/type/test gate pipeline
+├── skills/                  # Modular capability definitions nested <name>/SKILL.md
 │   ├── code-craft/          # ten commandments + INTENT/TWINS/AUTH/PENDING gates
 │   ├── harness-engineering/ # L1/L2/L3 termination, mutation testing, GROW
 │   ├── memory-engineering/  # instruction vs learning memory
@@ -103,9 +107,9 @@ Then restart your coding tool so it picks up the new config.
 │   ├── performance-patterns/
 │   ├── repo-documentation/
 │   ├── commit-message/
-│   ├── go-essential/        # domain adapter -- Go language doctrine
-│   ├── openapi-spec/        # domain adapter -- OpenAPI 3.2 (backs commands/openapi)
-│   └── confluence/          # domain adapter -- Atlassian Confluence via mcp-atlassian
+│   ├── go-essential/        # domain adapter Go language doctrine
+│   ├── openapi-spec/        # domain adapter OpenAPI 3.2 (backs commands/openapi)
+│   └── confluence/          # domain adapter Atlassian Confluence via mcp-atlassian
 ├── adapters/                # Distribution layer (segregated from the agnostic core)
 │   ├── install.sh           # reads registries/hosts.json; no hardcoded tool list
 │   ├── install.ps1          # Windows companion
@@ -127,7 +131,7 @@ Then restart your coding tool so it picks up the new config.
 └── eval/                    # Honesty layer: scenario seeds + null-committed results
 ```
 
-> **Manifest layout.** Host plugin manifests live canonically under `adapters/manifests/<host>/` and are surfaced at their tool-discovery paths (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`, root `plugin.json`/`marketplace.json`) via symlinks. `G13_plugin_symlinks` enforces the contract; `G15_manifests_generated` regenerates from `VERSION` + inventory + registries and fails on drift. The host list itself comes from `registries/hosts.json` -- `G16_registries_parse` validates both registries.
+> **Manifest layout.** Host plugin manifests live canonically under `adapters/manifests/<host>/` and are surfaced at their tool-discovery paths (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`, root `plugin.json`/`marketplace.json`) via symlinks. `G13_plugin_symlinks` enforces the contract; `G15_manifests_generated` regenerates from `VERSION` + inventory + registries and fails on drift. The host list itself comes from `registries/hosts.json` `G16_registries_parse` validates both registries.
 
 ### The squad
 
@@ -140,11 +144,11 @@ The governance `AGENTS.md` routes to a four-role **autonomous squad**:
 | [validator](agents/validator.md) | subagent | Independent verifier. Modes: verify / judge. Re-runs the worker's evidence, runs mutation probes, hunts frauds, issues one verdict. Did not write the code; never delivers the fix. |
 | [discover](agents/discover.md) | subagent | Read-only scout. Modes: explore / lookup / review. Never mutates source, never runs the toolchain for verification. |
 
-The load-bearing separation is **author vs verifier**: the `worker` writes the code; the `validator` independently signs off (the worker never self-judges a high-stakes claim); `discover` stays read-only. Each agent file carries a cross-host frontmatter superset -- `name`, `description`, `mode`, `color`, and `permission` (capability-gated hosts; OpenCode/KiloCode), with the orchestrator's `task` rules gating which subagents it may delegate to -- so the boundary is enforced on every host.
+The load-bearing separation is **author vs verifier**: the `worker` writes the code; the `validator` independently signs off (the worker never self-judges a high-stakes claim); `discover` stays read-only. Each agent file carries a cross-host frontmatter superset `name`, `description`, `mode`, `color`, and `permission` (capability-gated hosts; OpenCode/KiloCode), with the orchestrator's `task` rules gating which subagents it may delegate to so the boundary is enforced on every host.
 
 ### Commands
 
-Six phase commands drive the THINK-ACT-PROVE-GROW loop: [document](commands/cmd-document.md) (ACT/GROW), [judge](commands/cmd-judge.md) (PROVE), [openapi](commands/cmd-openapi.md) (ACT), [refactor](commands/cmd-refactor.md) (ACT), [review](commands/cmd-review.md) (PROVE), [verify](commands/cmd-verify.md) (PROVE). Each carries `description` + `agent` (the worker it binds to) + `phase` frontmatter, When/Inputs/Steps, and executable Success/Failure metrics. Commands accept caller options through the portable `$ARGUMENTS` channel (a closed `key=value` grammar the command parses itself) plus an `argument-hint` for autocomplete on hosts that show it -- the `G18_portable_command_inputs` gate keeps this contract host-agnostic. See the [command-inputs doctrine](skills/harness-engineering/references/agent-computer-interface.md).
+Six phase commands drive the THINK-ACT-PROVE-GROW loop: [document](commands/cmd-document.md) (ACT/GROW), [judge](commands/cmd-judge.md) (PROVE), [openapi](commands/cmd-openapi.md) (ACT), [refactor](commands/cmd-refactor.md) (ACT), [review](commands/cmd-review.md) (PROVE), [verify](commands/cmd-verify.md) (PROVE). Each carries `description` + `agent` (the worker it binds to) + `phase` frontmatter, When/Inputs/Steps, and executable Success/Failure metrics. Commands accept caller options through the portable `$ARGUMENTS` channel (a closed `key=value` grammar the command parses itself) plus an `argument-hint` for autocomplete on hosts that show it the `G18_portable_command_inputs` gate keeps this contract host-agnostic. See the [command-inputs doctrine](skills/harness-engineering/references/agent-computer-interface.md).
 
 ### Skills
 
@@ -182,7 +186,7 @@ The installer (`adapters/install.sh`, reads `registries/hosts.json`) symlinks th
 
 v3 is a **breaking** restructure for filesystem consumers; the doctrine is continuous. Key changes:
 
-- Artifacts now ship in **native harness format**: flat `agents/<name>.md` and `commands/<name>.md` (was nested `*/SKILL.md`). Run `adapters/install.sh install --force` to refresh links -- the installer detects STALE v2 symlinks and refuses to clobber real files without `--force`.
+- Artifacts now ship in **native harness format**: flat `agents/<name>.md` and `commands/<name>.md` (was nested `*/SKILL.md`). Run `adapters/install.sh install --force` to refresh links the installer detects STALE v2 symlinks and refuses to clobber real files without `--force`.
 - `effective-code-craft` -> `code-craft`. The three language/tool skills are top-level: `skills/go-essential`, `skills/openapi-spec`, `skills/confluence` (was under `skills/adapters/`).
 - `.agents/plugins/` -> `adapters/manifests/`; root installer -> `adapters/`.
 - Agent frontmatter gained `tools` + `permission` so the read-only/mutating boundary is enforced on every host.
@@ -191,9 +195,9 @@ See [CHANGELOG.md](./CHANGELOG.md) for the full v3.0.0 entry. v2 content is pres
 
 ## References
 
-- [bmad-method](https://github.com/bmad-code-org/bmad-method) -- the structural standards this repo adheres to (persona agents, modular skills, reusable commands, single-source registries).
-- [Agent Skills Specification](https://agentskills.io/specification) -- the open `SKILL.md` format this repo conforms to.
-- [skills.sh](https://skills.sh) -- open skills leaderboard and `npx skills` CLI.
-- [Claude Code Plugin Marketplace](https://code.claude.com/docs/en/plugin-marketplaces) -- `.claude-plugin/` format.
-- [Cursor Plugin Specification](https://github.com/cursor/plugins) -- `.cursor-plugin/` schema.
-- [Gemini CLI Extensions](https://geminicli.com/docs/extensions/reference/) -- `gemini-extension.json` format.
+- [bmad-method](https://github.com/bmad-code-org/bmad-method) the structural standards this repo adheres to (persona agents, modular skills, reusable commands, single-source registries).
+- [Agent Skills Specification](https://agentskills.io/specification) the open `SKILL.md` format this repo conforms to.
+- [skills.sh](https://skills.sh) open skills leaderboard and `npx skills` CLI.
+- [Claude Code Plugin Marketplace](https://code.claude.com/docs/en/plugin-marketplaces) `.claude-plugin/` format.
+- [Cursor Plugin Specification](https://github.com/cursor/plugins) `.cursor-plugin/` schema.
+- [Gemini CLI Extensions](https://geminicli.com/docs/extensions/reference/) `gemini-extension.json` format.

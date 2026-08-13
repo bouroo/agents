@@ -17,16 +17,16 @@ Restructure existing code that is correct but unclear, unsafe, or slow, without 
 
 ## Inputs
 
-- **$ARGUMENTS** -- target area (module, package, path, or file). If empty, ask the user which area to target before analyzing; do not guess.
+- **$ARGUMENTS** target area (module, package, path, or file). If empty, ask the user which area to target before analyzing; do not guess.
 - **Options** (ride inside `$ARGUMENTS`, any order, `key=value`):
-  - `--goal=<readability|safety|performance>` -- what the refactor optimizes for. Default: behavior-preserving, data-driven (improve what measurement finds, change nothing observable).
-- Parsing `$ARGUMENTS` is this command's job -- the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
+  - `--goal=<readability|safety|performance>` what the refactor optimizes for. Default: behavior-preserving, data-driven (improve what measurement finds, change nothing observable).
+- Parsing `$ARGUMENTS` is this command's job the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
 
 ## Steps
 
 1. **Analyze.** Map the target area, its dependencies, and call sites. Identify the smell, not the symptom. Run CPU, memory, and I/O profilers; record heap profiles and allocation counts for the top contributors. Catalog smells via [refactor-checklist](cmd-refactor/references/refactor-checklist.md).
 
-2. **Plan.** Write a REASONS canvas (see [spec-driven-development](../skills/spec-driven-development/SKILL.md)). Lock scope explicitly; mark unknowns. If `$ARGUMENTS` set `--goal`, let that goal weigh the plan (e.g. `performance` justifies profiler-driven targets, `safety` justifies error-path hardening) -- never to relax the behavior-preserving constraint. Tests and benchmarks are part of the plan, not an afterthought.
+2. **Plan.** Write a REASONS canvas (see [spec-driven-development](../skills/spec-driven-development/SKILL.md)). Lock scope explicitly; mark unknowns. If `$ARGUMENTS` set `--goal`, let that goal weigh the plan (e.g. `performance` justifies profiler-driven targets, `safety` justifies error-path hardening). Never to relax the behavior-preserving constraint. Tests and benchmarks are part of the plan, not an afterthought.
 
 3. **Baseline.** Before touching production code, capture or write tests and benchmarks that prove current behavior and, if performance is a goal, current metrics.
    - Tests that read as sentences about behavior: happy path, error path, edge cases.
@@ -38,7 +38,7 @@ Restructure existing code that is correct but unclear, unsafe, or slow, without 
 
 5. **Verify.** Run formatter, linter, type-checker, and the full test suite. Re-profile and re-benchmark against the baseline to confirm improvement, not regression. Any metric regresses -> revert and re-plan. Never trade correctness or performance for aesthetics.
 
-6. **Sync spec.** Update or create the spec to match the refactor; never leave it describing the old shape. When code and spec diverge, fix the spec first, then the code -- a stale spec is a bug. If the repo maintains a `docs/` tree and the refactor moved or renamed source files a doc points to, update the affected system/flow doc and its Source map so links still resolve (see [repo-documentation](../skills/repo-documentation/SKILL.md)).
+6. **Sync spec.** Update or create the spec to match the refactor; never leave it describing the old shape. When code and spec diverge, fix the spec first, then the code. A stale spec is a bug. If the repo maintains a `docs/` tree and the refactor moved or renamed source files a doc points to, update the affected system/flow doc and its Source map so links still resolve (see [repo-documentation](../skills/repo-documentation/SKILL.md)).
 
 ## Success metrics
 
@@ -51,16 +51,16 @@ Restructure existing code that is correct but unclear, unsafe, or slow, without 
 
 Abort and hand back to the orchestrator if:
 
-- Baseline tests or benchmarks cannot be captured -- no reproducible before/after comparison is possible.
+- Baseline tests or benchmarks cannot be captured. No reproducible before/after comparison is possible.
 - Public behavior changes (a previously-passing test fails after a refactor step) and cannot be restored within scope.
 - Any measured metric regresses after a step and reverting does not recover it.
 - Scope expands beyond the locked plan, or an unknown blocks further safe progress.
 
 ## References
 
-- [refactor-checklist](cmd-refactor/references/refactor-checklist.md) -- structural, performance, and correctness smell catalog.
-- [code-craft](../skills/code-craft/SKILL.md) -- hard rules, ten commandments, common mistakes.
-- [performance-patterns](../skills/performance-patterns/SKILL.md) -- measure-before-optimize performance patterns.
-- [spec-driven-development](../skills/spec-driven-development/SKILL.md) -- REASONS canvas and spec/code sync.
-- [repo-documentation](../skills/repo-documentation/SKILL.md) -- keeping the `docs/` tree in sync.
-- [AGENTS.md](../AGENTS.md) -- The Loop, Code Craft, Performance.
+- [refactor-checklist](cmd-refactor/references/refactor-checklist.md) structural, performance, and correctness smell catalog.
+- [code-craft](../skills/code-craft/SKILL.md) hard rules, ten commandments, common mistakes.
+- [performance-patterns](../skills/performance-patterns/SKILL.md) measure-before-optimize performance patterns.
+- [spec-driven-development](../skills/spec-driven-development/SKILL.md) REASONS canvas and spec/code sync.
+- [repo-documentation](../skills/repo-documentation/SKILL.md) keeping the `docs/` tree in sync.
+- [AGENTS.md](../AGENTS.md) The Loop, Code Craft, Performance.

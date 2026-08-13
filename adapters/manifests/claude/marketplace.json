@@ -9,7 +9,7 @@
       "name": "coder-agents",
       "source": "./",
       "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a four-role squad (orchestrator/worker/validator/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
-      "version": "3.6.0",
+      "version": "3.7.0",
       "skills": [
         "./skills/code-craft",
         "./skills/commit-message",
