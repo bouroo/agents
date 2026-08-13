@@ -1,7 +1,7 @@
 ---
 description: "Adversarial verifier for the PROVE phase -- treats a finished-work report as untrusted claims, re-runs every verification, hunts frauds, and delivers a verdict. Use when a prior step reported work complete and you must confirm or refute it before shipping."
 argument-hint: "[diff|dir|branch|report] [--against=<ref>] [--claim=<text>]"
-agent: coder
+agent: validator
 phase: PROVE
 ---
 
@@ -32,7 +32,7 @@ Distinct from review: review trusts the author and grades the code by severity; 
 
 3. **Re-run every claimed verification.** Do not read code and nod: run the tests, the build, the script, the page. Capture the real output (command, exit code, stdout/stderr). A claim that cannot be re-run -- missing environment, credentials, or something needing human eyes -- is **UNVERIFIABLE**, never assumed true.
 
-4. **Hunt the fraud table.** The frauds live in [coder modes-and-judgment](../agents/coder/references/modes-and-judgment.md); do not re-derive them. Hunt highest-yield first and resolve authority by rank. See [judge protocol](cmd-judge/references/judge-protocol.md) for the full hunt order and output template.
+4. **Hunt the fraud table.** The frauds live in [validator verification-and-verdict](../agents/validator/references/verification-and-verdict.md); do not re-derive them. Hunt highest-yield first and resolve authority by rank. See [judge protocol](cmd-judge/references/judge-protocol.md) for the full hunt order and output template.
 
 5. **Deliver the verdict.** First line is the verdict, then a claims table (claim, observed, evidence), then frauds found (file:line + smallest fix), then a one-line recommended action.
 
@@ -59,7 +59,7 @@ Never soften a refutation to be polite; never inflate a caveat into a refutation
 ## References
 
 - [Judge protocol -- fraud hunt order, authority rank, output template](cmd-judge/references/judge-protocol.md)
-- [coder modes-and-judgment](../agents/coder/references/modes-and-judgment.md) -- the fraud rubric table.
+- [validator verification-and-verdict](../agents/validator/references/verification-and-verdict.md) -- the fraud rubric table.
 - [harness-engineering](../skills/harness-engineering/SKILL.md) -- hard verify bound, grade-the-tests.
 - [code-craft](../skills/code-craft/SKILL.md) -- artifact gates (`INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`)
-- [coder](../agents/coder.md) -- the worker this command runs on
+- [validator](../agents/validator.md) -- the agent this command runs on

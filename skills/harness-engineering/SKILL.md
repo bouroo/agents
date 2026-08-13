@@ -42,7 +42,7 @@ Executable evidence (command + exit code + actual output) for every done claim -
 
 **Adversarial judge:** treat a "done" report as claims; re-run at least one; hunt frauds; issue one verdict (VERIFIED / VERIFIED WITH CAVEATS / REFUTED). ([judge command](../../commands/cmd-judge.md).)
 
-**Hard verify bound:** on the **3rd failed cycle** on the same issue, STOP. Do not start a 4th attempt. ([coder](../../agents/coder.md).)
+**Hard verify bound:** on the **3rd failed cycle** on the same issue, STOP. Do not start a 4th attempt. ([worker](../../agents/worker.md).)
 
 ## GROW -- self-improving harness
 

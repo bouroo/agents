@@ -5,9 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.6.0] - 2026-08-13
 
-_No changes yet._
+### Changed
+
+- **Squad re-init: autonomous four-role harness (Tura-informed).** The three-role squad is restructured into four: `conductor` -> **`orchestrator`** (primary, now explicitly autonomous -- plans, delegates, runs the completion audit, converges, GROWs), `coder` -> **`worker`** (mutating implement/fix/verify), and a new **`validator`** (independent adversarial verifier: re-runs the worker's evidence, mutation-probes, hunts frauds, issues one verdict). `discover` (explore/lookup/review) is unchanged. The split removes a conflict of interest: the worker that wrote the code no longer self-judges a high-stakes "done" -- that independence is the `validator`. `worker.judge` mode is removed; adversarial judgment moves to `validator` (the `cmd-judge` command now dispatches it). Modeled on the Tura agent harness (planner/worker/validator, capability-gated tools, completion audit) while preserving the local doctrine: delegation stays a dialed choice (not a role lock), host-agnostic (no model pinning), repo-as-record, L1/L2/L3, artifact gates, the 3-cycle hard verify bound, and GROW.
+
+### Added
+
+- **`validator` agent** (`agents/validator.md` + `references/verification-and-verdict.md`): independent verifier with `verify`/`judge` modes, the fraud table (moved from the old `coder` judge reference), a probe-only edit constraint (every mutation probe reverted before return), and a verdict handoff schema.
+- **Orchestrator completion-audit doctrine** (`agents/orchestrator/references/completion-audit.md`): prompt-to-artifact checklist (never accept proxy signals; treat uncertainty as not-done), autonomy/persistence, and a host-agnostic capability/effort dial (verification depth by complexity, not a pinned model).
+
+### Rewired
+
+- Every cross-reference updated across `AGENTS.md` (§3 squad, §4 loop roles, §11 nav), `registries/modules.json` (core.agents), `README.md` (squad tree + table), all six `commands/` (`cmd-judge` -> validator; the rest -> worker), `skills/harness-engineering` (SKILL + composition-patterns), `scripts/gen-manifests.py` + `resolve-customization.py`, the `eval/s5` scenario, and regenerated `adapters/manifests/**`. `git mv` preserved history for the two moved reference files. All 18 `checks.py` gates pass (G4 validates the 4 agents; G15 manifests match; G17 core is free of host-binding tokens).
 
 ## [3.5.2] - 2026-08-11
 

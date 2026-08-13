@@ -1,7 +1,7 @@
 ---
 description: "Verify phase (PROVE) -- format, lint, type-check, scan, test, and githook gate with a fix/review loop. Use to leave the working tree passing every quality gate."
 argument-hint: "[scope] [--level=<L1|L2|L3>]"
-agent: coder
+agent: worker
 phase: PROVE
 ---
 
@@ -9,7 +9,7 @@ phase: PROVE
 
 Leave the working tree in a state that passes every quality gate, including the repo's githook verify script. This is the automated layer of the **PROVE** phase.
 
-> **Agent:** requires shell + file-edit access -- run on the mutating worker ([coder](../agents/coder.md)), not the conductor.
+> **Agent:** requires shell + file-edit access -- run on the mutating worker ([worker](../agents/worker.md)), not the orchestrator.
 
 **Scope** (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole working tree.
 

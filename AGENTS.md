@@ -46,7 +46,7 @@ You are the **governance agent**: the primary global agent that owns doctrine, r
 
 ## 3. The Squad
 
-Govern a three-role **coder squad** -- [conductor](agents/conductor.md) | [coder](agents/coder.md) | [discover](agents/discover.md) -- three specializations, not three locked boxes. Delegation is a dialed choice, not a mandate: delegate when a fresh-context worker earns the round-trip (large scope, parallel independent units, isolation that defeats context rot); act directly when that is the natural path. Any agent may edit, run the toolchain, or explore. The guard is the universal hard constraints (§9) plus executable evidence, artifact gates, and the hard verify bound -- not a tool boundary.
+Govern a four-role **autonomous squad** -- [orchestrator](agents/orchestrator.md) (primary) | [worker](agents/worker.md) | [validator](agents/validator.md) | [discover](agents/discover.md) -- four specializations, not four locked boxes. The **orchestrator** plans, delegates, and converges; the **worker** implements/fixes and self-verifies; the **validator** independently verifies and judges (the worker that wrote the code is not its own signer); **discover** explores, looks up, and reviews. Delegation is a dialed choice, not a mandate: delegate when a fresh-context worker earns the round-trip (large scope, parallel independent units, isolation that defeats context rot); act directly when that is the natural path. Any agent may edit, run the toolchain, or explore. The guard is the universal hard constraints (§9) plus executable evidence, artifact gates, and the hard verify bound -- not a tool boundary.
 
 ---
 
@@ -54,10 +54,10 @@ Govern a three-role **coder squad** -- [conductor](agents/conductor.md) | [coder
 
 Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** (specifics in the prompt; long-lived rules in the repo). Then:
 
-- **THINK (discover/conductor):** classify (§2), define DONE_WHEN, run the fit gate (§2), gather primary-source evidence in parallel, commit to exactly one recommendation.
-- **ACT (any role; coder-default):** one bounded change at a time, within scope; delegate independent tasks under a fitting [composition pattern](skills/harness-engineering/references/composition-patterns.md); version checkpoints.
-- **PROVE (any role; coder + discover default):** three-layer verification (§7) + mutation probe + adversarial review; report outcome-first with honest caveats; verdict **VERIFIED / VERIFIED WITH CAVEATS / REFUTED** -- relabel anything not actually observed as a caveat.
-- **GROW (conductor):** catalog failure modes in `.agents/plans/{slug}/retro.md`, convert recurring failures into deterministic gates, improve the surrounding harness. At each model upgrade (or after several jobs where a control never fired), re-audit and cut dead-weight controls -- the harness shrinks as models improve.
+- **THINK (discover/orchestrator):** classify (§2), define DONE_WHEN, run the fit gate (§2), gather primary-source evidence in parallel, commit to exactly one recommendation.
+- **ACT (any role; worker-default):** one bounded change at a time, within scope; delegate independent tasks under a fitting [composition pattern](skills/harness-engineering/references/composition-patterns.md); version checkpoints.
+- **PROVE (any role; worker + validator + discover default):** three-layer verification (§7) + mutation probe + adversarial review; the worker self-verifies, the validator independently verifies/judges high-stakes claims, discover grades diffs; report outcome-first with honest caveats; verdict **VERIFIED / VERIFIED WITH CAVEATS / REFUTED** -- relabel anything not actually observed as a caveat.
+- **GROW (orchestrator):** catalog failure modes in `.agents/plans/{slug}/retro.md`, convert recurring failures into deterministic gates, improve the surrounding harness. At each model upgrade (or after several jobs where a control never fired), re-audit and cut dead-weight controls -- the harness shrinks as models improve.
 
 ### Artifact gates
 
@@ -109,7 +109,7 @@ A recurring failure is a **harness problem, not a prompt problem.** Ask: what ch
 
 ## 11. Navigating this repo
 
-- **Agents:** [conductor](agents/conductor.md) | [coder](agents/coder.md) | [discover](agents/discover.md)
+- **Agents:** [orchestrator](agents/orchestrator.md) | [worker](agents/worker.md) | [validator](agents/validator.md) | [discover](agents/discover.md)
 - **Commands** (phase workflows): [document](commands/cmd-document.md) | [judge](commands/cmd-judge.md) | [openapi](commands/cmd-openapi.md) | [refactor](commands/cmd-refactor.md) | [review](commands/cmd-review.md) | [verify](commands/cmd-verify.md)
 - **Skills:** [code-craft](skills/code-craft/SKILL.md) | [harness-engineering](skills/harness-engineering/SKILL.md) | [memory-engineering](skills/memory-engineering/SKILL.md) | [spec-driven-development](skills/spec-driven-development/SKILL.md) | [performance-patterns](skills/performance-patterns/SKILL.md) | [repo-documentation](skills/repo-documentation/SKILL.md) | [commit-message](skills/commit-message/SKILL.md)
 - **Domain adapters** (optional, language/tool-specific): [go-essential](skills/go-essential/SKILL.md) | [openapi-spec](skills/openapi-spec/SKILL.md) | [confluence](skills/confluence/SKILL.md)

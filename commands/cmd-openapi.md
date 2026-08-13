@@ -1,7 +1,7 @@
 ---
 description: "OpenAPI phase (ACT) -- generate or update docs/openapi.yaml (OpenAPI 3.2) from API code or requirements and validate it against the canonical OAS meta-schema. Use to produce, repair, or sync an API contract."
 argument-hint: "[resource|tag|endpoint-group] [--validate-only]"
-agent: coder
+agent: worker
 phase: ACT
 ---
 
@@ -9,7 +9,7 @@ phase: ACT
 
 Produce or repair the project's OpenAPI 3.2 contract at `docs/openapi.yaml` (or the repo's existing spec path) and prove it validates against the canonical meta-schema. The contract must reflect what the server serves -- a spec that drifts from the code, or does not validate, is a bug.
 
-> **Agent:** requires file-edit + shell access (read routes/handlers, run the validator) -- run on the mutating worker ([coder](../agents/coder.md)), not the conductor.
+> **Agent:** requires file-edit + shell access (read routes/handlers, run the validator) -- run on the mutating worker ([worker](../agents/worker.md)), not the orchestrator.
 
 **Target area** (optional): **$ARGUMENTS** -- a resource, tag, or endpoint group (`orders`, `POST /webhooks`, `auth`). If empty, generate or sync the whole API surface.
 
