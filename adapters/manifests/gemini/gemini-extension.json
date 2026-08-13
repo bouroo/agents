@@ -1,7 +1,7 @@
 {
   "name": "coder-agents",
-  "version": "3.5.2",
-  "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a three-role squad (conductor/coder/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
+  "version": "3.6.0",
+  "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a four-role squad (orchestrator/worker/validator/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
   "contextFileName": "AGENTS.md",
   "mcpServers": {}
 }
