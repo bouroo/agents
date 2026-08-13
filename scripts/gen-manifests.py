@@ -35,14 +35,14 @@ REPO_URL = "https://github.com/bouroo/agents"
 
 DESC_PLUGIN = (
     "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, "
-    "a three-role squad (conductor/coder/discover), phase commands, and on-demand "
+    "a four-role squad (orchestrator/worker/validator/discover), phase commands, and on-demand "
     "skills driving the think-act-prove-grow loop. Targets deterministic, "
     "executable-completion workflows over speculative assistance."
 )
 DESC_MARKET = (
     "Language- and host-agnostic coder-agent squad: governance doctrine, harness "
     "engineering, code craft, performance, spec-driven development, and a primary "
-    "conductor orchestrator."
+    "orchestrator."
 )
 
 

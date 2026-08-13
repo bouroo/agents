@@ -1,6 +1,6 @@
 # Judge Protocol -- Fraud Hunt and Output
 
-On-demand detail for the Judge command. The fraud table and its probes are defined in [coder modes-and-judgment](../../../agents/coder/references/modes-and-judgment.md) and are **not re-derived here**. This file holds the judge-specific hunt order, the authority-resolution rule, the UNVERIFIABLE rule, and the verdict output template.
+On-demand detail for the Judge command. The fraud table and its probes are defined in [validator verification-and-verdict](../../../agents/validator/references/verification-and-verdict.md) and are **not re-derived here**. This file holds the judge-specific hunt order, the authority-resolution rule, the UNVERIFIABLE rule, and the verdict output template.
 
 ## Hunt order (highest yield first)
 

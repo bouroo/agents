@@ -1,7 +1,7 @@
 ---
 description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API, glossary) with code changes. Use when a behavior, interface, invariant, or domain-term change must be reflected in project documentation."
 argument-hint: "[system|flow|adr|api|glossary area] [--type=<system|flow|adr|api|glossary>]"
-agent: coder
+agent: worker
 phase: ACT
 ---
 
@@ -9,7 +9,7 @@ phase: ACT
 
 Docs and code must agree; a stale doc is a bug. This command bootstraps a `docs/` tree where none exists and keeps an existing one in sync with code, so documentation stays accurate inside the THINK-ACT-PROVE-GROW loop.
 
-Runs on the mutating worker (the coder), not the orchestrator: it needs file-edit and shell access to read the tree and write Markdown.
+Runs on the mutating worker, not the orchestrator: it needs file-edit and shell access to read the tree and write Markdown.
 
 ## When to use
 
