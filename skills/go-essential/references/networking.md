@@ -19,7 +19,7 @@ srv := &http.Server{
 }
 ```
 
-`ReadHeaderTimeout` is preferred over the broader `ReadTimeout`  --  it bounds the slowloris attack without limiting body upload time for legitimate large requests.
+`ReadHeaderTimeout` is preferred over the broader `ReadTimeout`; it bounds the slowloris attack without limiting body upload time for legitimate large requests.
 
 ### Client
 
@@ -28,7 +28,7 @@ client := &http.Client{
     Timeout: 10 * time.Second, // total: DNS + Dial + TLS + read + write
     Transport: &http.Transport{
         MaxIdleConns:        100,
-        MaxIdleConnsPerHost: 10, // DEFAULT IS 2  --  almost always too low
+        MaxIdleConnsPerHost: 10, // DEFAULT IS 2; almost always too low
         IdleConnTimeout:     90 * time.Second,
     },
 }
@@ -98,7 +98,7 @@ Skip buffering when latency per byte is critical (interactive / real-time protoc
 
 ## 5. Context Propagation
 
-Always pass the inbound `r.Context()` downstream  --  to DB (`QueryContext`, `ExecContext`), to outbound HTTP (`http.NewRequestWithContext`), and to gRPC. When the client disconnects, Go cancels the context and every downstream operation halts cleanly.
+Always pass the inbound `r.Context()` downstream to DB (`QueryContext`, `ExecContext`), to outbound HTTP (`http.NewRequestWithContext`), and to gRPC. When the client disconnects, Go cancels the context and every downstream operation halts cleanly.
 
 ```go
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -108,16 +108,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-For work that must outlive the request (audit log writes, async dispatch), use `context.WithoutCancel(r.Context())` (Go 1.21+)  --  it preserves request-scoped values but strips cancellation.
+For work that must outlive the request (audit log writes, async dispatch), use `context.WithoutCancel(r.Context())` (Go 1.21+); it preserves request-scoped values but strips cancellation.
 
 ## 6. Resilience Patterns
 
 ### Circuit breaker
 Three states protect a failing downstream:
 
-- **Closed**  --  requests flow; failures counted over a sliding window.
-- **Open**  --  calls return immediately with an error; no traffic reaches the target.
-- **Half-Open**  --  limited trial requests; success transitions to Closed, failure re-Opens.
+- **Closed**   requests flow; failures counted over a sliding window.
+- **Open**   calls return immediately with an error; no traffic reaches the target.
+- **Half-Open**   limited trial requests; success transitions to Closed; failure re-Opens.
 
 Without a circuit breaker, a slow dependency piles up client goroutines, exhausts connections, and triggers cascading failure across the system.
 
@@ -129,7 +129,7 @@ Under overload, return well-formed `503 Service Unavailable` with a `Retry-After
 
 ## 7. Connection Lifecycle Observability (`httptrace`)
 
-Use `net/http/httptrace` to capture timing at each phase  --  DNS, connect, TLS, GotConn, read/write. This is how slow-client hangs get diagnosed.
+Use `net/http/httptrace` to capture timing at each phase; DNS, connect, TLS, GotConn, read/write. This is how slow-client hangs get diagnosed.
 
 ```go
 trace := &httptrace.ClientTrace{
@@ -142,7 +142,7 @@ trace := &httptrace.ClientTrace{
 req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
 ```
 
-Integrate `httptrace` spans with OpenTelemetry tracing so per-phase latency is correlated with distributed traces. Watch `GotConnInfo.Reused`  --  a low reuse ratio means the transport pool is misconfigured or bodies are not being drained.
+Integrate `httptrace` spans with OpenTelemetry tracing so per-phase latency is correlated with distributed traces. Watch `GotConnInfo.Reused`; a low reuse ratio means the transport pool is misconfigured or bodies are not being drained.
 
 ## 8. Checklist
 

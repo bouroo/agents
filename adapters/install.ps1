@@ -1,4 +1,4 @@
-# install.ps1 -- Windows installer; mirrors adapters/install.sh.
+# install.ps1: Windows installer; mirrors adapters/install.sh.
 # The host list is read from registries/hosts.json (no hardcoded tool list).
 #
 # Usage:

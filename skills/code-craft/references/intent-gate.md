@@ -39,7 +39,7 @@ X, Y, Z agree that current behavior is wrong -> proceed to fix; emit `TWINS:` fo
 
 ## Triviality gate
 
-A pure typo, a mechanical rename with no behavior change, or a formatter-only edit skips the gate. Note the skip in the report ("pure rename; no behavior change; INTENT gate skipped"). Any edit that could change observable behavior -- return value, exit code, log line, side effect, timing, ordering -- must pass the gate.
+A pure typo, a mechanical rename with no behavior change, or a formatter-only edit skips the gate. Note the skip in the report ("pure rename; no behavior change; INTENT gate skipped"). Any edit that could change observable behavior (return value, exit code, log line, side effect, timing, ordering) must pass the gate.
 
 ## Source
 

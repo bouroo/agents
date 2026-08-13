@@ -3,12 +3,12 @@
 
 WHY THIS EXISTS
 MCP servers connect at Claude Code session startup. A server registered
-mid-session -- or one present only in ~/.claude/settings.json `mcpServers`,
-which this setup does NOT auto-load -- is not hot-loaded into the running
+mid-session or one present only in ~/.claude/settings.json `mcpServers`,
+which this setup does NOT auto-load, is not hot-loaded into the running
 session's toolset, and subagents inherit that stale set. When the user asks for
 "the configured MCP" but its tools are not surfaced, this bridge invokes the
 SAME configured server (uvx mcp-atlassian, user-scope env) over stdio JSON-RPC
-and calls its real tools via tools/call -- identical to what the harness does.
+and calls its real tools via tools/call, identical to what the harness does.
 
 USAGE
     python3 mcp_bridge.py list                          # list tool names
