@@ -1,37 +1,35 @@
-# Access: creds, fix-when-missing, the stdio bridge
+# Access: official remote MCP, fix-when-missing, the stdio fallback bridge
 
 The short doctrine lives in [SKILL.md](../SKILL.md); this file is the concrete plumbing.
 
-## Credentials
+## Primary connection: the official Atlassian remote MCP server
 
-`mcp-atlassian` is configured for your Atlassian site (set `CONFLUENCE_BASE_URL` and `SPACE_KEY` to your instance -- e.g. `<your-domain>.atlassian.net`, space `<your-space-key>`). Creds live in the host's settings (e.g. `~/.claude/settings.json`) → `mcpServers.mcp-atlassian.env`:
+The canonical server is the **official Atlassian remote MCP** (`https://mcp.atlassian.com/v1/mcp/authv2`, HTTP transport, OAuth2.1) -- the Atlassian-hosted build of the open-source `mcp-atlassian` server. It exposes the same `confluence_*` tool surface (and jira_*). Config in the host's `~/.claude/settings.json`:
 
-- `CONFLUENCE_URL` / `CONFLUENCE_USERNAME` / `CONFLUENCE_API_TOKEN`
-- `JIRA_URL` / `JIRA_USERNAME` / `JIRA_API_TOKEN` (same token value as Confluence)
-
-The server command is `uvx mcp-atlassian`. It exposes ~98 tools incl. `confluence_get_page`, `confluence_create_page`, `confluence_update_page`, `confluence_delete_page`, `confluence_get_page_children`, `confluence_search`.
-
-## Fix when `claude mcp list` shows nothing
-
-`~/.claude/settings.json` `mcpServers` is NOT auto-loaded by this Claude Code setup -- `claude mcp list` reported none even though the entry existed. Re-register at **user scope** (the location this version reads):
-
-```bash
-USER=$(python3 -c "import json;d=json.load(open('$HOME/.claude/settings.json'))['mcpServers']['mcp-atlassian']['env'];print(d['CONFLUENCE_USERNAME'])")
-TOK=$(python3 -c "import json;d=json.load(open('$HOME/.claude/settings.json'))['mcpServers']['mcp-atlassian']['env'];print(d['CONFLUENCE_API_TOKEN'])")
-claude mcp add mcp-atlassian -s user \
-  -e "JIRA_URL=https://<your-domain>.atlassian.net" \
-  -e "JIRA_USERNAME=$USER" -e "JIRA_API_TOKEN=$TOK" \
-  -e "CONFLUENCE_URL=https://<your-domain>.atlassian.net/wiki" \
-  -e "CONFLUENCE_USERNAME=$USER" -e "CONFLUENCE_API_TOKEN=$TOK" \
-  -- uvx mcp-atlassian
-claude mcp list   # → mcp-atlassian: uvx mcp-atlassian - ✔ Connected
+```json
+{ "mcpServers": { "atlassian": { "url": "https://mcp.atlassian.com/v1/mcp/authv2" } } }
 ```
 
-**Gotcha:** even after `✔ Connected`, the tools surface only in sessions started *after* registration. A session already running (and its subagents) keeps the stale toolset.
+Authentication is OAuth2.1; a one-time browser login is triggered the first time the server is used in a session. An API token is also accepted as an optional credential (same Atlassian account), but the remote server carries no token in the config file.
 
-## The stdio bridge (when tools are not surfaced mid-session)
+Register at user scope if not already:
 
-MCP tools connect at session startup; a server added mid-session is not hot-loaded. When the user insists on "the configured MCP" but its tools are not surfaced, drive the **same server** over stdio JSON-RPC. The bundled `../mcp_bridge.py` does this -- it is the same server/tools/auth, transport-bridged:
+```bash
+claude mcp add --transport http atlassian https://mcp.atlassian.com/v1/mcp/authv2
+claude mcp list   # → atlassian: https://mcp.atlassian.com/v1/mcp/authv2 - ✔ Connected
+```
+
+**Gotcha (load-bearing):** MCP servers connect at session startup. The `atlassian` server is not hot-loaded mid-session, and OAuth completes after the session has begun -- so `confluence_*` tools surface only in sessions **started after** the server connects (and OAuth has succeeded at least once). A session already running -- and its subagents -- keep the stale toolset. Fix: complete OAuth in a browser once, then **restart the host/session**.
+
+## When `confluence_*` tools are not surfaced
+
+1. Confirm registration: `claude mcp list` should show `atlassian … ✔ Connected`.
+2. Confirm OAuth completed: the first call after registration opens a browser to `id.atlassian.com`; approve. Subsequent calls reuse the cached token.
+3. **Restart the session** so the registered-and-connected server is loaded at startup. Tools then surface as `mcp__atlassian__confluence_*` (exact prefix depends on the host's tool-naming convention -- confirm with `claude mcp` or by listing tools).
+
+## Fallback: the stdio bridge (when OAuth is unavailable or tools still won't surface)
+
+When OAuth is unavailable (headless/CI, or a stubborn mid-session stalemate), drive the **same `mcp-atlassian` server** over stdio JSON-RPC via the bundled `../mcp_bridge.py`. It is the same server/tools/auth, transport-bridged -- not a workaround:
 
 ```bash
 cd <skill dir>
@@ -41,7 +39,7 @@ python3 mcp_bridge.py call confluence_get_page '{"page_id":"123456789","convert_
 python3 mcp_bridge.py call confluence_update_page '{"page_id":"…","content_format":"storage","content_file":"/tmp/page.xml","version_comment":"…"}'
 ```
 
-The bridge reads creds from `~/.claude/settings.json` (or `CONF_USER`/`CONF_TOK` env vars), so it works with no edits.
+The bridge reads creds from `~/.claude/settings.json` → `mcpServers.mcp-atlassian.env` (the older stdio+token entry, if present), or from `CONF_USER` / `CONF_TOK` env vars. With only the remote `mcpServers.atlassian` (HTTP, no token) configured, pass `CONF_USER` and `CONF_TOK` (an Atlassian API token for the same account) explicitly when invoking the bridge.
 
 ## Tool schemas / gotchas
 
@@ -52,7 +50,9 @@ The bridge reads creds from `~/.claude/settings.json` (or `CONF_USER`/`CONF_TOK`
 
 ## Shortlink resolution
 
-`/x/<id>` tinylinks need auth (WebFetch cannot reach them). Resolve to a page id:
+`/x/<id>` tinylinks need auth (WebFetch cannot reach them). Resolve to a page id.
+
+**Under the stdio bridge** (has a user:token pair), the REST lookup and redirect-follow both work:
 
 ```bash
 # direct REST lookup (needs user:token)
@@ -62,6 +62,8 @@ curl -s -u "$USER:$TOK" -L -o /dev/null -w "%{url_effective}" "https://<your-dom
 ```
 
 The redirect chain is `…/x/<id>` → `…/pages/tinyurl.action?urlIdentifier=<id>` → `…/spaces/<KEY>/pages/<pageId>/…`.
+
+**Under the remote MCP (OAuth)** there is no basic-auth token for `curl -u`. Resolve instead by: following the `/x/<id>` redirect in an **authenticated browser session** and reading the `…/pages/<pageId>/…` URL; or by `confluence_search` if the page title is known; or by fetching the likely parent and using `confluence_get_page_children`. If a token is needed, fall back to the stdio bridge for this one resolution step.
 
 ## Can't-delete fallback: repurpose
 

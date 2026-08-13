@@ -14,7 +14,7 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 ## Why use it
 
 - **Agnostic core.** `AGENTS.md`, `agents/`, `command/`, and `skills/` contain no host-binding tokens and no language-bias doctrine. The `G17_agnostic_core` gate enforces it.
-- **One squad, many tools.** A three-role coder squad (conductor / coder / discover) drives the THINK-ACT-PROVE-GROW loop; link it everywhere via one data-driven installer.
+- **One squad, many tools.** A four-role autonomous squad (orchestrator / worker / validator / discover) drives the THINK-ACT-PROVE-GROW loop; link it everywhere via one data-driven installer.
 - **bmad-method structure.** Agents are persona artifacts; commands are reusable workflows; skills are modular capabilities; everything is declarative Markdown + frontmatter.
 - **Hosts are data, not code.** Adding a tool is one entry in `registries/hosts.json` -- never a code change to the core.
 - **Self-improving.** Every recurring failure becomes a deterministic gate (GROW); learnings persist on disk, not in the chat.
@@ -83,9 +83,10 @@ Then restart your coding tool so it picks up the new config.
 │   ├── modules.json         # Module registry (core squad + optional domain adapters)
 │   └── hosts.json           # Host-adapter registry (abstract contract + adapter instances)
 ├── agents/                  # Squad agent definitions -- flat <name>.md (native discovery)
-│   ├── conductor.md         # primary orchestrator (read-only on source)
-│   ├── coder.md             # subagent, mutating (implement/fix/verify/judge)
-│   ├── discover.md          # subagent, read-only (explore/lookup/review)
+│   ├── orchestrator.md      # primary orchestrator (plans, delegates, converges)
+│   ├── worker.md            # subagent, mutating (implement/fix/verify)
+│   ├── validator.md         # subagent, independent verifier (verify/judge)
+│   ├── discover.md          # subagent, read-only scout (explore/lookup/review)
 │   └── <name>/references/   # progressive-disclosure depth per agent
 ├── commands/                # Standardized reusable workflows -- flat <name>.md
 │   ├── cmd-document.md      # ACT/GROW -- bootstrap/sync a docs tree
@@ -130,15 +131,16 @@ Then restart your coding tool so it picks up the new config.
 
 ### The squad
 
-The governance `AGENTS.md` routes to a three-role **coder squad**:
+The governance `AGENTS.md` routes to a four-role **autonomous squad**:
 
 | Agent | Mode | Role |
 |---|---|---|
-| [conductor](agents/conductor.md) | primary | Orchestrator. Decomposes work into a unit graph, delegates complete packets, audits evidence, converges, and self-improves the harness. Read-only on source. |
-| [coder](agents/coder.md) | subagent | Mutating worker. Modes: implement / fix / verify / judge. Edits within SCOPE, runs the toolchain, captures executable evidence, adversarially judges claims. |
-| [discover](agents/discover.md) | subagent | Read-only worker. Modes: explore / lookup / review. Never mutates source, never runs the toolchain. |
+| [orchestrator](agents/orchestrator.md) | primary | Autonomous orchestrator. Decomposes work into a unit graph, delegates complete packets, runs the completion audit, converges, and self-improves the harness. |
+| [worker](agents/worker.md) | subagent | Mutating worker. Modes: implement / fix / verify. Edits within SCOPE, runs the toolchain, captures executable evidence, self-verifies. |
+| [validator](agents/validator.md) | subagent | Independent verifier. Modes: verify / judge. Re-runs the worker's evidence, runs mutation probes, hunts frauds, issues one verdict. Did not write the code; never delivers the fix. |
+| [discover](agents/discover.md) | subagent | Read-only scout. Modes: explore / lookup / review. Never mutates source, never runs the toolchain for verification. |
 
-The load-bearing safety split is **mutating vs read-only**: only `coder` touches source. Each agent file carries a cross-host frontmatter superset -- `name`, `description`, `mode`, plus `tools` (name-gated hosts) and `permission` (capability-gated hosts) -- so the read-only/mutating boundary is enforced on every host.
+The load-bearing separation is **author vs verifier**: the `worker` writes the code; the `validator` independently signs off (the worker never self-judges a high-stakes claim); `discover` stays read-only. Each agent file carries a cross-host frontmatter superset -- `name`, `description`, `mode`, `color`, and `permission` (capability-gated hosts; OpenCode/KiloCode), with the orchestrator's `task` rules gating which subagents it may delegate to -- so the boundary is enforced on every host.
 
 ### Commands
 
