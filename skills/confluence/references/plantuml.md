@@ -104,6 +104,42 @@ ok = svg.count("<text") > 0 and not any(m in svg for m in ["DescriptionError","e
 A missing/trivial SVG, or `viewBox` ~`0 0 0 0`, or an error-marker string, means the
 diagram is broken -- fix before pushing. A real SVG with your labels present is proof.
 
+## Embedding in a page: HTML+ macro form (works with the remote MCP)
+
+The `plantumlcloud` macro is an **extension** node, NOT old `<ac:structured-macro>` storage XML. With the remote MCP (`content_format: "html"`), author it as a `<div data-type="extension">` whose `data-parameters` carries the compressed source. This form round-trips through the remote MCP verified (the server assigns a `macroId` + the plugin placeholder icon on save, and the `data` param survives byte-for-byte):
+
+```html
+<div data-type="extension"
+     data-extension-key="plantumlcloud"
+     data-extension-type="com.atlassian.confluence.macro.core"
+     data-layout="default"
+     data-parameters="{&quot;macroParams&quot;:{&quot;data&quot;:{&quot;value&quot;:&quot;<COMPRESSED>&quot;},&quot;compressed&quot;:{&quot;value&quot;:&quot;true&quot;}},&quot;macroMetadata&quot;:{&quot;schemaVersion&quot;:{&quot;value&quot;:&quot;1&quot;},&quot;title&quot;:&quot;PlantUML Diagrams for Confluence&quot;}}"></div>
+```
+
+- `<COMPRESSED>` = `compress_plantuml(source)` (the algorithm above). The whole `data-parameters` value is a JSON string with `"` escaped as `&quot;` (the page stores it that way).
+- Do NOT omit `compressed: true` or the plugin tries to treat `data` as raw text.
+- The reliable publish path (because the remote gateway 502s on large writes): create the page with a minimal body, then `updateConfluencePage` with the full body containing the macro. See SKILL.md §5a.
+- The old skill warned macros need storage XML -- that was the `<ac:structured-macro>` form. The `data-type="extension"` HTML+ form above is what the remote MCP / Cloud editor uses and accepts. Confirmed on an instance whose plugin placeholder icon is `https://puml4cc.stratus-addons.com/images/plant-uml-atlas.png`.
+
+### Always pair the macro with a raw-source expand (team convention)
+
+The sibling pages do NOT ship a bare `plantumlcloud` macro. They follow it **immediately** with a `<details>` (expand) containing the raw `@startuml…@enduml` source, so the diagram stays editable/auditable even though the macro's `data` is compressed and unreadable. Replicate this for every diagram:
+
+```html
+<!-- 1) rendered macro (above), then: -->
+<details data-breakout="wide" data-breakout-width="1800">
+  <summary>code of &lt;feature&gt; sequence diagram</summary>
+  <pre><code class="language-abap">@startuml
+...the exact source fed to compress_plantuml()...
+@enduml</code></pre>
+</details>
+```
+
+- The raw source in the expand MUST be the **same** source bytes you compressed into the macro's `data` (so they can't drift). HTML-escape it (`&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`) inside the `<code>`; keep the literal `\n` two-char escapes in messages (the `\n` trap above).
+- `language-abap` is the (quirky) lexer the sibling pages use for PlantUML source; match it for consistency, or use `language-plantuml` if available.
+- The `data-breakout="wide"` makes the expand span the full content width like the diagram above it.
+- Publish the macro + expand together in one `updateConfluencePage` (the expand is plain HTML+, no compression, so it adds little to payload size).
+
 ## The `\n` syntax trap (the regression)
 
 A sequence-diagram message that spans a **real newline** is a syntax error (`Error line N`). This happens when a converter helpfully turns a literal `\n` (backslash-n) inside a message into a real newline:

@@ -1,7 +1,7 @@
 ---
 description: "Refactor phase (ACT loop): analyze, plan, baseline, execute, verify, and sync a behavior-preserving restructuring with before/after measurement. Use when restructuring existing code for clarity, safety, or performance without changing its observable behavior."
 argument-hint: "<module|package|path|file> [--goal=<readability|safety|performance>]"
-agent: coder
+agent: worker
 phase: ACT
 ---
 
@@ -9,7 +9,7 @@ phase: ACT
 
 A behavior-preserving restructuring workflow inside the ACT phase. Measure before and after; keep only what the data supports; apply performance work only after correctness is proven.
 
-> Runs on the **coder** (implementing) agent -- the one with file-edit and shell access -- not the conductor (orchestrator) or discover agent.
+> Runs on the **worker** (implementing) agent -- the one with file-edit and shell access -- not the orchestrator or discover agent.
 
 ## When to use
 

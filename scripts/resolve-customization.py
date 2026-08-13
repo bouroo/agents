@@ -22,7 +22,7 @@ caller (the agent) resolves the block itself per the rules above.
 
 Usage:
     python3 scripts/resolve-customization.py --skill <relative-dir> --key <table>
-    python3 scripts/resolve-customization.py --skill agents/conductor --key agent
+    python3 scripts/resolve-customization.py --skill agents/orchestrator --key agent
 
 Exit codes:
     0   resolved block printed as JSON on stdout
@@ -106,7 +106,7 @@ def _load(path: Path, ctx: dict) -> dict:
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Three-tier customization resolver.")
-    ap.add_argument("--skill", required=True, help="artifact dir relative to repo root (e.g. agents/conductor)")
+    ap.add_argument("--skill", required=True, help="artifact dir relative to repo root (e.g. agents/orchestrator)")
     ap.add_argument("--key", required=True, help="top-level table to resolve (e.g. agent, workflow)")
     ap.add_argument("--root", default=None, help="repo root (default: git toplevel)")
     args = ap.parse_args(argv)
