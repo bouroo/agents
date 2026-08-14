@@ -1,6 +1,6 @@
 # Verification, Mutation Probe, and Verdict
 
-Depth for the validator. The [SKILL.md](../../agents/validator.md) owns the contract; this owns the detail. For deeper adversarial audits, align with the [judge protocol](../../commands/cmd-judge/references/judge-protocol.md).
+Depth for the validator. The [SKILL.md](../../../agents/validator.md) owns the contract; this owns the detail. For deeper adversarial audits, align with the [judge protocol](../../workflows/cmd-judge/judge-protocol.md).
 
 ## verify (PROVE)
 

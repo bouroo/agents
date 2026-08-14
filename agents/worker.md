@@ -3,9 +3,9 @@ name: worker
 description: "Mutating implementer. Use for implement, narrowly-scoped fix, and self-verify within SCOPE. Repro before fix; one bug per fix; capture command + exit + output as evidence. Does not judge its own high-stakes done (route that to validator)."
 mode: subagent
 color: "#3B82F6"
-# Claude Code tool allowlist (omits the delegation tool so a worker cannot
-# spawn subagents). Capability-gating hosts use the `permission` block below.
-tools: Read, Edit, Write, Glob, Grep, Bash, WebFetch, WebSearch, TodoWrite
+# Deny the delegation tool so a leaf worker cannot spawn subagents.
+# Capability-gating hosts read `permission.task` below.
+disallowedTools: Agent
 # Capability gating: mutating, but a leaf worker (no spawn).
 # Built-in tools first: Read/Grep/Glob/Edit/Write over bash (AGENTS.md S2).
 permission:
@@ -14,7 +14,6 @@ permission:
   glob: allow
   grep: allow
   bash: allow
-  list: allow
   todowrite: allow
   webfetch: allow
   websearch: allow

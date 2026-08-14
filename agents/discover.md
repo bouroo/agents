@@ -3,10 +3,9 @@ name: discover
 description: "Explorer, scout, and reviewer. Use for exploring unfamiliar code, version-sensitive external lookup, and fixed-rubric diff review. Defaults to read-only scouting; can act directly when natural. Separate evidence, inference, and unknowns; cite primary sources."
 mode: subagent
 color: "#10B981"
-# Claude Code tool allowlist. No mutating/toolchain lock, but still a leaf
-# worker (cannot spawn subagents). Built-in tools first: Read/Grep/Glob for
-# scouting, bash for commands only (AGENTS.md S2).
-tools: Read, Edit, Glob, Grep, Bash, WebFetch, WebSearch, TodoWrite
+# Deny the delegation tool: a leaf scout never spawns subagents.
+# Capability-gating hosts read `permission.task` below.
+disallowedTools: Agent
 # Capability gating: read-first; may edit when acting directly.
 permission:
   read: allow
@@ -14,7 +13,6 @@ permission:
   glob: allow
   grep: allow
   bash: allow
-  list: allow
   todowrite: allow
   webfetch: allow
   websearch: allow

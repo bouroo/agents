@@ -13,7 +13,6 @@ permission:
   glob: allow
   grep: allow
   bash: allow
-  list: allow
   todowrite: allow
   webfetch: allow
   websearch: allow
@@ -82,6 +81,6 @@ If a unit fails verification 3 times on the same issue, STOP. Hand back with the
 
 ## Depth docs
 
-- `references/orchestrator/plan-and-convergence.md` failure classes, convergence gates, state schema.
-- `references/orchestrator/completion-audit.md` completion audit, autonomy, capability/effort dial.
+- `references/agents/orchestrator/plan-and-convergence.md` failure classes, convergence gates, state schema.
+- `references/agents/orchestrator/completion-audit.md` completion audit, autonomy, capability/effort dial.
 - `skills/code-craft` artifact gates (INTENT/TWINS/AUTH/PENDING); `skills/harness-engineering` L1/L2/L3, mutation testing, failure-mode control.
