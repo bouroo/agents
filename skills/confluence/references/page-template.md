@@ -149,10 +149,10 @@ recoverable and copy-editable on the page. `build_page` emits this pair; when
 authoring by hand, decode the macro's `data` param and emit the same source in the
 expand. Remote-MCP (`html`) form: `<details><summary>Raw sequence diagram source</summary><pre><code class="language-none">SOURCE</code></pre></details>` (HTML-escape the source; arrows `->`/`-->` contain `>`).
 
-## Instance variant: tenant / ClientInstance "BFF API Specification" pages
+## Instance variant: tenant "BFF API Specification" pages
 
-Verified by publishing 2026-08-14 (pages `/x/SHORTLINK-A`, `/x/SHORTLINK-B`, siblings
-under page 0000000000). The sibling pages in this space follow a **different but
+Verified by publishing 2026-08-14 on a tenant instance (two shortlink pages
+and siblings under a parent page). The sibling pages in this space follow a **different but
 self-consistent layout**; when extending a family of endpoint pages there, match
 the siblings, not the canonical order above:
 
