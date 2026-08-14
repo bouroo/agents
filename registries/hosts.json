@@ -10,7 +10,7 @@
     { "code": "antigravity",    "config_dir": "$HOME/.gemini",            "config_file": "GEMINI.md", "surfaces": { "skills": true, "commands": true, "agents": false, "agents_path": null } },
     { "code": "antigravity-ide","config_dir": "$HOME/.gemini",            "config_file": "GEMINI.md", "surfaces": { "skills": true, "commands": true, "agents": false, "agents_path": null } },
     { "code": "codex",          "config_dir": "$HOME/.codex",             "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": false, "agents_path": null } },
-    { "code": "claude",         "config_dir": "$HOME/.claude",            "config_file": "CLAUDE.md", "surfaces": { "skills": true, "commands": true, "agents": false, "agents_path": null } },
+    { "code": "claude",         "config_dir": "$HOME/.claude",            "config_file": "CLAUDE.md", "surfaces": { "skills": true, "commands": true, "agents": true,  "agents_path": "agents" } },
     { "code": "qwen",           "config_dir": "$HOME/.qwen",              "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": false, "agents_path": null } },
     { "code": "opencode",       "config_dir": "$HOME/.config/opencode",   "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": true,  "agents_path": "agents" } },
     { "code": "kilo",           "config_dir": "$HOME/.config/kilo",       "config_file": "AGENTS.md", "surfaces": { "skills": true, "commands": true, "agents": true,  "agents_path": "agent" } },

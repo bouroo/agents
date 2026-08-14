@@ -35,7 +35,12 @@ REGISTRIES = ROOT / "registries"
 MANIFEST_DIR = ROOT / "adapters" / "manifests"
 
 ALLOWED_MODES = {"primary", "subagent"}
-ALLOWED_AGENT_PERM_KEYS = {"read", "glob", "grep", "edit", "bash", "task", "web", "external_directory", "color", "steps", "team", "icon"}
+# Permission keys valid across hosts that gate by capability (OpenCode, Kilo).
+# Sources: OpenCode /docs/permissions (read/edit/glob/grep/bash/task/skill/lsp/
+# question/webfetch/websearch/external_directory/doom_loop) and Kilo custom-modes
+# doc (read/edit/bash/glob/grep/task/webfetch/websearch/todowrite/todoread).
+# `list` is NOT a valid key on either host and must not be used.
+ALLOWED_AGENT_PERM_KEYS = {"read", "edit", "glob", "grep", "bash", "task", "skill", "lsp", "question", "webfetch", "websearch", "external_directory", "todowrite", "todoread", "web", "color", "steps", "team", "icon"}
 ALLOWED_COMMAND_KEYS = {"name", "description", "phase", "invocable_as", "agent", "model", "argument-hint"}
 ALLOWED_PHASES = {"THINK", "ACT", "PROVE", "GROW", "ANYTIME"}
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -51,7 +56,7 @@ HOST_TOKEN_RE = re.compile(
     re.IGNORECASE,
 )
 # Core files scanned for host tokens. registries/, adapters/, eval/, scripts/,
-# README, CHANGELOG are excluded -- they are the data/distribution/docs layer.
+# README, CHANGELOG are excluded; they are the data/distribution/docs layer.
 CORE_HOST_SCAN_GLOBS = ["AGENTS.md", "agents/*.md", "commands/*.md", "skills/*/SKILL.md", "skills/*/references/*.md"]
 # Domain adapters may name their host/tool legitimately (Go, Confluence/Atlassian,
 # OpenAPI tooling). They are excluded from the core-agnosticism scan.
@@ -220,7 +225,7 @@ def G3_skills_frontmatter() -> None:
 
 def G4_agents_frontmatter() -> None:
     name = "G4_agents_frontmatter"
-    # flat agents/<name>.md (native discovery); exclude nested references/*.md
+    # flat agents/<name>.md (native discovery); depth docs live in references/
     agents = sorted(p for p in AGENTS_DIR.glob("*.md"))
     if not agents:
         _add("WARN", f"{name}: no agents found")
@@ -252,6 +257,27 @@ def G4_agents_frontmatter() -> None:
         if mode not in ALLOWED_MODES:
             _add("FAIL", f"{name}: {rel}: invalid mode {mode!r}; allowed {sorted(ALLOWED_MODES)}")
             ok = False
+        # Validate permission keys against the cross-host vocabulary. Keys are
+        # children of `permission:` at indent 2; deeper nesting (task glob
+        # rules) is skipped. Parsed by indentation, not yaml, so no PyYAML dep.
+        text = md.read_text()
+        fm_end = text.find("\n---", 3)
+        if fm_end != -1:
+            in_perm = False
+            for fline in text[3:fm_end].splitlines():
+                fstripped = fline.lstrip()
+                if not fstripped or fstripped.startswith("#"):
+                    continue
+                findent = len(fline) - len(fstripped)
+                if findent == 0:
+                    in_perm = fstripped.startswith("permission:")
+                    continue
+                if in_perm and findent == 2:
+                    pkey = fstripped.split(":")[0].strip().strip('"').strip("'")
+                    if pkey not in ALLOWED_AGENT_PERM_KEYS:
+                        _add("FAIL", f"{name}: {rel}: invalid permission key {pkey!r}; "
+                            f"allowed {sorted(ALLOWED_AGENT_PERM_KEYS)}")
+                        ok = False
     if ok:
         _add("PASS", f"{name}: {len(agents)} agent(s) frontmatter valid")
 
@@ -731,7 +757,7 @@ def G18_portable_command_inputs() -> None:
     if bad_tok:
         msgs.append("indexed $ARGUMENTS[N] at " + "; ".join(f"{r}:{i}" for r, i in bad_tok[:10]))
     if msgs:
-        _add("FAIL", f"{name}: " + "; ".join(msgs) + " -- use portable $ARGUMENTS (see skills/harness-engineering/references/agent-computer-interface.md)")
+        _add("FAIL", f"{name}: " + "; ".join(msgs) + ". Use portable $ARGUMENTS (see skills/harness-engineering/references/agent-computer-interface.md)")
         return
     _add("PASS", f"{name}: {len(files)} invokable file(s) use the portable $ARGUMENTS channel")
 
@@ -778,7 +804,7 @@ def main(argv: list[str]) -> int:
         _msgs.clear()
         try:
             fn()
-        except Exception as e:  # noqa: BLE001 -- top-level containment: a crashing gate reports FAIL, not a traceback
+        except Exception as e:  # noqa: BLE001; top-level containment: a crashing gate reports FAIL, not a traceback
             _add("FAIL", f"{name}: gate crashed: {e}")
         for level, msg in _msgs:
             tag = {"PASS": "[PASS]", "FAIL": "[FAIL]", "WARN": "[WARN]"}[level]

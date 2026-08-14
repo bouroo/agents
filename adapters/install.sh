@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install.sh  --  install this repo into supported AI tools.
+# install.sh: install this repo into supported AI tools.
 #
 # The host list is NOT hardcoded here. It is read from registries/hosts.json
 # (the host-adapter registry) via python3, which this repo already requires.
@@ -11,12 +11,13 @@
 #   skills/     -> skills/        (when surfaces.skills)
 #   commands/   -> commands/      (when surfaces.commands)
 #   agents/     -> agents_path    (when surfaces.agents; e.g. agents/ or agent/)
+#   references/ -> references/    (when surfaces.agents or surfaces.commands; depth docs)
 #
 # agents/ and commands/ ship in each host's NATIVE format: flat <name>.md files
-# (opencode/kilo discover agents/<name>.md and commands/<name>.md). claude is
-# excluded from the agents surface: its subagent frontmatter (name/description/
-# tools/model) differs from the opencode-native format in agents/, so symlinking
-# would conflict. claude still gets skills/ and commands/.
+# (opencode/kilo discover agents/<name>.md and commands/<name>.md; claude
+# discovers ~/.claude/agents/<name>.md). The agent frontmatter is a superset
+# (name/description/mode/color/permission/disallowedTools) that each host reads
+# only its own keys from; extra keys are ignored, so one file serves all three.
 # skills/ ship nested skills/<name>/SKILL.md (the Agent Skills standard).
 #
 # Modes:
@@ -43,8 +44,11 @@ if [[ ! -f "$HOSTS_REG" ]]; then
   exit 1
 fi
 
-# Emit adapter rows: code|config_dir|config_file|skills|commands|agents|agents_path
+# Emit adapter rows: code|config_dir|config_file|skills|commands|agents|ref|agents_path
 # $HOME stays literal here; expanded per-row below without eval.
+# `ref` is the progressive-disclosure gate: references/ now holds depth docs for
+# both the agents/ surface (references/agents/) and the commands/ surface
+# (references/workflows/), so link it when the host consumes either surface.
 read_registry() {
   python3 -c '
 import json, sys
@@ -52,13 +56,16 @@ d = json.load(open(sys.argv[1], encoding="utf-8"))
 for a in d.get("adapters", []):
     s = a.get("surfaces", {})
     ap = s.get("agents_path") or ""
+    ag = bool(s.get("agents"))
+    cmd = bool(s.get("commands"))
     print("|".join([
         a.get("code", ""),
         a.get("config_dir", ""),
         a.get("config_file", ""),
         "1" if s.get("skills") else "0",
-        "1" if s.get("commands") else "0",
-        "1" if s.get("agents") else "0",
+        "1" if cmd else "0",
+        "1" if ag else "0",
+        "1" if (ag or cmd) else "0",
         ap,
     ]))
 ' "$HOSTS_REG"
@@ -139,16 +146,17 @@ status_artifact() {
 
 if [[ "$MODE" == "list" ]]; then
   log "Adapters from registries/hosts.json:"
-  while IFS='|' read -r code config_dir config_file sk cmd ag ap; do
-    printf '  %-16s %s  (%s)%s\n' "$code" "$config_dir" "$config_file" \
-      "$([[ "$ag" == "1" ]] && printf ' agents->%s' "$ap")"
+  while IFS='|' read -r code config_dir config_file sk cmd ag rf ap; do
+    printf '  %-16s %s  (%s)%s%s\n' "$code" "$config_dir" "$config_file" \
+      "$([[ "$ag" == "1" ]] && printf ' agents->%s' "$ap")" \
+      "$([[ "$rf" == "1" ]] && printf ' refs' )"
   done < <(read_registry)
   exit 0
 fi
 
 log "mode=$MODE dry-run=$DRY_RUN force=$FORCE${FILTER:+ filter=$FILTER}"
 
-while IFS='|' read -r code config_dir config_file sk cmd ag ap; do
+while IFS='|' read -r code config_dir config_file sk cmd ag rf ap; do
   [[ -n "$code" ]] || continue
   if [[ -n "$FILTER" && "$code" != "$FILTER" ]]; then continue; fi
   dir="$(expand_home "$config_dir")"
@@ -159,27 +167,24 @@ while IFS='|' read -r code config_dir config_file sk cmd ag ap; do
       [[ "$sk" == "1" ]] && link_artifact "$REPO_DIR/skills" "$dir/skills" "skills"
       [[ "$cmd" == "1" ]] && link_artifact "$REPO_DIR/commands" "$dir/commands" "commands"
       [[ "$ag" == "1" && -n "$ap" ]] && link_artifact "$REPO_DIR/agents" "$dir/$ap" "agents"
-      # Migrate installs made before claude dropped the agents surface: a
-      # pre-3.4.2 `install claude` left ~/.claude/agents symlinked to this
-      # repo's opencode-native agents/, which conflicts with claude's own
-      # subagent frontmatter. Remove that stale symlink now; never touch a
-      # real dir the user owns -- only a symlink we created.
-      [[ "$code" == "claude" && -L "$dir/agents" ]] && unlink_artifact "$dir/agents" "agents-legacy"
+      # Progressive-disclosure depth docs (references/) sit alongside
+      # agents/ and commands/; link them when the host consumes either
+      # surface, so cross-refs from agent and command contracts resolve.
+      [[ "$rf" == "1" ]] && link_artifact "$REPO_DIR/references" "$dir/references" "references"
       ;;
     uninstall)
       unlink_artifact "$dir/$config_file" "doctrine"
       [[ "$sk" == "1" ]] && unlink_artifact "$dir/skills" "skills"
       [[ "$cmd" == "1" ]] && unlink_artifact "$dir/commands" "commands"
       [[ "$ag" == "1" && -n "$ap" ]] && unlink_artifact "$dir/$ap" "agents"
-      # Same legacy cleanup on uninstall: the flag is off now, so the normal
-      # path above skips ~/.claude/agents, but a stale symlink may remain.
-      [[ "$code" == "claude" && -L "$dir/agents" ]] && unlink_artifact "$dir/agents" "agents-legacy"
+      [[ "$rf" == "1" ]] && unlink_artifact "$dir/references" "references"
       ;;
     status)
       status_artifact "$REPO_DIR/$DOCTRINE" "$dir/$config_file" "doctrine"
       [[ "$sk" == "1" ]] && status_artifact "$REPO_DIR/skills" "$dir/skills" "skills"
       [[ "$cmd" == "1" ]] && status_artifact "$REPO_DIR/commands" "$dir/commands" "commands"
       [[ "$ag" == "1" && -n "$ap" ]] && status_artifact "$REPO_DIR/agents" "$dir/$ap" "agents"
+      [[ "$rf" == "1" ]] && status_artifact "$REPO_DIR/references" "$dir/references" "references"
       ;;
   esac
 done < <(read_registry)

@@ -1,8 +1,8 @@
-# Memory Layers -- Type x Scope Map
+# Memory Layers Type x Scope Map
 
 > Load on demand. The short pointer lives in [memory-engineering](../SKILL.md); this file is the full grid.
 
-Two axes decide where a fact lives and whether it is committed. State both before you write a fact -- a fact without a type and a scope has no home.
+Two axes decide where a fact lives and whether it is committed. State both before you write a fact. A fact without a type and a scope has no home.
 
 ## The Type Axis
 
@@ -27,10 +27,10 @@ Whether it is a human directive (instruction, stable) or an agent correction (le
 | "the API gateway is at `:8080`" | semantic | project | learning | `.agents/memory/` |
 | "user prefers tabs" | semantic | user | learning | user memory |
 | a debugging root cause from last task | episodic | project | learning | `.agents/memory/` then forget when stale |
-| "never push to main" (a governing rule) | semantic | project | **instruction** | `AGENTS.md` -- never learning memory |
+| "never push to main" (a governing rule) | semantic | project | **instruction** | `AGENTS.md`. Never learning memory |
 | how to run the verify gate | procedural | project | instruction | `commands/cmd-verify.md` |
 
-If a fact could go in two places, prefer the more specific scope and the non-instruction axis -- learning memory is auditable and forgettable; instruction memory is not.
+If a fact could go in two places, prefer the more specific scope and the non-instruction axis. Learning memory is auditable and forgettable; instruction memory is not.
 
 ## retro.md vs. memory/
 
@@ -38,5 +38,5 @@ If a fact could go in two places, prefer the more specific scope and the non-ins
 
 ## Cross-References
 
-- [memory-engineering](../SKILL.md) -- instruction vs. learning, the workflow, fallback layout, hygiene.
-- [harness-engineering](../../harness-engineering/SKILL.md) -- state-on-disk, compaction resilience.
+- [memory-engineering](../SKILL.md) instruction vs. learning, the workflow, fallback layout, hygiene.
+- [harness-engineering](../../harness-engineering/SKILL.md) state-on-disk, compaction resilience.

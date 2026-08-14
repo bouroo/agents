@@ -1,6 +1,6 @@
-# Coder Modes, Mutation Probe, and Judgment
+# Worker Modes and Verification
 
-Depth for the coder. The [SKILL.md](../../coder.md) owns the contract; this owns the detail.
+Depth for the worker. The [SKILL.md](../../../agents/worker.md) owns the contract; this owns the detail.
 
 ## implement (ACT)
 
@@ -8,7 +8,7 @@ Depth for the coder. The [SKILL.md](../../coder.md) owns the contract; this owns
 2. Make the smallest change that satisfies the spec.
 3. Run `done_cmd`; capture command + exit code + output.
 4. Emit `INTENT: <user-visible behavior change>` on the first behavior-changing edit.
-5. Return the handoff. If `done_cmd` is red, return `failed` with the repro -- do not explain it away.
+5. Return the handoff. If `done_cmd` is red, return `failed` with the repro do not explain it away.
 
 ## fix (ACT)
 
@@ -28,30 +28,9 @@ Dial the layers to job complexity ([right-sizing](../../../skills/harness-engine
 
 For every layer run: capture command + exit code + actual output. A narrated pass is not evidence. If a layer is red, return `failed` with the repro. If read-only review conflicts with a red test, the red test wins.
 
-**Mutation probe:** make a targeted change that should break `done_cmd` (flip a condition, delete a guard). If `done_cmd` still passes, the test is theater -- the verification is invalid until the test catches the mutation. Revert the probe before returning.
+**Mutation probe:** make a targeted change that should break `done_cmd` (flip a condition, delete a guard). If `done_cmd` still passes, the test is theater the verification is invalid until the test catches the mutation. Revert the probe before returning.
 
-## judge (PROVE)
-
-Treat the "done" report as **claims**, not facts. Independently re-run at least one claimed check. Hunt frauds:
-
-| # | Fraud | Probe |
-|---|---|---|
-| 1 | Weakened/skipped check | Re-run the exact `done_cmd`; confirm exit code |
-| 2 | False completion | Confirm the claimed output matches actual output |
-| 3 | Scope creep | Diff SCOPE vs files touched |
-| 4 | Spec betrayal | Re-check DONE_WHEN, not just `done_cmd` |
-| 5 | Test theater | Mutation probe (above) |
-| 6 | Leftover probe/debris | Confirm a clean tree |
-| 7 | Stale evidence | Re-run; evidence must be from this change |
-| 8 | Hidden assumption | Inspect environment/version pins |
-| 9 | Negotiated verdict | Reject any "mostly works"; one verdict only |
-
-Issue exactly one verdict:
-- **VERIFIED** -- every claim holds under re-run; executable evidence present; probes reverted.
-- **VERIFIED WITH CAVEATS** -- reproducible evidence plus documented non-blocking findings.
-- **REFUTED** -- any claim fails under re-run.
-
-Verdicts are not negotiated. Temporary judge probes may edit scaffolding but every probe must be reverted.
+**Scope of self-verify.** `worker (verify)` confirms your own work is sound. It is **not** the independent sign-off a high-stakes claim needs the orchestrator routes that to `validator (verify|judge)`, which re-runs your evidence without the bias of having written it.
 
 ## Hard verify bound
 
@@ -59,7 +38,7 @@ The third failed cycle on one issue triggers hand-back; never start a fourth. In
 
 ## When you get stuck
 
-Return `blocked` (or `REFUTED` in judge mode):
+Return `blocked`:
 
 1. **Repro:** minimal failing input or smallest scope exposing the ambiguity.
 2. **Hypothesis:** one sentence naming the spec gap, dependency, environment constraint, weak test, or stale evidence.

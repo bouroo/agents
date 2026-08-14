@@ -9,7 +9,7 @@ Reference for `go-essential` §3: sentinel vs. custom types, `%w` vs. `%v`, `err
 - Defined once at package level: `var ErrNotFound = errors.New("not found")`.
 - Match with `errors.Is(err, ErrNotFound)`.
 - **Constraint:** do not embed dynamic values (IDs, paths) in a sentinel. If you need per-instance data, use a custom type.
-- **Format:** lowercase, no trailing punctuation  --  `errors.New("out of cheese")`, never `errors.New("Out of Cheese!")`.
+- **Format:** lowercase, no trailing punctuation   `errors.New("out of cheese")`, never `errors.New("Out of Cheese!")`.
 
 ### Custom error types
 - Used when the caller needs rich contextual data (`Timeout()`, `HTTPStatusCode`, `Field`).
@@ -37,7 +37,7 @@ func (e *QueryError) Unwrap() error { return e.Err }
 
 ### Error string formatting rules
 
-- **Lowercase, including acronyms.** `"invalid message id"` not `"invalid message ID"`  --  the string is concatenated mid-sentence via `fmt.Errorf("...: %w", err)`, so mixed case reads wrong.
+- **Lowercase, including acronyms.** `"invalid message id"` not `"invalid message ID"`. The string is concatenated mid-sentence via `fmt.Errorf("...: %w", err)`, so mixed case reads wrong.
 - **No trailing punctuation.** `"out of cheese"` not `"Out of Cheese!"`.
 - **Describe what happened, not what to do.** `"dial tcp: connection refused"` not `"please check your network"`.
 - **Sentinel origin prefix.** Package-level sentinels SHOULD include the package name (`errors.New("apiclient: not found")`); skip for stdlib sentinels where identity is implicit.
@@ -49,33 +49,33 @@ func (e *QueryError) Unwrap() error { return e.Err }
 - `%v` flattens the message into a string and **breaks** the chain. Use `%v` only at system boundaries (HTTP/gRPC response, public API) to prevent callers from depending on internal error types.
 
 ```go
-// Internal layer  --  wrap to preserve the chain
+// Internal layer   wrap to preserve the chain
 return fmt.Errorf("querying database: %w", err)
 
-// Public API boundary  --  break the chain to hide internals
+// Public API boundary   break the chain to hide internals
 return fmt.Errorf("item unavailable: %v", err)
 ```
 
-### `%w` vs `%v`  --  decision table
+### `%w` vs `%v`   decision table
 
 | Layer | Verb | Why |
 | --- | --- | --- |
 | Internal (service → repo → driver) | `%w` | Preserve the chain so `errors.Is` / `errors.As` traverse to the root cause |
 | Public API / system boundary (HTTP, gRPC response) | `%v` | Hide internal error types; prevent callers from depending on internals |
-| Logging at the top boundary | neither  --  log `%+v` or the error directly | The chain is for humans; no wrapping needed |
+| Logging at the top boundary | neither   log `%+v` or the error directly | The chain is for humans; no wrapping needed |
 
 ## 3. Inspecting Errors
 
-- `errors.Is(err, sentinel)` walks the chain (including `Unwrap()` and joined errors) and returns true on a match. **Never** compare with `==`  --  wrapping breaks equality.
-- `errors.As(err, &target)` walks the chain and assigns the first matching typed error. **Never** bare type-assert (`err.(*T)`)  --  wrapping hides the inner type.
+- `errors.Is(err, sentinel)` walks the chain (including `Unwrap()` and joined errors) and returns true on a match. **Never** compare with `==`; wrapping breaks equality.
+- `errors.As(err, &target)` walks the chain and assigns the first matching typed error. **Never** bare type-assert (`err.(*T)`); wrapping hides the inner type.
 - Go 1.26+: `errors.AsType[T](err)` returns `(T, bool)` with the same traversal behaviour, simpler syntax.
 
 ```go
-// Bad  --  breaks on wrapped errors
+// Bad   breaks on wrapped errors
 if err == sql.ErrNoRows { ... }
 if ve, ok := err.(*ValidationError); ok { ... }
 
-// Good  --  traverses the entire chain
+// Good   traverses the entire chain
 if errors.Is(err, sql.ErrNoRows) { ... }
 
 var ve *ValidationError
@@ -89,10 +89,10 @@ The performance cost of `errors.Is`/`errors.As` is negligible compared with the 
 
 ### The nil error interface trap
 
-A function whose return type is `error` that returns a typed nil pointer produces a non-nil `error` interface  --  `{type: *MyErr, value: nil}` is `!= nil` even though the dynamic value is nil, so `if err != nil` checks silently fail. **Rule:** return the untyped `nil` for the no-error case, never a typed nil pointer.
+A function whose return type is `error` that returns a typed nil pointer produces a non-nil `error` interface   `{type: *MyErr, value: nil}` is `!= nil` even though the dynamic value is nil, so `if err != nil` checks silently fail. **Rule:** return the untyped `nil` for the no-error case, never a typed nil pointer.
 
 ```go
-// ✗ Bad  --  *Config is nil but the error interface is not
+// ✗ Bad   *Config is nil but the error interface is not
 func loadConfig(path string) error {
     cfg, err := parseConfig(path)
     if err != nil { return &ConfigError{Path: path, Err: err} }
@@ -111,7 +111,7 @@ func loadConfig(path string) error {
 
 ## 4. Combining Errors with `errors.Join` (Go 1.20+)
 
-`errors.Join` merges multiple independent errors into one. The combined error is itself inspectable  --  `errors.Is` and `errors.As` walk each inner error.
+`errors.Join` merges multiple independent errors into one. The combined error is itself inspectable   `errors.Is` and `errors.As` walk each inner error.
 
 ### Multi-field validation
 
@@ -141,13 +141,13 @@ func closeAll(closers ...io.Closer) error {
 An error MUST be handled exactly once: either **logged** or **returned**, never both. Logging then returning produces duplicate entries in log aggregators and obscures root causes.
 
 ```go
-// Bad  --  logs AND returns; two entries per failure in production
+// Bad   logs AND returns; two entries per failure in production
 if err != nil {
     slog.Error("failed to find user", "err", err)
     return err
 }
 
-// Good  --  wrap with context, let the top boundary log once
+// Good   wrap with context, let the top boundary log once
 if err != nil {
     return fmt.Errorf("fetching user: %w", err)
 }
@@ -159,7 +159,7 @@ The top boundary (HTTP middleware, gRPC interceptor, `main`) logs the error once
 
 ### When panic is acceptable
 - Truly unrecoverable states: programmer error in initialization (`MustCompileRegex`), corrupted invariant, impossible condition.
-- **Never** for expected failures  --  network timeouts, missing files, malformed input. Those are errors.
+- **Never** for expected failures   network timeouts, missing files, malformed input. Those are errors.
 
 ### Recovering at goroutine boundaries
 
@@ -182,7 +182,7 @@ func safeHandler(next http.Handler) http.Handler {
 }
 ```
 
-`panic` allocates a stack trace and unwinds the stack  --  using it as control flow is both an anti-pattern and a performance hazard.
+`panic` allocates a stack trace and unwinds the stack   using it as control flow is both an anti-pattern and a performance hazard.
 
 ## 7. Error Visibility at Boundaries
 
@@ -192,7 +192,7 @@ func safeHandler(next http.Handler) http.Handler {
 
 ## 8. Go 1.26+ `errors.AsType[T]`
 
-Signature: `func AsType[T error](err error) (T, bool)`. Walks the `Unwrap()` chain like `errors.As` and returns the first matching typed error with `ok`. Prefer it over `errors.As` when `T` implements `error`  --  no pointer-to-pointer, type-parameter inference. Keep `errors.As(err, &target)` for non-error targets or Go <1.26.
+Signature: `func AsType[T error](err error) (T, bool)`. Walks the `Unwrap()` chain like `errors.As` and returns the first matching typed error with `ok`. Prefer it over `errors.As` when `T` implements `error`   no pointer-to-pointer, type-parameter inference. Keep `errors.As(err, &target)` for non-error targets or Go <1.26.
 
 ```go
 // Go 1.26+

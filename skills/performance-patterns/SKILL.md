@@ -9,7 +9,7 @@ Optimize only after correctness and safety hold. Treat intuition about bottlenec
 
 > **Override.** A project-level performance policy that explicitly supersedes this skill takes precedence.
 
-**Stance:** Every optimization claim cites benchmark evidence (command + output + delta). No measurement, no change.
+**Stance:** every optimization claim cites benchmark evidence (command + output + delta). No measurement, no change.
 
 ## When to Load
 
@@ -19,23 +19,23 @@ Load when:
 - Reviewing a module or service for structural defects: missing pools, unbounded concurrency, N+1 queries, wrong data structures.
 - Diagnosing where time or memory is spent.
 
-Do **not** load for correctness or clarity work -- that is [code-craft](../code-craft/SKILL.md).
+Do **not** load for correctness or clarity work; that is [code-craft](../code-craft/SKILL.md).
 
 ## Modes
 
-- **Review (architecture)** -- broad scan for structural anti-patterns. Parallelize up to 3 concerns: allocation/layout, I/O/concurrency, algorithmic complexity/caching.
-- **Review (hot path)** -- focused analysis of one named function or loop. Sequential.
-- **Optimize** -- a profiler/benchmark identified the bottleneck. Follow the measure-first cycle sequentially.
+- **Review (architecture)** broad scan for structural anti-patterns. Parallelize up to 3 concerns: allocation/layout, I/O/concurrency, algorithmic complexity/caching.
+- **Review (hot path)** focused analysis of one named function or loop. Sequential.
+- **Optimize**: a profiler/benchmark identified the bottleneck. Follow the measure-first cycle sequentially.
 
 ## Measure Before You Optimize
 
 The cycle, every time: **Define, Benchmark, Diagnose, Improve, Compare**. Detail in [Measurement methodology](./references/measurement.md).
 
 1. **Define** the target metric (latency, throughput, memory, CPU). No target means random optimization.
-2. **Benchmark** -- isolate one function per benchmark; capture baseline to a file as an audit trail.
-3. **Diagnose** -- rule out external bottlenecks first, then apply the decision tree below.
-4. **Improve** -- ONE change at a time, with a comment naming why.
-5. **Compare** -- use a statistical comparator to confirm significance; paste the delta in the report or commit.
+2. **Benchmark** isolate one function per benchmark; capture baseline to a file as an audit trail.
+3. **Diagnose** rule out external bottlenecks first, then apply the decision tree below.
+4. **Improve** ONE change at a time, with a comment naming why.
+5. **Compare** use a statistical comparator to confirm significance; paste the delta in the report or commit.
 
 **Rule out external first.** If an off-CPU profiler, distributed trace, or worker dump shows the time is in DB queries, upstream calls, or socket reads, local allocation tuning will not help. Fix that component: caching, pooling, circuit breakers, query tuning.
 
@@ -58,13 +58,13 @@ Route the profiler signal to the right pattern set.
 
 ## References
 
-- [Measurement methodology](./references/measurement.md) -- the measure-first cycle, external-bottleneck diagnosis, benchmark and statistical hygiene.
-- [Memory, CPU & SIMD](./references/memory-cpu.md) -- pooling, preallocation, field layout, zero-copy, vectorization, build/runtime tuning.
-- [Concurrency](./references/concurrency.md) -- worker pools, bounded parallelism, atomics, cancellation, structured error collection, backpressure.
-- [I/O & resilience](./references/io-resilience.md) -- buffering, batching, streaming, transport tuning, caching, circuit breakers, load shedding, degradation.
-- [Pitfalls](./references/pitfalls.md) -- the common-mistakes table and cross-cutting checks.
+- [Measurement methodology](./references/measurement.md) the measure-first cycle, external-bottleneck diagnosis, benchmark and statistical hygiene.
+- [Memory, CPU & SIMD](./references/memory-cpu.md) pooling, preallocation, field layout, zero-copy, vectorization, build/runtime tuning.
+- [Concurrency](./references/concurrency.md) worker pools, bounded parallelism, atomics, cancellation, structured error collection, backpressure.
+- [I/O & resilience](./references/io-resilience.md) buffering, batching, streaming, transport tuning, caching, circuit breakers, load shedding, degradation.
+- [Pitfalls](./references/pitfalls.md) the common-mistakes table and cross-cutting checks.
 
 ## Cross-References
 
-- [code-craft](../code-craft/SKILL.md) -- correctness and clarity come before performance; artifact gates (`INTENT:`, `TWINS:`)
-- [harness-engineering](../harness-engineering/SKILL.md) -- deterministic logic in tested code; three-layer verification (L1/L2/L3)
+- [code-craft](../code-craft/SKILL.md) correctness and clarity come before performance; artifact gates (`INTENT:`, `TWINS:`).
+- [harness-engineering](../harness-engineering/SKILL.md) deterministic logic in tested code; three-layer verification (L1/L2/L3).
