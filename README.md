@@ -87,11 +87,16 @@ Then restart your coding tool so it picks up the new config.
 │   ├── worker.md            # subagent, mutating (implement/fix/verify)
 │   ├── validator.md         # subagent, independent verifier (verify/judge)
 │   └── discover.md          # subagent, read-only scout (explore/lookup/review)
-├── references/              # Progressive-disclosure depth per agent sibling of agents/
-│   ├── orchestrator/        # plan-and-convergence, completion-audit
-│   ├── worker/              # modes-and-verification
-│   ├── validator/           # verification-and-verdict (fraud rubric table)
-│   └── discover/            # modes-and-review
+├── references/              # Progressive-disclosure depth, sibling of agents/ and commands/
+│   ├── agents/              # per-role depth (orchestrator/worker/validator/discover)
+│   │   ├── orchestrator/    # plan-and-convergence, completion-audit
+│   │   ├── worker/          # modes-and-verification
+│   │   ├── validator/       # verification-and-verdict (fraud rubric table)
+│   │   └── discover/        # modes-and-review
+│   └── workflows/           # per-command depth (cmd-document/cmd-judge/cmd-refactor)
+│       ├── cmd-document/    # bootstrap
+│       ├── cmd-judge/       # judge-protocol
+│       └── cmd-refactor/    # refactor-checklist
 ├── commands/                # Standardized reusable workflows flat <name>.md
 │   ├── cmd-document.md      # ACT/GROW bootstrap/sync a docs tree
 │   ├── cmd-judge.md         # PROVE adversarial verification of "done"

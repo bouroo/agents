@@ -11,7 +11,7 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 
 **Stance:** "done" is the most common lie an agent tells. Verification is observed evidence, not narrated confidence; a gate that can fail is worth ten reminders that cannot.
 
-**Right-size, don't overengineer.** Every control below exists because a real failure once demanded it not because every job needs all of them. Refuse the **Average Answer Trap** (high-complexity controls as defaults) and the **Kirby Effect** (a component that encodes a model-limitation bet and turns into dead weight as models improve). Dial every control to the job; add one only when a failure demands it. See [right-sizing](references/right-sizing.md).
+**Right-size, don't overengineer.** Every control below exists because a real failure once demanded it, not because every job needs all of them. Refuse the **Average Answer Trap** (high-complexity controls as defaults) and the **Kirby Effect** (a component that encodes a model-limitation bet and turns into dead weight as models improve). Dial every control to the job; add one only when a failure demands it. See [right-sizing](references/right-sizing.md).
 
 **Modes:**
 - **Build mode** design/extend a harness: walk the lifecycle, emit gates, handoff artifacts, failure-mode controls. Sequential.
@@ -20,13 +20,13 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 ## THINK guides steer before you act
 
 1. **Repo-as-record, not conversation memory.** Restart from files; state, decisions, evidence live on disk under `.agents/`. Conversation is a cache that resets.
-2. **Split instructions from learning.** Instruction memory (human directives AGENTS.md, build docs) stays stable and predictable; learning memory (agent-accumulated corrections) lives in its own files. Never write corrections into instruction files. ([memory-engineering](../memory-engineering/SKILL.md).)
+2. **Split instructions from learning.** Instruction memory (human directives: AGENTS.md, build docs) stays stable and predictable; learning memory (agent-accumulated corrections) lives in its own files. Never write corrections into instruction files. Update only when the human changes a directive. ([memory-engineering](../memory-engineering/SKILL.md).)
 3. **Guides beat reminders; encode standards as deterministic gates, not prose.** A gate requires a clear pass condition, an actionable failure message naming the next action, and an owner (the harness, not agent memory). "Remember to verify" loses to a gate that fails when verification is absent.
 
 ## ACT surgical execution
 
 1. **WIP = 1.** Finish and verify one unit before starting the next.
-2. **Right tool by capability, built-in first; handle failures cleanly.** Route by capability not name; prefer the built-in Read/Grep/Glob/Edit/Write over bash for file and string operations (AGENTS.md §2); fail gracefully handle tool/MCP errors explicitly with retries or fallbacks; never swallow an error.
+2. **Right tool by capability, built-in first; handle failures cleanly.** Route by capability not name; prefer the built-in Read/Grep/Glob/Edit/Write over bash for file and string operations (AGENTS.md S2); fail gracefully: handle tool/MCP errors explicitly with retries or fallbacks; never swallow an error.
 3. **Separate reasoning from deterministic computation.** Arithmetic, parsing, validation, scheduling belong in tested code, never in model reasoning.
 
 ## PROVE three-layer termination, mutation, judging
@@ -36,7 +36,7 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 - **L2 runtime** tests run; app starts; critical paths execute. When the change runs.
 - **L3 end-to-end** one path crosses real boundaries. When the change crosses one (`n/a` allowed with a one-line reason).
 
-Executable evidence (command + exit code + actual output) for every done claim never a narrated pass. See [verification theater](references/verification-theater.md).
+Executable evidence (command + exit code + actual output) for every done claim, never a narrated pass. See [verification theater](references/verification-theater.md).
 
 **Mutation testing probe:** introduce a single semantic defect (flip a boolean, shift a bound, drop a guard); run the suite and require it to FAIL; revert and confirm it PASSES. A suite that cannot catch a deliberate defect is theater.
 
@@ -57,7 +57,7 @@ A recurring failure is a **harness problem, not a prompt problem.** Prompt tweak
 
 | Failure mode | Looks like | Primary fix | Artifact |
 |---|---|---|---|
-| Tool-routing drift | `cat`/`grep`/`find` in bash instead of Read/Grep/Glob | Built-in tools first; bash for commands only | AGENTS.md §2 |
+| Tool-routing drift | `cat`/`grep`/`find` in bash instead of Read/Grep/Glob | Built-in tools first; bash for commands only | AGENTS.md S2 |
 | Verification theater | "tests pass" without output | Require captured evidence; mutation probe | L1/L2/L3 gate |
 | Scope creep / spec betrayal | edits outside SCOPE | SCOPE-bound handoff; `INTENT:` gate | [code-craft](../code-craft/SKILL.md) |
 | Context rot / premature victory | "done" on stale memory | Repo-as-record; checkpoint every turn | `state.json` |

@@ -9,7 +9,7 @@ A prompt-as-artifact workflow integrated into the loop. **Spec is truth. Code se
 
 > **Override.** A project-level specification policy that explicitly supersedes this skill wins.
 
-**Stance:** value simplicity and explicitness. Apply rigor only when risk warrants it; push back on premature abstraction and on heavyweight process for trivial work. The spec is the durable contract; the code is its executable shadow.
+**Stance:** value simplicity and explicitness; apply rigor only when risk warrants it. The spec is the durable contract; the code is its executable shadow. Batch the canvas + implement + verify in one pass; round-trips cost more than in-turn tool results.
 
 ## Modes
 
@@ -48,7 +48,7 @@ Capture intent before code. Mark spikes explicitly (lightweight canvas: R + A on
 
 ## Authority order (when sources disagree)
 
-**user statement > spec > tests > current code.** Framing ("make tests pass") is not intent. When reality contradicts a locked spec, the spec is the bug open a change, don't drift.
+**user statement > spec > tests > current code.** Framing ("make tests pass") is not intent. When reality contradicts a locked spec, the spec is the bug: open a change, don't drift.
 
 ## Spec <-> code sync
 
