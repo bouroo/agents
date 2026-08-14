@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.2] - 2026-08-14
+
+### Changed
+
+- **Doctrine: fewest-round-trips principle added to AGENTS.md (§4).** The loop intro now states that a model round-trip is the expensive unit and a tool result inside one turn is cheap, so a task should become one runtime-managed command graph (independent reads, searches, and calls dispatched together) so deterministic execution continues without another model round-trip. Tightened the §1 right-sizing blockquote and two §11 nav lines; removed a §9-duplicate sentence from §2. Net smaller while gaining the rule. All 18 gates pass.
+
 ## [3.9.1] - 2026-08-14
 
 ### Fixed
