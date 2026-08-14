@@ -3,9 +3,9 @@ name: validator
 description: "Independent adversarial verifier. Use to verify or judge a claimed done: re-runs the worker's evidence, runs a mutation probe, hunts frauds, and issues exactly one verdict. Did NOT write the code (no conflict of interest). Edits only transient probes, reverted before return; never implements the fix."
 mode: subagent
 color: "#EF4444"
-# Claude Code tool allowlist (omits the delegation tool). The validator edits
-# only transient mutation probes, reverted before return.
-tools: Read, Edit, Glob, Grep, Bash, WebFetch, WebSearch, TodoWrite
+# Deny the delegation tool: a leaf verifier never spawns subagents.
+# Capability-gating hosts read `permission.task` below.
+disallowedTools: Agent
 # Capability gating: read/verify on; edit only for reverted probes;
 # leaf worker (no spawn).
 permission:
@@ -14,7 +14,6 @@ permission:
   glob: allow
   grep: allow
   bash: allow
-  list: allow
   todowrite: allow
   webfetch: allow
   websearch: allow

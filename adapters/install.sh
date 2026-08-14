@@ -11,7 +11,7 @@
 #   skills/     -> skills/        (when surfaces.skills)
 #   commands/   -> commands/      (when surfaces.commands)
 #   agents/     -> agents_path    (when surfaces.agents; e.g. agents/ or agent/)
-#   references/ -> references/    (when surfaces.agents; depth docs loaded by agents)
+#   references/ -> references/    (when surfaces.agents or surfaces.commands; depth docs)
 #
 # agents/ and commands/ ship in each host's NATIVE format: flat <name>.md files
 # (opencode/kilo discover agents/<name>.md and commands/<name>.md). claude is
@@ -46,8 +46,9 @@ fi
 
 # Emit adapter rows: code|config_dir|config_file|skills|commands|agents|ref|agents_path
 # $HOME stays literal here; expanded per-row below without eval.
-# `ref` is the agents surface gate: progressive-disclosure depth docs in
-# references/ are only useful to a host that also consumes the agents/ surface.
+# `ref` is the progressive-disclosure gate: references/ now holds depth docs for
+# both the agents/ surface (references/agents/) and the commands/ surface
+# (references/workflows/), so link it when the host consumes either surface.
 read_registry() {
   python3 -c '
 import json, sys
@@ -56,14 +57,15 @@ for a in d.get("adapters", []):
     s = a.get("surfaces", {})
     ap = s.get("agents_path") or ""
     ag = bool(s.get("agents"))
+    cmd = bool(s.get("commands"))
     print("|".join([
         a.get("code", ""),
         a.get("config_dir", ""),
         a.get("config_file", ""),
         "1" if s.get("skills") else "0",
-        "1" if s.get("commands") else "0",
+        "1" if cmd else "0",
         "1" if ag else "0",
-        "1" if ag else "0",
+        "1" if (ag or cmd) else "0",
         ap,
     ]))
 ' "$HOSTS_REG"
@@ -166,8 +168,8 @@ while IFS='|' read -r code config_dir config_file sk cmd ag rf ap; do
       [[ "$cmd" == "1" ]] && link_artifact "$REPO_DIR/commands" "$dir/commands" "commands"
       [[ "$ag" == "1" && -n "$ap" ]] && link_artifact "$REPO_DIR/agents" "$dir/$ap" "agents"
       # Progressive-disclosure depth docs (references/) sit alongside
-      # agents/; only link them when the host consumes the agents surface,
-      # so the cross-refs from each agent contract resolve at runtime.
+      # agents/ and commands/; link them when the host consumes either
+      # surface, so cross-refs from agent and command contracts resolve.
       [[ "$rf" == "1" ]] && link_artifact "$REPO_DIR/references" "$dir/references" "references"
       # Migrate installs made before claude dropped the agents surface: a
       # pre-3.4.2 `install claude` left ~/.claude/agents symlinked to this

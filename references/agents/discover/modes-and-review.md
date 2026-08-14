@@ -1,6 +1,6 @@
 # Discover Modes and Review Rubric
 
-Depth for discover. The [SKILL.md](../../agents/discover.md) owns the contract; this owns the detail.
+Depth for discover. The [SKILL.md](../../../agents/discover.md) owns the contract; this owns the detail.
 
 ## explore (THINK)
 

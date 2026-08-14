@@ -9,7 +9,7 @@ Optimize only after correctness and safety hold. Treat intuition about bottlenec
 
 > **Override.** A project-level performance policy that explicitly supersedes this skill takes precedence.
 
-**Stance:** Every optimization claim cites benchmark evidence (command + output + delta). No measurement, no change.
+**Stance:** every optimization claim cites benchmark evidence (command + output + delta). No measurement, no change.
 
 ## When to Load
 
@@ -66,5 +66,5 @@ Route the profiler signal to the right pattern set.
 
 ## Cross-References
 
-- [code-craft](../code-craft/SKILL.md) correctness and clarity come before performance; artifact gates (`INTENT:`, `TWINS:`)
-- [harness-engineering](../harness-engineering/SKILL.md) deterministic logic in tested code; three-layer verification (L1/L2/L3)
+- [code-craft](../code-craft/SKILL.md) correctness and clarity come before performance; artifact gates (`INTENT:`, `TWINS:`).
+- [harness-engineering](../harness-engineering/SKILL.md) deterministic logic in tested code; three-layer verification (L1/L2/L3).

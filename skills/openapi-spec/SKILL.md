@@ -23,7 +23,7 @@ The contract lives in the repo as `docs/openapi.yaml` (or the project's existing
 # yaml-language-server: $schema=https://spec.openapis.org/oas/3.2/schema/2025-11-23
 ```
 
-Editors (Red Hat YAML language server) and the bundled [validator](references/validate-openapi.mjs) read the same line one source of truth. The validator fetches it, validates the body (which starts at `openapi: 3.2.0`), and strips a legacy root `$ref` for older specs.
+Editors (Red Hat YAML language server) and the bundled [validator](references/validate-openapi.mjs) read the same line: one source of truth. The validator fetches it, validates the body (which starts at `openapi: 3.2.0`), and strips a legacy root `$ref` for older specs.
 
 ## Modes
 
@@ -37,7 +37,7 @@ Editors (Red Hat YAML language server) and the bundled [validator](references/va
 - `openapi: 3.2.0` is the first spec key; the `$schema` modeline precedes it as a comment.
 - Every operation has a unique `operationId` (camelCase), a `summary`, and `responses` with at least success + the error codes it can return.
 - Reuse, never duplicate: shared shapes once in `components/schemas`, referenced with `$ref`.
-- Examples required at least one per response/request body.
+- Examples required: at least one per response/request body.
 - 3.1+ typing `nullable` is gone; nullability is `type: [string, "null"]`. Use `format` (`date-time`, `uuid`, `email`, `uri`).
 - Errors are real: model the error envelope once; reference it from every error response.
 - No speculative endpoints. If the code does not serve it, it is not in the spec.

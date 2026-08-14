@@ -14,14 +14,14 @@ Memory never written is forgotten at compaction; memory written into the wrong p
 - **Instruction memory** is human-authored directives: `AGENTS.md`, build docs, style guides. Stable and predictable. **Never write corrections into it** they drift behavior silently and resist removal. Update only when the human changes a directive.
 - **Learning memory** is agent-accumulated: a correction, a preference, a failed attempt and its remedy. Auditable and *forgettable*. Lives in its own files.
 
-The split is the core invariant: instruction stays stable; learning is mutable. When a learned correction becomes durable policy, the *human* promotes it into instruction memory never the agent.
+The split is the core invariant: instruction stays stable; learning is mutable. When a learned correction becomes durable policy, the *human* promotes it into instruction memory, never the agent.
 
 ## The workflow: retrieve -> construct -> update -> forget
 
 1. **Retrieve before.** Pull relevant learning memory scoped to the task before starting. Load by scope, never the whole tree.
-2. **Construct during.** When a correction or hard-won fact appears, capture it one fact per file, frontmatter + one-line index entry.
+2. **Construct during.** When a correction or hard-won fact appears, capture it: one fact per file, frontmatter + one-line index entry.
 3. **Update after.** Persist durable learnings at task end; update the index.
-4. **Forget deliberately.** Forgetting is a first-class operation stale or superseded facts are deleted, not archived. Unbounded growth is a failure mode.
+4. **Forget deliberately.** Forgetting is a first-class operation: stale or superseded facts are deleted, not archived. Unbounded growth is a failure mode.
 
 ## Scope hierarchy (where a fact lives)
 
@@ -37,7 +37,7 @@ More specific scope wins; prefer the non-instruction axis.
 
 ## The Type x Scope grid
 
-State both axes before you write a fact a fact without a type and a scope has no home.
+State both axes before you write a fact: a fact without a type and a scope has no home.
 
 - **semantic** facts and conventions (the repo uses tabs; the gateway is at `:8080`).
 - **episodic** what happened (a root cause, a strategy that worked).

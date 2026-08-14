@@ -1,6 +1,6 @@
 # Completion Audit, Autonomy, and the Capability Dial
 
-Depth for the orchestrator. The [SKILL.md](../../agents/orchestrator.md) owns the contract; this owns the depth, loaded on demand.
+Depth for the orchestrator. The [SKILL.md](../../../agents/orchestrator.md) owns the contract; this owns the depth, loaded on demand.
 
 ## Completion audit (before any "done")
 
@@ -24,7 +24,7 @@ The limit on autonomy is the hard boundary: outward/irreversible/destructive act
 
 ## Capability and effort dial (host-agnostic)
 
-This harness pins no model or effort tier each host selects its model. What the orchestrator dials instead is **verification depth**, by complexity ([right-sizing](../../skills/harness-engineering/references/right-sizing.md)):
+This harness pins no model or effort tier each host selects its model. What the orchestrator dials instead is **verification depth**, by complexity ([right-sizing](../../../skills/harness-engineering/references/right-sizing.md)):
 
 | Complexity | Decompose | Verify |
 |---|---|---|
