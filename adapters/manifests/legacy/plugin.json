@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "3.9.3",
+  "version": "3.9.4",
   "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a four-role squad (orchestrator/worker/validator/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
   "author": "bouroo",
   "homepage": "https://github.com/bouroo/agents",
