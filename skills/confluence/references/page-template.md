@@ -121,3 +121,10 @@ Sequence-message rule: keep each message on **one source line**; a literal `\n`
 inside a message is a visual break, never turn it into a real newline (see
 [plantuml.md](./plantuml.md) `\n` trap). Render every authored diagram to SVG and
 assert non-trivial output before publishing.
+
+**Sequence section = rendered diagram + raw source expand.** Every Sequence Diagram
+section has both: the `plantumlcloud` macro (rendered) immediately followed by the
+same source in a collapsed expand ("Raw sequence diagram source") so the source is
+recoverable and copy-editable on the page. `build_page` emits this pair; when
+authoring by hand, decode the macro's `data` param and emit the same source in the
+expand. Remote-MCP (`html`) form: `<details><summary>Raw sequence diagram source</summary><pre><code class="language-none">SOURCE</code></pre></details>` (HTML-escape the source; arrows `->`/`-->` contain `>`).
