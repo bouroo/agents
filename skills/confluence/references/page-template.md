@@ -11,7 +11,7 @@ dict. Authoring mechanics (macros, compression, storage format) live in
 
 Learned from author-review cycles on 2026-08-14; treat as acceptance criteria:
 
-1. **Every nested struct field is its own table row**, keyed by dotted path
+1. **Every nested field is its own table row**, keyed by dotted path
    (`content.installmentPlans[].promotionalInterestDetail[].startTenor`), never a
    collapsed "see structure below" row. A parent row may summarize ("Each item has
    the fields below") but the children must still appear as individual rows.
@@ -21,10 +21,11 @@ Learned from author-review cycles on 2026-08-14; treat as acceptance criteria:
    plan AND a promotional plan in the same response sample). Mock data must be
    internally consistent across request and response (response tiers mirror the
    request's tiers).
-3. **Opaque pass-through payloads stay single-row.** Fields typed
-   `json.RawMessage` in source (schema owned upstream) are documented as one row
-   with an "opaque, relayed verbatim" remark; never fabricate sub-fields.
-4. **Field names come from the Go struct json tags**, verified in source, not from
+3. **Opaque pass-through payloads stay single-row.** Fields whose type is an
+   opaque raw-JSON pass-through in source (schema owned upstream) are documented
+   as one row with an "opaque, relayed verbatim" remark; never fabricate sub-fields.
+4. **Field names come from the source's serialization tags** (e.g. JSON struct
+   tags), verified in source, not from
    memory (e.g. `headerResp.statusCd`, not `statusCode`).
 
 ## Why decode a real page
