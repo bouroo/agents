@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.3] - 2026-08-14
+
+### Changed
+
+- **Confluence: every diagram ships with its raw source in a collapsed expand.** A rendered `plantumlcloud` macro alone leaves the diagram source unrecoverable from the published page. The confluence skill now mandates the pair pattern (mirrored in [page-template](skills/confluence/references/page-template.md)): render the macro, then immediately follow it with the same PlantUML source in an `expand > code` block titled "Raw sequence diagram source" (decode the macro's `data` param to obtain the source). Two forms: remote-MCP (`html`) emits `<details><summary>` wrapping an HTML-escaped `<pre><code class="language-none">` block (arrows `->`/`-->` contain `>` and must be escaped); stdio-bridge (`storage`) emits `expand_macro(...)` wrapping `code_macro(source, language="none")`.
+
 ## [3.9.2] - 2026-08-14
 
 ### Changed
