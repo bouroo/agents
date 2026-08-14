@@ -5,6 +5,15 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.1] - 2026-08-14
+
+### Fixed
+
+- **Claude Code now receives the `agents/` surface.** A stale pre-3.4.2 decision kept `surfaces.agents: false` for claude in `registries/hosts.json`, so `install claude` linked only doctrine/skills/commands/references and skipped `~/.claude/agents/`. The exclusion was made when the opencode-native agent frontmatter (`mode`/`color`/`permission`) conflicted with Claude's subagent format. After the v3.8.0-v3.9.0 cross-host compatibility work, the agent frontmatter is now a superset each host reads only its own keys from: `name`/`description`/`disallowedTools` are Claude-native; `mode`/`permission` are unknown keys Claude ignores. Re-enabled the surface (`agents: true`, `agents_path: "agents"`).
+  - Removed the stale `agents-legacy` unlink in `install.sh` (both install and uninstall branches) that would have immediately unlinked `~/.claude/agents` after linking it.
+  - Updated the install.sh header comment that documented the exclusion.
+  - README line179 already claimed Claude Code compatibility; now the code matches.
+
 ## [3.9.0] - 2026-08-14
 
 ### Changed
