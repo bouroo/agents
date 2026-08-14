@@ -5,6 +5,50 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.0] - 2026-08-14
+
+### Changed
+
+- **Layout: `references/` reorganized into domain-named subtrees.** Agent depth docs moved from `references/<role>/` to `references/agents/<role>/`; command depth docs moved out of `commands/cmd-<name>/references/` into `references/workflows/cmd-<name>/`. This consolidates all progressive-disclosure depth under one `references/` tree with a clear domain split: `agents/` for per-role doctrine, `workflows/` for per-command protocol.
+  - **8 files moved** via `git mv` (preserving history): 5 agent refs (orchestrator x2, worker, validator, discover) and 3 command refs (cmd-document/bootstrap, cmd-judge/judge-protocol, cmd-refactor/refactor-checklist).
+  - **Every cross-reference updated**: 8 links in `agents/*.md` and `commands/*.md`, plus 9 internal links in the moved files themselves (agent refs moved one level deeper, so `../../` links needed an extra `../`).
+  - **install.sh gate decoupled**: the `references/` symlink was gated on `surfaces.agents: true` only. Since command depth docs now live in `references/`, the gate fires for `surfaces.agents OR surfaces.commands`. Verified via dry-run: all command-capable hosts now get `references/`; skills-only hosts correctly skip it.
+  - README tree diagram updated. No doctrine change.
+
+- **Cross-host compatibility verified and fixed for OpenCode, Kilo Code, and Claude Code.** Tested all three target hosts against their official documentation; found and fixed three frontmatter conflicts:
+  - **`tools:` replaced with `disallowedTools: Agent`.** The v3.8.0 `tools:` field (comma-separated string) was valid for Claude Code but deprecated-as-object in OpenCode, where a string value would be misinterpreted. Replaced with `disallowedTools: Agent` (Claude Code's deny-list syntax; an unknown key silently ignored by OpenCode/Kilo). The `permission.task: {"*": "deny"}` block already covers the same constraint for capability-gating hosts.
+  - **Invalid `list` permission key removed.** OpenCode's permission vocabulary (`/docs/permissions`) and Kilo's custom-modes doc both confirm `list` is not a valid key. Removed from all four agents. Remaining keys (`read`, `edit`, `glob`, `grep`, `bash`, `task`, `webfetch`, `websearch`, `lsp`, `todowrite`) are verified valid across both hosts.
+  - **`color` field kept as hex.** OpenCode and Kilo both accept hex colors; Claude Code accepts only named colors. Hex is correct for the two agents-surface hosts; Claude does not receive the agents surface, so the field is cosmetic there.
+
+### Added
+
+- **G4 permission-key gate.** `ALLOWED_AGENT_PERM_KEYS` in `scripts/checks.py` updated to the union of OpenCode + Kilo permission vocabularies (sourced from their official docs), and wired into the G4 gate so future drift toward invalid keys fails CI.
+
+## [3.8.1] - 2026-08-14
+
+### Changed
+
+- **Commands and skills rewritten with the batch discipline.** Extended the Tura-informed treatment (v3.8.0 applied it to the four agents) across all six phase commands and all ten skills:
+  - **Goal-backward + batch, per command.** Every phase command (`refactor`, `verify`, `review`, `judge`, `openapi`, `document`) now opens with a compact "How to work (fewest round-trips)" note: define done backward (from the Success-metrics gate), then batch the reads/edits/verify into one pass. A round-trip is the expensive unit; an in-turn tool result is cheap.
+  - **Skills tightened.** Prose compressed in every SKILL.md; the batch principle folded into skills that drive sequential work (`code-craft`, `harness-engineering`, `spec-driven-development`). Verified/pinned facts preserved exactly (OpenAPI 3.2.0 schema URL, Go version features, Confluence MCP surface and PlantUML compression algorithm).
+  - **Net static-token reduction** across commands + skills combined, despite adding the new discipline, with per-file trimming offsetting the added sections. The real token win is at execution time: fewer model round-trips per command run.
+- No doctrine change; no frontmatter schema change; all 18 gates pass.
+
+## [3.8.0] - 2026-08-14
+
+### Changed
+
+- **Agent prompts rewritten for fewer tokens and better results (Tura-informed).** Analyzed the Tura runtime harness (its runtime-managed command graph and backward-reasoning model) and folded the two transferable techniques into all four squad agents:
+  - **Batch, do not ReAct.** Each executor now opens with a "How to work (fewest round-trips)" discipline: gather every read in one pass, then edit, then run the toolchain once, instead of paying a model round-trip per tool call. A round-trip is the expensive unit; a tool result inside one turn is cheap.
+  - **Goal backward.** Start from DONE (the `done_cmd`), reconstruct the current state, name the gap, then act. Replaces open-ended "figure it out" framing with a deterministic reasoning order.
+  - **Stripped dead weight.** Removed unresolvable relative-link reference lists (4-6 per agent) and compressed verbose prose into high-signal imperatives. Subagents do not inherit AGENTS.md, so each body stays self-contained; only the truly redundant restatement was cut.
+  - Net system-prompt body reduction: ~17% overall (worker -23%, validator -17%, orchestrator -19%, discover -9%), measured after frontmatter, despite adding the new reasoning discipline.
+- **Cross-host compatibility: Claude Code tool allowlists.** Added a `tools:` field (Read/Edit/Write/Glob/Grep/Bash/WebFetch/WebSearch/TodoWrite, omitting the delegation tool) to the three subagents so they work as-is when copied into a `.claude/agents/` directory. Capability-gating hosts continue to use the existing `permission:` block; allowlist hosts use `tools:`. The orchestrator (primary) keeps full tool access including delegation. No host-binding tokens introduced; G17 stays green.
+
+### Fixed
+
+- Frontmatter comments in the subagents no longer name specific hosts; the core stays host-agnostic per G17.
+
 ## [3.7.0] - 2026-08-13
 
 ### Changed

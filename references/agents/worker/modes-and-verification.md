@@ -1,6 +1,6 @@
 # Worker Modes and Verification
 
-Depth for the worker. The [SKILL.md](../../agents/worker.md) owns the contract; this owns the detail.
+Depth for the worker. The [SKILL.md](../../../agents/worker.md) owns the contract; this owns the detail.
 
 ## implement (ACT)
 
@@ -20,7 +20,7 @@ Depth for the worker. The [SKILL.md](../../agents/worker.md) owns the contract; 
 
 ## verify (PROVE)
 
-Dial the layers to job complexity ([right-sizing](../../skills/harness-engineering/references/right-sizing.md)); the dial chooses which layers, never the evidence standard.
+Dial the layers to job complexity ([right-sizing](../../../skills/harness-engineering/references/right-sizing.md)); the dial chooses which layers, never the evidence standard.
 
 - **L1 static:** lint, type-check, format. Every source change.
 - **L2 runtime:** tests run; app starts; critical paths execute. When the change runs.
