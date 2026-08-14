@@ -7,6 +7,26 @@ Match this when authoring any new endpoint/spec page. The companion generator
 dict. Authoring mechanics (macros, compression, storage format) live in
 [storage-format.md](./storage-format.md) + [plantuml.md](./plantuml.md).
 
+## Content-quality rules (mandatory on every endpoint page)
+
+Learned from author-review cycles on 2026-08-14; treat as acceptance criteria:
+
+1. **Every nested struct field is its own table row**, keyed by dotted path
+   (`content.installmentPlans[].promotionalInterestDetail[].startTenor`), never a
+   collapsed "see structure below" row. A parent row may summarize ("Each item has
+   the fields below") but the children must still appear as individual rows.
+2. **Sample request/response are FULL payloads**: every field documented in the
+   tables appears in the sample with realistic mock data, including all
+   `headerReq`/`headerResp` fields and every array/nested variant (e.g. a normal
+   plan AND a promotional plan in the same response sample). Mock data must be
+   internally consistent across request and response (response tiers mirror the
+   request's tiers).
+3. **Opaque pass-through payloads stay single-row.** Fields typed
+   `json.RawMessage` in source (schema owned upstream) are documented as one row
+   with an "opaque, relayed verbatim" remark; never fabricate sub-fields.
+4. **Field names come from the Go struct json tags**, verified in source, not from
+   memory (e.g. `headerResp.statusCd`, not `statusCode`).
+
 ## Why decode a real page
 
 Confluence page structure (macro forms, table attributes, heading levels) is
@@ -128,3 +148,42 @@ same source in a collapsed expand ("Raw sequence diagram source") so the source 
 recoverable and copy-editable on the page. `build_page` emits this pair; when
 authoring by hand, decode the macro's `data` param and emit the same source in the
 expand. Remote-MCP (`html`) form: `<details><summary>Raw sequence diagram source</summary><pre><code class="language-none">SOURCE</code></pre></details>` (HTML-escape the source; arrows `->`/`-->` contain `>`).
+
+## Instance variant: ktbinnovation / GoofyDisco "BFF API Specification" pages
+
+Verified by publishing 2026-08-14 (pages `/x/BwGnbwE`, `/x/lYGkbwE`, siblings
+under page 6064604274). The sibling pages in this space follow a **different but
+self-consistent layout**; when extending a family of endpoint pages there, match
+the siblings, not the canonical order above:
+
+- **H2 section headings** (not H1): `Change logs`, `Sequence diagram`, `Logic`,
+  `API Details`, `Status Code`, `Field to Field Mapping`, each preceded by `<hr>`.
+- **Opens with a `panel-info`** (`<div data-type="panel-info">`) titled
+  "**BFF API Specification:** <service> - <METHOD> <path>" + one-paragraph summary.
+- **Metadata table**: fixed `data-width="1761"`, label cells
+  `data-background="#f4f5f7"` with `style="background-color: #f4f5f7"` and
+  `data-colwidth` groups; `Dependency overview` uses `rowspan` with nested
+  `Inbound component` / `Outbound component` label rows.
+- **Change logs** row: date `DD-MM-YYYY`, `<span data-type="mention"
+  data-user-id="...">` (omit rather than invent an id), description, and
+  `<span data-type="status" data-color="green" data-status-style="bold">DONE</span>`.
+  Append a row per revision, never rewrite history.
+- **Sequence diagram is a PLAIN wide code block**, not `plantumlcloud`:
+  `<pre data-breakout="wide"><code class="language-none">…PlantUML source…</code></pre>`
+  with real newlines. Siblings render the source as-is; do not introduce
+  `plantumlcloud` here without a rendered-SVG proof on this instance.
+- **Logic** = bulleted `<ul><li>` list of validation/injection/relay/error rules.
+- **API Details** = `### Request parameters` table (`Field | Type | M/O |
+  Description | Remark`), `### Sample request (full)` in a 1-col table wrapping
+  `<pre><code class="language-json">`, then the same pair for the response. M/O
+  values: mandatory `<span style="color: #de350b">M</span>`, optional `O`,
+  conditional `C`.
+- **Status Code** table: `HTTP Code | Custom Status Code | Status Description |
+  Scenario`, with a `passthrough` row (`- | - | passthrough | …`) for inherited
+  downstream errors.
+- **Field to Field Mapping**: one `###`-level table per downstream call
+  (`Input / Output | Target | Source | Mapping Logic | Remark`; I/O cell is `I`
+  or `O`), plus a final `### Response mapping` table.
+- **Remote-MCP html transport handled ~25 KB bodies fine** (create + update, no
+  502 split needed) on this instance; retry-with-pause before falling back to the
+  create-then-update minimal-placeholder pattern.
