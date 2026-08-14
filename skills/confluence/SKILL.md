@@ -40,6 +40,9 @@ Markdown is a rendering trap on Confluence. The contract is the native **storage
 - Sequence-diagram messages split across a **real newline** are a syntax error. Keep each message on one line; a literal `\n` inside a message is a visual break.
 - **Do not trust a local `-check`** that reports `Error line 1` in some Java versions; it can be a false negative. Render + inspect the SVG is the only proof.
 - The verified compression algorithm (encode + decode) and the `\n` trap are in [plantuml](references/plantuml.md). Publishing a diagram that produces no/trivial SVG or an error-marker image renders broken on the page.
+- **Every diagram ships with its raw source in a collapsed expand.** A rendered `plantumlcloud` alone leaves the source unrecoverable from the page; mirror [page-template](references/page-template.md): render the macro, then immediately follow it with the PlantUML source in an `expand > code` block titled e.g. "Raw sequence diagram source". Emit the SAME source in both (decode the macro's `data` param to get the source for the expand). Forms:
+  - **Remote MCP (`html`):** `<details><summary>Raw sequence diagram source</summary><pre><code class="language-none">SOURCE</code></pre></details>`. HTML-escape the source (`&` `<` `>` → `&amp;` `&lt;` `&gt;`; PlantUML arrows `->`/`-->` contain `>`).
+  - **stdio bridge (`storage`):** `expand_macro("Raw sequence diagram source", code_macro(source, language="none"))`.
 
 **Mermaid confirm before authoring from storage XML:**
 
