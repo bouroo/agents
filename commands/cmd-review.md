@@ -7,9 +7,13 @@ phase: PROVE
 
 # Review Code Review
 
-A thorough, language-agnostic code review of the current changes, reported by severity. Part of the **PROVE** phase. (Review trusts the author's evidence; the [judge](cmd-judge.md) command trusts nothing and re-runs.) Right-size on action and context complexity: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences. Flag any owed artifact line the author skipped an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:` ([code-craft](../skills/code-craft/SKILL.md)) as a SHOULD FIX; full fraud hunting is the judge's job, not review's.
+A thorough, language-agnostic code review of the current changes, reported by severity. Part of the **PROVE** phase. (Review trusts the author's evidence; the [judge](cmd-judge.md) command trusts nothing and re-runs.) Right-size on complexity: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences. Flag any owed artifact line the author skipped (an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:`; [code-craft](../skills/code-craft/SKILL.md)) as a SHOULD FIX; full fraud hunting is the judge's job, not review's.
 
 > **Agent:** run on a reviewing worker ([discover](../agents/discover.md), review mode) or any read-only reviewer.
+
+## How to work (fewest round-trips)
+
+Round-trips cost more than in-turn tool results. Define done backward (a verdict + every rubric row considered, every finding naming `[file:line]` + a fix), then batch: read the diff plus neighbors in one pass and synthesize, then group by severity.
 
 **Target** (optional): **$ARGUMENTS**. Otherwise review the current uncommitted changes (`git diff` / `git diff --cached`).
 
@@ -18,14 +22,7 @@ A thorough, language-agnostic code review of the current changes, reported by se
 - `--against=<ref>` review the diff against this ref (`main`, `HEAD~1`, a branch) instead of the uncommitted changes.
 - `--focus=<dimension>` review one dimension only: `security`, `performance`, `correctness`, or `tests`. Default: all dimensions.
 
-Parsing `$ARGUMENTS` is this command's job the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
-
-## Workflow
-
-1. **Understand the change.** Read the message/PR/summary. Does it make sense? Should it exist? Identify scope: bug fix, feature, refactor, cleanup. If `$ARGUMENTS` set `--against`, derive the diff from that ref (`git diff <ref>`) instead of the uncommitted changes.
-2. **Read the diff plus neighbors.** Do not review in isolation; read enough surrounding code to judge coupling and convention.
-3. **Check against the rubric** (below). If `$ARGUMENTS` set `--focus`, restrict the rubric to that one dimension; otherwise cover all rows.
-4. **Group findings** by severity; every finding names `[file:line]` and a suggested resolution.
+Parsing `$ARGUMENTS` is this command's job; the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
 
 ## Review rubric
 
@@ -59,7 +56,7 @@ Parsing `$ARGUMENTS` is this command's job the host only forwards the string. Se
 [APPROVE / REQUEST CHANGES / BLOCKED one-line justification]
 ```
 
-## Success metrics
+## Success metrics (done =)
 
 - Every rubric row considered; every finding names a location and a fix.
 - Verdict is one of the three with a one-line justification.
