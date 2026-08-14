@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.4] - 2026-08-14
+
+### Changed
+
+- **Confluence: mandatory content-quality rules for endpoint pages** (page-template.md): every nested struct field as its own dotted-path table row (never collapsed); sample request/response are full payloads with internally consistent mock data covering every documented field; opaque `json.RawMessage` pass-throughs stay single-row ("opaque, relayed verbatim", never fabricate sub-fields); field names verified from Go struct json tags, not memory. SKILL.md pointer updated.
+- **Confluence: instance-variant section** (page-template.md): the tenant / ClientInstance "BFF API Specification" page family (H2 sections with `<hr>`, `panel-info` opener, fixed-width metadata table with `rowspan` dependency rows, DD-MM-YYYY change-log rows with mention/status spans, plain wide code-block sequence diagrams instead of `plantumlcloud`, M/O/C coloring, passthrough status-code rows, per-call field-mapping tables). Rule: when extending an existing page family, match siblings rather than the canonical layout. Includes the transport note that remote-MCP html handled ~25 KB bodies without a 502 split on this instance.
+
 ## [3.9.3] - 2026-08-14
 
 ### Changed
