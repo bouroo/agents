@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.0] - 2026-08-14
+
+### Changed
+
+- **Agent prompts rewritten for fewer tokens and better results (Tura-informed).** Analyzed the Tura runtime harness (its runtime-managed command graph and backward-reasoning model) and folded the two transferable techniques into all four squad agents:
+  - **Batch, do not ReAct.** Each executor now opens with a "How to work (fewest round-trips)" discipline: gather every read in one pass, then edit, then run the toolchain once, instead of paying a model round-trip per tool call. A round-trip is the expensive unit; a tool result inside one turn is cheap.
+  - **Goal backward.** Start from DONE (the `done_cmd`), reconstruct the current state, name the gap, then act. Replaces open-ended "figure it out" framing with a deterministic reasoning order.
+  - **Stripped dead weight.** Removed unresolvable relative-link reference lists (4-6 per agent) and compressed verbose prose into high-signal imperatives. Subagents do not inherit AGENTS.md, so each body stays self-contained; only the truly redundant restatement was cut.
+  - Net system-prompt body reduction: ~17% overall (worker -23%, validator -17%, orchestrator -19%, discover -9%), measured after frontmatter, despite adding the new reasoning discipline.
+- **Cross-host compatibility: Claude Code tool allowlists.** Added a `tools:` field (Read/Edit/Write/Glob/Grep/Bash/WebFetch/WebSearch/TodoWrite, omitting the delegation tool) to the three subagents so they work as-is when copied into a `.claude/agents/` directory. Capability-gating hosts continue to use the existing `permission:` block; allowlist hosts use `tools:`. The orchestrator (primary) keeps full tool access including delegation. No host-binding tokens introduced; G17 stays green.
+
+### Fixed
+
+- Frontmatter comments in the subagents no longer name specific hosts; the core stays host-agnostic per G17.
+
 ## [3.7.0] - 2026-08-13
 
 ### Changed
