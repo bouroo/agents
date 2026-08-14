@@ -1,16 +1,16 @@
 # Discover Modes and Review Rubric
 
-Depth for discover. The [SKILL.md](../../discover.md) owns the contract; this owns the detail.
+Depth for discover. The [SKILL.md](../../../agents/discover.md) owns the contract; this owns the detail.
 
 ## explore (THINK)
 
-Goal: give the conductor enough to decide without reading the code itself.
+Goal: give the orchestrator enough to decide without reading the code itself.
 
 Return:
 - **Locations:** exact file paths + line ranges for the relevant surface.
 - **Shape:** 2-5 sentences on how the code is organized and how it works.
 - **Coupling:** what else touches this surface; what would ripple from a change.
-- **Risk:** sharp edges, invariants, concurrency, error-handling conventions the coder must match.
+- **Risk:** sharp edges, invariants, concurrency, error-handling conventions the worker must match.
 
 Name the surface you actually inspected. Never generalize from a grep count ("appears 12 times" without reading those sites is not exploration).
 
@@ -28,7 +28,7 @@ If sources conflict, say so and pick the most authoritative. Do not present an i
 
 ## review (PROVE)
 
-Read the spec, the diff plus its neighbors, SCOPE, assumptions, and the coder's verification handoff. Do not re-run commands. Grade every rubric row; any missing grade is a failure. Findings include severity and a concrete location/repro. If evidence is stale or incomplete, route to `coder (verify)`.
+Read the spec, the diff plus its neighbors, SCOPE, assumptions, and the worker's verification handoff. Do not re-run commands. Grade every rubric row; any missing grade is a failure. Findings include severity and a concrete location/repro. If evidence is stale or incomplete, route to `worker (verify)` (or `validator` for independent re-execution).
 
 | # | Grade | What "pass" requires |
 |---|---|---|
@@ -40,7 +40,7 @@ Read the spec, the diff plus its neighbors, SCOPE, assumptions, and the coder's 
 | 6 | artifact-lines | INTENT/TWINS/AUTH/PENDING owed are present |
 | 7 | assumptions | assumptions made explicit; no silent guesses |
 
-If a red test conflicts with a narrative pass, the red test wins and routes to `coder (fix)`.
+If a red test conflicts with a narrative pass, the red test wins and routes to `worker (fix)`.
 
 ## When you get stuck
 

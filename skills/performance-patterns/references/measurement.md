@@ -8,13 +8,13 @@ Optimization without measurement is guessing, and guesses about bottlenecks are 
 
 **Define, Benchmark, Diagnose, Improve, Compare**, repeated.
 
-1. **Define your metric (THINK)** -- latency, throughput, memory, or CPU? Without a target, optimizations are random. Pick one primary metric and state the target.
-2. **Write an atomic benchmark (THINK)** -- isolate one function per benchmark to avoid result contamination. A benchmark touching everything proves nothing about anything.
-3. **Measure baseline (PROVE)** -- capture to a file as an executable audit trail (`report-1.txt`). The file, not memory, is the record.
-4. **Diagnose (THINK)** -- rule out external bottlenecks first (below), then apply the decision tree in the SKILL.
-5. **Improve (ACT)** -- apply ONE optimization at a time, with an explanatory comment naming why.
-6. **Compare (PROVE)** -- use a statistical comparator to confirm significance; paste the comparison in the report or commit so reviewers see the exact delta.
-7. **Repeat (GROW)** -- increment the report number, catalog findings, and tackle the next bottleneck.
+1. **Define your metric (THINK)**: latency, throughput, memory, or CPU? Without a target, optimizations are random. Pick one primary metric and state the target.
+2. **Write an atomic benchmark (THINK)**: isolate one function per benchmark to avoid result contamination. A benchmark touching everything proves nothing about anything.
+3. **Measure baseline (PROVE)**: capture to a file as an executable audit trail (`report-1.txt`). The file, not memory, is the record.
+4. **Diagnose (THINK)**: rule out external bottlenecks first (below), then apply the decision tree in the SKILL.
+5. **Improve (ACT)**: apply ONE optimization at a time, with an explanatory comment naming why.
+6. **Compare (PROVE)**: use a statistical comparator to confirm significance; paste the comparison in the report or commit so reviewers see the exact delta.
+7. **Repeat (GROW)**: increment the report number, catalog findings, and tackle the next bottleneck.
 
 One change at a time is non-negotiable. Bundling changes destroys causality: you cannot tell which change helped, which hurt, and which did nothing.
 
@@ -28,7 +28,7 @@ Before optimizing code, verify the bottleneck is in your process. If 90% of late
 - **Distributed tracing** shows which upstream span is slow.
 - A **thread or task dump** shows workers blocked in socket reads or DB drivers.
 
-**When external:** optimize that component -- query tuning, caching, connection pools, circuit breakers, batch sizing. Re-profile after each external fix; the internal hot path may have moved or vanished.
+**When external:** optimize that component: query tuning, caching, connection pools, circuit breakers, batch sizing. Re-profile after each external fix; the internal hot path may have moved or vanished.
 
 ## Benchmark Hygiene
 
@@ -41,4 +41,4 @@ Before optimizing code, verify the bottleneck is in your process. If 90% of late
 
 ## Source
 
-See also [harness-engineering](../../harness-engineering/SKILL.md) (Three-Layer Verification) -- the same "executable evidence, not narration" standard applies to a performance claim.
+See also [harness-engineering](../../harness-engineering/SKILL.md) (Three-Layer Verification) for the same "executable evidence, not narration" standard that applies to a performance claim.

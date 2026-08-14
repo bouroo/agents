@@ -4,12 +4,13 @@
     {
       "code": "core",
       "name": "Coder Squad Core",
-      "description": "Autonomous, self-improving, language-agnostic coder-agent squad: a governance router (AGENTS.md), a three-role squad (conductor/coder/discover), six phase commands, and the core skills that drive the think-act-prove-grow loop.",
+      "description": "Autonomous, self-improving, language-agnostic coder-agent squad: a governance router (AGENTS.md), a four-role squad (orchestrator/worker/validator/discover), six phase commands, and the core skills that drive the think-act-prove-grow loop.",
       "default_selected": true,
       "source": "local",
       "agents": [
-        "conductor",
-        "coder",
+        "orchestrator",
+        "worker",
+        "validator",
         "discover"
       ],
       "commands": [

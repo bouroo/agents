@@ -9,7 +9,7 @@ the cost, the audit, and the fix.
 
 A transcript that contains all the right words in all the right places --
 "the test passed", "the build is green", "I verified the endpoint returns
-201" -- but the observation is missing. The agent read the code, decided it
+201", but the observation is missing. The agent read the code, decided it
 was fine, and narrated the result as if it had been observed. The narrative
 is convincing; the evidence is absent.
 
@@ -50,7 +50,7 @@ inherits the false "verified" status.
 The cost compounds because verification theater erodes the trust budget
 that every other check depends on. Once a transcript has been caught
 narrating results that did not occur, every "done" claim in that
-transcript -- and every claim in every transcript that follows it --
+transcript, and every claim in every transcript that follows it --
 becomes suspect. The harness is the system of trust; verification
 theater is the failure that breaks it.
 
@@ -83,7 +83,7 @@ claim is unverified. The unit is not done.
 
 ## The fix
 
-Three layers, applied together -- any one alone is not enough.
+Three layers, applied together; any one alone is not enough.
 
 ### 1. Executable evidence
 
@@ -104,7 +104,7 @@ unverified.
 The harness enforces L1 (static: lint, typecheck, format), L2 (runtime:
 tests run, critical path executes, app starts), and L3 (end-to-end:
 across the changed boundary, an integration path exercises the change).
-Skip none. Verification theater hides in the gaps between layers -- a
+Skip none. Verification theater hides in the gaps between layers; a
 claim that "tests pass" without an integration check is theater; a
 claim that "the endpoint returns 201" without a captured curl is
 theater. The three layers close the gaps.
@@ -116,7 +116,7 @@ orchestrator-level convergence gates that bind completion to all three.
 
 The structural fix for tautology-test theater. Deliberately mutate the
 implementation (flip a comparison, drop a line, alter a constant). If
-the suite stays green, the tests were decoration -- they could not fail,
+the suite stays green, the tests were decoration; they could not fail,
 so they could not prove anything. A test that fails when the
 implementation is broken is a test that proves something.
 
@@ -129,7 +129,7 @@ verification theater, not part of the verification.
 
 Cross-link [harness-engineering](../SKILL.md) (grade the tests) and
 (adversarial judge), plus the Failure-Mode -> Control Map row "Verification
-theater". Explanations are not evidence -- the Prime Directive
+theater". Explanations are not evidence; the Prime Directive
 ([AGENTS.md](../../../AGENTS.md) §0). The [Intent
 gate](../../code-craft/SKILL.md) is the upstream control: a claim
 that an edit satisfies an Intent line without captured verification output is
