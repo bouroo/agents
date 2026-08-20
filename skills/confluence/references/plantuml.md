@@ -139,6 +139,7 @@ The sibling pages do NOT ship a bare `plantumlcloud` macro. They follow it **imm
 - `language-abap` is the (quirky) lexer the sibling pages use for PlantUML source; match it for consistency, or use `language-plantuml` if available.
 - The `data-breakout="wide"` makes the expand span the full content width like the diagram above it.
 - Publish the macro + expand together in one `updateConfluencePage` (the expand is plain HTML+, no compression, so it adds little to payload size).
+- **Failure record (2026-08-18):** an instance-variant note in [page-template.md](./page-template.md) had been mis-recorded as "plain wide code block, NOT plantumlcloud"; following it shipped two endpoint pages whose diagram section was raw code under an expand, exactly the complaint "sequence diagram not displayed with raw expand code below." Both needed a v5 re-publish with the macro + expand form. The failure is invisible to body readback (the source text is all present); only the macro's presence in the published markup proves the diagram will render. When this file and any instance-variant note disagree about diagram form, the macro wins unless a rendered-SVG proof on that instance says otherwise.
 
 ## The `\n` syntax trap (the regression)
 

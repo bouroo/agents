@@ -15,9 +15,11 @@
 #
 # agents/ and commands/ ship in each host's NATIVE format: flat <name>.md files
 # (opencode/kilo discover agents/<name>.md and commands/<name>.md; claude
-# discovers ~/.claude/agents/<name>.md). The agent frontmatter is a superset
-# (name/description/mode/color/permission/disallowedTools) that each host reads
-# only its own keys from; extra keys are ignored, so one file serves all three.
+# discovers ~/.claude/agents/<name>.md). The agent frontmatter is the common
+# subset (name/description/mode/color/permission) that every host reads. NEVER
+# add host-specific keys (e.g. Claude-only `disallowedTools`): OpenCode/Kilo
+# pass unknown keys to the provider as model options, breaking the agent's
+# first model call. Enforced by checks.py G4.
 # skills/ ship nested skills/<name>/SKILL.md (the Agent Skills standard).
 #
 # Modes:
