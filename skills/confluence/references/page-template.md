@@ -11,7 +11,7 @@ dict. Authoring mechanics (macros, compression, storage format) live in
 
 Learned from author-review cycles on 2026-08-14; treat as acceptance criteria:
 
-1. **Every nested struct field is its own table row**, keyed by dotted path
+1. **Every nested field is its own table row**, keyed by dotted path
    (`content.installmentPlans[].promotionalInterestDetail[].startTenor`), never a
    collapsed "see structure below" row. A parent row may summarize ("Each item has
    the fields below") but the children must still appear as individual rows.
@@ -21,10 +21,11 @@ Learned from author-review cycles on 2026-08-14; treat as acceptance criteria:
    plan AND a promotional plan in the same response sample). Mock data must be
    internally consistent across request and response (response tiers mirror the
    request's tiers).
-3. **Opaque pass-through payloads stay single-row.** Fields typed
-   `json.RawMessage` in source (schema owned upstream) are documented as one row
-   with an "opaque, relayed verbatim" remark; never fabricate sub-fields.
-4. **Field names come from the Go struct json tags**, verified in source, not from
+3. **Opaque pass-through payloads stay single-row.** Fields whose type is an
+   opaque raw-JSON pass-through in source (schema owned upstream) are documented
+   as one row with an "opaque, relayed verbatim" remark; never fabricate sub-fields.
+4. **Field names come from the source's serialization tags** (e.g. JSON struct
+   tags), verified in source, not from
    memory (e.g. `headerResp.statusCd`, not `statusCode`).
 
 ## Why decode a real page
@@ -168,10 +169,17 @@ the siblings, not the canonical order above:
   data-user-id="...">` (omit rather than invent an id), description, and
   `<span data-type="status" data-color="green" data-status-style="bold">DONE</span>`.
   Append a row per revision, never rewrite history.
-- **Sequence diagram is a PLAIN wide code block**, not `plantumlcloud`:
-  `<pre data-breakout="wide"><code class="language-none">…PlantUML source…</code></pre>`
-  with real newlines. Siblings render the source as-is; do not introduce
-  `plantumlcloud` here without a rendered-SVG proof on this instance.
+- **Sequence diagram uses the `plantumlcloud` extension macro + raw-source
+  expand, same as the canonical form** (see step 4 above and
+  [plantuml.md](./plantuml.md) "Remote MCP" section): the macro div renders
+  server-side into SVG; the `<details data-breakout="wide">` expand below it
+  carries the raw `@startuml…@enduml` source (lexer `language-abap`, the
+  sibling-page convention). The expand source must be the exact bytes
+  compressed into the macro's `data` param. A plain
+  `<pre data-breakout="wide"><code class="language-none">@startuml…</code></pre>`
+  block renders as **literal text, never a diagram** on this instance;
+  following that (earlier mis-recorded) form shipped 2026-08-18 and both pages
+  had to be re-published as v5 with the macro.
 - **Logic** = bulleted `<ul><li>` list of validation/injection/relay/error rules.
 - **API Details** = `### Request parameters` table (`Field | Type | M/O |
   Description | Remark`), `### Sample request (full)` in a 1-col table wrapping
