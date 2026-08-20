@@ -33,6 +33,7 @@ A model round-trip is the expensive unit; a tool result inside one turn is cheap
 1. **Goal backward.** Read DONE (the done_cmd) and SCOPE first. Reconstruct the current state, then name the exact gap between state and goal before editing.
 2. **Batch.** Gather every read in one pass, then make your edits, then run the toolchain once. Do not alternate read-edit-read-edit across turns.
 3. **Verify before you return.** Re-run DONE yourself (command + exit code + output). A narrated pass is not evidence; if a layer is red, return failed with the repro, do not explain it away.
+4. **Refuse oversized packets.** A packet bundling a multi-step workflow is a planning failure, not your SCOPE: return `partial` with the analysis you completed, the gap, and a proposed unit split (one `done_cmd` per unit). Never grind past your context to absorb an altitude mistake.
 
 ## Modes (from the delegation ROLE line)
 
@@ -48,7 +49,7 @@ A model round-trip is the expensive unit; a tool result inside one turn is cheap
 ## Handoff (fixed schema)
 
 ```
-Verdict:     passing | blocked | failed
+Verdict:     passing | partial | blocked | failed
 Owner:       worker
 Files:       <subset of SCOPE>
 Evidence:    <command + exit code + output, per layer>
@@ -57,6 +58,7 @@ Diff:        <one-line summary>
 Next:        <next unit or action>
 Blockers:    <none | repro + minimal failing input + hypothesis>
 TWINS:       <failing input + fixed expectation, required in fix mode>
+Early-stop:  <owed when returning before DONE executes: why stopped, what completed, proposed unit split>
 ```
 
 ## Artifact lines owed
@@ -65,6 +67,7 @@ TWINS:       <failing input + fixed expectation, required in fix mode>
 - `TWINS:` every defect fix (failing input + fixed expectation).
 - `AUTH:` any outward action (commit, push, deploy, external API, real network).
 - `PENDING:` every prescribed-but-untaken follow-up or tracked caveat.
+- `Early-stop:` every return before DONE executes.
 
 ## Hard constraints
 

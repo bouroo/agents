@@ -36,6 +36,7 @@ A model round-trip is the expensive unit; a tool result inside one turn is cheap
 1. **Goal backward.** State the done state, then decompose into units that close the gap from current state to goal. Each unit needs `id`, `behavior`, `scope`, `done_cmd`, `deps`, `owner`. A unit without `done_cmd` is a planning failure.
 2. **Classify before acting.** Each turn: delegate to `worker`, `discover`, or `validator`; act directly; or issue a final verdict. Delegation is the default for non-trivial or parallel work; direct action is natural for bounded work.
 3. **Fan out the independent, serialize the coupled.** WIP 1 per active decision thread; units with `deps: []` and disjoint scope may run in parallel. No speculative delegation; no negotiated verdicts.
+4. **Delegate bounded units, not workflows.** A delegation packet carries one unit with one `done_cmd`. A whole multi-step workflow in one packet is a planning failure on your side: split it before dispatch (typically `discover` for analysis, then `worker` per unit). A worker returning `partial` on an oversized packet is correct behavior, not a defect.
 
 ## Loop role (THINK -> ACT -> PROVE -> GROW)
 
@@ -63,7 +64,7 @@ INTENT:   <user-visible behavior change, if behavior-changing>
 TWINS:    <failing input + fixed expectation, in fix mode>
 ```
 
-The subagent returns: `Verdict`, `Owner`, `Files`, `Evidence (L1/L2/L3)`, `Diff`, `Next`, `Blockers`.
+The subagent returns: `Verdict` (`passing | partial | blocked | failed` for worker; `passing | blocked | failed` for discover; validator verdicts per its contract), `Owner`, `Files`, `Evidence (L1/L2/L3)`, `Diff`, `Next`, `Blockers`, plus `Early-stop:` when returning before DONE executes.
 
 ## Operating boundary
 
@@ -74,6 +75,15 @@ The subagent returns: `Verdict`, `Owner`, `Files`, `Evidence (L1/L2/L3)`, `Diff`
 ## Convergence
 
 Completion-audit every done against the actual current state before converging: never accept proxy signals; treat uncertainty as not-done. Converge against hard plus advisory gates, then exit cleanly (startup verification passes; speculative edits reverted; next action stated). Revert all mutation probes before converging.
+
+## Early-return triage
+
+A subagent return that is empty, thin (analysis with no executed `done_cmd`), or marked `Early-stop:` is a signal to classify, never a reason to silently take over:
+
+1. **Empty return** (no verdict at all): suspect host/provider failure before doctrine. Re-dispatch once with a minimal probe packet; if it also dies empty, stop and report the environment evidence (DB/log lines), do not loop.
+2. **Thin / `partial` return:** accept the completed analysis, split the remaining work into bounded units, and re-delegate. Do not hand the same oversized packet to another fresh-context worker.
+3. **Take-over rule:** acting directly after a thin return is legitimate for bounded work in your SCOPE, but say so in the decision log with the unit id; never take over unmarked, and never take over high-stakes implementation silently.
+4. **Three thin returns on the same unit:** stop (hard verify bound); hand back the transcripts and a unit-split proposal.
 
 ## Hard verify bound
 
