@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.10.0] - 2026-08-21
+
+### Added
+
+- **Worker `partial` verdict and `Early-stop:` return line.** A worker returning before its `done_cmd` executes now owes an `Early-stop:` line (why stopped, what completed, proposed unit split), and may return `partial` with analysis plus a unit-split proposal instead of silently grinding past its context on an oversized delegation packet. The worker also refuses oversized packets outright: a packet bundling a whole multi-step workflow is a planning failure, not a SCOPE.
+- **Orchestrator bounded-unit delegation rule (planning step 4).** Delegation packets carry one unit with one `done_cmd`; multi-step workflows are split before dispatch, with `discover` doing analysis and `worker` receiving bounded units. A worker returning `partial` on an oversized packet is correct behavior.
+- **Orchestrator early-return triage protocol.** Empty returns (suspect host/provider first, one minimal-probe redispatch, then stop with environment evidence), thin/`partial` returns (accept analysis, split, re-delegate), a marked-take-over rule for bounded work (never silent, never high-stakes), and a 3-thin-returns hard stop.
+- **Failure class 5 (Early Return) in the convergence taxonomy**, provider-probe guidance in class 3, and two new delegation cheatsheet rows.
+
+### Changed
+
+- **`cmd-refactor` role split.** The workflow now runs analysis on `discover (explore)` and hands the plan to `worker` per bounded unit with its own `done_cmd` and evidence, instead of one whole-workflow delegation. Fresh-context workers handed the entire workflow stall mid-analysis.
+- **Delegation-packet return schema** now enumerates per-role verdict enums plus the `Early-stop:` field.
+
 ## [3.9.5] - 2026-08-20
 
 ### Fixed
