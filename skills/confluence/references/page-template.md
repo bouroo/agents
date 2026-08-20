@@ -169,10 +169,17 @@ the siblings, not the canonical order above:
   data-user-id="...">` (omit rather than invent an id), description, and
   `<span data-type="status" data-color="green" data-status-style="bold">DONE</span>`.
   Append a row per revision, never rewrite history.
-- **Sequence diagram is a PLAIN wide code block**, not `plantumlcloud`:
-  `<pre data-breakout="wide"><code class="language-none">…PlantUML source…</code></pre>`
-  with real newlines. Siblings render the source as-is; do not introduce
-  `plantumlcloud` here without a rendered-SVG proof on this instance.
+- **Sequence diagram uses the `plantumlcloud` extension macro + raw-source
+  expand, same as the canonical form** (see step 4 above and
+  [plantuml.md](./plantuml.md) "Remote MCP" section): the macro div renders
+  server-side into SVG; the `<details data-breakout="wide">` expand below it
+  carries the raw `@startuml…@enduml` source (lexer `language-abap`, the
+  sibling-page convention). The expand source must be the exact bytes
+  compressed into the macro's `data` param. A plain
+  `<pre data-breakout="wide"><code class="language-none">@startuml…</code></pre>`
+  block renders as **literal text, never a diagram** on this instance;
+  following that (earlier mis-recorded) form shipped 2026-08-18 and both pages
+  had to be re-published as v5 with the macro.
 - **Logic** = bulleted `<ul><li>` list of validation/injection/relay/error rules.
 - **API Details** = `### Request parameters` table (`Field | Type | M/O |
   Description | Remark`), `### Sample request (full)` in a 1-col table wrapping
