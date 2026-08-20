@@ -41,6 +41,12 @@ ALLOWED_MODES = {"primary", "subagent"}
 # doc (read/edit/bash/glob/grep/task/webfetch/websearch/todowrite/todoread).
 # `list` is NOT a valid key on either host and must not be used.
 ALLOWED_AGENT_PERM_KEYS = {"read", "edit", "glob", "grep", "bash", "task", "skill", "lsp", "question", "webfetch", "websearch", "external_directory", "todowrite", "todoread", "web", "color", "steps", "team", "icon"}
+# Top-level agent frontmatter keys every consuming host understands. OpenCode
+# and Kilo do NOT ignore unknown keys: their config normalizers fold them into
+# `options`, which providers receive as model options; a Claude-only key such
+# as `disallowedTools` then breaks the subagent's first model call (task tool
+# returns empty -> "returned without doing any actual work").
+ALLOWED_AGENT_KEYS = {"name", "description", "mode", "color", "permission"}
 ALLOWED_COMMAND_KEYS = {"name", "description", "phase", "invocable_as", "agent", "model", "argument-hint"}
 ALLOWED_PHASES = {"THINK", "ACT", "PROVE", "GROW", "ANYTIME"}
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -257,11 +263,22 @@ def G4_agents_frontmatter() -> None:
         if mode not in ALLOWED_MODES:
             _add("FAIL", f"{name}: {rel}: invalid mode {mode!r}; allowed {sorted(ALLOWED_MODES)}")
             ok = False
+        text = md.read_text()
+        fm_end = text.find("\n---", 3)
+        # Top-level keys only (indent 0): the flat parser in _frontmatter
+        # folds nested permission: children in, which are not top-level keys.
+        if fm_end != -1:
+            for fline in text[3:fm_end].splitlines():
+                if not fline or fline.startswith((" ", "\t", "#")):
+                    continue
+                k = fline.split(":", 1)[0].strip()
+                if k and k not in ALLOWED_AGENT_KEYS:
+                    _add("FAIL", f"{name}: {rel}: non-portable top-level key {k!r}; "
+                        f"allowed {sorted(ALLOWED_AGENT_KEYS)}")
+                    ok = False
         # Validate permission keys against the cross-host vocabulary. Keys are
         # children of `permission:` at indent 2; deeper nesting (task glob
         # rules) is skipped. Parsed by indentation, not yaml, so no PyYAML dep.
-        text = md.read_text()
-        fm_end = text.find("\n---", 3)
         if fm_end != -1:
             in_perm = False
             for fline in text[3:fm_end].splitlines():

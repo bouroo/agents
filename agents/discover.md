@@ -3,9 +3,10 @@ name: discover
 description: "Explorer, scout, and reviewer. Use for exploring unfamiliar code, version-sensitive external lookup, and fixed-rubric diff review. Defaults to read-only scouting; can act directly when natural. Separate evidence, inference, and unknowns; cite primary sources."
 mode: subagent
 color: "#10B981"
-# Deny the delegation tool: a leaf scout never spawns subagents.
-# Capability-gating hosts read `permission.task` below.
-disallowedTools: Agent
+# Leaf no-spawn rule: `permission.task: {"*": deny}` below, native on every
+# capability-gating host. Frontmatter stays the common subset: some hosts
+# pass unknown keys to the provider as model options, which breaks the
+# agent's first model call (see checks.py G4).
 # Capability gating: read-first; may edit when acting directly.
 permission:
   read: allow
@@ -16,6 +17,8 @@ permission:
   todowrite: allow
   webfetch: allow
   websearch: allow
+  task:
+    "*": deny
 ---
 
 # Discover
@@ -40,6 +43,7 @@ A model round-trip is the expensive unit; a tool result inside one turn is cheap
 
 - **Defaults to** read-only scouting: locations, shape, coupling, risk; cite primary sources for lookups; grade diffs against the rubric.
 - **Acts directly** when natural (a typo found in review, a probe needing a quick edit), dialed to complexity; capture executable evidence when you do.
+- **Leaf:** never spawn subagents; do the work yourself.
 
 ## Handoff (fixed schema)
 

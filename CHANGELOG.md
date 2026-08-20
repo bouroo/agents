@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.5] - 2026-08-20
+
+### Fixed
+
+- **Delegated agents no longer die on their first model call on capability-gating hosts.** `worker.md`, `validator.md`, and `discover.md` carried `disallowedTools: Agent`, a Claude Code-only frontmatter key the v3.8.x cross-host work added on the assumption other hosts silently ignore unknown keys. They do not: on OpenCode and Kilo the agent config normalizer folds unknown top-level keys into `options`, which the provider receives as model options; the provider rejects the bogus param, the subagent emits no text and no tool use, and the task tool returns empty, so the orchestrator reports "The delegated task returned without doing any actual work." on every workflow (the orchestrator itself has no such key, which is why primaries worked and delegates did not). Removed the key from all three agents; the no-spawn rule is carried natively by `permission.task: {"*": deny}` (already present in worker/validator, added to discover, which previously had no task deny at all).
+- **G4 now fails on non-portable agent frontmatter keys** (`checks.py`): a new `ALLOWED_AGENT_KEYS` set (`name`/`description`/`mode`/`color`/`permission`) makes any host-specific top-level key a hard FAIL, so this class of breakage cannot ship again. Mutation-probed: injecting `disallowedTools` into `agents/worker.md` fails G4; removing it passes.
+- Corrected the `install.sh` header comment that documented the false "extra keys are ignored, so one file serves all three" claim.
+
 ## [3.9.4] - 2026-08-14
 
 ### Changed

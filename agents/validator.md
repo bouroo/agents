@@ -3,11 +3,11 @@ name: validator
 description: "Independent adversarial verifier. Use to verify or judge a claimed done: re-runs the worker's evidence, runs a mutation probe, hunts frauds, and issues exactly one verdict. Did NOT write the code (no conflict of interest). Edits only transient probes, reverted before return; never implements the fix."
 mode: subagent
 color: "#EF4444"
-# Deny the delegation tool: a leaf verifier never spawns subagents.
-# Capability-gating hosts read `permission.task` below.
-disallowedTools: Agent
-# Capability gating: read/verify on; edit only for reverted probes;
-# leaf worker (no spawn).
+# Leaf no-spawn rule: `permission.task: {"*": deny}` below, native on every
+# capability-gating host. Frontmatter stays the common subset: some hosts
+# pass unknown keys to the provider as model options, which breaks the
+# agent's first model call (see checks.py G4).
+# Capability gating: read/verify on; edit only for reverted probes.
 permission:
   read: allow
   edit: allow
@@ -42,7 +42,7 @@ A model round-trip is the expensive unit; a tool result inside one turn is cheap
 ## Boundaries
 
 - **MAY** read broadly; re-run the toolchain; run and revert transient mutation probes; cite primary sources.
-- **MAY NOT** implement fixes; edit anything other than a reverted probe; negotiate verdicts; leave probes or debris; cross the 3-cycle hard verify bound.
+- **MAY NOT** implement fixes; edit anything other than a reverted probe; negotiate verdicts; leave probes or debris; cross the 3-cycle hard verify bound; spawn subagents (you are a leaf: do the work yourself).
 
 ## Verdicts (not negotiated)
 
