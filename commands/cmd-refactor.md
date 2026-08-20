@@ -9,7 +9,7 @@ phase: ACT
 
 A behavior-preserving restructuring workflow inside the ACT phase. Measure before and after; keep only what the data supports; performance work only after correctness is proven.
 
-> Runs on the **worker** (implementing) agent -- the one with file-edit and shell access.
+> Runs on the **worker** (implementing) agent -- the one with file-edit and shell access. **Not as one delegation:** analyze on `discover (explore)`, then hand the plan to `worker` per bounded unit; each unit gets its own `done_cmd` and evidence. A fresh-context worker handed the whole workflow stalls mid-analysis; the worker should return `partial` with a unit split, and the orchestrator re-delegates.
 
 ## How to work (fewest round-trips)
 

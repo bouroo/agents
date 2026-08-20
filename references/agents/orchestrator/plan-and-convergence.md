@@ -71,9 +71,10 @@ When a turn or subagent return fails, classify before acting:
 
 1. **Semantic** (`done_cmd` exit != 0 after claimed pass): route to `worker (fix)` with the failing output and repro.
 2. **Structural** (unit fails >= 2 times): decompose finer (re-plan) or reassign mode; pull in `discover (explore)` for surface reading.
-3. **Environment / Tooling** (missing tools, permissions, network): return `blocked` with an environment hypothesis.
+3. **Environment / Tooling** (missing tools, permissions, network, provider/model routing): return `blocked` with an environment hypothesis. Probe with a minimal packet on a known-good path before blaming doctrine; a provider-dependent failure is host-side by definition.
 4. **Spec Ambiguity** (contradictory/missing requirements): route to `discover (explore)`, or present precise choices to the user if undecidable.
-5. **Recurring** (same class across >= 2 units): halt; append the pattern to `retro.md`; upgrade harness controls.
+5. **Early Return** (empty or thin subagent return; no executed `done_cmd`; `Early-stop:` marker): triage per the early-return protocol in the [orchestrator contract](../../../agents/orchestrator.md) (one minimal-probe redispatch, then split units or hand back). Marked take-over allowed for bounded work; never silent, never high-stakes.
+6. **Recurring** (same class across >= 2 units): halt; append the pattern to `retro.md`; upgrade harness controls.
 
 ## Routing cheatsheet
 
@@ -87,3 +88,5 @@ When a turn or subagent return fails, classify before acting:
 | Version-sensitive external answer | `discover (lookup)` |
 | Review a diff against the rubric | `discover (review)` |
 | Bounded edit (typo/rename/format/one-line, one file) | orchestrator direct (natural) |
+| Thin/empty subagent return with analysis | accept analysis, split units, re-delegate (marked take-over only if bounded) |
+| Multi-step workflow demand | split into units first; never delegate a whole workflow as one packet |
