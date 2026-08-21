@@ -1,8 +1,6 @@
 ---
 description: "Review phase (PROVE) review current code changes for quality, safety, and performance, grouped by severity with a verdict. Use to review a diff (trusts the author; for adversarial re-verification use judge)."
 argument-hint: "[target] [--against=<ref>] [--focus=<security|performance|correctness|tests>]"
-agent: discover
-phase: PROVE
 ---
 
 # Review Code Review
