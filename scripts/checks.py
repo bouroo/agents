@@ -47,7 +47,7 @@ ALLOWED_AGENT_PERM_KEYS = {"read", "edit", "glob", "grep", "bash", "task", "skil
 # as `disallowedTools` then breaks the subagent's first model call (task tool
 # returns empty -> "returned without doing any actual work").
 ALLOWED_AGENT_KEYS = {"name", "description", "mode", "color", "permission"}
-ALLOWED_COMMAND_KEYS = {"name", "description", "phase", "invocable_as", "agent", "model", "argument-hint"}
+ALLOWED_COMMAND_KEYS = {"name", "description", "invocable_as", "model", "argument-hint"}
 ALLOWED_PHASES = {"THINK", "ACT", "PROVE", "GROW", "ANYTIME"}
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 AGENTS_MD_BUDGET = 220

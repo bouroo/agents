@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.10.1] - 2026-08-21
+
+### Changed
+
+- **Commands no longer bind a single agent in frontmatter.** All six `commands/*.md` drop `agent:`/`phase:` frontmatter: the command body describes the workflow, and the orchestrator (v3.10.0 bounded-unit delegation) picks the right agent per unit: `discover` for analysis, `worker` per bounded unit, `validator` for high-stakes verification. A single-agent binding invited handing a whole multi-step workflow to one fresh-context worker, the delegation shape behind the early-stop reports.
+- **G5 tightened** (`ALLOWED_COMMAND_KEYS`): `agent` and `phase` are now unknown keys, so the single-agent binding cannot ship again. Mutation-probed.
+
 ## [3.10.0] - 2026-08-21
 
 ### Added

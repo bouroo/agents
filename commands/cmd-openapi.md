@@ -1,8 +1,6 @@
 ---
 description: "OpenAPI phase (ACT) generate or update docs/openapi.yaml (OpenAPI 3.2) from API code or requirements and validate it against the canonical OAS meta-schema. Use to produce, repair, or sync an API contract."
 argument-hint: "[resource|tag|endpoint-group] [--validate-only]"
-agent: worker
-phase: ACT
 ---
 
 # OpenAPI Contract Generation & Validation

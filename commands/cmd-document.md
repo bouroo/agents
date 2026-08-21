@@ -1,8 +1,6 @@
 ---
 description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API, glossary) with code changes. Use when a behavior, interface, invariant, or domain-term change must be reflected in project documentation."
 argument-hint: "[system|flow|adr|api|glossary area] [--type=<system|flow|adr|api|glossary>]"
-agent: worker
-phase: ACT
 ---
 
 # Document -- sync the docs/ tree with code changes
