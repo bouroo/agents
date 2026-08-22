@@ -66,6 +66,15 @@ Declare the same grammar whether the caller writes `/verify --strict --focus=aut
 - Keep the option set small and closed. Free-form flags multiply misuse surface; prefer one required target plus a few well-named toggles.
 - Default to the safe, no-argument behavior. A command invoked with empty `$ARGUMENTS` must do something useful and non-destructive (review the current diff, verify the whole tree), never error or block waiting for input it never named.
 
+## Macro commands: one turn, many steps
+
+Round-trip economics is also a tool-design decision. When a sequence is deterministic, ship it as **one command** (a shell pipeline, a script, or a slash command) so N interactive tool calls become one. The macro's spec states its steps and their order; the author, not the runtime, owns the batching.
+
+- **Macro only the deterministic part.** A step that needs judgment (read this diff and decide) is a seam: split the macro there, and let the judgment step run interactively between two deterministic runs.
+- **A macro is a tool with a spec.** Same checklist as above: self-contained, non-overlapping, poka-yoke arguments, token-efficient returns (report per-stage exit codes and findings, not raw logs).
+- **Name the in-repo instance.** `/verify` is the canonical macro: one invocation runs format, lint, type-check, scan, and test, then hands judgment (the findings) back to the model.
+- **Kirby check.** A macro that exists only because the current model cannot sequence calls reliably is a bet to revisit at the next model upgrade, not permanent infrastructure.
+
 ## The feedback loop
 
 A tool's spec is a hypothesis about how the model will use it. Validate it the way you validate code:

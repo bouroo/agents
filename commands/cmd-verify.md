@@ -11,7 +11,7 @@ Leave the working tree passing every quality gate, including the repo's githook 
 
 ## How to work (fewest round-trips)
 
-Round-trips cost more than in-turn tool results. Define done backward (CLEAN: every stage reports command + exit code + output, githook exit 0, only intended changes remain), then batch: run the pipeline stages in one pass, collect exit codes and output, then fix and re-verify. Each stage is a gate; a narrated pass is not evidence.
+Round-trips cost more than in-turn tool results. Define done backward (CLEAN: every stage reports command + exit code + output, githook exit 0, only intended changes remain), then batch: run the pipeline stages in one pass, collect exit codes and output, then fix and re-verify. Each stage is a gate; a narrated pass is not evidence. This pipeline is the macro-command instance: one invocation runs every deterministic gate; judgment enters only on findings.
 
 **Scope** (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole working tree.
 

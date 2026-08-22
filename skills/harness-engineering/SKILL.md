@@ -22,6 +22,7 @@ A strong model still fails when the closed-loop system around it is weak. The ha
 1. **Repo-as-record, not conversation memory.** Restart from files; state, decisions, evidence live on disk under `.agents/`. Conversation is a cache that resets.
 2. **Split instructions from learning.** Instruction memory (human directives: AGENTS.md, build docs) stays stable and predictable; learning memory (agent-accumulated corrections) lives in its own files. Never write corrections into instruction files. Update only when the human changes a directive. ([memory-engineering](../memory-engineering/SKILL.md).)
 3. **Guides beat reminders; encode standards as deterministic gates, not prose.** A gate requires a clear pass condition, an actionable failure message naming the next action, and an owner (the harness, not agent memory). "Remember to verify" loses to a gate that fails when verification is absent.
+4. **Reason backward to root cause.** In diagnosis and fix, reason backward from the observed failure to the state that produced it and name the root cause before writing the change; a symptom patch that leaves the cause in place is a defect.
 
 ## ACT surgical execution
 
@@ -72,6 +73,7 @@ Clean exit (startup + verification pass; speculative edits reverted). No secret 
 ## References
 
 - [right-sizing](references/right-sizing.md) the two-axis dial.
+- [loop-flowcharts](references/loop-flowcharts.md) the loop as executable decision charts (master router, THINK/ACT/PROVE/GROW, judge).
 - [verification-theater](references/verification-theater.md) the mutation-testing protocol and theater audit.
 - [agent-computer-interface](references/agent-computer-interface.md) tool & MCP design checklist; also how slash commands receive `$ARGUMENTS` portably across hosts.
 - [composition-patterns](references/composition-patterns.md) delegation topology menu.
