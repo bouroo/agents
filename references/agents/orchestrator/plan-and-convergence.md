@@ -47,6 +47,8 @@ Emit `INTENT: <user-visible behavior change>` on the first behavior-changing uni
 **Clock-in:** `ROOT=$(git rev-parse --show-toplevel) && mkdir -p "$ROOT/.agents/plans/{slug}" "$ROOT/.agents/handoff"` -> load `state.json` if it exists -> verify the git working tree -> decompose or take a read-only decision.
 **Clock-out:** update `state.json` + `decision-log.md` -> verify a clean checkout -> summarize completed units and evidence.
 
+**Compaction rule (canonical across compaction):** when the window strains, `state.json` + `canvas.md` + `decision-log.md` + handoff summaries ARE the execution state. Every field a fresh context needs to resume deterministically (active unit, per-unit status + evidence pointers, pending artifact gates, SCOPE) survives compaction because it is on disk, not in conversation. Never summarize the session into prose; re-read the ledger.
+
 ## Convergence gates
 
 Before issuing a final verdict, pass **Hard** (all required) and review **Advisory**:

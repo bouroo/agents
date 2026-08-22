@@ -61,4 +61,5 @@ Never soften a refutation to be polite; never inflate a caveat into a refutation
 - [Judge protocol fraud hunt order, authority rank, output template](../references/workflows/cmd-judge/judge-protocol.md)
 - [validator verification-and-verdict](../references/agents/validator/verification-and-verdict.md) the fraud rubric table.
 - [harness-engineering](../skills/harness-engineering/SKILL.md) hard verify bound, grade-the-tests.
+- [loop flowcharts](../skills/harness-engineering/references/loop-flowcharts.md) the judge chart.
 - [code-craft](../skills/code-craft/SKILL.md) artifact gates (`INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`).
