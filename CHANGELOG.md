@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.11.0] - 2026-08-22
+
+### Added
+
+- **The loop as decision flowcharts** (`skills/harness-engineering/references/loop-flowcharts.md`): six executable Mermaid charts (master router, THINK with bounded evidence, ACT, PROVE two-half check with bounded retries, GROW, judge) rendering the existing doctrine as "follow the arrows literally" decisions, in the repo's own gate vocabulary. From [fable-method flowcharts](https://raw.githubusercontent.com/Sahir619/fable-method/refs/heads/main/skills/fable-method/references/flowcharts.md). Linked from harness-engineering's reference list and cmd-judge.
+- **Macro-command doctrine** (from [Tura](https://github.com/Tura-AI/tura)): a deterministic multi-step sequence is one batched command (pipeline or slash command), not N interactive calls; judgment steps are seams that split the macro. Lands as a new ACI section (`agent-computer-interface.md`), a second "form" in AGENTS.md S4 round-trip economics, orchestrator planning item 5, and a note on cmd-verify naming it the canonical macro instance.
+- **Execution-state compaction** (from [Tura](https://github.com/Tura-AI/tura)): when the window strains, preserve exact execution state (active unit, per-unit status + evidence pointers, pending artifact gates, SCOPE) on disk, never a narrative summary; a fresh context resumes deterministically from the ledger. Lands in AGENTS.md S8, worker item 5, and the orchestrator's plan-and-convergence State section.
+- **Backward reasoning to root cause** (from [Tura](https://github.com/Tura-AI/tura)): in fix mode, reason backward from the observed failure to the producing state and name the root cause before editing; a symptom patch that leaves the cause in place is a defect. Lands in harness-engineering THINK item 4 and worker item 1.
+- **Bounded evidence** (from fable-method): stop gathering the moment more evidence cannot change the next action. One clause in AGENTS.md S4 THINK and discover item 1.
+- **REASONS canvas: O = Operations** (from [Fowler SPDD](https://martinfowler.com/articles/structured-prompt-driven/)): per-entity command/query inventory as the API surface; module structure folded into Approach. Lands in spec-driven-development's canvas and spec-carries lists, consumed by cmd-openapi's interview step.
+- **Safe-by-default validating constructors** (from [JetBrains 10x commandments](https://blog.jetbrains.com/go/2025/10/16/the-10x-commandments-of-highly-effective-go/)): code-craft commandment 4 gains the general clause; go-essential S1 gains the Go form (`NewX(...) (X, error)`, `os.Root`).
+
+### Audited as already absorbed (intentionally no-op)
+
+- [Stop overengineering your agent harness](https://www.oreilly.com/radar/stop-overengineering-your-agent-harness/) -> already encoded line-for-line in `right-sizing.md` (Kirby Effect, Average Answer Trap, two axes, control dial, Reduce/Offload/Isolate).
+- [goperf.dev common patterns](https://goperf.dev/01-common-patterns/) -> every pattern already in `performance-patterns/references/` and go-essential S5/S8.
+- fable-method's non-coding domain adapters and Tura's `task_status` runtime internals -> rejected by doctrine (right-sizing "Coding-agent doctrine only"; host tooling is not portable doctrine), not omissions.
+
 ## [3.10.1] - 2026-08-21
 
 ### Changed

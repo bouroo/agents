@@ -18,6 +18,7 @@ Correctness is verified by executable evidence (L1/L2/L3), never by reading code
 - **Write packages, not programs.** Library/domain packages return data instead of printing, and return errors instead of `panic`/`os.Exit`.
 - **Isolate `main`.** Its only job is parsing flags/args, wiring dependencies, handling outer-loop errors, and graceful exit. Real work lives in imported domain packages.
 - **Minimize the public surface.** Internal types stay internal; export for callers, not for convenience.
+- **Validating constructors.** `NewX(...) (X, error)` validates inputs so a misassembled value cannot exist; use `os.Root` for filesystem containment. A constructor that guarantees invariants beats post-hoc checks at every call site.
 
 ## 2. Naming
 
