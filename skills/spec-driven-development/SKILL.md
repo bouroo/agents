@@ -24,7 +24,8 @@ Capture intent before code. Mark spikes explicitly (lightweight canvas: R + A on
 |---|---|---|
 | **R** | Requirements | User-visible behavior the system must deliver |
 | **E** | Entities | Domain nouns and their relationships |
-| **A** | Approach | Architecture, patterns, data flow |
+| **A** | Approach | Architecture, patterns, data flow, module structure |
+| **O** | Operations | Per-entity commands and queries the system must expose (CRUD, search, sync): the API surface |
 | **S** | Safeguards | Non-negotiable constraints: latency, size, error rates, quotas, security |
 | **N** | Norms | Cross-cutting rules: naming, error handling, documentation, clarity |
 
@@ -40,6 +41,7 @@ Capture intent before code. Mark spikes explicitly (lightweight canvas: R + A on
 ## What every spec carries
 
 - **Requirements** user-visible behavior, stated as testable outcomes.
+- **Operations** the endpoint/command inventory per entity; a missing operation is a visible gap at review time.
 - **Approach** architecture and data flow; the smallest pattern that works.
 - **Safeguards** numeric, non-negotiable (P99 < 200ms at 1k QPS; not "should be fast").
 - **Test scenarios** happy path, error path, edge cases, at least one end-to-end.

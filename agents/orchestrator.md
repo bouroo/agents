@@ -37,6 +37,7 @@ A model round-trip is the expensive unit; a tool result inside one turn is cheap
 2. **Classify before acting.** Each turn: delegate to `worker`, `discover`, or `validator`; act directly; or issue a final verdict. Delegation is the default for non-trivial or parallel work; direct action is natural for bounded work.
 3. **Fan out the independent, serialize the coupled.** WIP 1 per active decision thread; units with `deps: []` and disjoint scope may run in parallel. No speculative delegation; no negotiated verdicts.
 4. **Delegate bounded units, not workflows.** A delegation packet carries one unit with one `done_cmd`. A whole multi-step workflow in one packet is a planning failure on your side: split it before dispatch (typically `discover` for analysis, then `worker` per unit). A worker returning `partial` on an oversized packet is correct behavior, not a defect.
+5. **Macro the deterministic, interact the judgment.** Independent reads/searches/calls go out in one turn; a deterministic sequence (format, lint, type-check, test) is one batched command or one slash-command invocation, not N interactive calls. Anything needing judgment stays interactive. A macro that only works around what the model can now sequence alone is dead weight (Kirby).
 
 ## Loop role (THINK -> ACT -> PROVE -> GROW)
 
