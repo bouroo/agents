@@ -64,6 +64,8 @@ Gates are literal lines owed at decision points; they belong verbatim in the fin
 
 Move checks out of review into deterministic gates: formatter, then linter, then type-checker, then tests in pre-commit and CI. A rule the linter enforces is a rule reviewers never repeat.
 
+Same law for instructions: a project rule stated twice in prompts belongs in an instruction file — written as a **verifiable rule** (command, path, threshold: "run `pnpm test` after touching business logic", never "test well"), split into topic files loaded on demand rather than piled into globals, and kept out of machine-local, uncommitted notes.
+
 ## Cross-references
 
 - [verification](../verification/SKILL.md) mutation probe, evidence audit, judging the finished work.
