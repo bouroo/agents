@@ -1,0 +1,13 @@
+{
+  "name": "bouroo-coder-agents",
+  "owner": {
+    "name": "bouroo"
+  },
+  "plugins": [
+    {
+      "name": "coder-agents",
+      "source": "./",
+      "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), three on-demand skills (craft, performance, verification), four routine-task command workflows, and deterministic verification gates."
+    }
+  ]
+}

@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 """Deterministic verification gates for the v4 shared-setup repository.
 
-The repo ships docs and skills only, so these four static gates are the
-entire verification surface:
+Static gates over docs/skills plus the distribution layer:
 
     budget          AGENTS.md stays within its line budget (the concision charter)
-    frontmatter     every skills/<name>/SKILL.md carries valid Agent-Skills metadata
+    frontmatter     every skill/command carries valid Agent-Skills-style metadata
     links           every relative Markdown link resolves to an existing file
     agnostic        core doctrine is free of host-binding tokens
+    manifests       marketplace discovery manifests parse; versions agree
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
-fails. Note: `.agents/plans/**` is deliberately outside every scan -- those
+fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
 are committed historical retros that cite paths as they were, and gating
-history against the present would make retro files uncommittable.
+history against the present would make retro files uncommittable. Host-token
+scanning intentionally EXCLUDES the distribution layer (.claude-plugin/,
+.cursor-plugin/, gemini-extension.json, scripts/): agnosticism applies to the
+doctrine, while installers/manifests are precisely where concrete hosts live.
 """
 
 import argparse
+import json
 import pathlib
 import re
 import sys
@@ -36,12 +40,14 @@ HOST_TOKEN_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Files scanned for host tokens. CHANGELOG.md cites removed machinery by name
-# on purpose (the Removed section of a breaking release), so it is allowlisted.
-HOST_SCAN_FILES = [ROOT / "AGENTS.md", ROOT / "README.md"]
+# Files scanned for host tokens: everything an assistant consumes as doctrine
+# (AGENTS.md, skills, commands). README.md and CHANGELOG.md are allowlisted:
+# they document the distribution layer for humans, so naming concrete hosts,
+# marketplaces, and removed machinery is their job, not a leak.
+HOST_SCAN_FILES = [ROOT / "AGENTS.md"]
 HOST_SCAN_SKILLS = sorted((ROOT / "skills").rglob("*.md")) \
     + sorted((ROOT / "commands").rglob("*.md"))
-HOST_SCAN_ALLOWLIST = {"CHANGELOG.md"}
+HOST_SCAN_ALLOWLIST = {"CHANGELOG.md", "README.md"}
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 
@@ -158,6 +164,52 @@ def g_links() -> None:
     _add("PASS", f"{name}: {checked} relative link(s) resolve")
 
 
+MARKETPLACE_MANIFESTS = [
+    ".claude-plugin/plugin.json",
+    ".claude-plugin/marketplace.json",
+    ".cursor-plugin/plugin.json",
+    ".cursor-plugin/marketplace.json",
+    "gemini-extension.json",
+]
+
+
+def g_manifests() -> None:
+    name = "manifests"
+    errors: list[str] = []
+    docs: dict[str, dict] = {}
+    for rel in MARKETPLACE_MANIFESTS:
+        path = ROOT / rel
+        if not path.is_file():
+            errors.append(f"missing {rel}")
+            continue
+        try:
+            docs[rel] = json.loads(path.read_text())
+        except ValueError as exc:
+            errors.append(f"{rel}: invalid JSON: {exc}")
+    versions = {rel: d.get("version") for rel, d in docs.items()
+                if isinstance(d, dict) and d.get("version")}
+    if not versions and not any("invalid" in e or "missing" in e for e in errors):
+        errors.append("no version field found in any manifest")
+    if len(set(versions.values())) > 1:
+        detail = ", ".join(f"{r}={v}" for r, v in sorted(versions.items()))
+        errors.append(f"versions disagree: {detail}")
+    for mrel in (".claude-plugin/marketplace.json", ".cursor-plugin/marketplace.json"):
+        market = docs.get(mrel) if isinstance(docs.get(mrel), dict) else {}
+        prel = mrel.replace("marketplace.json", "plugin.json")
+        plugin = docs.get(prel) if isinstance(docs.get(prel), dict) else {}
+        listed = [p.get("name") for p in market.get("plugins", [])
+                  if isinstance(p, dict)]
+        pname = plugin.get("name")
+        if pname and listed and pname not in listed:
+            errors.append(f"{mrel} lists {listed} but {prel} defines {pname!r}")
+    if errors:
+        _add("FAIL", f"{name}: " + "; ".join(errors))
+        return
+    _add("PASS", f"{name}: {len(docs)} manifest(s) parse, "
+                 f"versions agree ({next(iter(sorted(versions.values())))}, "
+                 f"{len(MARKETPLACE_MANIFESTS) - len(docs)} absent)")
+
+
 def g_agnostic() -> None:
     name = "agnostic"
     files = [f for f in HOST_SCAN_FILES + HOST_SCAN_SKILLS
@@ -180,7 +232,8 @@ def g_agnostic() -> None:
 
 
 GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
-         ("links", g_links), ("agnostic", g_agnostic)]
+         ("links", g_links), ("agnostic", g_agnostic),
+         ("manifests", g_manifests)]
 
 
 def main(argv: list[str]) -> int:

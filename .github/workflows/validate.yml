@@ -7,9 +7,10 @@ name: validate
 #
 # Gates (`python3 scripts/check.py --help` for the authoritative list):
 #   budget       AGENTS.md line budget (the concision charter)
-#   frontmatter  valid, colon-safe Agent-Skills metadata on every skill
+#   frontmatter  valid, colon-safe Agent-Skills metadata on every skill/command
 #   links        every relative Markdown link resolves
 #   agnostic     core doctrine free of host-binding tokens
+#   manifests    marketplace manifests parse; version fields agree
 
 on:
   push:

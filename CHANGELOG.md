@@ -33,6 +33,20 @@ tools. Tracked volume drops from ~5,000 lines to under ~800.
   `cmd-refactor` (behavior-preserving restructure), `cmd-document` (docs/ tree
   bootstrap/sync). Deliberately not restored: cmd-judge (protocol lives in the
   verification skill) and cmd-openapi (tool-chain-specific, breaks agnosticism).
+- **Marketplace compatibility**: plugin/extension discovery manifests ship at
+  their canonical paths (`.claude-plugin/`, `.cursor-plugin/`,
+  `gemini-extension.json`) as plain versioned files - no generator step and no
+  root-symlink indirection - so Agent-Skills-compatible CLIs can add the repo
+  directly from GitHub. A fifth gate (`manifests`) parses them and asserts
+  cross-file version agreement.
+- **`scripts/install.sh`**: detection-driven local installer; discovers
+  installed harnesses by config directory, then links (or copies) the manifesto
+  under each tool's expected instruction filename plus its skills/commands
+  directories where supported. Never clobbers real files; uninstall only
+  touches links resolving back to this repository unless `--force`.
+  Host-agnostic doctrine stays token-free - concrete hosts are known only to
+  this script and the manifests (the distribution layer, excluded from the
+  agnostic scan).
 - **`scripts/check.py`** replaces `checks.py`: four gates (budget, frontmatter, links,
   agnostic). The GitHub workflow calls it from the same change; consumers invoking
   `checks.py` gate names must migrate.
