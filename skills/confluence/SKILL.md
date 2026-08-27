@@ -46,6 +46,7 @@ Writes go out as **`html` contentFormat**: round-trip safe, and it is what the r
 - Panels/status/expands/layouts use Confluence-HTML data-type nodes - follow the editor contract, never raw wiki markup.
 - **Diagrams default to PlantUML** through the instance's diagram macro; a bare `<pre><code>@startuml...` NEVER renders as a diagram (it shows literal text - the one failure mode invisible when re-reading the body). Every published diagram ships with its raw source mirrored in a collapsed expand so it survives macro outages.
 - Native Mermaid macros are not installed everywhere and third-party ones store out-of-band attachments the API cannot create: treat Mermaid as manual-via-UI only.
+- **Endpoint/spec pages:** authoring them follows a fixed template - canonical document order, mandatory content-quality rules (dotted-path field rows, full-payload samples with consistent mocks, serialization-tag field names), fixed table column sets, and per-family variants: [references/page-template.md](references/page-template.md). Always decode a live sibling page first and match its family.
 - **Large pages:** create with a minimal placeholder body plus real title/parent, then push the full body via a second update call. Gateway transport errors (502s/reset) hit big payloads; retry after ~20 s.
 
 **Publish-then-prove:** after any write, re-fetch the page and confirm the stored body contains what you intended (macro wrappers present, sources escaped). A narrated success without the read-back is theater.
