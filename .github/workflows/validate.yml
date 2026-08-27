@@ -1,23 +1,15 @@
 name: validate
 
-# Runs the repo's deterministic verification gates on every push and pull
-# request. This repository ships no build tool; scripts/checks.py is the single
-# verification surface (scripts/validate-agents.sh is a thin shim that execs
-# it), so CI runs it on a clean runner so a broken artifact never lands on main
-# or develop.
+# Runs the repository's deterministic gates on every push and pull request.
+# This repository ships docs and skills only; scripts/check.py is the single
+# verification surface, so CI runs it on a clean runner so a broken artifact
+# never lands on main or develop.
 #
-# Gates (see `python3 scripts/checks.py --help` for the authoritative list):
-#   G1-G2    manifests parse; versions agree
-#   G3-G5    frontmatter shape for skills/, agents/, commands/
-#   G6       no em/en-dash characters in scanned files
-#   G7       no orphan skills (plugin.json cross-ref + on-disk SKILL.md)
-#   G8       eval/results/*.json parse as JSON
-#   G9       AGENTS.md line budget
-#   G10-G13  per-host plugin manifest schemas + discovery-path symlinks
-#   G14      frontmatter colon-safe (strict-YAML)
-#   G15      plugin manifests match scripts/gen-manifests.py output (generated)
-#   G16      registries/{modules,hosts}.json parse
-#   G17      core (AGENTS.md, agents/, commands/, agnostic skills) is free of host-binding tokens
+# Gates (`python3 scripts/check.py --help` for the authoritative list):
+#   budget       AGENTS.md line budget (the concision charter)
+#   frontmatter  valid, colon-safe Agent-Skills metadata on every skill
+#   links        every relative Markdown link resolves
+#   agnostic     core doctrine free of host-binding tokens
 
 on:
   push:
@@ -43,5 +35,5 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run checks.py (deterministic gates)
-        run: python3 scripts/checks.py --all
+      - name: Run check.py (deterministic gates)
+        run: python3 scripts/check.py --all
