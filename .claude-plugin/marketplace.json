@@ -13,7 +13,8 @@
       "skills": [
         "./skills/craft",
         "./skills/performance",
-        "./skills/verification"
+        "./skills/verification",
+        "./skills/confluence"
       ],
       "homepage": "https://github.com/bouroo/agents"
     }

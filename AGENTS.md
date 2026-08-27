@@ -110,6 +110,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/craft](skills/craft/SKILL.md) | craftsmanship + artifact-gate definitions |
 | [skills/performance](skills/performance/SKILL.md) | measurement discipline (+ [references](skills/performance/references/tactics.md)) |
 | [skills/verification](skills/verification/SKILL.md) | proving work done (+ [flowcharts](skills/verification/references/flowcharts.md)) |
+| [skills/confluence](skills/confluence/SKILL.md) | operate Atlassian wikis via the Rovo MCP server (domain adapter) |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |

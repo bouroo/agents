@@ -60,7 +60,9 @@ tools. Tracked volume drops from ~5,000 lines to under ~800.
 - Superseded skills: `memory-engineering` (one-line sliver survives in AGENTS.md §8)
   and `spec-driven-development` (spec-sync rule survives in craft's intent gate);
   dropped as out of scope for a language-/host-agnostic core: `commit-message`,
-  `repo-documentation`, `go-essential`, `openapi-spec`, `confluence`.
+  `repo-documentation`, `go-essential`, `openapi-spec`, `confluence`
+  (reinstated below once the Rovo remote MCP server removed its local-machinery
+  dependency).
 - `eval/` scenario suite (graded deleted surfaces; a replacement suite seeds from the
   first real post-v4 retros instead of stubs).
 

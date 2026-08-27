@@ -15,8 +15,9 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 ├── skills/
 │   ├── craft/                         twelve commandments + INTENT/TWINS/AUTH/PENDING gates
 │   ├── performance/                   measure-first cycle + four-overhead-source routing
-│   └── verification/                  right-sizing dial, evidence audit, mutation probe,
-│       └── references/flowcharts.md   judge protocol; the loop as decision charts
+│   ├── verification/                  right-sizing dial, evidence audit, mutation probe,
+│   │   └── references/flowcharts.md   judge protocol; the loop as decision charts
+│   └── confluence/                    operate Atlassian wikis via the Rovo MCP server
 ├── commands/
 │   ├── cmd-verify.md                  quality-gate pipeline with a fix/re-verify loop
 │   ├── cmd-review.md                  severity-grouped code review with one verdict

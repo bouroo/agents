@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "skills": [
     "skills/craft/SKILL.md",
+    "skills/confluence/SKILL.md",
     "skills/performance/SKILL.md",
     "skills/verification/SKILL.md"
   ],
