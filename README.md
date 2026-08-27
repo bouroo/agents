@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto plus three on-demand skills, ~740 lines total. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, three on-demand skills, and four routine-task command workflows — under 1,000 lines total. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## What's inside
 
@@ -17,6 +17,12 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 │   ├── performance/                   measure-first cycle + four-overhead-source routing
 │   └── verification/                  right-sizing dial, evidence audit, mutation probe,
 │       └── references/flowcharts.md   judge protocol; the loop as decision charts
+├── commands/
+│   ├── cmd-verify.md                  quality-gate pipeline with a fix/re-verify loop
+│   ├── cmd-review.md                  severity-grouped code review with one verdict
+│   ├── cmd-refactor.md                behavior-preserving restructure, measured before/after
+│   └── cmd-document.md                bootstrap/sync a docs/ tree (systems, flows,
+│                                      ADRs, API endpoints, glossary)
 └── scripts/check.py                   four deterministic gates (CI runs this)
 ```
 
@@ -26,6 +32,7 @@ Manual consumption only:
 
 - **Manifesto** — copy `AGENTS.md` content into your assistant's instruction file at whatever location your tool reads, or point the tool at this file directly.
 - **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`).
+- **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
 
 If a previous major version installed symlinks on your machine, remove them with that version's uninstaller from git history — v4 ships nothing that writes outside this repository.
 

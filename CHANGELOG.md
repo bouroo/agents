@@ -28,6 +28,11 @@ tools. Tracked volume drops from ~5,000 lines to under ~800.
   `skills/verification` (right-sizing dial, evidence audit, mutation probe, adversarial
   judging) — plus `references/measurement.md`, `references/tactics.md`, and
   `references/flowcharts.md`.
+- **Routine-task commands** restored lean for every-project reuse:
+  `cmd-verify` (quality-gate pipeline), `cmd-review` (severity-grouped review),
+  `cmd-refactor` (behavior-preserving restructure), `cmd-document` (docs/ tree
+  bootstrap/sync). Deliberately not restored: cmd-judge (protocol lives in the
+  verification skill) and cmd-openapi (tool-chain-specific, breaks agnosticism).
 - **`scripts/check.py`** replaces `checks.py`: four gates (budget, frontmatter, links,
   agnostic). The GitHub workflow calls it from the same change; consumers invoking
   `checks.py` gate names must migrate.
