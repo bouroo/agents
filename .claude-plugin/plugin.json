@@ -22,6 +22,7 @@
   "skills": [
     "./skills/craft",
     "./skills/performance",
-    "./skills/verification"
+    "./skills/verification",
+    "./skills/confluence"
   ]
 }
