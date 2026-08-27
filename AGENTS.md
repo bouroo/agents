@@ -112,6 +112,8 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/verification](skills/verification/SKILL.md) | proving work done (+ [flowcharts](skills/verification/references/flowcharts.md)) |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
+| `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
+| marketplace manifests | plugin/extension discovery files at their canonical paths, guarded by the `manifests` gate |
 | `.agents/plans/` | committed retros; the GROW ledger |
 
 Version history: git tags; release notes in [CHANGELOG](CHANGELOG.md).

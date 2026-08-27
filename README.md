@@ -23,7 +23,11 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 │   ├── cmd-refactor.md                behavior-preserving restructure, measured before/after
 │   └── cmd-document.md                bootstrap/sync a docs/ tree (systems, flows,
 │                                      ADRs, API endpoints, glossary)
-└── scripts/check.py                   four deterministic gates (CI runs this)
+├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
+├── gemini-extension.json              extension discovery metadata
+└── scripts/
+    ├── check.py                       five deterministic gates (CI runs these)
+    └── install.sh                     detect tools on a machine and install
 ```
 
 ## Using it
@@ -33,6 +37,18 @@ Manual consumption only:
 - **Manifesto** — copy `AGENTS.md` content into your assistant's instruction file at whatever location your tool reads, or point the tool at this file directly.
 - **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`).
 - **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
+- **Marketplaces** — the repository ships plugin/extension discovery metadata at its canonical paths (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`), so Agent-Skills-compatible CLIs can add it directly from GitHub (`npx skills add bouroo/agents`) and host marketplaces consume it without any generation step.
+- **Local installer** — `scripts/install.sh` detects which compatible tools live on the machine and links (or copies) the setup into each one's config directory:
+
+  ```bash
+  ./scripts/install.sh detect               # what did we find?
+  ./scripts/install.sh install              # all detected tools
+  ./scripts/install.sh install --dry-run    # preview the exact actions
+  ./scripts/install.sh status               # per-tool link state
+  ./scripts/install.sh uninstall            # removes only links pointing into this repo
+  ```
+
+  The instruction file is linked under each tool's expected name, plus its `skills/` and `commands/` directories where supported. Real files are never clobbered; uninstall without `--force` only touches symlinks that resolve back to this repository.
 
 If a previous major version installed symlinks on your machine, remove them with that version's uninstaller from git history — v4 ships nothing that writes outside this repository.
 
@@ -49,11 +65,12 @@ python3 scripts/check.py --all
 | Gate | Enforces |
 |---|---|
 | `budget` | `AGENTS.md` stays within its line budget (the concision charter) |
-| `frontmatter` | every skill carries valid, colon-safe Agent-Skills metadata |
+| `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata |
 | `links` | every relative Markdown link resolves |
 | `agnostic` | core doctrine is free of host-binding tokens |
+| `manifests` | marketplace manifests parse; version fields agree across files |
 
-CI runs all four on every push and pull request.
+CI runs all five on every push and pull request.
 
 ## Versioning
 
