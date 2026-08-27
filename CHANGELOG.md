@@ -10,6 +10,19 @@ tags and log (`v1.0.0` through `v3.11.0`).
 
 ## [4.0.0] - 2026-08-27
 
+### Added
+
+- **Execution-efficiency doctrine upgrades**, absorbed from current coding-agent
+  engineering guidance: session hygiene (one task per session; fresh session per
+  investigation thread); environment-first triage for inconsistent outputs
+  (directory/permissions/tool surface/integrations before reasoning); deliberate
+  knowledge placement (instruction vs learning memory; procedures -> skills;
+  episodes -> retros; facts -> repo docs or retrieval) under memory-scope
+  precedence organization > project > personal > machine-local, with role-scoped
+  memory for delegated workers; GROW promotes battle-proven procedures into
+  scheduled or triggered automation; authoring rules for instruction files
+  themselves (verifiable-rule phrasing, topic-modular on-demand loading).
+
 ### Changed (BREAKING)
 
 Ground-up restructure: the four-role distribution (governance file + role sheets +
