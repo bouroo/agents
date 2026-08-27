@@ -25,7 +25,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 AGENTS_MD_BUDGET = 200
 
 KEBAB_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
-ALLOWED_SKILL_KEYS = {"name", "description"}
+ALLOWED_KEYS = {"name", "description"}
 
 # Host-binding tokens forbidden in core doctrine. A dotdir or host config
 # filename is an unambiguous signal of a host leak into an agnostic file.
@@ -39,7 +39,8 @@ HOST_TOKEN_RE = re.compile(
 # Files scanned for host tokens. CHANGELOG.md cites removed machinery by name
 # on purpose (the Removed section of a breaking release), so it is allowlisted.
 HOST_SCAN_FILES = [ROOT / "AGENTS.md", ROOT / "README.md"]
-HOST_SCAN_SKILLS = sorted((ROOT / "skills").rglob("*.md"))
+HOST_SCAN_SKILLS = sorted((ROOT / "skills").rglob("*.md")) \
+    + sorted((ROOT / "commands").rglob("*.md"))
 HOST_SCAN_ALLOWLIST = {"CHANGELOG.md"}
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
@@ -90,20 +91,25 @@ def g_budget() -> None:
 
 def g_frontmatter() -> None:
     name = "frontmatter"
-    skills = sorted(p for p in (ROOT / "skills").glob("*/SKILL.md"))
-    if not skills:
-        _add("FAIL", f"{name}: no skills/*/SKILL.md found")
+    # (path, expected-name) pairs: a skill's name matches its directory,
+    # a command's name matches its file stem.
+    subjects = [(p, p.parent.name)
+                for p in sorted((ROOT / "skills").glob("*/SKILL.md"))]
+    subjects += [(p, p.stem)
+                 for p in sorted((ROOT / "commands").glob("*.md"))]
+    if not subjects:
+        _add("FAIL", f"{name}: no skills/*/SKILL.md or commands/*.md found")
         return
     ok = True
-    for md in skills:
+    for md, expected_name in subjects:
         rel = md.relative_to(ROOT)
         fields, lines, fenced = _frontmatter(md)
         problems: list[str] = []
         if not fenced:
             problems.append("does not start with --- fence")
         fname = fields.get("name")
-        if fields.get("name") != md.parent.name:
-            problems.append(f"name {fname!r} != directory {md.parent.name!r}")
+        if fname != expected_name:
+            problems.append(f"name {fname!r} != {expected_name!r}")
         elif not KEBAB_RE.match(fname):
             problems.append(f"name {fname!r} not kebab-case")
         elif not 1 <= len(fname) <= 64:
@@ -111,7 +117,7 @@ def g_frontmatter() -> None:
         desc = fields.get("description", "")
         if not 1 <= len(desc) <= 1024:
             problems.append("description length not in 1..1024")
-        unknown = set(fields) - ALLOWED_SKILL_KEYS
+        unknown = set(fields) - ALLOWED_KEYS
         if unknown:
             problems.append(f"unknown keys {sorted(unknown)}")
         unsafe = [ln.split(":", 1)[0].strip() for ln in lines
@@ -123,13 +129,14 @@ def g_frontmatter() -> None:
             ok = False
             _add("FAIL", f"{name}: {rel}: {'; '.join(problems)}")
     if ok:
-        _add("PASS", f"{name}: {len(skills)} SKILL.md frontmatter valid")
+        _add("PASS", f"{name}: {len(subjects)} SKILL.md/command frontmatter valid")
 
 
 def g_links() -> None:
     name = "links"
     targets = [ROOT / f for f in ("AGENTS.md", "README.md", "CHANGELOG.md")]
     targets += sorted(p for p in (ROOT / "skills").rglob("*.md"))
+    targets += sorted(p for p in (ROOT / "commands").rglob("*.md"))
     dead: list[str] = []
     checked = 0
     for f in targets:

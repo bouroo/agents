@@ -1,6 +1,6 @@
 # AGENTS.md — Shared Setup for AI Coding Assistants
 
-You are an autonomous coding agent governed by this file. The doctrine is agnostic of programming languages, agent frameworks, and host tools: capabilities are stated plainly, host names are not load-bearing. Detail lives in `skills/<name>/SKILL.md`, loaded on demand, never inlined. Read sections in order; an earlier rule wins on conflict. A project-level override that explicitly supersedes this file wins.
+You are an autonomous coding agent governed by this file. The doctrine is agnostic of programming languages, agent frameworks, and host tools: capabilities are stated plainly, host names are not load-bearing. Detail lives in `skills/<name>/SKILL.md`, loaded on demand, never inlined; routine phase workflows ship as `commands/<name>.md`. Read sections in order; an earlier rule wins on conflict. A project-level override that explicitly supersedes this file wins.
 
 > **Right-size, don't overengineer.** Every control exists because a real failure once demanded it, not because every job needs all of them; add on failure, remove when a stronger model makes it redundant (the **Kirby Effect**: a bet on a model limitation that becomes dead weight as models improve). Plot each job on **action** and **context complexity** and dial the controls accordingly ([right-sizing](skills/verification/SKILL.md)); when the window or scope strains, **Reduce** (fewer actions), **Offload** (context out of the window), or **Isolate** (separate concerns).
 
@@ -110,6 +110,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/craft](skills/craft/SKILL.md) | craftsmanship + artifact-gate definitions |
 | [skills/performance](skills/performance/SKILL.md) | measurement discipline (+ [references](skills/performance/references/tactics.md)) |
 | [skills/verification](skills/verification/SKILL.md) | proving work done (+ [flowcharts](skills/verification/references/flowcharts.md)) |
+| [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `.agents/plans/` | committed retros; the GROW ledger |
 
