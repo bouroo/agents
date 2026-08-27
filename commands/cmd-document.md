@@ -1,52 +1,44 @@
 ---
-description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API, glossary) with code changes. Use when a behavior, interface, invariant, or domain-term change must be reflected in project documentation."
-argument-hint: "[system|flow|adr|api|glossary area] [--type=<system|flow|adr|api|glossary>]"
+name: cmd-document
+description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API endpoints, glossary) with code changes. Use when a behavior, interface, invariant, or domain-term change must be reflected in project documentation."
 ---
 
-# Document -- sync the docs/ tree with code changes
+# Document - Sync docs/ With Code
 
-Docs and code must agree; a stale doc is a bug. This command bootstraps a `docs/` tree where none exists and keeps an existing one in sync with code, so documentation stays accurate inside the THINK-ACT-PROVE-GROW loop.
+Docs and code must agree; a stale doc is a bug. Bootstraps a `docs/` tree where none exists and keeps an existing one synchronized inside the THINK-ACT-PROVE-GROW loop. One well-written doc beats many shallow ones.
 
-Runs on the mutating worker, not the orchestrator: it needs file-edit and shell access to read the tree and write Markdown.
+## Target
 
-## How to work (fewest round-trips)
+Argument: the area to document (`auth`, `email-verification flow`, `sessions-vs-tokens ADR`). If empty, detect from `git diff` / `git diff --cached` and document what changed. Option `--type=<system|flow|adr|api|glossary>` forces the type only when the mapping is unambiguous.
 
-Round-trips cost more than in-turn tool results. Define done backward (a green target gate: every relative link resolves, ADR frontmatter valid, repo gate exits zero), then batch: read the docs map, affected docs, and the code change in one pass; draft from template; sync surroundings; verify links once. One well-written doc beats many shallow ones.
+## Doc types
 
-## Inputs
+| Type | Covers | Lives at |
+|---|---|---|
+| system | one subsystem's responsibilities and boundaries | `docs/systems/<system>.md` |
+| flow | a cross-system runtime path | `docs/flows/<flow>.md` |
+| adr | one architecture decision, immutable once accepted | `docs/architecture/decisions/<slug>.md` |
+| api | one HTTP endpoint: contract, auth, errors, sequence | `docs/api/<service>/<endpoint>.md` |
+| glossary term | a Title Case domain concept | entry in `docs/glossary.md` |
 
-- **$ARGUMENTS** (optional): the system, flow, ADR, or glossary area to document, e.g. `auth`, `email-verification flow`, `session-vs-token ADR`.
-- If empty, detect what changed with `git diff` / `git diff --cached` and document the affected system or flow.
-- **Options** (ride inside `$ARGUMENTS`, any order, `key=value`):
-  - `--type=<system|flow|adr|api|glossary>` force the doc type instead of choosing it from the skill's granularity rules; use only when the change clearly maps to one type.
-- Parsing `$ARGUMENTS` is this command's job; the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
+**Granularity rule:** document as a system until it crosses systems; then promote to a flow.
 
 ## Steps
 
-1. **Load the skill.** Load `repo-documentation` before anything else. It owns doc-type doctrine, ADR lifecycle rules (Proposed -> Accepted; never rewrite an accepted ADR, supersede it with `superseded_by`), source maps, glossary form, and granularity rules (system until it crosses systems, then promote to flow). Refer back to it at each step.
-2. **Assess.** Does the target repo have a `docs/` tree?
-   - Absent -> bootstrap: create the layout, index, glossary stub, and copy in the templates. See [bootstrap](../references/workflows/cmd-document/bootstrap.md).
-   - Present -> use the existing tree as-is; do not rearrange or duplicate templates.
-3. **Locate.** Read `AGENTS.md` and/or `docs/README.md` for the docs map. Find the affected system doc (`docs/systems/`), related flows (`docs/flows/`), endpoint docs (`docs/api/`), governing ADRs (`docs/architecture/decisions/`), and Title Case terms in `docs/glossary.md`. If no doc exists, decide whether the area warrants one. A change that touches an HTTP endpoint warrants an endpoint doc in `docs/api/<service>/`.
-4. **Choose type.** Pick exactly one: system / flow / ADR / API / glossary. If `$ARGUMENTS` set `--type`, use that; otherwise choose from the skill, not memory, and resist inventing categories. For **API**, the doc covers one HTTP endpoint and lives at `docs/api/<service>/<endpoint>.md` (per-endpoint); publish the same endpoint to a wiki via the [confluence](../skills/confluence/SKILL.md) adapter's endpoint-page template (`page_template.py`), translating the doc's mermaid sequence to PlantUML source for that generator.
-5. **Draft from template.** Prefer `docs/templates/` (the repo may have customized them); otherwise reference the skill's templates directly without creating a tree. Follow the skill's structural rules for source maps, ADR frontmatter, related-docs linking, and the `[NEEDS CLARIFICATION]` convention.
-6. **Sync surroundings.** Update linked docs, not just the target: a new Title Case term -> `glossary.md`; a new flow -> link from its system(s) and `README.md`; a new system -> register in the docs map; an accepted ADR -> propagate its consequence into affected docs. Reconcile any docs-vs-code disagreement by updating docs, fixing code, or flagging the gap.
-7. **Verify.** Confirm every relative link resolves, ADR frontmatter is valid, and the repo's own gate is green (see Success metrics).
+1. **Assess.** No `docs/` tree? Bootstrap the minimal layout: `docs/README.md` (index linking every system), `systems/`, `flows/`, `architecture/decisions/`, `api/`, `glossary.md`. Present? Use it as-is; never rearrange someone's tree.
+2. **Locate.** Read the docs index/map; find the affected system doc, related flows, endpoint pages, governing ADRs, and glossary terms. Decide honestly whether the change warrants a new doc or an edit to an existing one.
+3. **Draft.** Each doc states purpose, inputs/outputs, key invariants, and a source map (code paths that implement it) so future readers can navigate both directions. Mark unresolved points `[NEEDS CLARIFICATION]` rather than inventing content.
+4. **Sync surroundings,** not just the target: new Title Case term -> glossary; new flow -> linked from its systems and the index; accepted ADR -> propagate consequences into affected docs; any docs-vs-code disagreement reconciled by updating the wrong side or flagging the gap explicitly.
+5. **Verify.** Every relative link resolves; ADR frontmatter valid; repo gate green.
 
-## Success metrics (done =)
+## ADR lifecycle
 
-- Every relative Markdown link in new/updated docs and their source maps points to a real file in the target repo (spot-check by searching the tree).
-- ADR frontmatter is valid: `status` is an allowed value, `date` is `YYYY-MM-DD`, and `status: Superseded` carries a `superseded_by` pointing to a real file.
-- The target repo's own quality gate (formatter, link-check, Markdown linter, validator, pre-commit hook, or test suite) exits zero. If the repo ships no gate, note the absence.
+Statuses: Proposed -> Accepted; an Accepted ADR is **never rewritten** - supersede it with `status: Superseded` plus `superseded_by: <file>`. Frontmatter requires `status` (allowed value), `date` (`YYYY-MM-DD`), and context + decision + consequences sections.
 
-## Failure metrics (abort / hand back)
+## Done =
 
-- A broken link, invalid frontmatter, or a non-zero gate after a fix attempt; fix and re-run; do not declare done with any check red.
-- Docs contradict verified code and the contradiction cannot be reconciled within scope; hand back with the mismatch called out.
-- The area named in $ARGUMENTS cannot be located and cannot be inferred from the diff; hand back rather than invent context.
+- Every relative link in new/updated docs (and their source maps) points to a real file.
+- ADR frontmatter valid; superseded entries carry a real `superseded_by`.
+- The target repo's own gate (formatter / link-check / markdown lint / tests) exits zero - noted as absent if none ships.
 
-## References
-
-- [repo-documentation](../skills/repo-documentation/SKILL.md) doc types, ADR lifecycle, source maps, glossary, granularity rules; ships the templates.
-- Templates (copied into `docs/templates/`): [system.md](../skills/repo-documentation/references/system.md) | [flow.md](../skills/repo-documentation/references/flow.md) | [adr.md](../skills/repo-documentation/references/adr.md) | [api.md](../skills/repo-documentation/references/api.md).
-- [bootstrap](../references/workflows/cmd-document/bootstrap.md) exact layout to create when `docs/` is absent.
+Hand back when: the named area cannot be located or inferred from the diff; docs contradict verified code and cannot be reconciled in scope.
