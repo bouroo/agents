@@ -19,7 +19,7 @@ Run in order; on findings apply the safest narrowest auto-fix (**correct the roo
 2. **Lint** warnings-as-errors; auto-fix where supported. Include the language's doc-convention linter if configured; otherwise note the absence.
 3. **Type-check** strict; no auto-fix - issues go straight to review.
 4. **Scan** secrets / SAST / vulnerabilities; fail above threshold. **Never auto-fix security findings** - report and escalate.
-5. **Test** the full suite (unit + integration). A green suite is one signal, not proof: for high-trust changes grade the tests with a **mutation probe** (flip a semantic defect, require FAIL, revert).
+5. **Test** the full suite (unit + integration). A green suite is one signal, not proof: for high-stakes changes grade the tests with a **mutation probe** (flip a semantic defect, require FAIL, revert).
 
 **Hook gate:** after the pipeline is clean, run the repo's own verify script(s) (pre-commit/pre-push hooks, `scripts/verify.*`, package-script equivalents) and enforce exit 0; note the absence if none exists.
 

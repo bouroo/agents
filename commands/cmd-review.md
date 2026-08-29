@@ -11,7 +11,7 @@ Flag any owed artifact line the author skipped as SHOULD FIX: an outward action 
 
 ## Target
 
-Default: the current uncommitted changes (`git diff` / `git diff --cached`). Options: `--against=<ref>` diffs against a ref; `--focus=<security|performance|correctness|tests>` reviews one dimension only.
+Default: the current uncommitted changes (`git diff` / `git diff --cached`). Options: `--against=<ref>` diffs against a ref; `--focus=<security|performance|correctness|tests>` reviews one dimension only. Clean tree with no `--against`: report that there is nothing to review and stop - never fabricate a diff.
 
 ## Rubric
 
