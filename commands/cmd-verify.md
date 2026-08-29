@@ -1,59 +1,39 @@
 ---
-description: "Verify phase (PROVE) format, lint, type-check, scan, test, and githook gate with a fix/review loop. Use to leave the working tree passing every quality gate."
-argument-hint: "[scope] [--level=<L1|L2|L3>]"
+name: cmd-verify
+description: "Verify phase (PROVE): format, lint, type-check, scan, test, and hook gates with a fix/re-verify loop. Use to leave a working tree passing every quality gate."
 ---
 
 # Verify Quality-Gate Pipeline
 
-Leave the working tree passing every quality gate, including the repo's githook verify script. This is the automated layer of the **PROVE** phase.
+Leave the working tree passing every quality gate. This is the automated layer of **PROVE**: gates enforce, prompts only request. One invocation runs every deterministic stage; judgment enters only on findings. This pipeline is a macro instance - run the stages as batched execution, not call by call.
 
-> **Agent:** requires shell + file-edit access; run on the mutating worker ([worker](../agents/worker.md)), not the orchestrator.
+## Scope
 
-## How to work (fewest round-trips)
-
-Round-trips cost more than in-turn tool results. Define done backward (CLEAN: every stage reports command + exit code + output, githook exit 0, only intended changes remain), then batch: run the pipeline stages in one pass, collect exit codes and output, then fix and re-verify. Each stage is a gate; a narrated pass is not evidence. This pipeline is the macro-command instance: one invocation runs every deterministic gate; judgment enters only on findings.
-
-**Scope** (optional, from arguments): **$ARGUMENTS**. If empty, verify the whole working tree.
-
-**Options** (ride inside `$ARGUMENTS`, any order, `key=value`; empty keeps the default above):
-
-- `--level=<L1|L2|L3>` cap the pipeline at this layer (L1 static, L2 runtime, L3 end-to-end) instead of dialing to the change's complexity. Lower layers still run.
-
-Parsing `$ARGUMENTS` is this command's job; the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
+Default: the whole working tree. An optional argument narrows the target (`src/module`, a file list). Option `--level=<L1|L2|L3>` caps the pipeline at that layer (L1 static, L2 runtime, L3 end-to-end) instead of dialing to the change's complexity; lower layers still run. Dial guidance: [verification](../skills/verification/SKILL.md).
 
 ## Pipeline
 
-Gates enforce; prompts only request. Run in order; on findings, **auto-fix** then **re-verify**; repeat until clean or no more auto-fixes are possible, then advance. If `$ARGUMENTS` set `--level`, stop after that layer instead of dialing to complexity. See [harness-engineering](../skills/harness-engineering/SKILL.md).
+Run in order; on findings apply the safest narrowest auto-fix (**correct the root cause**, never band-aid), re-run the stage, repeat until clean, then advance.
 
-1. **Format** apply the project's formatter; fail if files would change after auto-fix.
-2. **Lint** linter with warnings-as-errors; auto-fix where supported. Include the language's **doc-convention linter** so comment noise and missing doc comments are caught computationally (godoc, TSDoc/JSDoc, docstring, rustdoc). If none is configured, note the absence and proceed.
-3. **Type-check** static type checker, strict; no auto-fix, so move directly to review on issues.
-4. **Scan** secret/SAST/vulnerability scanners; fail above threshold. Never auto-fix security findings; review and escalate.
-5. **Test** full suite (unit + integration); coverage must meet the spec's Safeguards. A green suite is one signal, not proof; for high-trust changes **grade the tests** with a mutation probe. See the [right-sizing map](../skills/harness-engineering/references/right-sizing.md).
+1. **Format** project formatter; fail if files would change after auto-fix.
+2. **Lint** warnings-as-errors; auto-fix where supported. Include the language's doc-convention linter if configured; otherwise note the absence.
+3. **Type-check** strict; no auto-fix - issues go straight to review.
+4. **Scan** secrets / SAST / vulnerabilities; fail above threshold. **Never auto-fix security findings** - report and escalate.
+5. **Test** the full suite (unit + integration). A green suite is one signal, not proof: for high-stakes changes grade the tests with a **mutation probe** (flip a semantic defect, require FAIL, revert).
 
-## Fix/review loop
+**Hook gate:** after the pipeline is clean, run the repo's own verify script(s) (pre-commit/pre-push hooks, `scripts/verify.*`, package-script equivalents) and enforce exit 0; note the absence if none exists.
 
-On remaining issues: apply the safest, narrowest auto-fixes first (correct the root cause, never band-aid); if legitimate, patch and re-run; if false positives, document the exception and escalate to the spec's Safeguards; re-run the stage. Stop after **three iterations** and escalate unresolved issues (the hard verify bound: re-read, adjust, retry once, then widen, then fall back with an explicit note).
+## Bound
 
-## Githook gate
+Stop after **three fix/re-verify iterations** on the same issue and escalate unresolved items - the hard verify bound applies to this pipeline too ([verification](../skills/verification/SKILL.md)).
 
-After the pipeline is clean, run the repo's githook verify script(s), in order of preference: `.git/hooks/pre-commit`, `.git/hooks/pre-push`, or a project-defined verify script (`scripts/verify.sh`, `npm run githook:verify`, `make githook-verify`). Enforce exit 0. If none exists, note the absence and proceed.
+## Done = CLEAN
 
-## Success metrics (done = CLEAN)
+- Every stage reports command + exit code + actual output (a narrated pass is not evidence).
+- All stages pass, hooks exit 0, only intended changes remain in the tree.
 
-- Every stage reports command + exit code + actual output.
-- All stages pass, githook exit 0, only intended changes remain.
-
-## Failure metrics (abort / BLOCKED)
-
-- Any stage fails after three iterations -> **BLOCKED**, escalate with the failing checks.
-- Security finding above threshold -> **BLOCKED**, never auto-fixed.
+Abort/BLOCKED: any stage failing after three iterations; any security finding above threshold (never auto-fixed).
 
 ## Reporting
 
-Pass/fail per stage (command, exit code, files changed, outstanding findings) + final verdict. Before reporting, run the artifact-gate sweep: add any owed `INTENT:`/`TWINS:`/`AUTH:`/`PENDING:` line ([code-craft](../skills/code-craft/SKILL.md)); delete scratch artifacts and note the cleanup.
-
-## References
-
-- [harness-engineering](../skills/harness-engineering/SKILL.md) gates over prompts, the hard verify bound, mutation testing.
-- [code-craft](../skills/code-craft/SKILL.md) artifact gates.
+Pass/fail per stage (command, exit code, files changed, outstanding findings), then the final verdict. Before reporting, run the artifact-gate sweep - add any owed `INTENT:`/`TWINS:`/`AUTH:`/`PENDING:` line ([craft](../skills/craft/SKILL.md)) - and delete scratch artifacts.

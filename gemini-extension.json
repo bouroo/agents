@@ -1,7 +1,7 @@
 {
   "name": "coder-agents",
-  "version": "3.11.0",
-  "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a four-role squad (orchestrator/worker/validator/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
+  "version": "4.0.0",
+  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), three on-demand skills (craft, performance, verification), four routine-task command workflows, and deterministic verification gates.",
   "contextFileName": "AGENTS.md",
   "mcpServers": {}
 }

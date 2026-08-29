@@ -1,69 +1,52 @@
 ---
-description: "Review phase (PROVE) review current code changes for quality, safety, and performance, grouped by severity with a verdict. Use to review a diff (trusts the author; for adversarial re-verification use judge)."
-argument-hint: "[target] [--against=<ref>] [--focus=<security|performance|correctness|tests>]"
+name: cmd-review
+description: "Review phase (PROVE): review current code changes for correctness, safety, tests, security, performance, and readability, grouped by severity with one verdict. Use to review a diff while trusting the author; for adversarial re-verification use the judge protocol."
 ---
 
-# Review Code Review
+# Review Code Changes
 
-A thorough, language-agnostic code review of the current changes, reported by severity. Part of the **PROVE** phase. (Review trusts the author's evidence; the [judge](cmd-judge.md) command trusts nothing and re-runs.) Right-size on complexity: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences. Flag any owed artifact line the author skipped (an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:`; [code-craft](../skills/code-craft/SKILL.md)) as a SHOULD FIX; full fraud hunting is the judge's job, not review's.
+A thorough, language-agnostic review of the current changes, reported by severity. Review trusts the author's evidence; adversarial re-running is the judge protocol's job ([verification](../skills/verification/SKILL.md)). Right-size: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences.
 
-> **Agent:** run on a reviewing worker ([discover](../agents/discover.md), review mode) or any read-only reviewer.
+Flag any owed artifact line the author skipped as SHOULD FIX: an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:` ([craft](../skills/craft/SKILL.md)). Full fraud hunting is out of scope here.
 
-## How to work (fewest round-trips)
+## Target
 
-Round-trips cost more than in-turn tool results. Define done backward (a verdict + every rubric row considered, every finding naming `[file:line]` + a fix), then batch: read the diff plus neighbors in one pass and synthesize, then group by severity.
+Default: the current uncommitted changes (`git diff` / `git diff --cached`). Options: `--against=<ref>` diffs against a ref; `--focus=<security|performance|correctness|tests>` reviews one dimension only. Clean tree with no `--against`: report that there is nothing to review and stop - never fabricate a diff.
 
-**Target** (optional): **$ARGUMENTS**. Otherwise review the current uncommitted changes (`git diff` / `git diff --cached`).
+## Rubric
 
-**Options** (ride inside `$ARGUMENTS`, any order, `key=value`; empty keeps the default above):
+Consider every row; synthesize in one read pass over the diff plus touched neighbors.
 
-- `--against=<ref>` review the diff against this ref (`main`, `HEAD~1`, a branch) instead of the uncommitted changes.
-- `--focus=<dimension>` review one dimension only: `security`, `performance`, `correctness`, or `tests`. Default: all dimensions.
-
-Parsing `$ARGUMENTS` is this command's job; the host only forwards the string. See [command inputs](../skills/harness-engineering/references/agent-computer-interface.md).
-
-## Review rubric
-
-- **Correctness & spec parity:** does the change do what it claims? Does it match DONE_WHEN? Any off-by-one, wrong null/edge handling, race, or resource leak?
-- **Safety & error handling:** all errors checked and propagated with context; none silently discarded. No swallowed errors, no branching on error strings. ([code-craft](../skills/code-craft/SKILL.md) hard rules.)
-- **Tests:** appropriate unit/integration/e2e covering happy, error, and boundary paths? Tests assert behavior, not implementation.
-- **Security:** input validation, authz, no secrets logged or committed, dependency sanity.
-- **Performance:** only flag with measurement or a clear algorithmic concern; do not micro-optimize.
-- **Readability & consistency:** short single-purpose functions; happy path at minimal indent; errors handled first; matches surrounding convention.
+- **Correctness & spec parity:** does the change do what it claims and match DONE_WHEN? Off-by-one, wrong edge/null handling, races, leaks.
+- **Safety & error handling:** every error checked and propagated with context; none swallowed; no branching on error strings.
+- **Tests:** cover happy, error, boundary paths; assert behavior, not implementation details.
+- **Security:** input validation, authorization, no logged or committed secrets, dependency sanity.
+- **Performance:** flag only with measurement or a clear algorithmic concern; never micro-optimize in review.
+- **Readability & consistency:** single-purpose functions, happy path minimally indented, errors handled first, matches surrounding convention.
 
 ## Severity
 
-- **MUST FIX** correctness bugs, security holes, data loss, broken builds. Block merge.
-- **SHOULD FIX** design issues, missing tests, performance/error-handling gaps that materially affect maintainability. Strongly recommend before merge.
-- **NIT** style, naming, minor clarity. Optional.
-- **SUGGESTION** optional improvement, alternative approach.
+- **MUST FIX** correctness bugs, security holes, data loss, broken builds - blocks merge.
+- **SHOULD FIX** missing tests, design or error-handling gaps that materially hurt maintainability.
+- **NIT** style, naming, minor clarity - optional.
+- **SUGGESTION** optional improvement or alternative approach.
 
 ## Output
 
 ```
 ### MUST FIX
-- [ ] [file:line] issue + suggested resolution
+- [ ] [file:line] issue -> suggested resolution
 ### SHOULD FIX
-- [ ] [file:line] issue + suggested resolution
+- [ ] [file:line] issue -> suggested resolution
 ### NIT
-- [ ] [file:line] nit: ...
+- [ ] [file:line] nit
 ### SUGGESTION
-- [ ] [file:line] optional: ...
+- [ ] [file:line] optional idea
 
 ## Verdict
-[APPROVE / REQUEST CHANGES / BLOCKED one-line justification]
+APPROVE | REQUEST CHANGES | BLOCKED - one-line justification
 ```
 
-## Success metrics (done =)
+## Done =
 
-- Every rubric row considered; every finding names a location and a fix.
-- Verdict is one of the three with a one-line justification.
-
-## Failure metrics
-
-- Findings without `[file:line]` or without a suggested resolution -> incomplete review.
-
-## References
-
-- [code-craft](../skills/code-craft/SKILL.md) hard rules, the review checklist.
-- [judge](cmd-judge.md) when you need adversarial re-verification, not author-trusting review.
+Every rubric row considered; every finding carries `[file:line]` and a resolution; exactly one verdict with justification. A finding lacking location or resolution makes the review incomplete.

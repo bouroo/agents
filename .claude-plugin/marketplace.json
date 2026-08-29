@@ -8,19 +8,13 @@
     {
       "name": "coder-agents",
       "source": "./",
-      "description": "Language- and host-agnostic coder-agent squad. Ships a governance AGENTS.md, a four-role squad (orchestrator/worker/validator/discover), phase commands, and on-demand skills driving the think-act-prove-grow loop. Targets deterministic, executable-completion workflows over speculative assistance.",
-      "version": "3.11.0",
+      "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), three on-demand skills (craft, performance, verification), four routine-task command workflows, and deterministic verification gates.",
+      "version": "4.0.0",
       "skills": [
-        "./skills/code-craft",
-        "./skills/commit-message",
-        "./skills/confluence",
-        "./skills/go-essential",
-        "./skills/harness-engineering",
-        "./skills/memory-engineering",
-        "./skills/openapi-spec",
-        "./skills/performance-patterns",
-        "./skills/repo-documentation",
-        "./skills/spec-driven-development"
+        "./skills/craft",
+        "./skills/performance",
+        "./skills/verification",
+        "./skills/confluence"
       ],
       "homepage": "https://github.com/bouroo/agents"
     }
