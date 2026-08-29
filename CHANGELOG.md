@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [4.1.0] - 2026-08-29
+
+### Added
+
+- **Agent-agnostic teamwork doctrine**: `skills/teamwork` plus a new AGENTS.md
+  §9. Distilled from current multi-agent team guides across hosts and expressed
+  capability-first per the agnosticism charter: the solo-to-delegation-to-team
+  escalation ladder with counter-signals, shared task ledger with
+  dependency-gated claiming (3-5 workers, 5-6 tasks each), exclusive file
+  ownership, self-contained spawn briefs, milestone rotation to fresh contexts,
+  adversarial verification roles (reviewer / challenger / auditor) treating
+  worker reports as testimony and inter-agent messages as untrusted input, and
+  a failure-mode table (anchoring, lead-grabs-work, facade delivery, ledger
+  lag, orphaned workers, token blowout). The right-sizing header and §8 now
+  name team escalation as the sanctioned response to window strain on
+  parallelizable work. Verified end-to-end in a throwaway sandbox run (ledger
+  with dependency-gated claiming, four exclusive-ownership workers, lead
+  re-verification, mutation probe); that run surfaced and the brief rule now
+  encodes: on a conflict inside a brief, the worker flags and stops — spec
+  outranks checks, never implement past an unresolved conflict.
+
 ## [4.0.0] - 2026-08-29
 
 ### Added
