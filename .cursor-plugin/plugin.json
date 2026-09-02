@@ -1,7 +1,7 @@
 {
   "name": "coder-agents",
   "version": "4.1.0",
-  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), five on-demand skills (craft, performance, verification, teamwork, confluence), four routine-task command workflows, and deterministic verification gates.",
+  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), seven on-demand skills (craft, confluence, go-modernize, performance, solution-architecture, teamwork, verification), four routine-task command workflows, and deterministic verification gates.",
   "author": {
     "name": "bouroo"
   },
@@ -10,9 +10,11 @@
   "repository": "https://github.com/bouroo/agents",
   "license": "Apache-2.0",
   "skills": [
-    "skills/craft/SKILL.md",
     "skills/confluence/SKILL.md",
+    "skills/craft/SKILL.md",
+    "skills/go-modernize/SKILL.md",
     "skills/performance/SKILL.md",
+    "skills/solution-architecture/SKILL.md",
     "skills/teamwork/SKILL.md",
     "skills/verification/SKILL.md"
   ],
