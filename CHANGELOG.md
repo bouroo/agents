@@ -8,6 +8,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [4.2.0] - 2026-09-02
+
+### Added
+
+- **`skills/go-modernize`**: Go modernization discipline keyed to the module's
+  declared version (`go` directive in go.mod, toolchain fallback): run `go fix`
+  (Go ≥ 1.26) or the standalone `modernize` analyzer with `-diff`-then-apply
+  review, plus a write-modern-from-the-start idiom table. A reference file
+  maps every fixer (evidence: go1.26.7's fixer set vs current
+  `modernize@latest` — overlapping but non-identical; `bloop`, `fmtappendf`,
+  `appendclipped`, `slicesdelete` documented upstream but not in either yet).
+  A second reference encodes the one-shared-`gopls serve -mcp.listen` MCP
+  singleton pattern (login-time supervisor + held-open stdin; legacy
+  HTTP+SSE transport; per-host wiring by client transport class, stdio-only
+  hosts via a bridge) verified end-to-end on this machine. Ports are
+  discovered, not fixed: probe for a live instance, else bind a free high
+  port (49152–65535) and publish it (`~/.local/state/gopls-mcp.port`) for
+  hosts/bridges to resolve at connect time.
+
+- **`skills/solution-architecture`**: solution-architecture discipline distilled
+  from the Awesome AI Architect knowledge base (15 topics): frame ASRs as SEI
+  quality-attribute scenarios, choose patterns/styles by context and trade-off,
+  record significant decisions as ADRs (Y-statement core, MADR template),
+  model in C4 zoom levels, size with three-point estimates, and govern with
+  federated standards plus automated conformance. Eight references carry the
+  depth (requirements, quality attributes, patterns, decisions, modeling,
+  delivery contexts, governance, communication); descriptions across the five
+  discovery manifests now say seven on-demand skills.
+
 ## [4.1.0] - 2026-08-29
 
 ### Added
