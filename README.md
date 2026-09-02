@@ -70,7 +70,7 @@ python3 scripts/check.py --all
 ```
 
 | Gate | Enforces |
-|---|---|
+| --- | --- |
 | `budget` | `AGENTS.md` stays within its line budget (the concision charter) |
 | `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata |
 | `links` | every relative Markdown link resolves |
