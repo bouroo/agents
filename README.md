@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, five on-demand skills, and four routine-task command workflows — about 1,000 lines total. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, seven on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## What's inside
 
@@ -19,7 +19,11 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 │   │   └── references/flowcharts.md   judge protocol; the loop as decision charts
 │   ├── teamwork/                      multi-agent escalation ladder, task ledger, file
 │   │                                  ownership, spawn briefs, adversarial verification
-│   └── confluence/                    operate Atlassian wikis via the Rovo MCP server
+│   ├── confluence/                    operate Atlassian wikis via the Rovo MCP server
+│   ├── go-modernize/                  modernize Go per go.mod's declared version;
+│   │                                  go fix / modernize analyzer, idiom table
+│   └── solution-architecture/         ASRs + SEI scenarios, pattern selection by tradeoff,
+│       └── references/                ADRs, C4 modeling, estimation/governance/delivery
 ├── commands/
 │   ├── cmd-verify.md                  quality-gate pipeline with a fix/re-verify loop
 │   ├── cmd-review.md                  severity-grouped code review with one verdict
