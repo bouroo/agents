@@ -117,9 +117,10 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/performance](skills/performance/SKILL.md) | measurement discipline (+ [references](skills/performance/references/tactics.md)) |
 | [skills/verification](skills/verification/SKILL.md) | proving work done (+ [flowcharts](skills/verification/references/flowcharts.md)) |
 | [skills/teamwork](skills/teamwork/SKILL.md) | multi-agent teamwork: escalation ladder, task ledger, file ownership, spawn briefs, adversarial verification |
-| [skills/confluence](skills/confluence/SKILL.md) | operate Atlassian wikis via the Rovo MCP server (domain adapter) |
+| [skills/confluence](skills/confluence/SKILL.md) | operate Atlassian wikis via the Rovo or mcp-atlassian MCP servers (domain adapter) |
 | [skills/go-modernize](skills/go-modernize/SKILL.md) | modernize Go per the module's declared version (`go fix` / `modernize` analyzer) |
 | [skills/solution-architecture](skills/solution-architecture/SKILL.md) | ASRs + SEI scenarios, pattern tradeoffs, ADRs, C4 modeling, estimation/governance |
+| [skills/system-diagramming](skills/system-diagramming/SKILL.md) | system maps as one interactive HTML: typed JSON IR, bundled template + validator |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |

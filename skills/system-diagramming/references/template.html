@@ -1,0 +1,347 @@
+<!doctype html>
+<!--
+  System Diagramming template v1 -- self-contained, offline, zero dependencies.
+  Author ONLY the JSON inside the ir script block below; everything else is the
+  renderer and must not be edited. Gate before handoff:
+      python3 <this-skill>/references/validate.py <this-file>.html
+
+  IR contract (v1):
+    kind      architecture | workflow | sequence | dataflow | lifecycle
+    title     required; subtitle optional
+    canvas    { width, height } in user units, origin top-left
+    nodes[]   { id, label, sublabel?, role, x, y, w, h, emphasis?, dashed?, lifeline? }
+              role: frontend | backend | database | cloud | security |
+                    messagebus | external | state | participant
+              lifeline: dashed line to the canvas bottom (sequence participants)
+    edges[]   { id, from, to, label?, style?, orient?, points?, dy? }
+              style: solid (default) | dashed | emphasis
+              orient: "h" | "v" route hint for automatic box-to-box routing
+              points: explicit polyline [[x,y], ...] (sequence message rows);
+                      overrides automatic routing, still traces by from/to
+              dy: label vertical offset (default -8)
+    groups[]  { label, wraps: [node ids] }        at least 2 members
+    cards[]   { title, dot? accent|positive|warning, items: [..] }
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>System diagram</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --surface:#ffffff; --ink:#1b2130; --muted:#5d6673;
+    --line:#8f99a6; --grid:#e5e8ee; --accent:#2563eb; --positive:#059669;
+    --warning:#d97706; --bad:#dc2626;
+    --frontend:#2563eb; --backend:#0e7490; --database:#b45309; --cloud:#7c3aed;
+    --security:#dc2626; --messagebus:#c026d3; --external:#64748b;
+    --state:#0f766e; --participant:#334155;
+  }
+  html[data-theme="dark"]{
+    --bg:#0d1117; --surface:#151b23; --ink:#e6e9ee; --muted:#98a2af;
+    --line:#5d6673; --grid:#212a35;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  header{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;padding:16px 20px 6px}
+  h1{font-size:18px;margin:0}
+  .subtitle{color:var(--muted)}
+  .controls{margin-left:auto;display:flex;gap:6px;align-items:center}
+  input{font:inherit;padding:4px 8px;border:1px solid var(--line);border-radius:6px;
+        background:var(--surface);color:var(--ink);width:180px}
+  button{font:inherit;padding:3px 9px;border:1px solid var(--line);border-radius:6px;
+         background:var(--surface);color:var(--ink);cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  .banner{display:none;margin:8px 20px 0;padding:8px 12px;border:1px solid var(--bad);
+          border-radius:8px;color:var(--bad)}
+  main{display:flex;flex-wrap:wrap;gap:14px;padding:10px 20px 0;align-items:flex-start}
+  .stage{flex:1 1 720px;min-width:460px;background:var(--surface);
+         border:1px solid var(--grid);border-radius:10px;overflow:hidden}
+  svg{display:block;width:100%;height:auto;touch-action:none;user-select:none}
+  aside{flex:0 1 250px;display:flex;flex-direction:column;gap:10px;min-width:210px}
+  .card{background:var(--surface);border:1px solid var(--grid);border-radius:10px;
+        padding:10px 12px}
+  .card h2{font-size:13px;margin:0 0 6px;display:flex;align-items:center;gap:7px}
+  .card ul{margin:0;padding-left:16px;color:var(--muted)}
+  .card li{margin:2px 0}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+  .dot.positive{background:var(--positive)}
+  .dot.warning{background:var(--warning)}
+  footer{padding:8px 20px 14px;color:var(--muted);font-size:12px}
+  .group rect{fill:transparent;stroke:var(--line);stroke-dasharray:3 5;stroke-width:1}
+  .group text{fill:var(--muted);font-size:11px}
+  .lifeline{stroke:var(--line);stroke-dasharray:4 5;stroke-width:1}
+  .edge{pointer-events:none}
+  .edge path{fill:none;stroke:var(--line);stroke-width:1.5}
+  .edge.dashed path{stroke-dasharray:6 4}
+  .edge.emphasis path{stroke:var(--accent);stroke-width:2.25}
+  .edge text{fill:var(--muted);font-size:11px;paint-order:stroke;
+             stroke:var(--surface);stroke-width:4px}
+  .edge.hot path{stroke:var(--accent);stroke-width:2.25}
+  .edge.hot text{fill:var(--accent)}
+  .node{--c:var(--accent);cursor:pointer}
+  .r-frontend{--c:var(--frontend)} .r-backend{--c:var(--backend)}
+  .r-database{--c:var(--database)} .r-cloud{--c:var(--cloud)}
+  .r-security{--c:var(--security)} .r-messagebus{--c:var(--messagebus)}
+  .r-external{--c:var(--external)} .r-state{--c:var(--state)}
+  .r-participant{--c:var(--participant)}
+  .node rect{fill:color-mix(in srgb,var(--c) 11%,var(--surface));
+             stroke:var(--c);stroke-width:1.5}
+  .node.emphasis rect{stroke-width:2.5}
+  .node.dashed rect{stroke-dasharray:5 4}
+  .node.hot rect{stroke-width:2.5}
+  .node text{fill:var(--ink);font-size:13px;text-anchor:middle}
+  .node .sub{fill:var(--muted);font-size:11px}
+  .dim{opacity:.15}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1><span class="subtitle" id="subtitle"></span>
+  <div class="controls">
+    <input id="q" placeholder="find node  ( / )" aria-label="find node">
+    <button id="zin" title="zoom in">+</button>
+    <button id="zout" title="zoom out">&minus;</button>
+    <button id="zreset" title="reset view">&#8982;</button>
+    <button id="theme" title="toggle theme">&#9681;</button>
+  </div>
+</header>
+<div class="banner" id="banner"></div>
+<main>
+  <div class="stage"><svg id="dia" role="img"></svg></div>
+  <aside id="cards"></aside>
+</main>
+<footer>drag to pan &middot; scroll to zoom &middot; double-click resets &middot;
+click a node to trace its connections &middot; esc clears</footer>
+<script id="ir" type="application/json">
+{
+  "ir_version": 1,
+  "kind": "architecture",
+  "title": "Example: three-tier web app",
+  "canvas": { "width": 1020, "height": 320 },
+  "nodes": [
+    { "id": "users", "label": "Users", "sublabel": "browser / mobile", "role": "external", "x": 60, "y": 200, "w": 130, "h": 64 },
+    { "id": "api", "label": "API", "sublabel": "https :8000", "role": "backend", "x": 340, "y": 200, "w": 150, "h": 64 },
+    { "id": "cache", "label": "Redis", "sublabel": "cache :6379", "role": "database", "x": 560, "y": 60, "w": 150, "h": 60 },
+    { "id": "db", "label": "PostgreSQL", "sublabel": "primary :5432", "role": "database", "x": 800, "y": 200, "w": 150, "h": 64 }
+  ],
+  "edges": [
+    { "id": "users-api", "from": "users", "to": "api", "label": "HTTPS", "orient": "h" },
+    { "id": "api-cache", "from": "api", "to": "cache", "label": "read-through", "orient": "v" },
+    { "id": "api-db", "from": "api", "to": "db", "label": "SQL", "orient": "h" }
+  ],
+  "groups": [
+    { "label": "app tier", "wraps": ["api", "cache", "db"] }
+  ],
+  "cards": [
+    { "title": "Reading", "dot": "accent", "items": ["One main path left to right", "Supporting stores branch off the API"] }
+  ]
+}
+</script>
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+function banner(msg){var b=$("#banner");b.textContent=msg;b.style.display="block";}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+
+var ir;
+try{ ir=JSON.parse(document.getElementById("ir").textContent); }
+catch(e){ banner("IR is not valid JSON: "+e.message); return; }
+
+document.title=ir.title||"System diagram";
+$("#title").textContent=ir.title||"";
+$("#subtitle").textContent=ir.subtitle||"";
+
+$("#cards").innerHTML=(ir.cards||[]).map(function(c){
+  return "<div class=\"card\"><h2><span class=\"dot "+esc(c.dot||"")+"\"></span>"+
+         esc(c.title||"")+"</h2><ul>"+
+         (c.items||[]).map(function(i){return "<li>"+esc(i)+"</li>";}).join("")+
+         "</ul></div>";
+}).join("");
+
+// theme: stored choice wins, else system preference
+var root=document.documentElement,dark=false,stored=null;
+try{stored=localStorage.getItem("sd-theme");}catch(e){}
+dark=stored?stored==="dark":(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches);
+function applyTheme(){root.setAttribute("data-theme",dark?"dark":"light");}
+applyTheme();
+$("#theme").onclick=function(){dark=!dark;applyTheme();
+  try{localStorage.setItem("sd-theme",dark?"dark":"light");}catch(e){}};
+
+// geometry
+var W=ir.canvas.width,H=ir.canvas.height;
+var nodes=ir.nodes||[],edges=ir.edges||[];
+function byId(id){for(var i=0;i<nodes.length;i++)if(nodes[i].id===id)return nodes[i];return null;}
+function side(n,s){var cx=n.x+n.w/2,cy=n.y+n.h/2;
+  return s==="l"?[n.x,cy]:s==="r"?[n.x+n.w,cy]:s==="t"?[cx,n.y]:[cx,n.y+n.h];}
+function autoRoute(a,b,orient){
+  var dx=(b.x+b.w/2)-(a.x+a.w/2),dy=(b.y+b.h/2)-(a.y+a.h/2);
+  var hf=Math.abs(dx)>=Math.abs(dy);
+  if(orient==="h")hf=true; if(orient==="v")hf=false;
+  var pts;
+  if(hf){var s=side(a,dx>=0?"r":"l"),e=side(b,dx>=0?"l":"r"),mx=(s[0]+e[0])/2;
+    pts=[[s[0],s[1]],[mx,s[1]],[mx,e[1]],[e[0],e[1]]];}
+  else{var s2=side(a,dy>=0?"b":"t"),e2=side(b,dy>=0?"t":"b"),my=(s2[1]+e2[1])/2;
+    pts=[[s2[0],s2[1]],[s2[0],my],[e2[0],my],[e2[0],e2[1]]];}
+  var out=[pts[0]];
+  for(var i=1;i<pts.length;i++){var p=pts[i],q=out[out.length-1];
+    if(p[0]!==q[0]||p[1]!==q[1])out.push(p);}
+  return out.length>=2?out:[[pts[0][0],pts[0][1]],[pts[0][0]+1,pts[0][1]]];
+}
+function polyMid(pts){
+  var L=0,seg=[],i;
+  for(i=1;i<pts.length;i++){
+    var d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+    seg.push(d);L+=d;}
+  var t=L/2;
+  for(i=1;i<pts.length;i++){
+    if(t<=seg[i-1]){var f=seg[i-1]?t/seg[i-1]:0;
+      return [pts[i-1][0]+(pts[i][0]-pts[i-1][0])*f,
+              pts[i-1][1]+(pts[i][1]-pts[i-1][1])*f];}
+    t-=seg[i-1];}
+  return pts[pts.length-1];
+}
+
+// build svg (groups behind, then lifelines, edges, nodes on top)
+var svg=$("#dia");
+svg.setAttribute("viewBox","0 0 "+W+" "+H);
+if(ir.title)svg.setAttribute("aria-label",ir.title);
+var s="<defs>"+
+  "<marker id=\"arr\" viewBox=\"0 0 10 10\" refX=\"8.5\" refY=\"5\" markerWidth=\"7\" "+
+  "markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"var(--line)\"/></marker>"+
+  "<marker id=\"arre\" viewBox=\"0 0 10 10\" refX=\"8.5\" refY=\"5\" markerWidth=\"7\" "+
+  "markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"var(--accent)\"/></marker>"+
+  "</defs><g id=\"world\">";
+
+(ir.groups||[]).forEach(function(g){
+  var xs=[],ys=[],xe=[],ye=[];
+  (g.wraps||[]).forEach(function(id){var n=byId(id);if(!n)return;
+    xs.push(n.x);ys.push(n.y);xe.push(n.x+n.w);ye.push(n.y+n.h);});
+  if(!xs.length)return;
+  var pad=14,x0=Math.min.apply(0,xs)-pad,y0=Math.min.apply(0,ys)-pad,
+      x1=Math.max.apply(0,xe)+pad,y1=Math.max.apply(0,ye)+pad;
+  s+="<g class=\"group\"><rect x=\""+x0+"\" y=\""+y0+"\" width=\""+(x1-x0)+
+     "\" height=\""+(y1-y0)+"\" rx=\"10\"/>"+
+     "<text x=\""+(x0+10)+"\" y=\""+(y0+16)+"\">"+esc(g.label||"")+"</text></g>";
+});
+
+nodes.forEach(function(n){ if(!n.lifeline)return;
+  s+="<line class=\"lifeline\" x1=\""+(n.x+n.w/2)+"\" y1=\""+(n.y+n.h)+
+     "\" x2=\""+(n.x+n.w/2)+"\" y2=\""+H+"\"/>";
+});
+
+s+="<g>";
+edges.forEach(function(e){
+  var a=byId(e.from),b=byId(e.to); if(!a||!b)return;
+  var pts=(e.points&&e.points.length>=2)?e.points:autoRoute(a,b,e.orient);
+  var d="M"+pts.map(function(p){return p[0]+" "+p[1];}).join("L");
+  s+="<g class=\"edge "+(e.style||"solid")+"\" data-from=\""+esc(e.from)+
+     "\" data-to=\""+esc(e.to)+"\"><path d=\""+d+"\" marker-end=\"url(#"+
+     (e.style==="emphasis"?"arre":"arr")+")\"/>";
+  if(e.label){var m=polyMid(pts);
+    s+="<text x=\""+m[0]+"\" y=\""+(m[1]+(e.dy==null?-8:e.dy))+"\">"+esc(e.label)+"</text>";}
+  s+="</g>";
+});
+s+="</g>";
+
+s+="<g>";
+nodes.forEach(function(n){
+  var cls="node r-"+(n.role||"external")+(n.emphasis?" emphasis":"")+(n.dashed?" dashed":"");
+  s+="<g class=\""+cls+"\" data-id=\""+esc(n.id)+"\" transform=\"translate("+n.x+" "+n.y+")\">"+
+     "<rect width=\""+n.w+"\" height=\""+n.h+"\" rx=\"8\"/>";
+  if(n.sublabel){
+    s+="<text x=\""+n.w/2+"\" y=\""+(n.h/2-4)+"\">"+esc(n.label)+"</text>"+
+       "<text class=\"sub\" x=\""+n.w/2+"\" y=\""+(n.h/2+13)+"\">"+esc(n.sublabel)+"</text>";
+  }else{
+    s+="<text x=\""+n.w/2+"\" y=\""+(n.h/2+5)+"\">"+esc(n.label)+"</text>";
+  }
+  s+="</g>";
+});
+s+="</g></g>";
+svg.innerHTML=s;
+
+// integrity banner (safety net; the validator is the real gate)
+(function(){
+  var errs=[],seen={};
+  nodes.forEach(function(n){
+    if(seen[n.id])errs.push("duplicate node id: "+n.id);
+    seen[n.id]=1;});
+  edges.forEach(function(e){
+    if(e.from&&!seen[e.from])errs.push("edge "+e.id+": unknown from '"+e.from+"'");
+    if(e.to&&!seen[e.to])errs.push("edge "+e.id+": unknown to '"+e.to+"'");});
+  if(errs.length)banner(errs.join(" · "));
+})();
+
+// pan / zoom
+var world=$("#world"),k=1,tx=0,ty=0;
+function applyView(){world.setAttribute("transform","translate("+tx+" "+ty+") scale("+k+")");}
+applyView();
+function vbPoint(ev){var r=svg.getBoundingClientRect();
+  return [(ev.clientX-r.left)/r.width*W,(ev.clientY-r.top)/r.height*H];}
+svg.addEventListener("wheel",function(ev){ev.preventDefault();
+  var p=vbPoint(ev),f=ev.deltaY<0?1.12:1/1.12,nk=Math.min(4,Math.max(.35,k*f));
+  tx=p[0]-(p[0]-tx)*nk/k; ty=p[1]-(p[1]-ty)*nk/k; k=nk; applyView();},{passive:false});
+var down=null,panned=false;
+svg.addEventListener("pointerdown",function(ev){down=[ev.clientX,ev.clientY];panned=false;});
+window.addEventListener("pointermove",function(ev){ if(!down)return;
+  var dx=ev.clientX-down[0],dy=ev.clientY-down[1];
+  if(Math.abs(dx)+Math.abs(dy)>4)panned=true;
+  if(panned){var r=svg.getBoundingClientRect();
+    tx+=dx/r.width*W; ty+=dy/r.height*H; applyView();}
+  down=[ev.clientX,ev.clientY];});
+window.addEventListener("pointerup",function(){down=null;});
+function resetView(){k=1;tx=0;ty=0;applyView();}
+svg.addEventListener("dblclick",resetView);
+$("#zin").onclick=function(){k=Math.min(4,k*1.25);applyView();};
+$("#zout").onclick=function(){k=Math.max(.35,k/1.25);applyView();};
+$("#zreset").onclick=resetView;
+
+// hover / pin tracing
+var pinned=null;
+function clearHot(){svg.querySelectorAll(".hot").forEach(function(el){el.classList.remove("hot");});}
+function setHot(id,on){
+  svg.querySelectorAll(".edge").forEach(function(el){
+    if(el.getAttribute("data-from")===id||el.getAttribute("data-to")===id)
+      el.classList.toggle("hot",on);});
+  svg.querySelectorAll(".node").forEach(function(el){
+    var keep=el.getAttribute("data-id")===id;
+    if(!keep)edges.forEach(function(e){
+      if((e.from===id&&e.to===el.getAttribute("data-id"))||
+         (e.to===id&&e.from===el.getAttribute("data-id")))keep=true;});
+    el.classList.toggle("hot",on&&keep);});
+}
+svg.addEventListener("click",function(ev){
+  var t=ev.target,g=t&&t.closest?t.closest(".node"):null;
+  if(panned){panned=false;return;}
+  if(g){var id=g.getAttribute("data-id");
+    if(pinned===id){setHot(id,false);pinned=null;}
+    else{if(pinned)setHot(pinned,false);pinned=id;setHot(id,true);}}
+  else if(pinned){setHot(pinned,false);pinned=null;}
+});
+
+// search
+function applySearch(q){
+  q=q.trim().toLowerCase();pinned=null;clearHot();
+  var hits={};
+  nodes.forEach(function(n){
+    hits[n.id]=!q||
+      (n.label||"").toLowerCase().indexOf(q)>=0||
+      (n.sublabel||"").toLowerCase().indexOf(q)>=0||
+      n.id.toLowerCase().indexOf(q)>=0;});
+  svg.querySelectorAll(".node").forEach(function(el){
+    el.classList.toggle("dim",!hits[el.getAttribute("data-id")]);});
+  svg.querySelectorAll(".edge").forEach(function(el){
+    el.classList.toggle("dim",
+      !(hits[el.getAttribute("data-from")]&&hits[el.getAttribute("data-to")]));});
+}
+$("#q").addEventListener("input",function(){applySearch(this.value);});
+document.addEventListener("keydown",function(ev){
+  if(ev.key==="/"&&document.activeElement!==$("#q")){ev.preventDefault();$("#q").focus();}
+  if(ev.key==="Escape"){$("#q").value="";applySearch("");}
+});
+})();
+</script>
+</body>
+</html>
