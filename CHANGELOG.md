@@ -8,6 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [4.3.0] - 2026-09-03
+
+### Added
+
+- **`skills/system-diagramming`**: self-contained system diagramming — turn a
+  codebase or system description into one interactive HTML artifact (inline
+  SVG, dark/light themes, pan/zoom, hover tracing, search) with no installs
+  and no network. Author a small typed JSON IR inside the bundled template
+  (five kinds: architecture, workflow, sequence, dataflow, lifecycle; the
+  renderer draws it deterministically), then gate it with the bundled stdlib
+  validator (`E_*`/`W_*` diagnostics) before handoff. Exports, motion, and
+  share cards are out of scope.
+
+### Changed
+
+- **`skills/confluence`**: both supported MCP servers are now first-class -
+  the official Rovo remote server (OAuth; read/search/Teamwork-Graph surface)
+  and mcp-atlassian (open-source; hosted, e.g. mcp-atlassian.soomiles.com, or
+  local stdio with an API token; full page CRUD). Adds tool-shape detection
+  (server names are arbitrary; camelCase-with-cloudId vs snake_case-pinned-to-
+  one-site), a per-operation routing table with write-defaults-to-mcp-atlassian
+  when both are connected, mcp-atlassian transport rules (storage-format macros
+  first-class, `confluence_update_page_section` as the low-blast-radius path,
+  `version_comment` on updates, read-back via `convert_to_markdown: false`),
+  and hosted-endpoint setup. Retracts the wrong claim that the local stdio
+  fallback shared Rovo's tool surface.
+
 ## [4.2.0] - 2026-09-02
 
 ### Added
