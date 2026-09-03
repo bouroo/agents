@@ -43,7 +43,7 @@ Keep records immutable — supersede, never rewrite. Templates, naming, lifecycl
 
 ## 4. Model for the audience
 
-Diagrams are communication, not decoration. Zoom with C4: system context for executives and sponsors, containers for the delivery team, components for implementers; sequence diagrams for interactions; BPMN for process. One notation per diagram, current or deleted. Notation choices and drawing practice: [modeling](references/modeling.md); presenting it per audience and keeping the design alive in agile delivery: [communication](references/communication.md).
+Diagrams are communication, not decoration. Zoom with C4: system context for executives and sponsors, containers for the delivery team, components for implementers; sequence diagrams for interactions; BPMN for process. One notation per diagram, current or deleted. Notation choices and drawing practice: [modeling](references/modeling.md); presenting it per audience and keeping the design alive in agile delivery: [communication](references/communication.md). To render one of these views as an explorable, self-contained system map, hand it to [system-diagramming](../system-diagramming/SKILL.md).
 
 ## 5. Size and govern the delivery
 
