@@ -5,8 +5,8 @@ real, correctly-rendering sibling pages rather than invented. The v3 Python
 generator (`page_template.py`) that emitted this layout is gone by design -
 an agent following this file produces the identical output - but its two hard
 rules survive verbatim below. Authoring transport rules live in [SKILL.md](../SKILL.md)
-(html contentFormat on the Rovo MCP server; legacy storage-format snippets here
-are marked as such and only apply to stdio-bridge-era instances).
+(Rovo: Confluence-HTML data-type nodes; mcp-atlassian: storage format - the
+`[storage-form]` snippets below apply verbatim there).
 
 ## Content-quality rules (mandatory on every endpoint page)
 
@@ -153,8 +153,8 @@ siblings there instead of the canonical order:
 - **Field to Field Mapping**: one `###` table per downstream call
   (`Input / Output | Target | Source | Mapping Logic | Remark`; I/O cell is `I`
   or `O`), plus a final `### Response mapping` table.
-- Transport note: ~25 KB html bodies published fine (create + update, no split);
-  retry-with-pause before falling back to create-minimal-then-update.
+- Transport note: ~25 KB html bodies published fine on Rovo (create + update,
+  no split); retry-with-pause before falling back to create-minimal-then-update.
 
 ## Publish checklist
 
