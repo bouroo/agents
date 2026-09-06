@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [4.4.0] - 2026-09-06
+
+### Added
+- **`skills/wayfinder`**: plan an effort too big for one agent session as a shared map of decision tickets on the repo's issue tracker — destination named first, map as index (not store), HITL/AFK ticket types (research, prototype, grilling, task), fog of war graduated into tickets as the frontier advances, out-of-scope recorded where ruled out, claim-before-work for concurrent sessions, at most one ticket resolved per session; the map is done when nothing is left to decide before someone goes and does the thing. AGENTS.md routes plan-first efforts too big or foggy for one session to it and scopes it against teamwork: teamwork parallelizes one job across contexts, wayfinder persists one effort across sessions.
+
 ## [4.3.0] - 2026-09-03
 
 ### Added
