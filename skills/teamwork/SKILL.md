@@ -61,5 +61,6 @@ Counter-signals — sequential work, same-file edits, heavy inter-task dependenc
 
 ## Cross-references
 
+- [wayfinder](../wayfinder/SKILL.md) when the effort itself outgrows one session: its map of decision tickets is the cross-session coordination medium this ledger's within-a-job sibling.
 - [verification](../verification/SKILL.md) the evidence standard every worker owes; the judge protocol for a team's report.
 - [craft](../craft/SKILL.md) the artifact gates workers owe inside their briefs.
