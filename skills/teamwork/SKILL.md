@@ -14,7 +14,7 @@ Multiple agents cooperating on one job. Hosts expose this under different switch
 ## The escalation ladder
 
 | Tier | Shape | Use when | Cost |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Solo | one context running the loop | default: sequential steps, same-file edits, coupled dependencies | baseline |
 | Delegation | scoped worker spawned, result returns, caller keeps a summary | only the result matters; fan-out reads/searches; window must stay clean | one extra window per worker |
 | Team | peers with own windows, shared task ledger, direct peer messaging | workers must share findings, challenge each other, or claim work themselves | a window per member, linear |
@@ -50,7 +50,7 @@ Counter-signals — sequential work, same-file edits, heavy inter-task dependenc
 ## Failure modes
 
 | Mode | Looks like | Fix |
-|---|---|---|
+| --- | --- | --- |
 | Anchoring | first theory investigated, the rest merely confirm it | competing hypotheses charged with refutation |
 | Lead grabs work | lead implements while workers idle | lead synthesizes only; wait or reassign |
 | Facade delivery | tests mocked or skipped, outputs fabricated | auditor re-runs everything; gate completion on evidence |
