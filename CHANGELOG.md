@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [Unreleased]
+
+### Added
+
+- **`skills/grilling`**: the plan-first interview method, distilled from [mattpocock/skills](https://github.com/mattpocock/skills) (`grilling`, MIT): decisions mapped as a design tree and worked in numbered frontier rounds — every question whose prerequisites are settled, each with a recommended answer — facts dispatched to sub-agents while only decisions reach the user, done when the frontier is empty: one-recommendation plan, then STOP for approval.
+- **`skills/domain-modeling`**: the active domain-language discipline, adapted from the same source (MIT): five habits (challenge terms against the glossary, sharpen fuzzy language to canonical ones, stress-test relationships with edge-case scenarios, cross-reference code claims, update `CONTEXT.md` inline), `CONTEXT.md` at the repo root as a glossary and nothing else (opinionated `_Avoid_` entries, lazy creation, `CONTEXT-MAP.md` for multi-context repos), and the ADR trigger triad — offered only when hard to reverse, surprising without context, and a real trade-off; format reference in `references/context-format.md`.
+
+### Changed
+
+- **AGENTS.md §2 "Decide, don't ask"** now states the fact/decision split: facts are the agent's to look up; only decisions reach a human. The plan-first Shape line links `skills/grilling` for the full method; §5 routes design work touching domain terms, the glossary, or a decision record to `skills/domain-modeling`; the Repository Map gains both rows.
+- **Glossary unified on `CONTEXT.md`** at the repo root: `cmd-document`'s `--type=glossary` and its bootstrap layout retarget from `docs/glossary.md`, with format owned by `skills/domain-modeling`; README's tree follows. One language, one source of truth.
+- **Scoping cross-references**: wayfinder's Grilling tickets route to `skills/grilling` for technique, with "frontier" disambiguated (map tickets across sessions vs open questions within one session); solution-architecture §3 notes domain-modeling owns the conversation-time ADR trigger while format and lifecycle stay canonical there.
+
+## [4.4.0] - 2026-09-06
+
+### Added
+
+- **`skills/wayfinder`**: plan an effort too big for one agent session as a shared map of decision tickets on the repo's issue tracker — destination named first, map as index (not store), HITL/AFK ticket types (research, prototype, grilling, task), fog of war graduated into tickets as the frontier advances, out-of-scope recorded where ruled out, claim-before-work for concurrent sessions, at most one ticket resolved per session; the map is done when nothing is left to decide before someone goes and does the thing. AGENTS.md routes plan-first efforts too big or foggy for one session to it and scopes it against teamwork: teamwork parallelizes one job across contexts, wayfinder persists one effort across sessions.
+
 ## [4.3.0] - 2026-09-03
 
 ### Added

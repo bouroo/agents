@@ -1,7 +1,7 @@
 {
   "name": "coder-agents",
-  "version": "4.3.0",
-  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), eight on-demand skills (craft, confluence, go-modernize, performance, solution-architecture, system-diagramming, teamwork, verification), four routine-task command workflows, and deterministic verification gates.",
+  "version": "4.4.0",
+  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), eleven on-demand skills (craft, confluence, domain-modeling, go-modernize, grilling, performance, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, and deterministic verification gates.",
   "author": {
     "name": "bouroo"
   },
@@ -12,12 +12,15 @@
   "skills": [
     "skills/confluence/SKILL.md",
     "skills/craft/SKILL.md",
+    "skills/domain-modeling/SKILL.md",
     "skills/go-modernize/SKILL.md",
+    "skills/grilling/SKILL.md",
     "skills/performance/SKILL.md",
     "skills/solution-architecture/SKILL.md",
     "skills/system-diagramming/SKILL.md",
     "skills/teamwork/SKILL.md",
-    "skills/verification/SKILL.md"
+    "skills/verification/SKILL.md",
+    "skills/wayfinder/SKILL.md"
   ],
   "commands": [
     "commands/cmd-document.md",
