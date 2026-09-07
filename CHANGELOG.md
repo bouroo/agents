@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
-## [Unreleased]
+## [4.5.0] - 2026-09-07
 
 ### Added
 
@@ -20,6 +20,7 @@ tags and log (`v1.0.0` through `v3.11.0`).
 - **AGENTS.md §2 "Decide, don't ask"** now states the fact/decision split: facts are the agent's to look up; only decisions reach a human. The plan-first Shape line links `skills/grilling` for the full method; §5 routes design work touching domain terms, the glossary, or a decision record to `skills/domain-modeling`; the Repository Map gains both rows.
 - **Glossary unified on `CONTEXT.md`** at the repo root: `cmd-document`'s `--type=glossary` and its bootstrap layout retarget from `docs/glossary.md`, with format owned by `skills/domain-modeling`; README's tree follows. One language, one source of truth.
 - **Scoping cross-references**: wayfinder's Grilling tickets route to `skills/grilling` for technique, with "frontier" disambiguated (map tickets across sessions vs open questions within one session); solution-architecture §3 notes domain-modeling owns the conversation-time ADR trigger while format and lifecycle stay canonical there.
+- **`skills/confluence`**: three hard-won publish lessons from one day of blank-diagram debugging. (1) The `plantumlcloud` `data` encoding is not standard PlantUML base64 and varies between pages on the same instance — prove an encoder against the `data` param of a page that demonstrably renders in a browser (a sibling's mere existence proves nothing), re-encoding byte-for-byte before trusting it; recipe pinned as percent-encode → raw deflate (level 6) → standard base64 with padding kept. (2) A collapsible raw-source expand must use the native `expand` macro in storage format — Confluence silently strips an HTML `<details>` element from the stored body. (3) Multi-KB write payloads can be silently corrupted in the MCP client→server hop (`InputValidationError … could not be parsed as JSON`, reported bytes ~3× the payload) — a transport defect, not an authoring mistake: switch transport via smaller `confluence_update_page_section` or full-body `confluence_update_page` with `content_file`; and read-backs now rank probes by descending strength, led by `confluence_get_page_diff` (with the caveat that search indexes lag and never index macro parameters).
 
 ## [4.4.0] - 2026-09-06
 
