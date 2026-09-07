@@ -81,6 +81,40 @@ requester -> adapter : POST /<path>
 One message per source line: a literal `\n` inside a message is a visual break;
 never convert it to a real newline.
 
+### Translating Mermaid sources (repo docs) to PlantUML
+
+Repo-side docs keep Mermaid; wiki pages take PlantUML. Verified element mapping
+(2026-09-07, seven sequence diagrams republished blank-diagram-free):
+
+| Mermaid | PlantUML |
+| --- | --- |
+| `sequenceDiagram` + `autonumber` | `@startuml` + `autonumber` (drop `autonumber` if the family's siblings number steps manually) |
+| `actor X as Label` | `actor "Label" as X` |
+| `participant X as Label` | `participant "Label" as X` |
+| external/producer actor + `queue`/`topic` lifeline | `actor "Producer" as P` + `queue "Kafka\ntopic.name" as MQ` (escape the newline as literal `\n`) |
+| storage lifelines (`DB as …`) | `database "Label" as DB` |
+| `A->>B: msg` / `A-->>B: msg` | `A -> B: msg` / `A --> B: msg` |
+| `alt c1 … else c2 … end` | `alt c1 … else c2 … end` (identical shape) |
+| `Note over A,B: text` / `note right of X:` | `note over A,B: text` / `note right of X: text` (single-line form for short notes) |
+| `loop every N` | `loop every N … end` |
+| `== Section ==` | `== Section ==` (identical) |
+
+Mermaid message-text constructs that BREAK PlantUML - rewrite before shipping:
+
+- `<angle-bracket>` placeholders parse as tags → `[square-brackets]` or prose.
+- `<=` / `>=` in expressions → prose ("fire_at is due", "created after schedule").
+- `;` mid-message splits the statement → split into two message lines.
+- `#` in message text starts PlantUML color syntax → "message 1", not "message #1".
+- `"` inside messages → drop or single-quote (participants' display names are
+  the quoted position; message text quoting nests badly).
+
+Housekeeping: keep the repo's Mermaid as the source of truth, generate the
+PlantUML in the publish script, and assert each generated `data` param
+round-trips to a `@startuml…@enduml` source before upload. If diagrams live in
+a standalone generator (e.g. `.agents/<task>/generate_storage.py`), leave it in
+place for the next sync - regenerating five payloads beat re-deriving the
+encoding twice.
+
 ## Canonical document order
 
 Top-level sections are H1; headings start at H1 (no leading H1 title - the page
@@ -102,6 +136,16 @@ the corresponding Confluence-HTML node or by mirroring the sibling's markup.
 4. **H1 Sequence Diagram** - the macro + raw-source expand pair above. `[storage-form]`
    reference shape: `plantumlcloud` macro (compressed inline source) followed by
    `expand` > `code(language=none)` carrying the identical decompressed source.
+   **The `plantumlcloud` `data` encoding is NOT standard PlantUML base64** (learned
+   2026-09-07 after a wrong-alphabet publish painted five blank diagrams):
+   `percent-encode(quote) the source` → `raw deflate (zlib raw, strip the 2-byte
+   zlib header and 4-byte adler tail)` → `standard base64, padding stripped`.
+   The macro decodes with standard base64 - `+` and `/` appear literally in
+   sibling `data` params, PlantUML's `0-9A-Za-z-_` alphabet does not. Verify an
+   encoder by re-encoding a known-good sibling's expand source and diffing
+   against its `data` param byte-for-byte before trusting it (one exact match
+   beats three plausible decoders). Storage-form macro:
+   `<ac:structured-macro ac:name="plantumlcloud"><ac:parameter ac:name="filename"><name>.svg</ac:parameter><ac:parameter ac:name="data"><encoded></ac:parameter><ac:parameter ac:name="compressed">true</ac:parameter></ac:structured-macro>`.
 5. **H1 Request**: H2 Request Header Schema (5-col field table) · H2 Request
    Body Schema (5-col field table) · H2 Example Request (wide json code block).
 6. **H1 Response**: H2 Custom HTTP Response Code (4-col table) · H2 Response
@@ -162,7 +206,14 @@ siblings there instead of the canonical order:
 2. Samples are full payloads with internally consistent mocks (rule 2); opaque
    payloads single-row (rule 3); field names match serialization tags (rule 4).
 3. Diagram = macro + byte-identical raw-source expand; no bare `@startuml`
-   code blocks anywhere.
+   code blocks anywhere. `plantumlcloud` payloads: encoder proven against a
+   known-good sibling's `data` param, and every generated `data` round-trips
+   to a valid `@startuml…@enduml` source — before upload, not after a blank
+   render (SKILL.md `content_file` sandbox: payloads staged inside the
+   workspace).
 4. Table column sets match this template or the target family's recorded set.
 5. Read-back after publish: stored body contains every macro wrapper and
-   escaped source you intended (SKILL.md, publish-then-prove).
+   escaped source you intended (SKILL.md, publish-then-prove). If the read-back
+   is compressed/truncated by the client, probe via bumped `version`,
+   `text ~ "unique-string"` search, and the parent's children listing; render
+   confirmation stays manual in a browser.
