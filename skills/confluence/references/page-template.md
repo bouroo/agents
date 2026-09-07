@@ -55,6 +55,23 @@ Rovo-MCP html forms observed working:
 <pre><code class="language-none">SOURCE</code></pre></details>
 ```
 
+mcp-atlassian storage form - **must** be the native `expand` macro; Confluence
+silently strips an HTML `<details>` element from a storage-format body (the
+source survives but lands outside any collapsible - caught 2026-09-07 and
+republished):
+
+```xml
+<ac:structured-macro ac:name="expand">
+  <ac:parameter ac:name="title">Raw sequence diagram source</ac:parameter>
+  <ac:rich-text-body>
+    <ac:structured-macro ac:name="code">
+      <ac:parameter ac:name="language">none</ac:parameter>
+      <ac:plain-text-body><![CDATA[SOURCE]]></ac:plain-text-body>
+    </ac:structured-macro>
+  </ac:rich-text-body>
+</ac:structured-macro>
+```
+
 **Trap:** a bare code block containing `@startuml…` renders as literal text,
 never a diagram - the failure mode invisible when re-reading the body. Some
 older siblings kept only that broken form; do not copy it. Verify a published
@@ -136,15 +153,24 @@ the corresponding Confluence-HTML node or by mirroring the sibling's markup.
 4. **H1 Sequence Diagram** - the macro + raw-source expand pair above. `[storage-form]`
    reference shape: `plantumlcloud` macro (compressed inline source) followed by
    `expand` > `code(language=none)` carrying the identical decompressed source.
-   **The `plantumlcloud` `data` encoding is NOT standard PlantUML base64** (learned
-   2026-09-07 after a wrong-alphabet publish painted five blank diagrams):
-   `percent-encode(quote) the source` → `raw deflate (zlib raw, strip the 2-byte
-   zlib header and 4-byte adler tail)` → `standard base64, padding stripped`.
-   The macro decodes with standard base64 - `+` and `/` appear literally in
-   sibling `data` params, PlantUML's `0-9A-Za-z-_` alphabet does not. Verify an
-   encoder by re-encoding a known-good sibling's expand source and diffing
-   against its `data` param byte-for-byte before trusting it (one exact match
-   beats three plausible decoders). Storage-form macro:
+   **The `plantumlcloud` `data` encoding is NOT standard PlantUML base64, and it
+   varies between pages on the same instance** (2026-09-07, two incidents in one
+   day: a PlantUML-custom-alphabet publish painted five blank diagrams; the
+   correction, validated against the wrong sibling, painted blanks again).
+   Recipe proven byte-for-byte against a live tenant instance: `percent-encode
+   the source (quote, safe="")` → `raw deflate (zlib raw, strip the 2-byte zlib
+   header and 4-byte adler tail), compression level 6` → `standard base64 with
+   padding KEPT`. Every detail is load-bearing: deflate level 9 does not
+   reproduce the reference bytes; stripping padding yields output off by exactly
+   the two `=` characters (the diagnostic signature of a padding mismatch, not
+   an alphabet mismatch); `+` and `/` appear literally in known-good `data`
+   params, PlantUML's `0-9A-Za-z-_` alphabet does not. Prove an encoder by
+   decoding the `data` param of a page that demonstrably **renders in a
+   browser** - a sibling's mere existence proves nothing about rendering: the
+   diagram family all shipped blank while the parent page
+   painted - and re-encoding it byte-for-byte before trusting the encoder on
+   new sources (one exact match beats three plausible decoders). Storage-form
+   macro:
    `<ac:structured-macro ac:name="plantumlcloud"><ac:parameter ac:name="filename"><name>.svg</ac:parameter><ac:parameter ac:name="data"><encoded></ac:parameter><ac:parameter ac:name="compressed">true</ac:parameter></ac:structured-macro>`.
 5. **H1 Request**: H2 Request Header Schema (5-col field table) · H2 Request
    Body Schema (5-col field table) · H2 Example Request (wide json code block).
