@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, eleven on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, twelve on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## What's inside
 
@@ -32,8 +32,10 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 │   │                                  numbered frontier rounds, facts vs decisions
 │   ├── domain-modeling/               active domain-language discipline: CONTEXT.md
 │   │   └── references/                glossary, edge-case scenarios, ADR trigger triad
-│   └── system-diagramming/            system maps as one interactive HTML: typed JSON IR,
-│                                      bundled template + validator, no installs
+│   ├── system-diagramming/            system maps as one interactive HTML: typed JSON IR,
+│   │                                  bundled template + validator, no installs
+│   └── graph-engineering/             workflow graphs: loop-vs-graph matrix,
+│       └── references/               five-stage method, typed edges, cost gates
 ├── commands/
 │   ├── cmd-verify.md                  quality-gate pipeline with a fix/re-verify loop
 │   ├── cmd-review.md                  severity-grouped code review with one verdict

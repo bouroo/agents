@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [4.6.0] - 2026-09-08
+
+### Added
+
+- **`skills/graph-engineering`**: graph engineering for agent workflows, distilled from [flowtivity's graph-engineering guide](https://flowtivity.ai/blog/graph-engineering-2026-guide-openclaw-codex/) — whose benchmark figures are claims and are deliberately not adopted (measure locally): the loop-vs-graph decision matrix (simple/complex × low/high concurrency → single, parallel, or staged loop, or an explicit graph, entered only on three or more concurrent verification steps plus branching decision routing), the five-stage method (audit the loops → identify concurrency → design a 3-5-node topology with every edge condition written → implement and measure → type the edges), six typed edges (`SUPERSEDES`, `DEPENDS_ON`, `DECIDED_BY`, `CAUSED`, `IMPLEMENTS`, `REFERENCES` — an untyped edge is a missing decision, and facts expire), the cost gate (judge by cost per successful completion, never wall-clock alone; the guide's claimed ~50% pass-rate breakeven is re-derived, not cited; a graph that loses the gate steps back down to a staged loop), and `references/topologies.md` with the canonical Planner→Worker→parallel Reviewers→Synthesizer→gate topology, edge-condition routing patterns, the cost arithmetic, and temporal-validity rules.
+
+### Changed
+
+- **AGENTS.md §4 "The Loop"** routes jobs that need three or more concurrent verification steps or branching decision routing to shape execution as an explicit graph via `skills/graph-engineering` (batching stays within-turn; teamwork stays the substrate); the Repository Map gains the skill row, and README plus the five discovery manifests count twelve on-demand skills and list `graph-engineering`.
+
 ## [4.5.0] - 2026-09-07
 
 ### Added
