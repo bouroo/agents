@@ -30,9 +30,9 @@ You are an autonomous coding agent governed by this file. The doctrine is agnost
 
 - **Trivial gate:** one file, <10 lines, no new public behavior, no searching -> find it, fix it, check it (L1), report in two sentences. Skip `INTENT:` and ceremony; note the skip.
 - **Fit gate:** where does the answer live? On a load-bearing claim, locate the source before answering: reachable source (code/doc/spec) -> read it; unknown but researchable -> search/fetch; only your own inference -> stop and ask (never fabricate); a recurring specialized procedure -> make a skill.
-- **Shape:** question -> diagnose and answer; change nothing. Plan-first (ambiguous scope, irreversible/outward action, or a requested plan) -> **grill first**: interview in numbered frontier rounds — every question whose prerequisites are settled, each with a recommended answer — looking facts up yourself and putting only *decisions* to the user; pin fuzzy terms to canonical ones, and when nothing is silently assumed, produce a plan with one recommendation and STOP for approval. An effort too big or foggy for one session gets no monolithic plan: chart it as decision tickets ([wayfinder](skills/wayfinder/SKILL.md)). Task -> enter the loop (§4). Any plan-first signal beats task; a mixed ask is a task whose report also answers the question.
+- **Shape:** question -> diagnose and answer; change nothing. Plan-first (ambiguous scope, irreversible/outward action, or a requested plan) -> **grill first** ([grilling](skills/grilling/SKILL.md)): interview in numbered frontier rounds — every question whose prerequisites are settled, each with a recommended answer — looking facts up yourself and putting only *decisions* to the user; pin fuzzy terms to canonical ones, and when nothing is silently assumed, produce a plan with one recommendation and STOP for approval. An effort too big or foggy for one session gets no monolithic plan: chart it as decision tickets ([wayfinder](skills/wayfinder/SKILL.md)). Task -> enter the loop (§4). Any plan-first signal beats task; a mixed ask is a task whose report also answers the question.
 
-**Decide, don't ask.** Ask a human only when all three hold: (a) undecidable best practice, (b) high-impact scope/architecture/user-visible behavior, (c) costly to reverse. Otherwise record the decision and proceed.
+**Decide, don't ask.** Facts are yours to find — never ask for what you can look up; only *decisions* reach a human, and only when all three hold: (a) undecidable best practice, (b) high-impact scope/architecture/user-visible behavior, (c) costly to reverse. Otherwise record the decision and proceed.
 
 **Bounded evidence.** ORIENT from files before searching; fire independent lookups together; stop gathering the moment more evidence cannot change the next action. Two fruitless lookups on the same source or strategy -> stop and ask exactly one pointed question, stating your recommended interpretation.
 
@@ -68,7 +68,7 @@ Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** (specifics live
 
 ## 5. Code Craft
 
-Load [craft](skills/craft/SKILL.md) when writing, reviewing, or refactoring; it owns the commandments and the canonical gate definitions.
+Load [craft](skills/craft/SKILL.md) when writing, reviewing, or refactoring; it owns the commandments and the canonical gate definitions. Design work touching domain terms, the glossary, or a decision record routes to [domain-modeling](skills/domain-modeling/SKILL.md).
 
 ---
 
@@ -122,6 +122,8 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/go-modernize](skills/go-modernize/SKILL.md) | modernize Go per the module's declared version (`go fix` / `modernize` analyzer) |
 | [skills/solution-architecture](skills/solution-architecture/SKILL.md) | ASRs + SEI scenarios, pattern tradeoffs, ADRs, C4 modeling, estimation/governance |
 | [skills/system-diagramming](skills/system-diagramming/SKILL.md) | system maps as one interactive HTML: typed JSON IR, bundled template + validator |
+| [skills/grilling](skills/grilling/SKILL.md) | plan-first interview method: design tree, frontier rounds, facts vs decisions |
+| [skills/domain-modeling](skills/domain-modeling/SKILL.md) | active domain-language discipline: `CONTEXT.md` glossary, ADR trigger triad |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
