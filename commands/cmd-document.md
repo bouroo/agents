@@ -19,16 +19,16 @@ Argument: the area to document (`auth`, `email-verification flow`, `sessions-vs-
 | flow | a cross-system runtime path | `docs/flows/<flow>.md` |
 | adr | one architecture decision, immutable once accepted | `docs/architecture/decisions/<slug>.md` |
 | api | one HTTP endpoint: contract, auth, errors, sequence | `docs/api/<service>/<endpoint>.md` |
-| glossary term | a Title Case domain concept | entry in `docs/glossary.md` |
+| glossary term | a Title Case domain concept | entry in `CONTEXT.md` at the repo root; format: [domain-modeling](../skills/domain-modeling/SKILL.md) |
 
 **Granularity rule:** document as a system until it crosses systems; then promote to a flow.
 
 ## Steps
 
-1. **Assess.** No `docs/` tree? Bootstrap the minimal layout: `docs/README.md` (index linking every system), `systems/`, `flows/`, `architecture/decisions/`, `api/`, `glossary.md`. Present? Use it as-is; never rearrange someone's tree.
+1. **Assess.** No `docs/` tree? Bootstrap the minimal layout: `docs/README.md` (index linking every system), `systems/`, `flows/`, `architecture/decisions/`, `api/`. The glossary lives outside the tree: `CONTEXT.md` at the repo root, created lazily on the first resolved term. Present? Use it as-is; never rearrange someone's tree.
 2. **Locate.** Read the docs index/map; find the affected system doc, related flows, endpoint pages, governing ADRs, and glossary terms. Decide honestly whether the change warrants a new doc or an edit to an existing one.
 3. **Draft.** Each doc states purpose, inputs/outputs, key invariants, and a source map (code paths that implement it) so future readers can navigate both directions. Mark unresolved points `[NEEDS CLARIFICATION]` rather than inventing content.
-4. **Sync surroundings,** not just the target: new Title Case term -> glossary; new flow -> linked from its systems and the index; accepted ADR -> propagate consequences into affected docs; any docs-vs-code disagreement reconciled by updating whichever side is wrong, or flagging the gap explicitly.
+4. **Sync surroundings,** not just the target: new Title Case term -> a `CONTEXT.md` entry (opinionated definition + `_Avoid_` list); new flow -> linked from its systems and the index; accepted ADR -> propagate consequences into affected docs; any docs-vs-code disagreement reconciled by updating whichever side is wrong, or flagging the gap explicitly.
 5. **Verify.** Every relative link resolves; ADR frontmatter valid; repo gate green.
 
 ## ADR lifecycle

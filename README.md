@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, nine on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, eleven on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## What's inside
 
@@ -28,6 +28,10 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 │   │                                  go fix / modernize analyzer, idiom table
 │   ├── solution-architecture/         ASRs + SEI scenarios, pattern selection by tradeoff,
 │   │   └── references/                ADRs, C4 modeling, estimation/governance/delivery
+│   ├── grilling/                      in-session decision interviewing: design tree,
+│   │                                  numbered frontier rounds, facts vs decisions
+│   ├── domain-modeling/               active domain-language discipline: CONTEXT.md
+│   │   └── references/                glossary, edge-case scenarios, ADR trigger triad
 │   └── system-diagramming/            system maps as one interactive HTML: typed JSON IR,
 │                                      bundled template + validator, no installs
 ├── commands/
@@ -35,7 +39,7 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 │   ├── cmd-review.md                  severity-grouped code review with one verdict
 │   ├── cmd-refactor.md                behavior-preserving restructure, measured before/after
 │   └── cmd-document.md                bootstrap/sync a docs/ tree (systems, flows,
-│                                      ADRs, API endpoints, glossary)
+│                                      ADRs, API endpoints; glossary -> CONTEXT.md)
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── gemini-extension.json              extension discovery metadata
 └── scripts/

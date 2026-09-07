@@ -39,7 +39,7 @@ Write an ADR when options were weighed and the choice binds future work; skip it
 
 > In context X, facing Y, we decided Z, neglecting A and B, to achieve C, accepting D.
 
-Keep records immutable — supersede, never rewrite. Templates, naming, lifecycle: [decisions](references/decisions.md).
+Keep records immutable — supersede, never rewrite. Templates, naming, lifecycle: [decisions](references/decisions.md). The conversation-time trigger for offering one (hard to reverse, surprising without context, real trade-off) lives in [domain-modeling](../domain-modeling/SKILL.md); the format stays canonical here.
 
 ## 4. Model for the audience
 
