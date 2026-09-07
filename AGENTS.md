@@ -57,7 +57,7 @@ Gates sit AT decision points as literal artifact lines owed in the final report;
 
 ## 4. The Loop: THINK -> ACT -> PROVE -> GROW
 
-Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** (specifics live in the prompt; long-lived rules in the repo). **Fewest round-trips:** a model round-trip is the expensive unit; a tool result inside a turn is cheap — dispatch independent reads, searches, and calls together, and collapse a deterministic multi-step sequence into one batched execution tree per turn instead of walking it call by call. Then:
+Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** (specifics live in the prompt; long-lived rules in the repo). **Fewest round-trips:** a model round-trip is the expensive unit; a tool result inside a turn is cheap — dispatch independent reads, searches, and calls together, and collapse a deterministic multi-step sequence into one batched execution tree per turn instead of walking it call by call; when the job itself needs three or more concurrent verification steps or branching decision routing, shape it as an explicit graph ([graph-engineering](skills/graph-engineering/SKILL.md)). Then:
 
 - **THINK:** define DONE_WHEN; reason backward — derive the state just before done, reconstruct the failure state, and name the root cause before writing code; commit to exactly one recommendation.
 - **ACT:** one bounded change at a time, within scope; checkpoint execution state under `.agents/` every turn.
@@ -124,6 +124,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/system-diagramming](skills/system-diagramming/SKILL.md) | system maps as one interactive HTML: typed JSON IR, bundled template + validator |
 | [skills/grilling](skills/grilling/SKILL.md) | plan-first interview method: design tree, frontier rounds, facts vs decisions |
 | [skills/domain-modeling](skills/domain-modeling/SKILL.md) | active domain-language discipline: `CONTEXT.md` glossary, ADR trigger triad |
+| [skills/graph-engineering](skills/graph-engineering/SKILL.md) | workflow graphs: loop-vs-graph matrix, five-stage method, typed edges, cost gates (+ [topologies](skills/graph-engineering/references/topologies.md)) |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
