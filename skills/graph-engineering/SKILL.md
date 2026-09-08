@@ -1,6 +1,6 @@
 ---
 name: graph-engineering
-description: "Graph engineering for agent workflows: the loop-vs-graph decision matrix, the five-stage method (audit, identify, design, implement, type), the canonical 3-5-node topology with explicit edge conditions, six typed edges, and cost-per-successful-completion discipline. Use when a job needs three or more concurrent verification steps or branching decision routing, when a workflow loop shows recurring bottlenecks or retry churn, or when deciding whether parallel steps beat a single loop."
+description: "Graph engineering for agent workflows: the loop-vs-graph decision matrix, the five-stage method (audit, identify, design, implement, type), the canonical 3-5-node topology with explicit edge conditions, six typed edges, query routing by question type (similarity search for lookups, graph traversal for multi-hop), and cost-per-successful-completion discipline. Use when a job needs three or more concurrent verification steps or branching decision routing, when a workflow loop shows recurring bottlenecks or retry churn, when deciding whether parallel steps beat a single loop, or when choosing between search and traversal over a decision or knowledge graph."
 ---
 
 # Graph Engineering
@@ -43,6 +43,10 @@ The edge type is the knowledge: an untyped edge ("relates to") is a missing deci
 
 Auto-derived edges carry creation and verification dates — facts expire, they do not die; a graph without dates routes on stale knowledge.
 
+## Route the query by its type
+
+The routing discipline applies to reading the graph, not only building it. Match retrieval to the question: a lookup ("what does X do?") rides similarity search — cheaper than traversal; a multi-hop question ("why did X change, and what is downstream of it?") rides graph traversal — similarity finds what sounds like the question, traversal finds what is connected to the answer. Simple lookups, high-volume retrieval, and low entity resolution are where graphs lose. Keep both: a cheap index for the lookups, the typed edges for the multi-hop path.
+
 ## The cost gate
 
 Parallel fan-out re-pays its token cost on every failed cycle, so it amortizes only when most branches pass: the guide claims a ~50% per-cycle pass-rate breakeven, and ~3x tokens for the same result at ~30%. Treat those as arithmetic to re-derive on your own runs, not constants to cite. Judge by **cost per successful completion**, never wall-clock alone, and price the all-reviewers-fail path before building it — it can cost more than the loop it replaced. A graph that loses the cost gate is stepped back down to a staged loop.
@@ -55,6 +59,7 @@ Parallel fan-out re-pays its token cost on every failed cycle, so it amortizes o
 | Bare edges ("relates to") | Name the relationship from the table above, or delete the edge |
 | Citing the guide's benchmarks as expected gains | Adopt the method; re-measure locally before claiming any number |
 | Trusting an auto-generated graph | Entity resolution compounds per hop (the guide's illustration: 85% per hop ≈ 44% over five) — dedupe and validate |
+| Traversal where a lookup would do | Similarity search answers "what"; traversal answers "why and what downstream" — route by question type |
 | An unpriced feedback loop | Cost the all-reviewers-fail path up front; cap it like verification caps retries |
 | Edges that never expire | Timestamp creation and last verification; stale edges misroute |
 | A graph where §4 batching would do | Batch within the turn first; graph only what survives the matrix |
