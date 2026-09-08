@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## Unreleased
+
+### Added
+
+- **`skills/graph-engineering` query routing**: route retrieval by question type, distilled from the same [flowtivity guide](https://flowtivity.ai/blog/graph-engineering-2026-guide-openclaw-codex/) — similarity search answers lookups ("what does X do?"), graph traversal answers multi-hop questions ("why did X change, what is downstream"); graphs lose on simple lookups, high-volume retrieval, and low entity resolution; keep a cheap index for lookups beside the typed edges for the multi-hop path. New pitfall row: traversal where a lookup would do.
+
 ## [4.6.0] - 2026-09-08
 
 ### Added
