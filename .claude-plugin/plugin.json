@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), twelve on-demand skills (craft, confluence, domain-modeling, go-modernize, graph-engineering, grilling, performance, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, and deterministic verification gates.",
   "author": {
     "name": "bouroo",
