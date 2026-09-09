@@ -1,6 +1,6 @@
 # The Loop as Decision Flowcharts
 
-> Load on demand. The prose lives in `AGENTS.md` (§2 intake, §4 loop, §7 verification) and [verification](../SKILL.md); this file renders the same doctrine as executable decision charts. **Follow the arrows literally**: at every diamond, read the condition against the actual situation, take exactly one outgoing edge, and do not skip a gate. A chart node with no outgoing arrow you satisfy is a stop, not a suggestion.
+> Load on demand. The prose lives in `AGENTS.md` (§2 intake, §4 execution graph, §7 verification) and [verification](../SKILL.md); this file renders the same doctrine as executable decision charts. **Follow the arrows literally**: at every diamond, read the condition against the actual situation, take exactly one outgoing edge, and do not skip a gate. A chart node with no outgoing arrow you satisfy is a stop, not a suggestion.
 
 ## 1. Master router: any ask, start to finish
 
@@ -15,11 +15,11 @@ flowchart TD
     SRCH --> SHAPE
     SHAPE -->|"question<br/>(why, what, which)"| ANSWER["Diagnose and answer.<br/>Change nothing"]
     SHAPE -->|"plan-first<br/>(ambiguous scope, irreversible,<br/>or plan requested)"| PLAN["Produce a plan with one recommendation.<br/>STOP for approval"]
-    SHAPE -->|task| LOOP["Enter the loop: THINK -> ACT -> PROVE -> GROW"]
+    SHAPE -->|task| GRAPH["Enter the execution graph:<br/>THINK -> ACT -> PROVE -> GROW"]
     DOIT --> OUT["Report, outcome first,<br/>honest caveats"]
     ANSWER --> OUT
     PLAN --> OUT
-    LOOP --> OUT
+    GRAPH --> OUT
 ```
 
 ## 2. THINK: bounded evidence
