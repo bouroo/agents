@@ -29,6 +29,21 @@ Learned from author-review cycles on 2026-08-14; treat as acceptance criteria:
    tags), verified in source, not from memory (`headerResp.statusCd`, not
    `statusCode`).
 
+## Template-match first
+
+For "render/update this page to match <URL>" requests, treat the supplied
+shortlink as the **template anchor**: fetch it in stored form before drafting,
+record its skeleton (headings, macro wrappers, panels, table attributes and
+column sets), then reuse that exact shape. Do not substitute the canonical
+order below unless the anchor uses it or the user explicitly asks for
+normalization. If the anchor is only the target page (not a proven-rendering
+sibling), name a sibling in the same space/folder and compare both stored
+bodies before choosing the stronger template. A decoded anchor graduates into
+an instance-variant record below (the 2026-09-09 storage-form record) so the
+next run starts from evidence, not re-derivation. Real-work identity (page
+titles, spaces, shortlinks) never enters this doctrine - it lives in
+machine-local memory; the `privacy` gate (`scripts/check.py`) enforces it.
+
 ## Derive structure from a live sibling first
 
 Page structure (macro forms, table attributes, heading levels) is learned by
@@ -158,20 +173,70 @@ the corresponding Confluence-HTML node or by mirroring the sibling's markup.
    day: a PlantUML-custom-alphabet publish painted five blank diagrams; the
    correction, validated against the wrong sibling, painted blanks again).
    Recipe proven byte-for-byte against a live tenant instance: `percent-encode
-   the source (quote, safe="")` → `raw deflate (zlib raw, strip the 2-byte zlib
-   header and 4-byte adler tail), compression level 6` → `standard base64 with
-   padding KEPT`. Every detail is load-bearing: deflate level 9 does not
-   reproduce the reference bytes; stripping padding yields output off by exactly
-   the two `=` characters (the diagnostic signature of a padding mismatch, not
-   an alphabet mismatch); `+` and `/` appear literally in known-good `data`
-   params, PlantUML's `0-9A-Za-z-_` alphabet does not. Prove an encoder by
-   decoding the `data` param of a page that demonstrably **renders in a
-   browser** - a sibling's mere existence proves nothing about rendering: the
-   diagram family all shipped blank while the parent page
-   painted - and re-encoding it byte-for-byte before trusting the encoder on
-   new sources (one exact match beats three plausible decoders). Storage-form
-   macro:
+   the source (urllib.parse.quote, safe="/")` → `raw deflate (zlib raw, strip
+   the 2-byte zlib header and 4-byte adler tail), compression level 6` →
+   `standard base64 with padding KEPT`. Every detail is load-bearing: deflate
+   level 9 does not reproduce the reference bytes; stripping padding yields
+   output off by exactly the two `=` characters (the diagnostic signature of a
+   padding mismatch, not an alphabet mismatch); `+` and `/` appear literally in
+   known-good `data` params, PlantUML's `0-9A-Za-z-_` alphabet does not. The
+   safe-set is `"/"` exactly - parens ARE percent-encoded (`%28`/`%29` appear
+   in known-good params; a `"/()"` safe-set produces byte-different output).
+   **Order is load-bearing:** percent-encode FIRST, on the raw source; the
+   final `data` param is pure base64 and must contain NO `%`. A param holding
+   `%2B`/`%3D` means quote ran *after* base64 (2026-09-09 incident: exactly
+   this shipped, the macro's base64 decode choked on `%`, blank diagram) -
+   that `%` is the diagnostic signature of an order bug, not an alphabet or
+   padding issue. Never ship a body still containing a template marker
+   (`PLACEHOLDER`, `TODO`) - a substitution step that silently didn't run
+   publishes the marker (2026-09-09: `DIAGRAM_DATA_PLACEHOLDER` in a staged
+   body; only a transcript archaeology caught it before/after the fact).
+   Storage-form macro:
    `<ac:structured-macro ac:name="plantumlcloud"><ac:parameter ac:name="filename"><name>.svg</ac:parameter><ac:parameter ac:name="data"><encoded></ac:parameter><ac:parameter ac:name="compressed">true</ac:parameter></ac:structured-macro>`.
+
+   **Gated encoder - run this, don't hand-roll it.** It encodes AND gates;
+   a push without its `GATE OK` line is unverified:
+
+   ```python
+   import base64, re, sys, urllib.parse, zlib
+
+   def encode_data_param(source: bytes) -> str:
+       q = urllib.parse.quote(source, safe="/").encode()
+       c = zlib.compressobj(6, zlib.DEFLATED, -15)   # raw deflate, level 6
+       return base64.b64encode(c.compress(q) + c.flush()).decode()
+
+   def gate(data: str, source: bytes, body: str) -> None:
+       assert re.fullmatch(r"[A-Za-z0-9+/]+={0,2}", data), "param: not pure base64 (a % means quote ran after b64 - order bug)"
+       assert "%" not in data,                        "param: contains % - percent-encoding applied in the wrong stage"
+       rt = urllib.parse.unquote_to_bytes(zlib.decompress(base64.b64decode(data), -15))
+       assert rt == source,                           "round-trip: decode->inflate->unquote != source"
+       assert not re.search(r"PLACEHOLDER|TODO|FIXME|<[a-z_]+_DATA>", body, re.I), "body: template marker left unsubstituted"
+       print("GATE OK", len(data), "chars")
+
+   source = open("diagram.puml", "rb").read()
+   data = encode_data_param(source)
+   gate(data, source, open("page.html").read())
+   ```
+
+   **Proving a variant instance** (first diagram on a new tenant, or a
+   changed recipe): decode the `data` param of a page someone has seen
+   **paint in a browser** - a sibling's mere existence proves nothing (the
+   2026-09-07 family all shipped blank while the parent painted) - then
+   re-encode the *unquoted original* byte-for-byte. Re-encode the inflated
+   bytes after `unquote_to_bytes`, never the still-encoded bytes (double-
+   quoting makes a correct encoder "fail" and a wrong one look close). And
+   check the reference can *discriminate*: if its source contains no parens
+   (or whatever character the safe-sets disagree on), byte-match proves
+   nothing about that character - prefer a reference whose source covers the
+   ambiguous chars, else derive the safe-set directly from the inflated
+   bytes: the RESERVED characters appearing literally (unencoded) there are
+   the safe-set, and only those - RFC 3986 unreserved chars (`-._~` and
+   alphanumerics) stay literal under any `safe` value, so their presence is
+   not evidence (proven 2026-09-09: inflated form held literal `{%, -, /}`;
+   `%` is the escape char itself, `-` is unreserved → the one reserved
+   literal, `/`, is the safe-set). `+`/`=` never appear literally in the
+   inflated form, so they are not safe-set evidence. One exact match beats
+   three plausible decoders.
 5. **H1 Request**: H2 Request Header Schema (5-col field table) · H2 Request
    Body Schema (5-col field table) · H2 Example Request (wide json code block).
 6. **H1 Response**: H2 Custom HTTP Response Code (4-col table) · H2 Response
@@ -196,7 +261,10 @@ the corresponding Confluence-HTML node or by mirroring the sibling's markup.
 Verified by publishing 2026-08-14 (two shortlink pages + siblings under a
 parent) and corrected 2026-08-18 after one mis-authored diagram form shipped.
 These spaces follow a **different but self-consistent layout** - match the
-siblings there instead of the canonical order:
+siblings there instead of the canonical order. Two surface records - where
+they diverge, match the surface you publish through:
+
+**Rovo (Confluence-HTML) surface:**
 
 - **H2 section headings** (not H1): `Change logs`, `Sequence diagram`, `Logic`,
   `API Details`, `Status Code`, `Field to Field Mapping`, each preceded by `<hr>`.
@@ -226,19 +294,70 @@ siblings there instead of the canonical order:
 - Transport note: ~25 KB html bodies published fine on Rovo (create + update,
   no split); retry-with-pause before falling back to create-minimal-then-update.
 
+### Storage-form record (mcp-atlassian surface)
+
+Decoded 2026-09-09 from a live family page at v5 (identity held in
+machine-local memory, never in this doctrine) - the storage-format rendering
+of this family. Same skeleton as the Rovo record, with these load-bearing
+divergences; when publishing through mcp-atlassian, match this record:
+
+- **H2/H3 ladder, no H1, no panel, no TOC.** The page opens directly with the
+  metadata table. Sections: `Change logs`, `Sequence diagram`, `Logic`,
+  `API Details` (H3: `Request parameters`, `Sample request (full)`,
+  `Response parameters`, `Sample response (full)`), `Status Code`,
+  `Field to Field Mapping` (numbered H3 per downstream call, then
+  `4. Response mapping`). Separators are
+  `<hr data-layout="wide" data-width="760"/>` before every H2 **except**
+  `Change logs` (page top) and `API Details`.
+- **Editor-v2 table attributes:** every table carries `ac:local-id`,
+  `data-layout`, `data-table-width` (1761; change-logs 1746); header cells are
+  `<th><p><strong>...</strong></p></th>`; label cells shade with
+  `data-highlight-colour="#f4f5f7"` (not `data-background`); metadata labels
+  are `<td ac:local-id="…" colspan="2" data-highlight-colour="#f4f5f7">`
+  (attribute order matters; `local-id` values are server-generated). Metadata
+  rows: Overview · Layer · Microservice ·
+  Authentication Level · Dependency overview (`rowspan="2"` over Inbound
+  component / Outbound component) · Expose to Mobile · Access token required ·
+  Language (no JIRA row on this instance).
+- **Change logs:** columns `Date | Update By | Description | Status`; the
+  mention is plain `@Full Name` text (no user-mention markup required); the
+  Status cell is a status **macro** `[storage-form]`:
+  `<ac:structured-macro ac:name="status">` with
+  `<ac:parameter ac:name="title">DONE</ac:parameter>` +
+  `<ac:parameter ac:name="colour">Green</ac:parameter>`.
+- **Sequence diagram:** `plantumlcloud` macro (`filename` =
+  `<slug>-sequence.svg`, `data` = gated-encoder payload, `compressed` =
+  `true`), then an `expand` **macro** (`title` + `breakoutWidth=1800`,
+  `data-layout="wide"`) wrapping a `code` macro (`language=abap`, body in
+  `<ac:plain-text-body><![CDATA[...]]></ac:plain-text-body>`).
+- **Schema tables:** `Field | Type | M/O | Description | Remark`; mandatory
+  `M` is `<span style="color: rgb(222,53,11);">M</span>` (no space after the
+  comma); optional `O` is plain text. Cells changed in the current revision
+  shade `data-highlight-colour="#fffae6"` (old/new naming pairs).
+- **Sample wrappers:** a 1-col table around each `code` (`language=json`)
+  macro; the caption header row is `<strong>Body</strong>` for the request
+  and `<strong>HTTP 200 - Success</strong>` for the response.
+- **Status Code:** `HTTP Code | Custom Status Code | Status Description |
+  Scenario` - same set as the Rovo record. **Field to Field Mapping:**
+  `Input / Output | Target | Source | Mapping Logic | Remark` with `I`/`O` in
+  the first cell - one table per numbered H3.
+
 ## Publish checklist
 
-1. Dotted-path row coverage complete against the source structs (rule 1).
-2. Samples are full payloads with internally consistent mocks (rule 2); opaque
+1. Template anchor fetched in stored form; target skeleton matches it for
+   heading levels, panel/macro wrappers, table attributes and column sets.
+2. Dotted-path row coverage complete against the source structs (rule 1).
+3. Samples are full payloads with internally consistent mocks (rule 2); opaque
    payloads single-row (rule 3); field names match serialization tags (rule 4).
-3. Diagram = macro + byte-identical raw-source expand; no bare `@startuml`
+4. Diagram = macro + byte-identical raw-source expand; no bare `@startuml`
    code blocks anywhere. `plantumlcloud` payloads: encoder proven against a
    known-good sibling's `data` param, and every generated `data` round-trips
    to a valid `@startuml…@enduml` source — before upload, not after a blank
    render (SKILL.md `content_file` sandbox: payloads staged inside the
    workspace).
-4. Table column sets match this template or the target family's recorded set.
-5. Read-back after publish: stored body contains every macro wrapper and
+5. Table column sets match the selected template anchor or the target family's
+   recorded set.
+6. Read-back after publish: stored body contains every macro wrapper and
    escaped source you intended (SKILL.md, publish-then-prove). If the read-back
    is compressed/truncated by the client, probe via bumped `version`,
    `text ~ "unique-string"` search, and the parent's children listing; render
