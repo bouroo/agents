@@ -12,8 +12,11 @@ Static gates over docs/skills plus the distribution layer:
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
 are committed historical retros that cite paths as they were, and gating
-history against the present would make retro files uncommittable. Host-token
-scanning intentionally EXCLUDES the distribution layer (.claude-plugin/,
+history against the present would make retro files uncommittable. Dot-
+directories (e.g. skills/.system/, where coding CLIs drop runtime skills) are
+outside every scan: .gitignore keeps them out of the repository, and gating
+machine-local tool state would make gate verdicts machine-dependent. Host-
+token scanning intentionally EXCLUDES the distribution layer (.claude-plugin/,
 .cursor-plugin/, gemini-extension.json, scripts/): agnosticism applies to the
 doctrine, while installers/manifests are precisely where concrete hosts live.
 """
@@ -40,13 +43,22 @@ HOST_TOKEN_RE = re.compile(
     re.IGNORECASE,
 )
 
+def _no_dotdir(p: pathlib.Path) -> bool:
+    """True unless some path part is a dot-directory: untracked tool state
+    (coding CLIs drop runtime skills into skills/.system/) that .gitignore
+    keeps out of the repository -- gating it would gate this machine, not
+    the doctrine."""
+    return not any(part.startswith(".") for part in p.relative_to(ROOT).parts)
+
+
 # Files scanned for host tokens: everything an assistant consumes as doctrine
 # (AGENTS.md, skills, commands). README.md and CHANGELOG.md are allowlisted:
 # they document the distribution layer for humans, so naming concrete hosts,
 # marketplaces, and removed machinery is their job, not a leak.
 HOST_SCAN_FILES = [ROOT / "AGENTS.md"]
-HOST_SCAN_SKILLS = sorted((ROOT / "skills").rglob("*.md")) \
-    + sorted((ROOT / "commands").rglob("*.md"))
+HOST_SCAN_SKILLS = sorted(p for p in (ROOT / "skills").rglob("*.md")
+                          if _no_dotdir(p)) \
+    + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p))
 HOST_SCAN_ALLOWLIST = {"CHANGELOG.md", "README.md"}
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
@@ -100,7 +112,8 @@ def g_frontmatter() -> None:
     # (path, expected-name) pairs: a skill's name matches its directory,
     # a command's name matches its file stem.
     subjects = [(p, p.parent.name)
-                for p in sorted((ROOT / "skills").glob("*/SKILL.md"))]
+                for p in sorted((ROOT / "skills").glob("*/SKILL.md"))
+                if _no_dotdir(p)]
     subjects += [(p, p.stem)
                  for p in sorted((ROOT / "commands").glob("*.md"))]
     if not subjects:
@@ -141,8 +154,10 @@ def g_frontmatter() -> None:
 def g_links() -> None:
     name = "links"
     targets = [ROOT / f for f in ("AGENTS.md", "README.md", "CHANGELOG.md")]
-    targets += sorted(p for p in (ROOT / "skills").rglob("*.md"))
-    targets += sorted(p for p in (ROOT / "commands").rglob("*.md"))
+    targets += sorted(p for p in (ROOT / "skills").rglob("*.md")
+                      if _no_dotdir(p))
+    targets += sorted(p for p in (ROOT / "commands").rglob("*.md")
+                      if _no_dotdir(p))
     dead: list[str] = []
     checked = 0
     for f in targets:

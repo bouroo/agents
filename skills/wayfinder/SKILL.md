@@ -71,7 +71,7 @@ Each ticket carries a `wayfinder:<type>` label (below). A session **claims** a t
 
 Every ticket is either **HITL** (human in the loop, worked _with_ the human) or **AFK** (the agent drives it alone). A HITL ticket resolves only through live exchange; the agent never stands in for the human's side — answering your own grilling questions is the planning equivalent of fabricating evidence, and breaks the same gate as self-granted `AUTH:`.
 
-- **Research** (AFK): reading documentation, third-party APIs, or local knowledge bases to surface a fact a decision waits on. Fan out per the delegation tier of [teamwork](../teamwork/SKILL.md): one scoped worker per ticket, findings back as the resolution comment.
+- **Research** (AFK): reading documentation, third-party APIs, or local knowledge bases to surface a fact a decision waits on. Fan out per the delegation rung of [teamwork](../teamwork/SKILL.md): one scoped worker per ticket, findings back as the resolution comment.
 - **Prototype** (HITL): a key "how should it look or behave" question, resolved by raising fidelity — a cheap, rough, concrete artifact to react to: an outline, a rough take, a stub, throwaway UI or logic. Link the artifact as an asset; the human's reaction is the resolution.
 - **Grilling** (HITL): conversation with the human to pin down a decision — the default type whenever the open question is about intent, preference, or scope. Interview technique: [grilling](../grilling/SKILL.md); the word "frontier" travels badly between the two — wayfinder's frontier is the map's takeable tickets across sessions, grilling's is the open questions inside one session.
 - **Task** (AFK): work that must happen so a decision can be made — provisioning access, moving data so its shape can be seen. This type does rather than decides, and earns its place only by unblocking a decision. Resolved when the work is done; the resolution records any facts later tickets depend on (credentials location, new URLs, row counts).
@@ -112,7 +112,7 @@ Invoked with a map reference (URL, number, or file).
 
 ## Cross-references
 
-- [teamwork](../teamwork/SKILL.md) the delegation tier fans research tickets out; its task ledger coordinates agents within one job, the map across sessions.
+- [teamwork](../teamwork/SKILL.md) the delegation rung fans research tickets out; its task ledger coordinates agents within one job, the map across sessions.
 - [verification](../verification/SKILL.md) the evidence standard a task ticket owes before it may close.
 - [craft](../craft/SKILL.md) decision gates (`INTENT:`, `AUTH:`) apply to what a resolution changes.
 - [grilling](../grilling/SKILL.md) the interview technique behind a Grilling ticket: rounds and frontier within one session; the map is what persists across sessions.

@@ -1,6 +1,6 @@
 ---
 name: verification
-description: "Proving work is actually done: right-sizing the controls, three-layer termination, evidence audit, mutation probes, adversarial judging with fraud hunting, and the GROW loop. Use when verifying beyond static checks, judging a done report, or when a verify cycle fails."
+description: "Proving work is actually done: right-sizing the controls, three-layer termination, executable evidence as anchors, mutation probes, adversarial judging with fraud hunting, and governed GROW. Use when verifying beyond static checks, judging a done report, or when a verify cycle fails."
 ---
 
 # Verification
@@ -29,9 +29,9 @@ Two traps: the **Average Answer Trap** runs hardest-job controls on every task (
 
 Guides steer before act, sensors detect after: run the cheapest check earliest; prefer computational sensors (deterministic, fast) over inferential ones (LLM judgment, costly). A red test beats a narrative pass; if review conflicts with a red test, the red test wins.
 
-## Executable evidence
+## Executable evidence is the anchor
 
-Every done claim carries command (literal), exit code (explicit), and actual output (captured, not paraphrased) — on disk where it survives compaction. **Evidence audit**, five questions asked of any done claim:
+Every done claim carries command (literal), exit code (explicit), and actual output (captured, not paraphrased) — on disk where it survives compaction. Evidence is the anchor class of last resort ([graph-engineering](../graph-engineering/SKILL.md)): the end of every `VERIFIES` chain, because it is the only node a later step cannot talk out of what it recorded. **Evidence audit**, five questions asked of any done claim:
 
 1. Is the command literally present, not paraphrased?
 2. Is the exit code captured?
@@ -54,27 +54,28 @@ Judging changes nothing — read and run only; minutes, not hours. Hunt in order
 3. Trace each `AUTH:` quote against the conversation; an outward effect without authorization covering *this exact action* is fraud.
 4. Confirm presence and truth of every owed artifact line (`INTENT:`/`TWINS:`/`AUTH:`/`PENDING:`).
 5. Re-run every re-runnable claim (cap 3 reproductions per claim); sweep debris and scope creep.
-6. Resolve conflicts by authority rank: user statement > spec > checks > current code.
+6. Resolve conflicts by anchor rank: user statement > spec > checks > current code.
 
 Labels: a claim that cannot be re-run is **UNVERIFIABLE**, never assumed true; UNVERIFIABLE on a load-bearing claim forces caveats. Verdict is exactly one of **VERIFIED / VERIFIED WITH CAVEATS / REFUTED** — refutation names the claim and shows contradicting output plus smallest fix; never soften a refutation to be polite, never inflate a caveat to look rigorous. If the environment to verify is missing, hand back rather than guess.
 
 ## Diagnosis
 
-Reason backward from the observed failure to the state that produced it and name the root cause before writing the next change; a symptom patch that leaves the cause in place is a defect. Route surprises backward, never forward: contradiction at PROVE returns to THINK; a mechanical mistake returns to ACT.
+Reason backward from the observed failure to the state that produced it and name the root cause before writing the next change; a symptom patch that leaves the cause in place is a defect. Route surprises backward, never forward: contradiction at PROVE re-enters at THINK; a mechanical mistake re-enters at ACT.
 
-## GROW
+## GROW: governed self-evolution
 
-A recurring failure is a **harness problem, not a prompt problem**: prompt tweaks smooth edges; durable reliability updates the surrounding system. Catalog failure modes in `.agents/plans/{slug}/retro.md` (cite doctrine by rule, not by rottable path), convert findings into deterministic gates, track failure frequency per category and halt to upgrade sensors when a budget blows.
+A recurring failure is a **harness problem, not a prompt problem**: prompt tweaks smooth edges; durable reliability updates the surrounding system. GROW is the evolution operator — it edits the machinery future runs execute — and it is governed, never autonomous: instrument, propose, validate, commit; anchors stay read-only; the evidence standard may tighten only, never loosen itself. The full cycle, cadence, and failure modes: [evolution](references/evolution.md).
 
 | Failure mode | Looks like | Primary fix |
 |---|---|---|
 | Tool-routing drift | `cat`/`grep`/`find` via shell instead of built-ins | capability routing rule |
 | Verification theater | "tests pass" without captured output | evidence audit + mutation probe |
-| Scope creep / spec betrayal | edits outside the ask; code against spec | `INTENT:` gate + authority rank |
-| Recurring class (>= 2 units) | same failure shape repeats | halt; retro -> gate |
+| Scope creep / spec betrayal | edits outside the ask; code against spec | `INTENT:` gate + anchor rank |
+| Recurring class (>= 2 units) | same failure shape repeats | halt; retro -> gate via the evolution cycle |
 
 ## References
 
 - [flowcharts](references/flowcharts.md) the whole discipline as executable decision charts.
+- [evolution](references/evolution.md) the governed GROW cycle.
 - [craft](../craft/SKILL.md) the artifact gates this skill audits.
 - [performance](../performance/SKILL.md) measurement claims meet this evidence standard too.
