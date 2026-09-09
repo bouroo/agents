@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
-## [Unreleased]
+## [5.0.0] - 2026-09-09
 
 v5 re-authors the doctrine's execution model from a cycle to an **execution graph**, absorbing four graph-engineering sources — flowtivity's 2026 guide, Eigent's graph-engineering and self-evolved-agents essays, and the arXiv survey 2608.21156 — while keeping v4's gates, verification layers, and budgets intact. Section numbering unchanged (§2 intake … §11 map).
 
@@ -25,6 +25,7 @@ v5 re-authors the doctrine's execution model from a cycle to an **execution grap
 - **`skills/verification`** re-anchored: executable evidence as the anchor class of last resort; GROW as the governed evolution operator.
 - **`skills/teamwork`** re-anchored as the coordination graph: topology ladder, ledger as task graph, spawn briefs as node contracts.
 - Flowcharts, `cmd-document`, craft, wayfinder, and README synchronized to the graph ontology.
+- `skills/go-modernize` gopls MCP guidance rewritten: the shared `serve -mcp.listen` singleton, port probing, and supervisor/bridge setup replaced by gopls's official headless MCP mode.
 
 ### Not adopted
 
