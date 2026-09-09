@@ -5,7 +5,7 @@ description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API e
 
 # Document - Sync docs/ With Code
 
-Docs and code must agree; a stale doc is a bug. Bootstraps a `docs/` tree where none exists and keeps an existing one synchronized inside the THINK-ACT-PROVE-GROW loop. One well-written doc beats many shallow ones.
+Docs and code must agree; a stale doc is a bug. Bootstraps a `docs/` tree where none exists and keeps an existing one synchronized inside the execution graph (THINK -> ACT -> PROVE -> GROW). One well-written doc beats many shallow ones.
 
 ## Target
 

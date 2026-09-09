@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [Unreleased]
+
+v5 re-authors the doctrine's execution model from a cycle to an **execution graph**, absorbing four graph-engineering sources — flowtivity's 2026 guide, Eigent's graph-engineering and self-evolved-agents essays, and the arXiv survey 2608.21156 — while keeping v4's gates, verification layers, and budgets intact. Section numbering unchanged (§2 intake … §11 map).
+
+### Added
+
+- **Anchors (§0, §10)**: every proof chain terminates in a fixed external node — a spec clause, the user's own words, a red test, captured command output — the machinery may read but never rewrite; the authority rank is restated as the anchor ordering (user statement > spec > checks > code).
+- **`skills/verification/references/evolution.md`**: governed self-evolution — GROW formalized as instrument -> propose -> validate -> commit, with intra-/inter-episode cadence, read-only anchors and evidence standard, adversarial validation, and the Kirby audit at model upgrades.
+- **`skills/graph-engineering` knowledge edges**: `SUPERSEDES`, `DEPENDS_ON`, `DECIDED_BY`, `CAUSED`, `IMPLEMENTS`, `REFERENCES` — dated like facts.
+
+### Changed
+
+- **`AGENTS.md` §4 "The Execution Graph"** replaces the loop as the execution model: THINK -> ACT -> PROVE -> GROW are role-nodes; edges are typed and conditional; every cycle is capped; the forbidden shape is the unrouted cycle. §8/§9 name the three graphs (task / coordination / state).
+- **`skills/graph-engineering`** re-based from escalation matrix to the doctrine's graph grammar: nodes closing on evidence, six execution edges (`PRODUCES`, `VERIFIES`, `ROUTES`, `RETURNS`, `FAN_OUT`, `JOINS`), caps, anchor routing, four shapes on a concision ladder, three-graph organization, query routing, cost gate; the v4 five-stage method (audit, identify, design, implement, type) is retained as the loop-to-graph conversion path — now from the v4 loop rather than a legacy build; [topologies](skills/graph-engineering/references/topologies.md) reworked around the canonical review graph.
+- **`skills/verification`** re-anchored: executable evidence as the anchor class of last resort; GROW as the governed evolution operator.
+- **`skills/teamwork`** re-anchored as the coordination graph: topology ladder, ledger as task graph, spawn briefs as node contracts.
+- Flowcharts, `cmd-document`, craft, wayfinder, and README synchronized to the graph ontology.
+
+### Not adopted
+
+- Benchmark figures from all four sources (claims, not facts — re-derive locally); host-specific tooling and tool names; free-running self-modification (evolution stays governed).
+
 ## [4.7.0] - 2026-09-08
 
 ### Added

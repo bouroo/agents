@@ -4,21 +4,23 @@
 
 # bouroo/agents
 
-A shared setup for AI coding assistants that is **agnostic of programming languages, agent frameworks, and host tools**: one governance manifesto, twelve on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, twelve on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## What's inside
 
 ```
 ├── AGENTS.md                          the manifesto: intake route, decision gates,
-│                                      THINK-ACT-PROVE-GROW loop, verification dial,
+│                                      the execution graph, verification dial,
 │                                      context/state rules, hard constraints
 ├── skills/
 │   ├── craft/                         twelve commandments + INTENT/TWINS/AUTH/PENDING gates
 │   ├── performance/                   measure-first cycle + four-overhead-source routing
-│   ├── verification/                  right-sizing dial, evidence audit, mutation probe,
-│   │   └── references/flowcharts.md   judge protocol; the loop as decision charts
-│   ├── teamwork/                      multi-agent escalation ladder, task ledger, file
-│   │                                  ownership, spawn briefs, adversarial verification
+│   ├── verification/                  right-sizing dial, evidence as anchors, mutation probe,
+│   │   └── references/                judge protocol; flowcharts.md renders the execution
+│   │                                  graph as decision charts; evolution.md the governed
+│   │                                  GROW cycle
+│   ├── teamwork/                      the coordination graph: topology ladder, task ledger,
+│   │                                  file ownership, spawn briefs, adversarial verification
 │   ├── wayfinder/                     efforts too big for one session: map of decision
 │   │                                  tickets on the tracker; fog of war; one ticket
 │   │                                  per session
@@ -34,8 +36,8 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
 │   │   └── references/                glossary, edge-case scenarios, ADR trigger triad
 │   ├── system-diagramming/            system maps as one interactive HTML: typed JSON IR,
 │   │                                  bundled template + validator, no installs
-│   └── graph-engineering/             workflow graphs: loop-vs-graph matrix,
-│       └── references/               five-stage method, typed edges, cost gates
+│   └── graph-engineering/             the execution-graph grammar: nodes, typed edges,
+│       └── references/               caps, anchors, shapes, cost; worked topologies
 ├── commands/
 │   ├── cmd-verify.md                  quality-gate pipeline with a fix/re-verify loop
 │   ├── cmd-review.md                  severity-grouped code review with one verdict
@@ -48,6 +50,14 @@ A shared setup for AI coding assistants that is **agnostic of programming langua
     ├── check.py                       five deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
+
+## The execution model
+
+Every job runs as an **execution graph**: THINK -> ACT -> PROVE -> GROW are the role-nodes most jobs need, edges are typed and conditional, and every cycle is capped — the forbidden shape is a node re-entering itself with no new evidence. Three graph structures organize anything above trivial: the **task graph** (what: units, dependencies, DONE_WHEN), the **coordination graph** (who: solo -> delegation -> team), and the **state graph** (how it operates: the repository as system of record). Every proof chain terminates in an **anchor** — a fixed external node like a spec clause, the user's words, or captured command output that the machinery may read but never rewrite; the authority rank (user statement > spec > checks > code) is the anchor ordering. The grammar lives in [graph-engineering](./skills/graph-engineering/SKILL.md); GROW is the governed evolution operator that edits the machinery future runs execute ([evolution](./skills/verification/references/evolution.md)).
+
+## The doctrine in one line
+
+Classify before working (trivial / fit / shape); owe named gates at decision points (`INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe, and a hard verify bound of 3 failed cycles; grow by governed evolution — recurring failures become deterministic gates, and controls better models make redundant are cut.
 
 ## Using it
 
@@ -67,13 +77,8 @@ Manual consumption only:
   ./scripts/install.sh uninstall            # removes only links pointing into this repo
   ```
 
-  The instruction file is linked under each tool's expected name, plus its `skills/` and `commands/` directories where supported. Real files are never clobbered; uninstall without `--force` only touches symlinks that resolve back to this repository.
 
 If a previous major version installed symlinks on your machine, remove them with that version's uninstaller from git history — v4 ships nothing that writes outside this repository.
-
-## The doctrine in one line
-
-Classify before working (trivial / fit / shape); owe named gates at decision points (`INTENT:` `TWINS:` `AUTH:` `PENDING:`); work THINK -> ACT -> PROVE -> GROW with backward planning and batched execution; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe, and a hard verify bound of 3 failed cycles; grow by converting recurring failures into deterministic gates and cutting controls better models make redundant.
 
 ## Verification
 

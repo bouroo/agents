@@ -1,75 +1,96 @@
 ---
 name: graph-engineering
-description: "Graph engineering for agent workflows: the loop-vs-graph decision matrix, the five-stage method (audit, identify, design, implement, type), the canonical 3-5-node topology with explicit edge conditions, six typed edges, query routing by question type (similarity search for lookups, graph traversal for multi-hop), and cost-per-successful-completion discipline. Use when a job needs three or more concurrent verification steps or branching decision routing, when a workflow loop shows recurring bottlenecks or retry churn, when deciding whether parallel steps beat a single loop, or when choosing between search and traversal over a decision or knowledge graph."
+description: "The doctrine's execution-graph grammar: nodes, six execution edge types, caps, anchor routing, knowledge edge types, the four shapes (linear, staged, fan-out, graph) with the concision ladder, three-graph organization (task, coordination, state), query routing by question type, and cost-per-successful-completion discipline. Use when designing or reviewing how a job executes — choosing between shapes, typing edges and routes, deciding when parallel steps beat a sequence, or costing feedback cycles."
 ---
 
 # Graph Engineering
 
-An agent job's execution shaped as an explicit graph: nodes (steps) joined by typed, conditional edges (handoffs), independent nodes run concurrently, feedback routed along named paths instead of a flat retry. Hosts express graphs through different mechanisms (team spawns, parallel workers, scripted pipelines); enabling them is host configuration, out of doctrine scope — this skill governs choosing the shape and designing its edges.
-
-**Stance:** a graph is an escalation bought with tokens and coordination, never a prestige move. The single loop of §4 stays the default; reshape a job only when the matrix below says so. The method is distilled from a 2026 industry guide whose benchmark figures are claims — none are adopted as fact; measurement is the only verdict here.
+The grammar of §4's execution graph — the doctrine's canonical language for how a job runs. Hosts express graphs through different mechanisms (spawns, parallel workers, scripted pipelines); enabling them is host configuration, out of doctrine scope. This skill governs the shape: nodes, edges, caps, anchors, and the cost of each.
 
 > **Override.** A project-level orchestration spec that explicitly supersedes this skill wins.
 
-## When a graph pays
+## Nodes
 
-| Complexity ↓ · Concurrency → | Low | High |
-| --- | --- | --- |
-| Simple | single loop | parallel loop — independent jobs at once; within one turn this is §4 batching |
-| Complex | staged loop — the loop with checkpoints between stages | **graph** — concurrent branches, conditional routing |
+A node is a bounded step that **closes on evidence**: command + exit code + output, or a resolved decision with its source. A node whose exit condition is "I feel done" is not a node — it is where a run goes to lie. THINK / ACT / PROVE / GROW are role-nodes most jobs need; a specific job's nodes name its own units ("baseline captured", "module migrated", "probe failed and reverted").
 
-Rule of thumb: three or more concurrent verification steps **and** branching decision routing. Below that bar a loop — batched within the turn (§4) — is the least mechanism that works. Sequential steps, same-file edits, and heavy inter-step dependencies are counter-signals: stay on teamwork's lower rungs.
+## The six execution edges
 
-## The five stages
-
-1. **AUDIT** — inventory every workflow the job runs: steps, retry clusters, wall-clock and token cost per task. Artifact: a loop inventory with bottleneck annotations.
-2. **IDENTIFY** — steps with no data dependency on each other are parallelization candidates; rank by impact.
-3. **DESIGN** — draft the topology: three to five nodes, every edge condition written (what happens when a reviewer fails? where does feedback route?). Canonical shape and worked patterns: [topologies](references/topologies.md).
-4. **IMPLEMENT** — build the smallest shape that honors the design; measure wall-clock **and** cost per successful completion against the audited loop.
-5. **TYPE** — upgrade bare handoffs to typed edges.
-
-## Typed edges
-
-The edge type is the knowledge: an untyped edge ("relates to") is a missing decision — type it or delete it.
+The edge type is the knowledge: an untyped edge ("goes next") is a missing decision — type it or delete it.
 
 | Edge | Means |
 | --- | --- |
-| `SUPERSEDES` | this replaces that; the target is no longer current |
-| `DEPENDS_ON` | this needs that; breaking the target breaks this |
-| `DECIDED_BY` | this exists because that was chosen |
-| `CAUSED` | this created that |
-| `IMPLEMENTS` | this realizes that |
-| `REFERENCES` | this mentions that |
+| `PRODUCES` | this hands its output to that (plan -> unit; measurement -> verdict) |
+| `VERIFIES` | that re-derives this against an anchor (probe -> change; judge -> report) |
+| `ROUTES` | a conditional branch — diamond, named conditions, exactly one edge taken |
+| `RETURNS` | feedback carrying a payload (findings, not a bare "failed") along a named back-path |
+| `FAN_OUT` | this splits into concurrent branches (per-lens reviews, per-file migrations) |
+| `JOINS` | concurrent branches re-synchronize here (synthesis, aggregate verdict) |
 
-Auto-derived edges carry creation and verification dates — facts expire, they do not die; a graph without dates routes on stale knowledge.
+## Caps
+
+Every cycle is bounded by a named cap, inherited from verification's hard bound: 3 failed cycles on one issue. A `RETURNS` edge without a cap is an unbounded loop wearing a graph costume — price the all-reviewers-fail path before building it.
+
+## Anchors
+
+An **anchor** is a fixed external node the machinery may read but never rewrite: a spec clause, the user's own words, a red test, captured command output. Every `VERIFIES` edge must terminate in an anchor; work citing only its own outputs is a loop validating itself — an echo chamber with more nodes. The authority rank (§0) is the anchor ordering. **Goodhart's law** is the standing threat: a system drilled on its own measurements optimizes the measurement, not the goal. Two structural guards follow:
+
+- **Owned references.** A fast check may not set its own target: DONE_WHEN comes from the prompt or spec, not from what the diff made easy to assert. Pair every metric with its counter-metric (tests green *and* mutation probe catches).
+- **Read-only anchors.** An anchor that a later step may rewrite is not an anchor. If the target must change, that is a decision routed to the anchor's owner (the spec's author, the user) — never a silent edit at the step that benefits from it.
+
+## The four shapes
+
+Concurrency x complexity — enter at the smallest shape that works; climb only on a measured bottleneck. The concision ladder binds: less mechanism wins.
+
+| Complexity ↓ · Concurrency → | Low | High |
+| --- | --- | --- |
+| Simple | **linear** — THINK -> ACT -> PROVE, no branch | **fan-out** — independent jobs at once; within one turn this is §4 batching |
+| Complex | **staged** — the sequence with checkpoints between stages | **graph** — concurrent branches, conditional routing, designed back-edges |
+
+Climb signals: three or more concurrent verification steps **and** branching decision routing. Descend signals: sequential steps, same-file edits, heavy inter-step dependencies. Step down the moment the reason for the climb disappears.
+
+## Three graphs over one job
+
+Any job above trivial has three simultaneous graph structures; design them deliberately instead of letting them accrete:
+
+- **Task graph (what):** units, dependencies, DONE_WHEN per unit. The wayfinder map is its cross-session form; the team ledger its cross-agent form.
+- **Coordination graph (who):** solo -> delegation -> team, one rung per topology; teamwork owns the rungs and their law.
+- **State graph (how it operates):** nodes read and write the repository as system of record — checkpoints, evidence pointers, retros; §8 is its law.
+
+## Knowledge edges
+
+The same typed-edge discipline records what was learned, not only what runs. Decision and knowledge graphs use their own six types: `SUPERSEDES` (this replaces that), `DEPENDS_ON` (breaking that breaks this), `DECIDED_BY` (this exists because that was chosen), `CAUSED` (this created that), `IMPLEMENTS` (this realizes that), `REFERENCES` (this mentions that). An untyped edge ("relates to") is a missing decision — type it or delete it. Auto-derived edges carry creation and verification dates: facts expire, they do not die; a graph without dates routes on stale knowledge.
+
+## The five-stage method
+
+Reshaping an existing loop-built job into a graph is itself a graph-shaped job; run it in five stages: **audit** the current execution (where are the cycles, which routes repeat, what evidence does each step close on), **identify** the nodes worth making explicit (bounded, evidence-closing, on a measured bottleneck), **design** edges and caps (typed per the tables above; every `RETURNS` payload-carrying and capped), **implement** at the smallest shape that works, and **type** the knowledge left behind (`SUPERSEDES`/`DEPENDS_ON`/... with dates) so the next audit starts from a map, not folklore.
 
 ## Route the query by its type
 
-The routing discipline applies to reading the graph, not only building it. Match retrieval to the question: a lookup ("what does X do?") rides similarity search — cheaper than traversal; a multi-hop question ("why did X change, and what is downstream of it?") rides graph traversal — similarity finds what sounds like the question, traversal finds what is connected to the answer. Simple lookups, high-volume retrieval, and low entity resolution are where graphs lose. Keep both: a cheap index for the lookups, the typed edges for the multi-hop path.
+Reading a knowledge graph obeys the same routing discipline as building a work graph: a lookup ("what does X do?") rides similarity search — cheaper than traversal; a multi-hop question ("why did X change, and what is downstream of it?") rides graph traversal — similarity finds what sounds like the question, traversal finds what is connected to the answer. Simple lookups, high-volume retrieval, and low entity resolution are where graphs lose. Keep both: a cheap index for the lookups, the typed edges for the multi-hop path.
 
 ## The cost gate
 
-Parallel fan-out re-pays its token cost on every failed cycle, so it amortizes only when most branches pass: the guide claims a ~50% per-cycle pass-rate breakeven, and ~3x tokens for the same result at ~30%. Treat those as arithmetic to re-derive on your own runs, not constants to cite. Judge by **cost per successful completion**, never wall-clock alone, and price the all-reviewers-fail path before building it — it can cost more than the loop it replaced. A graph that loses the cost gate is stepped back down to a staged loop.
+Fan-out re-pays its token cost on every failed cycle, so it amortizes only when most branches pass: the industry guide claims a ~50% per-cycle pass-rate breakeven, and ~3x tokens for the same result at ~30%. Treat those as arithmetic to re-derive on your own runs, not constants to cite. Judge by **cost per successful completion**, never wall-clock alone. A shape that loses the cost gate is stepped back down the ladder.
 
 ## Common mistakes
 
 | Mistake | Fix |
 | --- | --- |
-| Engineering a graph the job has not earned | Start at three to five nodes; grow only on a measured bottleneck |
-| Bare edges ("relates to") | Name the relationship from the table above, or delete the edge |
+| A node that closes on narration | Re-derive its exit as evidence, or split it until one node = one proof |
+| Bare edges ("goes next") | Name the relationship from the edge table, or delete the edge |
+| `RETURNS` with no payload or no cap | Route findings, not flags; bind the cycle count |
 | Citing the guide's benchmarks as expected gains | Adopt the method; re-measure locally before claiming any number |
-| Trusting an auto-generated graph | Entity resolution compounds per hop (the guide's illustration: 85% per hop ≈ 44% over five) — dedupe and validate |
-| Traversal where a lookup would do | Similarity search answers "what"; traversal answers "why and what downstream" — route by question type |
-| An unpriced feedback loop | Cost the all-reviewers-fail path up front; cap it like verification caps retries |
-| Edges that never expire | Timestamp creation and last verification; stale edges misroute |
-| A graph where §4 batching would do | Batch within the turn first; graph only what survives the matrix |
+| Trusting an auto-generated graph | Entity resolution compounds per hop — dedupe and validate |
+| Traversal where a lookup would do | Route by question type: similarity answers "what", traversal answers "why and what downstream" |
+| An anchor a step can rewrite | Route target changes to the anchor's owner; never silently |
+| Graph where a sequence or a turn's batching would do | Enter at the smallest shape; graph only what survives the climb signals |
 
 ## Cross-references
 
-- [teamwork](../teamwork/SKILL.md) is the substrate: the graph decides shape (nodes, edges, gates); teamwork's ladder, ledger, and adversarial roles govern conduct at each node.
-- [verification](../verification/SKILL.md) bounds every gate: graph routing inherits the loop caps — routing changes where failure goes, never how many retries exist.
-- [wayfinder](../wayfinder/SKILL.md) when the graph outgrows one session: persist it as a map of decision tickets, not a longer diagram.
-- [performance](../performance/SKILL.md) owns the measurement: AUDIT is the measure-first cycle applied to workflows; cost per successful completion is the benchmark it judges by.
-- [system-diagramming](../system-diagramming/SKILL.md) renders the designed topology when it must be read by humans.
+- [teamwork](../teamwork/SKILL.md) owns the coordination graph: this skill decides topology (shapes, edges, gates); teamwork's ladder, ledger, and adversarial roles govern conduct at each node.
+- [verification](../verification/SKILL.md) owns the evidence standard at every node and the caps that bound every `RETURNS` edge; its [flowcharts](../verification/references/flowcharts.md) render the doctrine's own execution graph.
+- [wayfinder](../wayfinder/SKILL.md) the task graph persisted across sessions: when the graph outgrows one session, it becomes a map of decision tickets, not a longer diagram.
+- [performance](../performance/SKILL.md) owns the measurement: the cost gate is the measure-first cycle applied to shapes; cost per successful completion is the benchmark it judges by.
+- [system-diagramming](../system-diagramming/SKILL.md) renders a designed graph when it must be read by humans.
 
-Distilled from flowtivity's graph-engineering guide (2026); its benchmark figures are deliberately not adopted — measure locally.
+Distilled from flowtivity's graph-engineering guide (2026) and Eigent's graph-engineering essays; their benchmark figures are deliberately not adopted — measure locally.
