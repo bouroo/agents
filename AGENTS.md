@@ -127,6 +127,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/solution-architecture](skills/solution-architecture/SKILL.md) | ASRs + SEI scenarios, pattern tradeoffs, ADRs, C4 modeling, estimation/governance |
 | [skills/system-diagramming](skills/system-diagramming/SKILL.md) | system maps as one interactive HTML: typed JSON IR, bundled template + validator |
 | [skills/grilling](skills/grilling/SKILL.md) | plan-first interview method: design tree, frontier rounds, facts vs decisions |
+| [skills/plan-authoring](skills/plan-authoring/SKILL.md) | deterministic plan documents: fixed sections, `WPn` packages, DONE_WHEN checks, status ledger |
 | [skills/domain-modeling](skills/domain-modeling/SKILL.md) | active domain-language discipline: `CONTEXT.md` glossary, ADR trigger triad |
 | [skills/graph-engineering](skills/graph-engineering/SKILL.md) | the graph grammar: nodes, typed edges, caps, shapes, cost (+ [topologies](skills/graph-engineering/references/topologies.md)) |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
