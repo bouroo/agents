@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.0.1] - 2026-09-09
+
+### Added
+
+- **`skills/confluence` storage-form template anchor**: decoded the live page
+  behind `wiki/x/AYBUdAE` (page 6246662145, GoofyDisco v5) and recorded it as
+  the mcp-atlassian surface of the "BFF API Specification" family in
+  [references/page-template.md](skills/confluence/references/page-template.md) — H2/H3 ladder and `<hr>` rhythm, editor-v2 table attributes (`ac:local-id` / `data-table-width` / `data-highlight-colour`), status/expand/code macro forms, M/O span syntax, changed-row `#fffae6` shading, sample-wrapper captions, and both table column sets. The template-match workflow now graduates decoded anchors into instance-variant records, and the publish checklist (now six gates) validates against the matched anchor.
+
+### Changed
+
+- **`skills/confluence` SKILL.md diagram and prove rules tightened**: the `data` param must be encoded by the reference's **gated encoder** (percent-encode `safe="/"` → raw deflate level 6 → padded base64; pure base64, no `%`) with its `GATE OK` line obtained **before** any publish; publish-then-prove now names the `<<ccr:…>>` collapsed-read-back failure mode and routes it to the diff/version/search probe ladder.
+
 ## [5.0.0] - 2026-09-09
 
 v5 re-authors the doctrine's execution model from a cycle to an **execution graph**, absorbing four graph-engineering sources — flowtivity's 2026 guide, Eigent's graph-engineering and self-evolved-agents essays, and the arXiv survey 2608.21156 — while keeping v4's gates, verification layers, and budgets intact. Section numbering unchanged (§2 intake … §11 map).
