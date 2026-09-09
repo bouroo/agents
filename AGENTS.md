@@ -108,7 +108,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 
 ## 10. Hard Constraints
 
-Never swallow an error. Never branch on error strings. Never log secrets. Never build speculative features. Never add a comment that restates the code; default is no comment; add one only for the *why*. Doc comments on exported symbols follow the language's official convention. Never declare done without executable evidence at L1/L2/L3. Never optimize without measurement. Never put deterministic logic in the model. Never leave a dirty checkout. Never let a proof chain terminate in anything but an anchor.
+Never swallow an error. Never branch on error strings. Never log secrets. Never put real-work identity (client/engagement names, space keys, page titles, shortlinks) into doctrine or releases — it lives in machine-local memory; the `privacy` gate enforces the tracked-file half. Never build speculative features. Never add a comment that restates the code; default is no comment; add one only for the *why*. Doc comments on exported symbols follow the language's official convention. Never declare done without executable evidence at L1/L2/L3. Never optimize without measurement. Never put deterministic logic in the model. Never leave a dirty checkout. Never let a proof chain terminate in anything but an anchor.
 
 ---
 

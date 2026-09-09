@@ -8,6 +8,8 @@ Static gates over docs/skills plus the distribution layer:
     links           every relative Markdown link resolves to an existing file
     agnostic        core doctrine is free of host-binding tokens
     manifests       marketplace discovery manifests parse; versions agree
+    privacy         doctrine free of real-work identifiers (tiny links,
+                    page ids, private hosts, engagement service names)
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -42,6 +44,23 @@ HOST_TOKEN_RE = re.compile(
     r"\bopencode\b|\bkilo\b|\bantigravity\b|\bcodex\b|\bqwen\b",
     re.IGNORECASE,
 )
+
+# Real-work identity is forbidden in the shared doctrine: page titles,
+# space keys, tiny-link codes, numeric page ids, and private hosts name a
+# specific engagement and must live in machine-local memory only. The scan
+# covers the same doctrine surface as the host scan (skills + commands +
+# AGENTS.md) plus CHANGELOG.md, whose host-token allowlist does not extend
+# to private identifiers. Detection is STRUCTURAL (tiny-link shapes, long
+# numeric ids, private Atlassian hosts) - the detector must not itself
+# enumerate engagement names. Structural classes are what is enforceable;
+# engagement-specific names stay a machine-local, human-reviewed rule.
+PRIVACY_TOKEN_RE = re.compile(
+    r"\bwiki/x/[A-Za-z0-9+/=_-]{6,}\b"                        # tiny links
+    r"|\b\d{7,}\b"                                            # page/attachment ids
+    r"|\b(?!mcp\.|support\.)[a-z0-9-]+\.atlassian\.(?:net|com)\b",
+    re.IGNORECASE,
+)
+PRIVACY_SCAN_FILES = [ROOT / "AGENTS.md", ROOT / "CHANGELOG.md"]
 
 def _no_dotdir(p: pathlib.Path) -> bool:
     """True unless some path part is a dot-directory: untracked tool state
@@ -246,9 +265,32 @@ def g_agnostic() -> None:
     _add("PASS", f"{name}: {len(files)} core file(s) free of host-binding tokens")
 
 
+def g_privacy() -> None:
+    name = "privacy"
+    scanned = PRIVACY_SCAN_FILES \
+        + sorted(p for p in (ROOT / "skills").rglob("*.md") if _no_dotdir(p)) \
+        + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p))
+    files = [f for f in scanned if f.is_file()]
+    hits: list[str] = []
+    for f in files:
+        rel = f.relative_to(ROOT)
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            m = PRIVACY_TOKEN_RE.search(line)
+            if m:
+                hits.append(f"{rel}:{i} '{m.group(0)}'")
+                if len(hits) >= 10:
+                    break
+        if len(hits) >= 10:
+            break
+    if hits:
+        _add("FAIL", f"{name}: real-work identifier in doctrine: " + "; ".join(hits))
+        return
+    _add("PASS", f"{name}: {len(files)} doctrine file(s) free of real-work identifiers")
+
+
 GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("links", g_links), ("agnostic", g_agnostic),
-         ("manifests", g_manifests)]
+         ("manifests", g_manifests), ("privacy", g_privacy)]
 
 
 def main(argv: list[str]) -> int:
