@@ -158,20 +158,70 @@ the corresponding Confluence-HTML node or by mirroring the sibling's markup.
    day: a PlantUML-custom-alphabet publish painted five blank diagrams; the
    correction, validated against the wrong sibling, painted blanks again).
    Recipe proven byte-for-byte against a live tenant instance: `percent-encode
-   the source (quote, safe="")` → `raw deflate (zlib raw, strip the 2-byte zlib
-   header and 4-byte adler tail), compression level 6` → `standard base64 with
-   padding KEPT`. Every detail is load-bearing: deflate level 9 does not
-   reproduce the reference bytes; stripping padding yields output off by exactly
-   the two `=` characters (the diagnostic signature of a padding mismatch, not
-   an alphabet mismatch); `+` and `/` appear literally in known-good `data`
-   params, PlantUML's `0-9A-Za-z-_` alphabet does not. Prove an encoder by
-   decoding the `data` param of a page that demonstrably **renders in a
-   browser** - a sibling's mere existence proves nothing about rendering: the
-   diagram family all shipped blank while the parent page
-   painted - and re-encoding it byte-for-byte before trusting the encoder on
-   new sources (one exact match beats three plausible decoders). Storage-form
-   macro:
+   the source (urllib.parse.quote, safe="/")` → `raw deflate (zlib raw, strip
+   the 2-byte zlib header and 4-byte adler tail), compression level 6` →
+   `standard base64 with padding KEPT`. Every detail is load-bearing: deflate
+   level 9 does not reproduce the reference bytes; stripping padding yields
+   output off by exactly the two `=` characters (the diagnostic signature of a
+   padding mismatch, not an alphabet mismatch); `+` and `/` appear literally in
+   known-good `data` params, PlantUML's `0-9A-Za-z-_` alphabet does not. The
+   safe-set is `"/"` exactly - parens ARE percent-encoded (`%28`/`%29` appear
+   in known-good params; a `"/()"` safe-set produces byte-different output).
+   **Order is load-bearing:** percent-encode FIRST, on the raw source; the
+   final `data` param is pure base64 and must contain NO `%`. A param holding
+   `%2B`/`%3D` means quote ran *after* base64 (2026-09-09 incident: exactly
+   this shipped, the macro's base64 decode choked on `%`, blank diagram) -
+   that `%` is the diagnostic signature of an order bug, not an alphabet or
+   padding issue. Never ship a body still containing a template marker
+   (`PLACEHOLDER`, `TODO`) - a substitution step that silently didn't run
+   publishes the marker (2026-09-09: `DIAGRAM_DATA_PLACEHOLDER` in a staged
+   body; only a transcript archaeology caught it before/after the fact).
+   Storage-form macro:
    `<ac:structured-macro ac:name="plantumlcloud"><ac:parameter ac:name="filename"><name>.svg</ac:parameter><ac:parameter ac:name="data"><encoded></ac:parameter><ac:parameter ac:name="compressed">true</ac:parameter></ac:structured-macro>`.
+
+   **Gated encoder - run this, don't hand-roll it.** It encodes AND gates;
+   a push without its `GATE OK` line is unverified:
+
+   ```python
+   import base64, re, sys, urllib.parse, zlib
+
+   def encode_data_param(source: bytes) -> str:
+       q = urllib.parse.quote(source, safe="/").encode()
+       c = zlib.compressobj(6, zlib.DEFLATED, -15)   # raw deflate, level 6
+       return base64.b64encode(c.compress(q) + c.flush()).decode()
+
+   def gate(data: str, source: bytes, body: str) -> None:
+       assert re.fullmatch(r"[A-Za-z0-9+/]+={0,2}", data), "param: not pure base64 (a % means quote ran after b64 - order bug)"
+       assert "%" not in data,                        "param: contains % - percent-encoding applied in the wrong stage"
+       rt = urllib.parse.unquote_to_bytes(zlib.decompress(base64.b64decode(data), -15))
+       assert rt == source,                           "round-trip: decode->inflate->unquote != source"
+       assert not re.search(r"PLACEHOLDER|TODO|FIXME|<[a-z_]+_DATA>", body, re.I), "body: template marker left unsubstituted"
+       print("GATE OK", len(data), "chars")
+
+   source = open("diagram.puml", "rb").read()
+   data = encode_data_param(source)
+   gate(data, source, open("page.html").read())
+   ```
+
+   **Proving a variant instance** (first diagram on a new tenant, or a
+   changed recipe): decode the `data` param of a page someone has seen
+   **paint in a browser** - a sibling's mere existence proves nothing (the
+   2026-09-07 family all shipped blank while the parent painted) - then
+   re-encode the *unquoted original* byte-for-byte. Re-encode the inflated
+   bytes after `unquote_to_bytes`, never the still-encoded bytes (double-
+   quoting makes a correct encoder "fail" and a wrong one look close). And
+   check the reference can *discriminate*: if its source contains no parens
+   (or whatever character the safe-sets disagree on), byte-match proves
+   nothing about that character - prefer a reference whose source covers the
+   ambiguous chars, else derive the safe-set directly from the inflated
+   bytes: the RESERVED characters appearing literally (unencoded) there are
+   the safe-set, and only those - RFC 3986 unreserved chars (`-._~` and
+   alphanumerics) stay literal under any `safe` value, so their presence is
+   not evidence (proven 2026-09-09: inflated form held literal `{%, -, /}`;
+   `%` is the escape char itself, `-` is unreserved → the one reserved
+   literal, `/`, is the safe-set). `+`/`=` never appear literally in the
+   inflated form, so they are not safe-set evidence. One exact match beats
+   three plausible decoders.
 5. **H1 Request**: H2 Request Header Schema (5-col field table) · H2 Request
    Body Schema (5-col field table) · H2 Example Request (wide json code block).
 6. **H1 Response**: H2 Custom HTTP Response Code (4-col table) · H2 Response
