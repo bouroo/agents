@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.1.0] - 2026-09-10
+
+### Added
+
+- **`skills/plan-authoring`**: the deterministic plan-document pattern — one `PLAN.md`
+  per effort with a fixed nine-section order, work packages as `WPn`, a DONE_WHEN
+  checklist of executable checks, a dated status ledger, and a grounded mermaid
+  diagram; deterministic alignment/drift sweep included. Grilling's approved plan,
+  wayfinder's graduated decisions, and verification's judgment contract now all
+  route through it.
+
+### Changed
+
+- **Skill count 12 -> 13** across all discovery surfaces: AGENTS.md §11 repository
+  map, README, and the five marketplace manifests (`.claude-plugin`,
+  `.cursor-plugin`, `gemini-extension.json`), whose descriptions now list
+  plan-authoring. Version fields bumped to 5.1.0.
+- **README verification section drift fixed**: documents the six gates (the v5.0.1
+  `privacy` gate was missing) and the `plan-authoring` tree entry.
+
 ## [5.0.1] - 2026-09-09
 
 ### Added

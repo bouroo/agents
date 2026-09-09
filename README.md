@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, twelve on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, thirteen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## What's inside
 
@@ -32,6 +32,8 @@ A shared setup for autonomous coding agents that is **agnostic of programming la
 │   │   └── references/                ADRs, C4 modeling, estimation/governance/delivery
 │   ├── grilling/                      in-session decision interviewing: design tree,
 │   │                                  numbered frontier rounds, facts vs decisions
+│   ├── plan-authoring/                deterministic plan documents: fixed sections,
+│   │                                  WPn packages, DONE_WHEN checks, status ledger
 │   ├── domain-modeling/               active domain-language discipline: CONTEXT.md
 │   │   └── references/                glossary, edge-case scenarios, ADR trigger triad
 │   ├── system-diagramming/            system maps as one interactive HTML: typed JSON IR,
@@ -47,7 +49,7 @@ A shared setup for autonomous coding agents that is **agnostic of programming la
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── gemini-extension.json              extension discovery metadata
 └── scripts/
-    ├── check.py                       five deterministic gates (CI runs these)
+    ├── check.py                       six deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -93,8 +95,9 @@ python3 scripts/check.py --all
 | `links` | every relative Markdown link resolves |
 | `agnostic` | core doctrine is free of host-binding tokens |
 | `manifests` | marketplace manifests parse; version fields agree across files |
+| `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
 
-CI runs all five on every push and pull request.
+CI runs all six on every push and pull request.
 
 ## Versioning
 
