@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.3.0] - 2026-09-10
+
+### Changed
+
+- **`skills/plan-authoring`**: the execution ledger is no longer a plan section —
+  PLAN.md is a planning-phase artifact, and execution state lives in a sibling
+  `<slug>/STATUS.md` (dated, newest on top, cite-don't-narrate, probe-before-write
+  unchanged). Plans-root index rows gain a STATUS.md link; the drift sweep now hunts
+  `Execution status` inside PLAN.md; nine sections become eight;
+  [verification](skills/verification/SKILL.md)'s judgment-contract cross-reference
+  follows the ledger.
+- Version fields bumped to 5.3.0 across the four versioned manifests.
+
 ## [5.2.0] - 2026-09-10
 
 ### Added
