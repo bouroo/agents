@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.2.0] - 2026-09-10
+
+### Added
+
+- **`skills/indexed-search`**: drive a trigram-indexed search tool when the host
+  has one — probe first, drive the index/serve lifecycle when present, fall back
+  to ripgrep then the built-in Grep; no install steps. Covers the index-earns-keep
+  decision, staleness rules (`--no-index` for fresh edits; a stale-index miss is
+  not evidence of absence), `--` pattern discipline, machine output (`--json`,
+  `--vimgrep`, `-q` exit codes), and the flags that silently degrade to a full scan.
+
+### Changed
+
+- **Skill count 13 -> 14** across all discovery surfaces: AGENTS.md §11 repository
+  map and §2 tool routing, README, and the five marketplace manifests. Version
+  fields bumped to 5.2.0.
+
 ## [5.1.0] - 2026-09-10
 
 ### Added

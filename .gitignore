@@ -6,3 +6,5 @@
 .DS_Store
 __pycache__/
 .system/
+# Trigram-index search state (indexed-search skill) — tool-managed, never tracked.
+.tgrep/

@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, thirteen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, fourteen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## What's inside
 
@@ -38,8 +38,10 @@ A shared setup for autonomous coding agents that is **agnostic of programming la
 │   │   └── references/                glossary, edge-case scenarios, ADR trigger triad
 │   ├── system-diagramming/            system maps as one interactive HTML: typed JSON IR,
 │   │                                  bundled template + validator, no installs
-│   └── graph-engineering/             the execution-graph grammar: nodes, typed edges,
-│       └── references/               caps, anchors, shapes, cost; worked topologies
+│   ├── graph-engineering/             the execution-graph grammar: nodes, typed edges,
+│   │   └── references/                caps, anchors, shapes, cost; worked topologies
+│   └── indexed-search/                large-tree search: probe tgrep, index/serve
+│                                       lifecycle, fallback ladder rg -> Grep
 ├── commands/
 │   ├── cmd-verify.md                  quality-gate pipeline with a fix/re-verify loop
 │   ├── cmd-review.md                  severity-grouped code review with one verdict
