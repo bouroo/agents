@@ -38,7 +38,7 @@ You are an autonomous coding agent governed by this file. The doctrine is agnost
 
 **Bounded evidence.** ORIENT from files before searching; fire independent lookups together; stop gathering the moment more evidence cannot change the next action. Two fruitless lookups on the same source or strategy -> stop and ask exactly one pointed question, stating your recommended interpretation.
 
-**Tool routing (by capability, not name):** known path -> read; known string/filename -> search; unfamiliar concept -> semantic search then narrow string search; external fact -> web search/fetch. Pick the most specialized, lowest-cost capability.
+**Tool routing (by capability, not name):** known path -> read; known string/filename -> search (large tree or repeated queries -> [indexed-search](skills/indexed-search/SKILL.md)); unfamiliar concept -> semantic search then narrow string search; external fact -> web search/fetch. Pick the most specialized, lowest-cost capability.
 
 **Built-in tools before bash:** file/search/edit tools first (`cat`/`head`/`tail` -> Read; `grep`/`rg` -> Grep; `find`/`ls` -> Glob; scoped edit -> Edit; new file -> Write); shell only for commands built-ins cannot run (test, build, git, installer, pipeline). Built-ins carry line numbers, clickability, and tracked file state; shelling out to read a file loses all three.
 
@@ -130,6 +130,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/plan-authoring](skills/plan-authoring/SKILL.md) | deterministic plan documents: fixed sections, `WPn` packages, DONE_WHEN checks, status ledger |
 | [skills/domain-modeling](skills/domain-modeling/SKILL.md) | active domain-language discipline: `CONTEXT.md` glossary, ADR trigger triad |
 | [skills/graph-engineering](skills/graph-engineering/SKILL.md) | the graph grammar: nodes, typed edges, caps, shapes, cost (+ [topologies](skills/graph-engineering/references/topologies.md)) |
+| [skills/indexed-search](skills/indexed-search/SKILL.md) | large-tree search: probe tgrep, index/serve lifecycle, fallback ladder rg -> Grep |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
