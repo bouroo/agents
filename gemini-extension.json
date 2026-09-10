@@ -1,7 +1,7 @@
 {
   "name": "coder-agents",
-  "version": "5.1.0",
-  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), thirteen on-demand skills (craft, confluence, domain-modeling, go-modernize, graph-engineering, grilling, performance, plan-authoring, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, and deterministic verification gates.",
+  "version": "5.2.0",
+  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md), fourteen on-demand skills (craft, confluence, domain-modeling, go-modernize, graph-engineering, grilling, indexed-search, performance, plan-authoring, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, and deterministic verification gates.",
   "contextFileName": "AGENTS.md",
   "mcpServers": {}
 }
