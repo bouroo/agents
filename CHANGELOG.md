@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.6.0] - 2026-09-11
+
+### Changed
+
+- **`AGENTS.md`**: the completion-non-authorization rule generalized to all
+  destructive and outward-reaching commands, example-free — finishing a task,
+  a clean tree, or a green build authorizes nothing beyond it; §3's AUTH gate
+  and §10's hard constraint both state the general form, with outward steps
+  named in `PENDING:` until the user approves.
+- **`skills/craft`**: the AUTH gate definition carries the same generalization,
+  with the concrete `PENDING: <step> - awaiting your authorization` pattern.
+- Version fields bumped to 5.6.0 across the four versioned manifests.
+
+### Motivation
+
+- Review feedback on v5.5.0: naming `git push` alone was too narrow — the same
+  completion-non-authorization logic covers every outward or irreversible step
+  (pushes, releases, deletes, publishes). v5.5.0 had shipped an hour earlier
+  in the same day; the generalization replaces the narrow rule before any
+  dependent procedure could anchor on it.
+
 ## [5.5.0] - 2026-09-11
 
 ### Changed
