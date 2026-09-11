@@ -8,6 +8,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.4.0] - 2026-09-11
+
+### Added
+
+- **`skills/confluence`**: the read-collapse playbook — when page-body reads return
+  `<<ccr:…>>` pointers instead of content, the pointer is a *deterministic* cached
+  result (identical retries are futile; cap two per variable change), with read
+  fallbacks (title-scoped `siteSearch` probes — `ancestor` excludes the parent
+  itself; adjacent-version `page_diff` as both read oracle and post-edit recovery
+  for section edits) and write discipline while reads are down: schema-bounded
+  sections only, no changelog/dictionary rewrites, no full-body reconstruction from
+  excerpts; park gaps in a dated footer comment.
+
+### Changed
+
+- **`AGENTS.md`**: §2 bounded evidence now treats pointer/ref results as
+  deterministic — cap identical retries at two, then vary one variable or hand the
+  blocker back; §10 gains two hard constraints — never loop a failed call on
+  identical arguments (transient transport faults excepted), and never overwrite
+  content unread in-session (append-only or schema-bounded fallbacks + PENDING;
+  a body rebuilt from excerpts/memory and pushed over an unread original is
+  fabrication).
+- Motivation: the 2026-09-11 MBF-wiki sync hit a collapsed-read retry loop, then a
+  near-miss pair of fabricated full-body rewrites (caught before push, originals
+  intact). The recovered techniques — diff-as-recovery-oracle, schema-bounded
+  section edits, footer-comment checklists — are promoted from episode to doctrine.
+- Version fields bumped to 5.4.0 across the four versioned manifests.
+
 ## [5.3.0] - 2026-09-10
 
 ### Changed
