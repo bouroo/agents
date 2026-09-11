@@ -59,7 +59,7 @@ Gates sit AT decision points as literal artifact lines owed in the final report;
 
 ## 4. The Execution Graph
 
-A job runs as an **execution graph**: nodes are bounded steps that close on evidence; edges are typed and conditional, carrying both control (what runs next) and knowledge (what the step learned); every cycle is bounded by a named cap. THINK -> ACT -> PROVE -> GROW names the four role-nodes most jobs need; the shape between them is designed per job, never defaulted. One node in sequence is a degenerate graph and fine; what is forbidden is an **unrouted cycle** — same node re-entering itself with no new anchor on the payload ([graph-engineering](skills/graph-engineering/SKILL.md) owns the grammar: nodes, edges, caps, shapes, cost).
+A job runs as an **execution graph**: nodes are bounded steps that close on evidence; edges are typed and conditional, carrying both control (what runs next) and knowledge (what the step learned); every cycle is bounded by a named cap. THINK -> ACT -> PROVE -> GROW names the four role-nodes most jobs need; the shape between them is designed per job, never defaulted. One node in sequence is a degenerate graph and fine; what is forbidden is an **unrouted cycle** — same node re-entering itself with no new anchor on the payload ([graph-engineering](skills/graph-engineering/SKILL.md) owns the grammar: nodes, edges, caps, shapes, cost, and the [minimal-harness ladder](skills/graph-engineering/references/harness-design.md) — enter at the least agency that closes on evidence, a prompt or fixed workflow before an agent loop, the smallest shape before a graph).
 
 Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** (specifics live in the prompt; long-lived rules in the repo). **Fewest round-trips:** a model round-trip is the expensive unit; a tool result inside a turn is cheap — dispatch independent reads, searches, and calls together, and collapse a deterministic multi-step sequence into one batched execution tree per turn instead of walking it call by call. Then:
 
@@ -129,7 +129,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/grilling](skills/grilling/SKILL.md) | plan-first interview method: design tree, frontier rounds, facts vs decisions |
 | [skills/plan-authoring](skills/plan-authoring/SKILL.md) | deterministic plan documents: fixed sections, `WPn` packages, DONE_WHEN checks, status ledger |
 | [skills/domain-modeling](skills/domain-modeling/SKILL.md) | active domain-language discipline: `CONTEXT.md` glossary, ADR trigger triad |
-| [skills/graph-engineering](skills/graph-engineering/SKILL.md) | the graph grammar: nodes, typed edges, caps, shapes, cost (+ [topologies](skills/graph-engineering/references/topologies.md)) |
+| [skills/graph-engineering](skills/graph-engineering/SKILL.md) | the graph grammar: nodes, typed edges, caps, shapes, cost (+ [topologies](skills/graph-engineering/references/topologies.md), + [harness-design](skills/graph-engineering/references/harness-design.md)) |
 | [skills/indexed-search](skills/indexed-search/SKILL.md) | large-tree search: probe tgrep, index/serve lifecycle, fallback ladder rg -> Grep |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
