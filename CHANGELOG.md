@@ -8,6 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.5.0] - 2026-09-11
+
+### Changed
+
+- **`AGENTS.md`**: `git push` is now named as the canonical AUTH case (§3) —
+  finishing a task, a clean tree, or a green build never authorizes reaching the
+  remote; agents end at local commits and report. §10 gains the matching hard
+  constraint: never `git push` without the user's explicit go-ahead; ending at
+  local commits with the push named in `PENDING:` is a clean exit.
+- **`skills/craft`**: the AUTH gate definition carries the same weave — the
+  completed-task/clean-tree/green-build non-authorization and the concrete
+  `PENDING: push - awaiting your authorization` pattern.
+
+### Motivation
+
+- Users reported agents pushing to the remote as a side effect of finishing a
+  task. The doctrine's AUTH gate spoke of outward effects only in the abstract,
+  and nothing said "done ≠ pushed". The rule is now named at every surface that
+  enforces AUTH, with host-side enforcement (permission ask-rules / hooks)
+  remaining a per-machine, per-host concern — the doctrine portable layer
+  states the rule; the deterministic layer is owned by each harness config.
+- Version fields bumped to 5.5.0 across the four versioned manifests.
+
 ## [5.4.0] - 2026-09-11
 
 ### Added
