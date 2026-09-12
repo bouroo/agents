@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "6.0.0-beta.1",
+  "version": "6.0.0-beta.2",
   "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, sixteen on-demand skills (artifacts, confluence, craft, domain-modeling, evals, go-modernize, graph-engineering, grilling, indexed-search, lifecycle, performance, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, and deterministic verification gates.",
   "author": {
     "name": "bouroo"

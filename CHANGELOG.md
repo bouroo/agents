@@ -8,6 +8,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.0.0-beta.2] - 2026-09-12
+
+Second beta of the v6 lifecycle foundation: a context-reduction pass over the
+always-loaded manifesto and the workflow docs. **No behavior changed** — every
+rule survives, verified by a rule-token sweep across all nine files.
+
+### Changed
+
+- **`AGENTS.md`** (166 -> 147 lines): §4's stage table — a verbatim copy of the
+  lifecycle skill's — becomes a one-line artifact chain that keeps every
+  stage -> artifact -> **seat** mapping; §2's tool-routing and built-in-preference
+  paragraphs merge into one; §7's L1/L2/L3 bullets collapse inline; §4's
+  duplicated "human judgment" paragraph folds into the seats section. The Shape
+  gate gains an explicit exit condition.
+- **`commands/`**: `cmd-verify` states its three-iteration cap once and folds the
+  hook gate and reporting into the pipeline; `cmd-review` collapses the severity
+  list to one line and gives the stale-tree case an explicit stop; `cmd-refactor`
+  and `cmd-document` group their hand-back conditions under `Done =`.
+- **`skills/craft`** (72 -> 64 lines): the "Style priorities" list — 5 of the
+  manifesto's §1 entries — is deleted; the skill now points at §1 as the single
+  owner.
+- **`skills/performance`**, **`skills/domain-modeling`**: gain an explicit exit
+  condition — the only two skills in the set that lacked one. Performance's
+  external-bottleneck section now points at its reference.
+- **`skills/graph-engineering`**: section references corrected to §4.2 and a
+  lifecycle cross-reference added.
+
+### Motivation
+
+- The manifesto and its docs load on every run, so their line count is a
+  recurring context cost. A measured duplication sweep first: one duplicated
+  sentence across 16 skills, so the reduction is concentrated where it pays —
+  `AGENTS.md`, the always-loaded file. Three files (`cmd-refactor`,
+  `cmd-document`, `graph-engineering`) were restructured for cohesion at zero
+  line change; that is recorded here rather than claimed as a saving.
+
 ## [6.0.0-beta.1] - 2026-09-12
 
 First published form of the v6 lifecycle foundation. Tagged as a **beta**: the
