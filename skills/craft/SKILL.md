@@ -5,25 +5,17 @@ description: "Language-agnostic software craftsmanship: the twelve commandments 
 
 # Craft
 
-Twelve commandments for high-quality language-agnostic code, and the canonical definitions of the four artifact gates.
+Twelve commandments for high-quality language-agnostic code, and the canonical definitions of the four artifact gates. When style priorities collide, resolve them by the manifesto's §1 order — Correctness > Clarity > Simplicity > Concision > Maintainability > Consistency > Performance.
 
 > **Override.** A project-level style guide that explicitly supersedes this skill wins; project convention beats personal taste.
 
 **Stance:** every unclear name, swallowed error, and untested branch is a defect waiting to ship. Clarity beats cleverness; the next reader is the customer.
 
-## Style priorities (conflict -> higher wins)
-
-1. **Clarity** purpose and rationale obvious to the reader, through their lens.
-2. **Simplicity** least mechanism that works: core language, then stdlib, then third-party.
-3. **Concision** high signal-to-noise; no repetition, opaque names, valueless abstraction.
-4. **Maintainability** the next programmer can change it correctly.
-5. **Consistency** match the surrounding codebase; in a tie, consistency beats taste.
-
 ## Artifact gates (canonical definitions)
 
 Gates are literal lines owed at decision points; they belong verbatim in the final report. If a run owed a gate, an absent line means the gate was not met.
 
-- **`INTENT:` before any behavior-changing edit:** `INTENT: code does <X>; the failing check expects <Y>; the spec says <Z>`. Fill all three slots by opening the artifacts: X = observed behavior of today's code (read it, run it if needed); Y = what the failing check actually expects (quote it); Z = what README/docstring/design doc/task demands (quote the clause). The line appears verbatim in the report. Worked case: endpoint returns insertion order, test `TestUserList_Alphabetical` fails, design doc says "sorted alphabetically by name" -> `INTENT: code does return users in insertion order; the failing test expects alphabetical order; the spec says "sorted alphabetically by name"`.
+- **`INTENT:` before any behavior-changing edit:** `INTENT: code does <X>; the failing check expects <Y>; the spec says <Z>`. Fill all three slots by opening the artifacts: X = observed behavior of today's code (read it, run it if needed); Y = what the failing check actually expects (quote it); Z = what README/docstring/design doc/task demands (quote the clause). Worked case: endpoint returns insertion order, test `TestUserList_Alphabetical` fails, design doc says "sorted alphabetically by name" -> `INTENT: code does return users in insertion order; the failing test expects alphabetical order; the spec says "sorted alphabetically by name"`.
   - **When X, Y, Z disagree, the disagreement is the finding — do NOT edit.** Resolve by the anchor ordering (§0): user statement > spec > checks > code. Splits: code + spec agree, test wrong -> the *test* is the suspect; propose fixing it. Code + test agree, spec silent -> fill the gap; ask which behavior is intended. Test + spec agree, code wrong -> the normal fix; proceed, then emit `TWINS:`. The spec is the durable contract; a logic change revises the spec first, then the code; a refactor syncs both sides — never land one alone.
   - Skip only for pure typo/rename/format edits with no observable-behavior risk (return value, exit code, log line, side effect, ordering); note the skip.
 - **`TWINS:` on every defect fix:** `TWINS: searched <pattern> - found <N> other sites: <files or "none">`. Search the whole project for the same wrong construct; fix siblings or list them.

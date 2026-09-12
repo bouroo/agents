@@ -23,7 +23,7 @@ Hygiene details: [measurement](references/measurement.md).
 
 ## Rule out external bottlenecks first
 
-Before optimizing code, verify the time is actually yours. An off-CPU profiler showing I/O wait, a distributed trace naming a slow upstream span, or a thread dump full of workers blocked on socket reads means local tuning will not move the number — fix that component (query tuning, caching, pooling, batch sizing) and re-profile; the internal hot path may have moved or vanished.
+Before optimizing code, verify the time is actually yours. An off-CPU profiler showing I/O wait, a distributed trace naming a slow upstream span, or a thread dump full of workers blocked on socket reads means local tuning will not move the number — fix that component (query tuning, caching, pooling, batch sizing) and re-profile; the internal hot path may have moved or vanished. Detail: [measurement](references/measurement.md).
 
 ## Route the signal
 
@@ -42,3 +42,5 @@ Keep the cheap overrides in mind: wrong algorithm (swap the structure before tun
 **Scope:** broad structural scans look for pools, bounds, N+1 queries, wrong structures — three passes max (allocation/layout, I/O/concurrency, algorithmic complexity/caching); focused reviews follow the cycle sequentially.
 
 **Goal:** boring code that stays fast when traffic spikes — not clever tricks.
+
+**Exit:** the cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move (external bottleneck) — report that and stop. Any metric regressed by a change -> revert it and re-diagnose; never keep an optimization the evidence does not support.
