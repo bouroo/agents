@@ -39,7 +39,9 @@ A shared setup for autonomous coding agents that is **agnostic of programming la
 │   ├── system-diagramming/            system maps as one interactive HTML: typed JSON IR,
 │   │                                  bundled template + validator, no installs
 │   ├── graph-engineering/             the execution-graph grammar: nodes, typed edges,
-│   │   └── references/                caps, anchors, shapes, cost; worked topologies
+│   │   └── references/                caps, anchors, shapes, cost; worked topologies;
+│                                       harness design: minimal-harness ladder, pattern
+│                                       catalogue, tool-surface (ACI)
 │   └── indexed-search/                large-tree search: probe tgrep, index/serve
 │                                       lifecycle, fallback ladder rg -> Grep
 ├── commands/

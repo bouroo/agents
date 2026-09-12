@@ -1,6 +1,6 @@
 ---
 name: graph-engineering
-description: "The doctrine's execution-graph grammar: nodes, six execution edge types, caps, anchor routing, knowledge edge types, the four shapes (linear, staged, fan-out, graph) with the concision ladder, three-graph organization (task, coordination, state), query routing by question type, and cost-per-successful-completion discipline. Use when designing or reviewing how a job executes — choosing between shapes, typing edges and routes, deciding when parallel steps beat a sequence, or costing feedback cycles."
+description: "The doctrine's execution-graph grammar: nodes, six execution edge types, caps, anchor routing, knowledge edge types, the four shapes (linear, staged, fan-out, graph) with the concision ladder, the minimal-harness ladder (prompt or fixed workflow before an agent loop), fan-out's two rationales (sectioning vs. voting), tool-surface (ACI) design, three-graph organization (task, coordination, state), query routing by question type, and cost-per-successful-completion discipline. Use when designing or reviewing how a job executes — choosing between shapes, entering at the least agency that works, typing edges and routes, deciding when parallel steps beat a sequence, or costing feedback cycles."
 ---
 
 # Graph Engineering
@@ -48,6 +48,18 @@ Concurrency x complexity — enter at the smallest shape that works; climb only 
 
 Climb signals: three or more concurrent verification steps **and** branching decision routing. Descend signals: sequential steps, same-file edits, heavy inter-step dependencies. Step down the moment the reason for the climb disappears.
 
+## Enter at the least-agency rung
+
+The four shapes say how a job's nodes connect; the **agency axis** says how much of that connection the model decides. Three rungs, least first: a **prompt or retrieval**, a **fixed workflow** (linear / staged, routes designed ahead of time), an **agent loop** (routes chosen at run time). Enter at the lowest rung that closes on evidence — an agent loop buys adaptability only where the path genuinely cannot be known in advance, and costs a decision it must re-make every turn. Build the smallest loop that closes end-to-end first, then add a control only on an observed failure (the Kirby Effect at harness level). Detail: [harness-design](references/harness-design.md).
+
+## Fan-out has two rationales
+
+A `FAN_OUT` edge carries one of two intents: **sectioning** splits the job into independent subtasks (per-file migrations, per-lens reviews), while **voting** runs the same task N times and aggregates for confidence. Sectioning pays on disjoint parts; voting pays only when the runs are plausibly **decorrelated** — correlated runs fail together and the premium becomes a tax (teamwork's correlated-lens hazard). Never cite "N runs" as free confidence without saying why they decorrelate: [harness-design](references/harness-design.md).
+
+## Design the tool surface
+
+Tool definitions are as load-bearing as the prompt: document each for the model (what it does, when to use it, input format, returned fields, error behavior, and how it differs from the similar tool), poka-yoke the arguments so misuse is hard to express, and scope the surface to the job — a narrower tool set means less confusion and less injection exposure. When traces show misuse, fix the interface before the instruction: [harness-design](references/harness-design.md).
+
 ## Three graphs over one job
 
 Any job above trivial has three simultaneous graph structures; design them deliberately instead of letting them accrete:
@@ -84,9 +96,13 @@ Fan-out re-pays its token cost on every failed cycle, so it amortizes only when 
 | Traversal where a lookup would do | Route by question type: similarity answers "what", traversal answers "why and what downstream" |
 | An anchor a step can rewrite | Route target changes to the anchor's owner; never silently |
 | Graph where a sequence or a turn's batching would do | Enter at the smallest shape; graph only what survives the climb signals |
+| Agent loop where a workflow or prompt would do | Enter at the least-agency rung; climb on a measured need |
+| N identical runs cited as confidence | Voting pays only on decorrelated runs; say why they decorrelate |
+| Tool definition written for the implementer | Document it for the model; iterate on observed misuse, fixing the interface first |
 
 ## Cross-references
 
+- [harness-design](references/harness-design.md) the minimal-harness ladder, the pattern catalogue mapped onto the grammar, voting vs. sectioning, and tool-surface (ACI) design.
 - [teamwork](../teamwork/SKILL.md) owns the coordination graph: this skill decides topology (shapes, edges, gates); teamwork's ladder, ledger, and adversarial roles govern conduct at each node.
 - [verification](../verification/SKILL.md) owns the evidence standard at every node and the caps that bound every `RETURNS` edge; its [flowcharts](../verification/references/flowcharts.md) render the doctrine's own execution graph.
 - [wayfinder](../wayfinder/SKILL.md) the task graph persisted across sessions: when the graph outgrows one session, it becomes a map of decision tickets, not a longer diagram.

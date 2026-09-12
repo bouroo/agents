@@ -60,7 +60,7 @@ Labels: a claim that cannot be re-run is **UNVERIFIABLE**, never assumed true; U
 
 ## Diagnosis
 
-Reason backward from the observed failure to the state that produced it and name the root cause before writing the next change; a symptom patch that leaves the cause in place is a defect. Route surprises backward, never forward: contradiction at PROVE re-enters at THINK; a mechanical mistake re-enters at ACT.
+Reason backward from the observed failure to the state that produced it and name the root cause before writing the next change; a symptom patch that leaves the cause in place is a defect. Before patching, **attribute the failure to its layer** — reasoning, tool interface, context, or control flow — because the wrong-layer fix (rewriting the prompt for an ambiguous tool signature, relaxing a check for a routing error) is a symptom patch by construction: [harness-design](../graph-engineering/references/harness-design.md). Route surprises backward, never forward: contradiction at PROVE re-enters at THINK; a mechanical mistake re-enters at ACT.
 
 ## GROW: governed self-evolution
 

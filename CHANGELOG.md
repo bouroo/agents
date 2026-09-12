@@ -8,6 +8,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [5.7.0] - 2026-09-12
+
+### Added
+
+- **`skills/graph-engineering/references/harness-design.md`**: the harness-design
+  reference the execution-graph grammar lacked — the minimal-harness ladder
+  (prompt/retrieval -> fixed workflow -> agent loop) with the walking-skeleton
+  build order; the pattern catalogue (augmented LLM, prompt chaining, routing,
+  parallelization, orchestrator-workers, evaluator-optimizer, agent) mapped onto
+  the grammar's shapes and edges; voting vs. sectioning with the decorrelation
+  caveat; tool-surface (ACI) design — document for the model, poka-yoke the
+  arguments, iterate on observed misuse; scoping the tool surface; server-side
+  context injection; layer attribution for failures; and the anti-framework
+  stance. Distilled from Anthropic's *Building effective agents* and Hugo
+  Bowne-Anderson's *Stop overengineering your agent harness*, adopted as method
+  with numbers re-derived locally.
+
+### Changed
+
+- **`skills/graph-engineering`**: the description, three new short sections
+  (enter at the least-agency rung; fan-out's two rationales; design the tool
+  surface), three new common-mistake rows, and the reference linked. The agency
+  ladder is named as the shape ladder viewed from the agency axis.
+- **`AGENTS.md`**: §4 routes to the minimal-harness ladder — enter at the least
+  agency that closes on evidence, a prompt or fixed workflow before an agent
+  loop, the smallest shape before a graph; §11's graph-engineering row lists the
+  new reference.
+- **`skills/teamwork`**: the spawn-brief contract now scopes the worker's tool
+  surface to its task — a narrower surface means less confusion, misuse, and
+  injection exposure.
+- **`skills/verification`**: Diagnosis attributes a failure to its layer —
+  reasoning, tool interface, context, or control flow — before patching, since a
+  wrong-layer fix is a symptom patch by construction.
+- **`README.md`**: the skills tree lists the harness-design reference.
+- Version fields bumped to 5.7.0 across the four versioned manifests.
+
+### Motivation
+
+- The doctrine governed how one job runs (shapes, typed edges, caps, anchors,
+  cost) but said little about designing the harness that runs it. A coverage
+  sweep against the two sources found the workflow-vs-agent ladder,
+  voting-vs-sectioning, tool-surface (ACI) design, scoped tool access,
+  server-side context injection, layer-attribution diagnosis, and the
+  anti-framework stance absent, with the correlated-lens hazard present but
+  voting unnamed. The reference adds the missing method without restating what
+  the "Right-size, don't overengineer" banner and the Kirby Effect already
+  encode — those are sharpened, not duplicated.
+
 ## [5.6.0] - 2026-09-11
 
 ### Changed
