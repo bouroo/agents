@@ -50,7 +50,7 @@ Climb signals: three or more concurrent verification steps **and** branching dec
 
 ## Enter at the least-agency rung
 
-The four shapes say how a job's nodes connect; the **agency axis** says how much of that connection the model decides. Three rungs, least first: a **prompt or retrieval**, a **fixed workflow** (linear / staged, routes designed ahead of time), an **agent loop** (routes chosen at run time). Enter at the lowest rung that closes on evidence — an agent loop buys adaptability only where the path genuinely cannot be known in advance, and costs a decision it must re-make every turn. Build the smallest loop that closes end-to-end first, then add a control only on an observed failure (the Kirby Effect at harness level). Detail: [harness-design](references/harness-design.md).
+Three rungs, least first: a **prompt or retrieval**, a **fixed workflow** (linear / staged, routes designed ahead of time), an **agent loop** (routes chosen at run time). Enter at the lowest rung that closes on evidence — an agent loop buys adaptability only where the path genuinely cannot be known in advance, and costs a decision it must re-make every turn. Build the smallest loop that closes end-to-end first, then add a control only on an observed failure (the Kirby Effect at harness level). Full ladder, walking-skeleton build order, and the pattern catalogue: [harness-design](references/harness-design.md).
 
 ## Fan-out has two rationales
 
