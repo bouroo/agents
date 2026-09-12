@@ -1,0 +1,71 @@
+name: release
+
+# Publishes a GitHub Release for a pushed version tag.
+#
+#   v6.0.0          stable release   (prerelease: false)
+#   v6.0.0-beta.1   beta / RC        (prerelease: true)
+#   v6.0.0-rc.1     release candidate (prerelease: true)
+#
+# Only a tag with a prerelease suffix (anything containing a hyphen after the
+# version, e.g. -beta.1 / -rc.1) is marked prerelease; it is NOT "latest", so a
+# beta never displaces the stable download for consumers. Cutting the beta is
+# deliberately asymmetric with promoting it: this workflow publishes whatever
+# tag is pushed, and promoting a beta to stable is a new tag on the merge
+# commit, never a re-point of the tag already published.
+#
+# The body is read verbatim from CHANGELOG.md by scripts/release_notes.py, so
+# the published notes and the committed notes are the same bytes. A tag with no
+# matching CHANGELOG section fails the run rather than publishing an empty body.
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Re-run the gates on the tagged commit: a tag can be pushed at a commit
+      # that never passed a pull-request check, and a release pins that commit
+      # for every consumer.
+      - name: Verify gates on the tagged commit
+        run: python3 scripts/check.py --all
+
+      - name: Classify the tag (prerelease vs stable)
+        id: kind
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          case "$tag" in
+            *-*) echo "prerelease=true"  >> "$GITHUB_OUTPUT" ;;
+            *)   echo "prerelease=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Extract the release body from CHANGELOG.md
+        run: python3 scripts/release_notes.py --tag "$GITHUB_REF_NAME" > /tmp/body.md
+
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file /tmp/body.md \
+            --verify-tag \
+            --prerelease="${{ steps.kind.outputs.prerelease }}"

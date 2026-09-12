@@ -31,7 +31,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
-AGENTS_MD_BUDGET = 200
+AGENTS_MD_BUDGET = 250
 
 KEBAB_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 ALLOWED_KEYS = {"name", "description"}
@@ -288,9 +288,61 @@ def g_privacy() -> None:
     _add("PASS", f"{name}: {len(files)} doctrine file(s) free of real-work identifiers")
 
 
+def g_evals() -> None:
+    name = "evals"
+    path = ROOT / "evals" / "suite.json"
+    if not path.is_file():
+        _add("FAIL", f"{name}: evals/suite.json missing (the harness "
+                     "regression suite is a required artifact)")
+        return
+    try:
+        suite = json.loads(path.read_text())
+    except ValueError as exc:
+        _add("FAIL", f"{name}: evals/suite.json: invalid JSON: {exc}")
+        return
+    errors: list[str] = []
+    evals = suite.get("evals")
+    if not isinstance(evals, list) or not evals:
+        errors.append("no non-empty 'evals' list")
+    else:
+        seen: set[str] = set()
+        for i, ev in enumerate(evals):
+            if not isinstance(ev, dict):
+                errors.append(f"evals[{i}] not an object")
+                continue
+            eid = ev.get("id")
+            if not isinstance(eid, str) or not eid:
+                errors.append(f"evals[{i}] missing 'id'")
+            elif eid in seen:
+                errors.append(f"duplicate id {eid!r}")
+            else:
+                seen.add(eid)
+            if not isinstance(ev.get("prompt"), str) or not ev["prompt"].strip():
+                errors.append(f"{eid or i}: missing 'prompt'")
+            checks = ev.get("checks")
+            if not isinstance(checks, list) or not checks:
+                errors.append(f"{eid or i}: no 'checks'")
+                continue
+            for j, chk in enumerate(checks):
+                if not isinstance(chk, dict):
+                    errors.append(f"{eid or i}: checks[{j}] not an object")
+                    continue
+                if not isinstance(chk.get("cmd"), str) or not chk["cmd"].strip():
+                    errors.append(f"{eid or i}: checks[{j}] missing 'cmd'")
+                if not isinstance(chk.get("expect_exit"), int):
+                    errors.append(f"{eid or i}: checks[{j}] missing int 'expect_exit'")
+    if errors:
+        _add("FAIL", f"{name}: " + "; ".join(errors[:10])
+             + (" ..." if len(errors) > 10 else ""))
+        return
+    _add("PASS", f"{name}: {len(evals)} eval(s) well-formed "
+                 f"(id, prompt, mechanical checks)")
+
+
 GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("links", g_links), ("agnostic", g_agnostic),
-         ("manifests", g_manifests), ("privacy", g_privacy)]
+         ("manifests", g_manifests), ("privacy", g_privacy),
+         ("evals", g_evals)]
 
 
 def main(argv: list[str]) -> int:

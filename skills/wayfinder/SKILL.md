@@ -11,7 +11,7 @@ The destination varies per effort, and naming it is the first act of charting be
 
 ## Plan, don't do
 
-Wayfinder is **planning** by default: each ticket resolves a decision, and the map is done when the way is clear. The urge to just do the work is usually the signal you have reached the edge of the map and it is time to hand off. An effort can override this in its **Notes**, carrying execution into the map itself; absent that, produce decisions, not deliverables. A destination of "decisions locked before build planning starts" hands its decisions to [plan-authoring](../plan-authoring/SKILL.md): the PLAN.md pattern is the default build-spec shape the map graduates into.
+Wayfinder is **planning** by default: each ticket resolves a decision, and the map is done when the way is clear. The urge to just do the work is usually the signal you have reached the edge of the map and it is time to hand off. An effort can override this in its **Notes**, carrying execution into the map itself; absent that, produce decisions, not deliverables. A destination of "decisions locked before build planning starts" hands its decisions to [artifacts](../artifacts/SKILL.md): the `intent` / `spec` / `PLAN.md` shapes are the default build-spec the map graduates into.
 
 ## Refer by name
 

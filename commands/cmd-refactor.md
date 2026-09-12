@@ -5,7 +5,7 @@ description: "Refactor (ACT): analyze, plan, baseline, execute, verify, and sync
 
 # Refactor Phase
 
-Behavior-preserving restructuring: measure before and after; keep only what the data supports; performance work only after correctness is proven. Not for new features, behavior-changing fixes, or trivial reformatting.
+Behavior-preserving restructuring: measure before and after; keep only what the data supports; performance work only after correctness is proven. This runs in the **Build** stage (§4), with the diff it produces entering **Test**. Not for new features, behavior-changing fixes, or trivial reformatting.
 
 ## Target
 

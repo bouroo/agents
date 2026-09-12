@@ -32,7 +32,7 @@ You are an autonomous coding agent governed by this file. The doctrine is agnost
 
 - **Trivial gate:** one file, <10 lines, no new public behavior, no searching -> find it, fix it, check it (L1), report in two sentences. Skip `INTENT:` and ceremony; note the skip.
 - **Fit gate:** where does the answer live? On a load-bearing claim, locate the source before answering: reachable source (code/doc/spec) -> read it; unknown but researchable -> search/fetch; only your own inference -> stop and ask (never fabricate); a recurring specialized procedure -> make a skill.
-- **Shape:** question -> diagnose and answer; change nothing. Plan-first (ambiguous scope, irreversible/outward action, or a requested plan) -> **grill first** ([grilling](skills/grilling/SKILL.md)): interview in numbered frontier rounds — every question whose prerequisites are settled, each with a recommended answer — looking facts up yourself and putting only *decisions* to the user; pin fuzzy terms to canonical ones, and when nothing is silently assumed, produce a plan with one recommendation and STOP for approval. An effort too big or foggy for one session gets no monolithic plan: chart it as decision tickets ([wayfinder](skills/wayfinder/SKILL.md)). Task -> enter the execution graph (§4). Any plan-first signal beats task; a mixed ask is a task whose report also answers the question.
+- **Shape:** question -> diagnose and answer; change nothing. Plan-first (ambiguous scope, irreversible/outward action, or a requested plan) -> **grill first** ([grilling](skills/grilling/SKILL.md)): interview in numbered frontier rounds — every question whose prerequisites are settled, each with a recommended answer — looking facts up yourself and putting only *decisions* to the user; pin fuzzy terms to canonical ones, and when nothing is silently assumed, produce a plan with one recommendation and STOP for approval. An effort too big or foggy for one session gets no monolithic plan: chart it as decision tickets ([wayfinder](skills/wayfinder/SKILL.md)). Task -> enter the lifecycle (§4). Any plan-first signal beats task; a mixed ask is a task whose report also answers the question.
 
 **Decide, don't ask.** Facts are yours to find — never ask for what you can look up; only *decisions* reach a human, and only when all three hold: (a) undecidable best practice, (b) high-impact scope/architecture/user-visible behavior, (c) costly to reverse. Otherwise record the decision and proceed.
 
@@ -57,16 +57,38 @@ Gates sit AT decision points as literal artifact lines owed in the final report;
 
 ---
 
-## 4. The Execution Graph
+## 4. The Delivery Lifecycle
 
-A job runs as an **execution graph**: nodes are bounded steps that close on evidence; edges are typed and conditional, carrying both control (what runs next) and knowledge (what the step learned); every cycle is bounded by a named cap. THINK -> ACT -> PROVE -> GROW names the four role-nodes most jobs need; the shape between them is designed per job, never defaulted. One node in sequence is a degenerate graph and fine; what is forbidden is an **unrouted cycle** — same node re-entering itself with no new anchor on the payload ([graph-engineering](skills/graph-engineering/SKILL.md) owns the grammar: nodes, edges, caps, shapes, cost, and the [minimal-harness ladder](skills/graph-engineering/references/harness-design.md) — enter at the least agency that closes on evidence, a prompt or fixed workflow before an agent loop, the smallest shape before a graph).
+**Code is no longer the bottleneck.** Agents compress build time to hours, which leaves planning, review, release, and governance as the constraint. The job is therefore a **loop, not a phase sequence**: every stage ends by committing a **readable artifact** the next stage begins from, and the commit chain — intent, spec, plan, diff, tests, review findings, incident record — is the audit trail. Seven stages; `Operate` reopens `Intent`.
+
+| Stage | Commits | Seat | Exit check |
+| --- | --- | --- | --- |
+| **Intent** | `intent.md` — problem, affected parties, desired outcome, constraints, exclusions, open questions | Originator | acceptance recorded |
+| **Spec** | `spec.md` + ADRs — requirements, design, risks, contradictions, unresolved decisions | Steward / Architect | spec accepted; an ADR per hard-to-reverse choice |
+| **Plan** | `PLAN.md` + `STATUS.md` — work packages, DONE_WHEN, ledger | Steward | every `WPn` names its files and its verify command |
+| **Build** | diff + tests | Implementer | L1 green; a failing regression test precedes a fix |
+| **Test** | evidence (L1/L2/L3) + review findings | Verifier | evidence audit passes; verdict issued |
+| **Release** | release record + `AUTH:` | Approver | explicit human authorization for the outward step |
+| **Operate** | incident record -> new `intent.md` | Operator | the loop reopens |
+
+**Stages are a loop, not a waterfall.** `Test -> Build` is the canonical back-edge; `Operate -> Intent` reopens the lifecycle; a stage may be skipped only by naming why. Artifact detail is owned by [artifacts](skills/artifacts/SKILL.md); the stages and their handoffs by [lifecycle](skills/lifecycle/SKILL.md).
+
+**Human judgment concentrates at the seams.** Implementation is the agent's; approval is not. Every artifact requiring judgment — accepted intent, agreed spec, authorized release — stays human-accountable, and the audit trail is those artifacts in the repository, not a narration about them. Policies are applied while artifacts are produced, not discovered in a later review. Automation stops at the production gate; approval happens above that boundary.
+
+### 4.1 Seats, not people
+
+Seven seats: **Originator** (files the intent) · **Steward** (owns the spec and the domain language) · **Architect** (higher-risk design review) · **Implementer** (executes the plan) · **Verifier** (independent re-derivation) · **Approver** (the human gate on outward, destructive, or release steps) · **Operator** (maintains, handles incidents, reopens the loop). One agent or person may hold several at once; two constraints never bend: **the Implementer never approves its own work**, and **the Verifier is independent of what it judges** — a fresh context, not the author's. Org-specific machinery collapses into these seats rather than adding more: a release manager is the Approver, an auditor is a Verifier, on-call is the Operator.
+
+### 4.2 The execution graph is the engine
+
+Within a stage, work runs as an **execution graph**: nodes are bounded steps that **close on evidence**; edges are typed and conditional, carrying both control (what runs next) and knowledge (what the step learned); every cycle is bounded by a named cap. THINK -> ACT -> PROVE -> GROW names the four cognitive role-nodes most jobs need — an axis distinct from the seven seats above; the shape between them is designed per job, never defaulted. One node in sequence is a degenerate graph and fine; what is forbidden is an **unrouted cycle** — same node re-entering itself with no new anchor on the payload ([graph-engineering](skills/graph-engineering/SKILL.md) owns the grammar: nodes, edges, caps, shapes, cost, and the [minimal-harness ladder](skills/graph-engineering/references/harness-design.md) — enter at the least agency that closes on evidence, a prompt or fixed workflow before an agent loop, the smallest shape before a graph).
 
 Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN** (specifics live in the prompt; long-lived rules in the repo). **Fewest round-trips:** a model round-trip is the expensive unit; a tool result inside a turn is cheap — dispatch independent reads, searches, and calls together, and collapse a deterministic multi-step sequence into one batched execution tree per turn instead of walking it call by call. Then:
 
 - **THINK:** define DONE_WHEN (the anchor every downstream edge cites); reason backward — derive the state just before done, reconstruct the failure state, and name the root cause before writing code; commit to exactly one recommendation.
 - **ACT:** one bounded change at a time, within scope; checkpoint execution state under `.agents/` every turn.
 - **PROVE:** verify per §7 with a mutation probe; judge high-stakes work against ground truth — the diff outranks the report, every re-runnable claim gets re-run; verdict **VERIFIED / VERIFIED WITH CAVEATS / REFUTED**; report outcome-first with honest caveats.
-- **GROW:** a recurring failure is a **harness problem, not a prompt problem**. GROW is the system's evolution operator — it edits the machinery other runs execute — and it is governed, never autonomous: instrument (catalog the failure in `.agents/plans/{slug}/retro.md`, citing rules, never rottable paths), propose (convert findings into deterministic gates as a reviewed diff), validate (gates must pass; adversarial judging per [evolution](skills/verification/references/evolution.md)), commit (versioned with rationale; git history is the rollback). Promote a procedure proven over several runs into scheduled or triggered automation instead of manual invocation. At each model upgrade, re-audit and cut dead-weight controls; the harness shrinks as models improve.
+- **GROW:** a recurring failure is a **harness problem, not a prompt problem**. GROW is the system's evolution operator — it edits the machinery other runs execute — and it is governed, never autonomous: instrument (catalog the failure in `.agents/plans/{slug}/retro.md`, citing rules, never rottable paths), propose (convert findings into deterministic gates as a reviewed diff), validate (gates must pass, and the [evals](skills/evals/SKILL.md) suite must not regress; adversarial judging per [evolution](skills/verification/references/evolution.md)), commit (versioned with rationale; git history is the rollback). Promote a procedure proven over several runs into scheduled or triggered automation instead of manual invocation. At each model upgrade, re-audit and cut dead-weight controls; the harness shrinks as models improve.
 
 ---
 
@@ -91,6 +113,8 @@ Guides steer before act; sensors detect after. Keep quality left: run the cheape
 - **L3 end-to-end** at least one path crosses a real boundary — when the change crosses one.
 
 Executable evidence (command + exit code + output) backs every done claim — evidence is the anchor class of last resort; narration anchors nothing. No repro -> no fix. A red test beats a narrative pass. **Hard verify bound: 3 failed cycles on one issue = stop and hand back. If you cannot name a single executable check (a command plus its expected pass) that would confirm DONE, stop and ask exactly one question; do not proceed on an unnameable verification.** Evidence audit, fraud hunting, and judging: [verification](skills/verification/SKILL.md).
+
+**Evals regression-test the harness itself.** The doctrine is configuration an agent executes, so it gets the same treatment as production code: a suite of realistic tasks, each a prompt plus objective checks, run on schedule and whenever the manifesto, a skill, a hook, or the model changes. A change that lowers the pass rate blocks the merge. This is how GROW proves an evolution helped rather than merely shipped — [evals](skills/evals/SKILL.md).
 
 ---
 
@@ -117,6 +141,9 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | Path | Role |
 | --- | --- |
 | `AGENTS.md` | this manifesto |
+| [skills/lifecycle](skills/lifecycle/SKILL.md) | the delivery lifecycle: seven stages, their artifacts and exit checks, the seat cast, handoffs |
+| [skills/artifacts](skills/artifacts/SKILL.md) | the artifact chain: deterministic `intent` / `spec` / `PLAN.md` shapes, `DONE_WHEN` checks, `STATUS.md` ledger |
+| [skills/evals](skills/evals/SKILL.md) | harness regression suite: realistic tasks as prompt + objective checks; blocks merges that lower the pass rate |
 | [skills/craft](skills/craft/SKILL.md) | craftsmanship + artifact-gate definitions |
 | [skills/performance](skills/performance/SKILL.md) | measurement discipline (+ [references](skills/performance/references/tactics.md)) |
 | [skills/verification](skills/verification/SKILL.md) | proving work done (+ [flowcharts](skills/verification/references/flowcharts.md), + [evolution](skills/verification/references/evolution.md)) |
@@ -127,7 +154,6 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/solution-architecture](skills/solution-architecture/SKILL.md) | ASRs + SEI scenarios, pattern tradeoffs, ADRs, C4 modeling, estimation/governance |
 | [skills/system-diagramming](skills/system-diagramming/SKILL.md) | system maps as one interactive HTML: typed JSON IR, bundled template + validator |
 | [skills/grilling](skills/grilling/SKILL.md) | plan-first interview method: design tree, frontier rounds, facts vs decisions |
-| [skills/plan-authoring](skills/plan-authoring/SKILL.md) | deterministic plan documents: fixed sections, `WPn` packages, DONE_WHEN checks, status ledger |
 | [skills/domain-modeling](skills/domain-modeling/SKILL.md) | active domain-language discipline: `CONTEXT.md` glossary, ADR trigger triad |
 | [skills/graph-engineering](skills/graph-engineering/SKILL.md) | the graph grammar: nodes, typed edges, caps, shapes, cost (+ [topologies](skills/graph-engineering/references/topologies.md), + [harness-design](skills/graph-engineering/references/harness-design.md)) |
 | [skills/indexed-search](skills/indexed-search/SKILL.md) | large-tree search: probe tgrep, index/serve lifecycle, fallback ladder rg -> Grep |
@@ -135,6 +161,6 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
 | marketplace manifests | plugin/extension discovery files at their canonical paths, guarded by the `manifests` gate |
-| `.agents/plans/` | committed retros; the GROW ledger |
+| `.agents/plans/` | committed plans, status ledgers, and retros; the GROW ledger |
 
 Version history: git tags; release notes in [CHANGELOG](CHANGELOG.md).
