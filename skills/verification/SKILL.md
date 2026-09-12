@@ -78,5 +78,5 @@ A recurring failure is a **harness problem, not a prompt problem**: prompt tweak
 - [flowcharts](references/flowcharts.md) the whole discipline as executable decision charts.
 - [evolution](references/evolution.md) the governed GROW cycle.
 - [craft](../craft/SKILL.md) the artifact gates this skill audits.
-- [plan-authoring](../plan-authoring/SKILL.md) plans carry the judgment contract: DONE_WHEN lists the checks a judge re-runs; the sibling STATUS.md ledger owes this skill's evidence standard.
+- [artifacts](../artifacts/SKILL.md) plans carry the judgment contract: DONE_WHEN lists the checks a judge re-runs; the sibling STATUS.md ledger owes this skill's evidence standard.
 - [performance](../performance/SKILL.md) measurement claims meet this evidence standard too.

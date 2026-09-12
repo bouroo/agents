@@ -5,7 +5,7 @@ description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API e
 
 # Document - Sync docs/ With Code
 
-Docs and code must agree; a stale doc is a bug. Bootstraps a `docs/` tree where none exists and keeps an existing one synchronized inside the execution graph (THINK -> ACT -> PROVE -> GROW). One well-written doc beats many shallow ones.
+Docs and code must agree; a stale doc is a bug. Bootstraps a `docs/` tree where none exists and keeps an existing one synchronized. Documentation is a **Spec**-stage artifact (§4) that tracks the code through Build and Test; run it as an execution graph inside that stage (§4.2). One well-written doc beats many shallow ones.
 
 ## Target
 

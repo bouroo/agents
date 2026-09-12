@@ -5,7 +5,7 @@ description: "The doctrine's execution-graph grammar: nodes, six execution edge 
 
 # Graph Engineering
 
-The grammar of §4's execution graph — the doctrine's canonical language for how a job runs. Hosts express graphs through different mechanisms (spawns, parallel workers, scripted pipelines); enabling them is host configuration, out of doctrine scope. This skill governs the shape: nodes, edges, caps, anchors, and the cost of each.
+The grammar of the execution graph (§4.2) — the doctrine's canonical language for how work is shaped *inside* a lifecycle stage. Hosts express graphs through different mechanisms (spawns, parallel workers, scripted pipelines); enabling them is host configuration, out of doctrine scope. This skill governs the shape: nodes, edges, caps, anchors, and the cost of each.
 
 > **Override.** A project-level orchestration spec that explicitly supersedes this skill wins.
 
@@ -43,7 +43,7 @@ Concurrency x complexity — enter at the smallest shape that works; climb only 
 
 | Complexity ↓ · Concurrency → | Low | High |
 | --- | --- | --- |
-| Simple | **linear** — THINK -> ACT -> PROVE, no branch | **fan-out** — independent jobs at once; within one turn this is §4 batching |
+| Simple | **linear** — THINK -> ACT -> PROVE, no branch | **fan-out** — independent jobs at once; within one turn this is §4.2 batching |
 | Complex | **staged** — the sequence with checkpoints between stages | **graph** — concurrent branches, conditional routing, designed back-edges |
 
 Climb signals: three or more concurrent verification steps **and** branching decision routing. Descend signals: sequential steps, same-file edits, heavy inter-step dependencies. Step down the moment the reason for the climb disappears.
@@ -103,6 +103,7 @@ Fan-out re-pays its token cost on every failed cycle, so it amortizes only when 
 ## Cross-references
 
 - [harness-design](references/harness-design.md) the minimal-harness ladder, the pattern catalogue mapped onto the grammar, voting vs. sectioning, and tool-surface (ACI) design.
+- [lifecycle](../lifecycle/SKILL.md) owns *which stage and what it commits*; this skill owns how work is shaped inside a stage. A stage contains one or more graphs — the two compose.
 - [teamwork](../teamwork/SKILL.md) owns the coordination graph: this skill decides topology (shapes, edges, gates); teamwork's ladder, ledger, and adversarial roles govern conduct at each node.
 - [verification](../verification/SKILL.md) owns the evidence standard at every node and the caps that bound every `RETURNS` edge; its [flowcharts](../verification/references/flowcharts.md) render the doctrine's own execution graph.
 - [wayfinder](../wayfinder/SKILL.md) the task graph persisted across sessions: when the graph outgrows one session, it becomes a map of decision tickets, not a longer diagram.

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "description": "Harness regression suite for bouroo/agents. Each eval is a realistic task the doctrine governs, plus objective checks a runner executes without reading a transcript. Run on any change to AGENTS.md, a SKILL.md, a command, check.py, or the pinned model; a regression blocks the merge. See skills/evals/SKILL.md.",
+  "evals": [
+    {
+      "id": "new-skill-keeps-frontmatter-valid",
+      "prompt": "Add a new skill under skills/ for a discipline the doctrine lacks. It must be discoverable by an Agent-Skills-compatible runtime.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py frontmatter",
+          "expect_exit": 0,
+          "description": "every skills/*/SKILL.md and commands/*.md carries valid, colon-safe name+description frontmatter"
+        }
+      ]
+    },
+    {
+      "id": "manifesto-edit-keeps-links-resolving",
+      "prompt": "Add a section to AGENTS.md that references a skill by relative link.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "every relative Markdown link in doctrine resolves to an existing file"
+        }
+      ]
+    },
+    {
+      "id": "new-skill-stays-host-agnostic",
+      "prompt": "Document a workflow that a specific agent host runs. The doctrine is agnostic of harnesses.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py agnostic",
+          "expect_exit": 0,
+          "description": "core doctrine is free of host-binding tokens (.claude, .cursor, CLAUDE.md, codex, qwen, ...)"
+        }
+      ]
+    },
+    {
+      "id": "manifesto-extension-respects-budget",
+      "prompt": "Extend the manifesto with a new rule.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py budget",
+          "expect_exit": 0,
+          "description": "AGENTS.md stays within its line budget (the concision charter)"
+        }
+      ]
+    },
+    {
+      "id": "doctrine-clean-of-real-work-identity",
+      "prompt": "Record an example drawn from a real engagement.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py privacy",
+          "expect_exit": 0,
+          "description": "doctrine is free of real-work identifiers (tiny links, page ids, private hosts)"
+        }
+      ]
+    }
+  ]
+}

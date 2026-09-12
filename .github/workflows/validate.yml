@@ -11,6 +11,8 @@ name: validate
 #   links        every relative Markdown link resolves
 #   agnostic     core doctrine free of host-binding tokens
 #   manifests    marketplace manifests parse; version fields agree
+#   privacy      doctrine free of real-work identifiers
+#   evals        the harness regression suite exists and is well-formed
 
 on:
   push:

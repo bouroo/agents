@@ -5,7 +5,7 @@ description: "Verify phase (PROVE): format, lint, type-check, scan, test, and ho
 
 # Verify Quality-Gate Pipeline
 
-Leave the working tree passing every quality gate. This is the automated layer of **PROVE**: gates enforce, prompts only request. One invocation runs every deterministic stage; judgment enters only on findings. This pipeline is a macro instance - run the stages as batched execution, not call by call.
+Leave the working tree passing every quality gate. This is the automated layer of **PROVE** in the **Test** stage (§4): gates enforce, prompts only request. One invocation runs every deterministic stage; judgment enters only on findings. This pipeline is a macro instance - run the stages as batched execution, not call by call.
 
 ## Scope
 

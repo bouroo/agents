@@ -8,6 +8,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.0.0-beta.1] - 2026-09-12
+
+First published form of the v6 lifecycle foundation. Tagged as a **beta**: the
+publish flows that ship the release are new this cycle and have not yet run
+end-to-end in CI, so the tag is marked prerelease and does not become the
+"latest" download for consumers until a stable tag is cut.
+
+### Added
+
+- **`scripts/release_notes.py`**: prints one version's CHANGELOG section
+  verbatim, so a release body is the committed bytes rather than a
+  paraphrase. Exits non-zero when a tag has no matching section, failing the
+  release instead of publishing an empty body.
+- **`.github/workflows/release.yml`**: on a pushed `v<major>.<minor>.<patch>`
+  tag, re-runs the gates on the tagged commit, extracts the release body, and
+  publishes the GitHub Release. A tag carrying a prerelease suffix (`-beta.1`,
+  `-rc.1`) is marked `prerelease: true` and never becomes "latest"; promoting a
+  beta to stable is a new tag on the merge commit, never a re-point of the tag
+  already published.
+- **`skills/lifecycle/`**: the doctrine's new spine — the AI-native delivery
+  lifecycle. Seven stages (intent, spec, plan, build, test, release, operate),
+  the artifact each commits, its exit check, and the seven **seats** that own
+  them (Originator, Steward, Architect, Implementer, Verifier, Approver,
+  Operator). The loop is explicitly non-linear: `Test -> Build` is the canonical
+  review back-edge and `Operate -> Intent` reopens the lifecycle. Two
+  constraints never bend however the seats collapse — the Implementer never
+  approves its own work, and the Verifier is independent of what it judges.
+  Org-specific roles collapse into the seven (release manager -> Approver,
+  auditor -> Verifier, on-call -> Operator). Distilled from Anthropic's
+  *AI-native SDLC playbook* as method; its org apparatus and host product
+  mechanisms are deliberately not adopted.
+- **`skills/evals/`** and **`evals/suite.json`**: continuous evals as a named
+  control — a harness regression suite of realistic tasks, each a prompt plus
+  objective checks, run on schedule and on any change to the manifesto, a
+  skill, a hook, or the pinned model. A change that lowers the pass rate blocks
+  the merge. Evals are how GROW proves an evolution helped rather than merely
+  shipped.
+- **`evals` gate** in `scripts/check.py`: validates that `evals/suite.json`
+  exists and every eval is well-formed (non-empty id, prompt, and mechanical
+  checks carrying a `cmd` and an `expect_exit`). The suite is now seven gates.
+
+### Changed
+
+- **`AGENTS.md`**: re-authored onto the lifecycle spine. §4 becomes **The
+  Delivery Lifecycle** (stage/artifact/seat/exit-check table, the loop's
+  back-edges, the seat cast, human judgment at the seams, evals as the
+  process regression control); the execution graph moves to §4.2 as the engine
+  that shapes work *inside* a stage. §7 gains the evals-regression rule; §11's
+  map lists the three new skills. Budget raised 200 -> 250 lines; the manifesto
+  is 166.
+- **`skills/plan-authoring` -> `skills/artifacts`**: generalized from one
+  artifact to the chain — deterministic `intent.md` and `spec.md` shapes added
+  alongside `PLAN.md` and its `STATUS.md` ledger, one artifact per lifecycle
+  stage. All live referrers updated (`AGENTS.md`, `README.md`, `grilling`,
+  `verification`, `wayfinder`); historical CHANGELOG entries are not rewritten.
+- **`skills/graph-engineering`**: reframed as the grammar of work *inside* a
+  stage, composing with the lifecycle rather than being the top level;
+  section references now point at §4.2.
+- **Commands** re-pointed at their stages: `cmd-verify` and `cmd-review` ->
+  Test, `cmd-refactor` -> Build, `cmd-document` -> Spec.
+- **`README.md`**: rewritten around the lifecycle foundation; skill tree,
+  execution-graph section, one-line doctrine, and the gate table updated.
+- Version fields bumped to 6.0.0 across the four versioned manifests, and each
+  manifest's skill list expanded from fourteen to sixteen.
+
+### Motivation
+
+- v5 answered *how one job runs* (the execution graph) but had no answer for
+  *where a job sits in the delivery loop, what artifact it commits, or who owns
+  an approval* — the foundation-level absence the SDLC playbook names. Its
+  thesis, that code stopped being the bottleneck once agents could write it
+  faster than humans could plan and ship around it, reorganizes the doctrine
+  around a non-linear artifact-driven loop with human judgment concentrated at
+  the approval seams. The other three researched sources (Bowne-Anderson's
+  harness article, the flowtivity graph-engineering guide, the z.ai devpack
+  best-practice page) were audited and found already distilled as of 5.7.0 or
+  carrying no adoptable delta; their material stays where it is.
+
 ## [5.7.0] - 2026-09-12
 
 ### Added

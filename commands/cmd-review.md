@@ -5,7 +5,7 @@ description: "Review phase (PROVE): review current code changes for correctness,
 
 # Review Code Changes
 
-A thorough, language-agnostic review of the current changes, reported by severity. Review trusts the author's evidence; adversarial re-running is the judge protocol's job ([verification](../skills/verification/SKILL.md)). Right-size: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences.
+A thorough, language-agnostic review of the current changes, reported by severity. This is the **Test** stage's review pass (§4), run by the Verifier seat — never the Implementer. Review trusts the author's evidence; adversarial re-running is the judge protocol's job ([verification](../skills/verification/SKILL.md)). Right-size: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences.
 
 Flag any owed artifact line the author skipped as SHOULD FIX: an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:` ([craft](../skills/craft/SKILL.md)). Full fraud hunting is out of scope here.
 

@@ -37,7 +37,7 @@ Finding _facts_ is your job, never the user's. When a frontier question needs a 
 
 ## Completion
 
-The interview is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Then produce the plan with one recommendation and **STOP** for approval — never act on the interview's outcome on your own authority (§2). Give that plan a deterministic body: [plan-authoring](../plan-authoring/SKILL.md) owns the PLAN.md pattern the approval produces.
+The interview is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Then produce the plan with one recommendation and **STOP** for approval — never act on the interview's outcome on your own authority (§2). Give that plan a deterministic body: [artifacts](../artifacts/SKILL.md) owns the `intent` / `spec` / `PLAN.md` shapes the approval produces.
 
 ## Common mistakes
 
