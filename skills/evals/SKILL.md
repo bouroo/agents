@@ -40,6 +40,16 @@ A change that lowers the pass rate **blocks the merge** until it is fixed or the
 
 Never let the agent that wrote the change write the check that judges it. Same independence rule as any verifier ([lifecycle](../lifecycle/SKILL.md)).
 
+## Running unattended
+
+A suite earns its keep when no human is reading the transcript — CI, a scheduled run, a batch of parallel invocations. Three conditions make that safe, and all three are the doctrine's own rules applied with nobody watching:
+
+- **The check gates the stop.** Unattended, "looks done" has no corrector, so the run must not end because the agent decided it was finished — it ends because the check passes. A check the agent only remembers to run fails open the moment attention drifts; wire it as a gate ([verification](../verification/SKILL.md), grip ladder).
+- **The tool surface is pre-scoped.** An unattended run is granted a narrow, declared set of tools before it starts, not asked to stay in bounds. Scope the surface to the task: less confusion, less misuse, less injection exposure ([harness-design](../graph-engineering/references/harness-design.md)).
+- **Authority still terminates in a human.** No amount of autonomy authorizes an outward or destructive step. A scheduled run ends local and emits `PENDING:`, exactly as an interactive one does — the `AUTH:` gate does not relax because nobody is present to be asked ([craft](../craft/SKILL.md)).
+
+Unattended operation is a *degree of attention*, never a degree of authority.
+
 ## Evals are how GROW proves itself
 
 GROW's whole cycle — instrument, propose, validate, commit — has one weak joint: *validate*. A new gate or a sharpened rule is a hypothesis that the harness will fail less often; the suite is where the hypothesis meets evidence. Run it before and after an evolution: a change that passes the gates and holds the suite is one you can commit with a rationale; one that regresses it is a change to revert, not to reconcile ([evolution](../verification/references/evolution.md)).
