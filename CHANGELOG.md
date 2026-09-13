@@ -8,6 +8,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.1.0] - 2026-09-14
+
+Harness hygiene: five load-bearing ideas the doctrine lacked, drawn from a gap
+analysis against Anthropic's Claude Code best-practices guide. Each folds into a
+skill that already owns the territory — no new skill, no new gate. The v6
+lifecycle's pending stable-`6.0.0` promotion is superseded by this release.
+
+### Added
+
+- **`skills/verification` — how hard a check grips the stop.** Four rungs, each
+  trading setup for attention: in-prompt iteration, a standing cross-turn
+  condition, a deterministic gate or hook, and an independent verifier. The
+  governing rule: *a check that must always run becomes a gate; a check that
+  only guides stays a sentence.* This is the minimal-harness ladder applied to
+  verification, and the reason the repository's own gates exist.
+- **`skills/craft` — instruction-file hygiene.** The prune test (*would removing
+  this line cause the agent to err?*), what to include versus what the agent can
+  read for itself, and two diagnostics: a rule that keeps being ignored means the
+  file is too long — cut, don't re-emphasize; a question the file already answers
+  means the phrasing is ambiguous.
+- **`skills/evals` — running unattended.** Three conditions for a run with no
+  human reading the transcript: the check gates the stop, the tool surface is
+  pre-scoped, and authority still terminates in a human. Autonomy is a degree of
+  attention, never a degree of authority.
+- **`commands/cmd-review`** and the `verification` failure table — the
+  over-reporting reviewer: a gap hunt always finds gaps, so chase only what
+  affects correctness or a stated requirement; the rest is optional.
+
+### Changed
+
+- **`AGENTS.md`** — four pointer clauses, no added lines (147/250 throughout):
+  §2 prefers an installed CLI to a hand-rolled API call; §4.2 hands the artifact
+  rather than describing it; §7 names the grip ladder; §8 adds the two-correction
+  reset and the compaction directive.
+
+### Motivation
+
+- Measured, not asserted: the doctrine held at **+26 lines** across five files,
+  with `AGENTS.md` flat because the new material is inline clauses rather than
+  new sections. `python3 scripts/check.py --all` → `OK (7 gate(s))`; the
+  `agnostic` gate was driven red on a host token and restored green; all five
+  eval checks were executed directly rather than merely validated.
+
 ## [6.0.0-beta.2] - 2026-09-12
 
 Second beta of the v6 lifecycle foundation: a context-reduction pass over the
