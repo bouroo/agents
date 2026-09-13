@@ -58,6 +58,8 @@ Move checks out of review into deterministic gates: formatter, then linter, then
 
 Same law for instructions: a project rule stated twice in prompts belongs in an instruction file — written as a **verifiable rule** (command, path, threshold: "run `pnpm test` after touching business logic", never "test well"), split into topic files loaded on demand rather than piled into globals, and kept out of machine-local, uncommitted notes.
 
+**The instruction file is loaded every session, so prune it like code.** Apply the test to each line: *would removing this cause the agent to err?* If not, cut it. Include what the agent cannot derive — build/test commands, style rules that differ from convention, repo etiquette, environment quirks, non-obvious gotchas. Exclude what it can read for itself — standard conventions, file-by-file maps, anything already true without the line. Two diagnostics: a rule that keeps being ignored means the file is **too long** and the rule is lost in noise (cut, don't re-emphasize); a question the agent keeps asking that the file answers means the **phrasing is ambiguous**, not that the rule is missing. Emphasize sparingly — if many lines shout, none stands out. A rule that must always hold belongs in a deterministic gate, not in prose ([verification](../verification/SKILL.md)).
+
 ## Cross-references
 
 - [verification](../verification/SKILL.md) mutation probe, evidence audit, judging the finished work.

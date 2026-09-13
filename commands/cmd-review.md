@@ -45,3 +45,5 @@ APPROVE | REQUEST CHANGES | BLOCKED - one-line justification
 ## Done =
 
 Every rubric row considered; every finding carries `[file:line]` and a resolution; exactly one verdict with justification. A finding without location or resolution makes the review incomplete.
+
+Reviewing is hunting gaps, and a hunt always finds some — a reviewer asked to look will report even when the work is sound. Chase only what affects **correctness or a stated requirement**; a NIT or SUGGESTION is optional by definition, and pursuing every one manufactures over-engineering — abstraction layers, defensive branches, tests for cases that cannot occur. Report the full list; treat only MUST FIX as blocking, and let a SHOULD FIX earn its place by naming the concrete harm.

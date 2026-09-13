@@ -29,6 +29,17 @@ Two traps: the **Average Answer Trap** runs hardest-job controls on every task (
 
 Guides steer before act, sensors detect after: run the cheapest check earliest; prefer computational sensors (deterministic, fast) over inferential ones (LLM judgment, costly). A red test beats a narrative pass; if review conflicts with a red test, the red test wins.
 
+## How hard a check grips the stop
+
+A check is worth what it can *prevent*, not what it can report. Four rungs of grip, each trading setup for attention — climb only as far as the job's risk earns:
+
+1. **In-prompt** — name the check and iterate inside the same turn. Works on any task today; relies on the agent remembering to run it.
+2. **Standing condition** — the check persists across turns, so it keeps gripping after the next unrelated message. Use when one turn is not the whole job.
+3. **Deterministic gate** — a script or hook runs the check and fails the turn; the machine, not the model, decides pass. Use when the check **must always** run.
+4. **Independent verifier** — a fresh context re-derives the result, so the author is not the grader. Use when the work is load-bearing and unattended.
+
+The governing rule: **a check that must always run becomes a gate; a check that only guides stays a sentence.** An instruction to remember a check is advisory and fails open; a gate fails closed. When a rule keeps being forgotten, the fix is to climb a rung, not to repeat the rule louder. Each rung costs more to build, so the ladder descends as readily as it climbs — a check no longer at risk is stepped back down ([graph-engineering](../graph-engineering/SKILL.md), least-agency rung).
+
 ## Executable evidence is the anchor
 
 Every done claim carries command (literal), exit code (explicit), and actual output (captured, not paraphrased) — on disk where it survives compaction. Evidence is the anchor class of last resort ([graph-engineering](../graph-engineering/SKILL.md)): the end of every `VERIFIES` chain, because it is the only node a later step cannot talk out of what it recorded. **Evidence audit**, five questions asked of any done claim:
@@ -72,6 +83,7 @@ A recurring failure is a **harness problem, not a prompt problem**: prompt tweak
 | Verification theater | "tests pass" without captured output | evidence audit + mutation probe |
 | Scope creep / spec betrayal | edits outside the ask; code against spec | `INTENT:` gate + anchor rank |
 | Recurring class (>= 2 units) | same failure shape repeats | halt; retro -> gate via the evolution cycle |
+| Over-reporting review | a gap-hunting reviewer lists NITs until real findings drown | chase correctness/requirement gaps only; the rest are optional |
 
 ## References
 
