@@ -8,6 +8,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.2.0] - 2026-09-15
+
+The intake gate: an agent now surfaces its **corrected reading** of an ask and
+waits for confirmation before acting on it. A restatement recites the ask; a
+correction states the reading the run will execute, filling in what the ask left
+implicit — vague scope, unstated constraints, missing `DONE_WHEN` — and a wrong
+correction silently steers everything downstream, costing more to undo than it
+costs to confirm.
+
+### Added
+
+- **`PROMPT:` — the fifth decision-point gate.** One concise English paragraph,
+  GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN (§4.2), owed at intake before the
+  first edit or command, joining `INTENT:` / `TWINS:` / `AUTH:` / `PENDING:` in
+  the `craft` gate definitions. Deliberately **corrective, not a restatement**:
+  the agent resolves the ask's implicit content, surfaces that reading, and
+  **stops for confirmation of the reading** before acting. The stop confirms a
+  reading, not a decision, so it does not reopen any lookupable fact and does not
+  collide with `Decide, don't ask`; a trivial ask is the only exemption.
+- **The unguessable correction is itself the question.** When the wording is
+  ambiguous or self-contradictory, a detail would be guessed rather than read, or
+  no one is present to answer, the correction is owed as one pointed question
+  carrying the recommended interpretation instead of an action taken on a guess.
+
+### Changed
+
+- **Every surface that enumerates the gate set** now carries `PROMPT:`: the
+  README one-line doctrine, `AGENTS.md` §2 (intake prose, the class-exit
+  condition, and the §3 gate block), `skills/craft` (canonical definition),
+  `skills/lifecycle` (stage-seam list), `skills/verification` (artifact-line
+  check), `commands/cmd-verify` (artifact-gate sweep), and the intake flowchart
+  in `skills/verification/references/flowcharts.md`, which now routes
+  *not trivial* → pin the corrected reading → confirm (cap: 2 rounds) → fit gate
+  rather than pinning before the trivial test. The confirmation loop is capped at
+  two rounds, so the gate cannot stall a run indefinitely.
+
+### Motivation
+
+- Measured across the change: **7 files, +18 / −10 lines**, +8 net, roughly 440
+  added words carried by the always-loaded manifesto and the on-demand docs. No
+  new skill, no new mechanism: the gate is a paragraph in files that already own
+  intake, plus one node in the existing flowchart. `AGENTS.md` holds at 150/250
+  lines, inside the budget gate.
+- `python3 scripts/check.py --all` → `OK (7 gate(s))`: budget, frontmatter,
+  links, agnostic, manifests, privacy, evals all pass on the released commit.
+
 ## [6.1.0] - 2026-09-14
 
 Harness hygiene: five load-bearing ideas the doctrine lacked, drawn from a gap
