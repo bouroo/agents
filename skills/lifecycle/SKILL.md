@@ -78,7 +78,7 @@ The lifecycle says *which stage and what it commits*; it does not say how a stag
 - [verification](../verification/SKILL.md) the evidence standard every stage exit owes.
 - [evals](../evals/SKILL.md) the harness regression suite that gates changes to the process itself.
 - [graph-engineering](../graph-engineering/SKILL.md) how work is shaped *inside* a stage.
-- [craft](../craft/SKILL.md) the artifact gates (`INTENT:` / `TWINS:` / `AUTH:` / `PENDING:`) that surface at stage seams.
+- [craft](../craft/SKILL.md) the artifact gates (`PROMPT:` / `INTENT:` / `TWINS:` / `AUTH:` / `PENDING:`) that surface at stage seams.
 - [wayfinder](../wayfinder/SKILL.md) when the effort outgrows one session, the lifecycle runs across a map of decision tickets.
 
 Distilled from Anthropic's *AI-native SDLC playbook* as method: the non-linear artifact-driven loop, the artifact chain as audit trail, human judgment at the approval seams, and evals as a standing regression control. The org-specific apparatus and host product mechanisms are deliberately not adopted; the seats are the collapsible, host-agnostic form.

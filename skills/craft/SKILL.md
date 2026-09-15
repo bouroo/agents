@@ -1,11 +1,11 @@
 ---
 name: craft
-description: "Language-agnostic software craftsmanship: the twelve commandments plus the full INTENT/TWINS/AUTH/PENDING gate definitions. Use when writing, reviewing, or refactoring code for clarity, safety, testability, or correctness."
+description: "Language-agnostic software craftsmanship: the twelve commandments plus the full PROMPT/INTENT/TWINS/AUTH/PENDING gate definitions. Use when writing, reviewing, or refactoring code for clarity, safety, testability, or correctness."
 ---
 
 # Craft
 
-Twelve commandments for high-quality language-agnostic code, and the canonical definitions of the four artifact gates. When style priorities collide, resolve them by the manifesto's §1 order — Correctness > Clarity > Simplicity > Concision > Maintainability > Consistency > Performance.
+Twelve commandments for high-quality language-agnostic code, and the canonical definitions of the five artifact gates. When style priorities collide, resolve them by the manifesto's §1 order — Correctness > Clarity > Simplicity > Concision > Maintainability > Consistency > Performance.
 
 > **Override.** A project-level style guide that explicitly supersedes this skill wins; project convention beats personal taste.
 
@@ -15,6 +15,7 @@ Twelve commandments for high-quality language-agnostic code, and the canonical d
 
 Gates are literal lines owed at decision points; they belong verbatim in the final report. If a run owed a gate, an absent line means the gate was not met.
 
+- **`PROMPT:` at intake, before the first edit or command:** `PROMPT: <one concise English paragraph — GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN>`. Pin the ask in English before working, **correctively, not as a restatement**: the paragraph states the reading you will execute, filling in what the ask left implicit — vague scope, unstated constraints, missing `DONE_WHEN`. Surface it and **STOP for confirmation of that corrected reading before the first edit or command**; acting on an unconfirmed correction is the failure this gate prevents. A correction you cannot write without guessing is owed instead as one pointed question carrying your recommended interpretation. The stop confirms the reading, not a decision, so it does not violate `Decide, don't ask`. Skip only for a trivial ask (one file, <10 lines, no new public behavior, no searching); note the skip.
 - **`INTENT:` before any behavior-changing edit:** `INTENT: code does <X>; the failing check expects <Y>; the spec says <Z>`. Fill all three slots by opening the artifacts: X = observed behavior of today's code (read it, run it if needed); Y = what the failing check actually expects (quote it); Z = what README/docstring/design doc/task demands (quote the clause). Worked case: endpoint returns insertion order, test `TestUserList_Alphabetical` fails, design doc says "sorted alphabetically by name" -> `INTENT: code does return users in insertion order; the failing test expects alphabetical order; the spec says "sorted alphabetically by name"`.
   - **When X, Y, Z disagree, the disagreement is the finding — do NOT edit.** Resolve by the anchor ordering (§0): user statement > spec > checks > code. Splits: code + spec agree, test wrong -> the *test* is the suspect; propose fixing it. Code + test agree, spec silent -> fill the gap; ask which behavior is intended. Test + spec agree, code wrong -> the normal fix; proceed, then emit `TWINS:`. The spec is the durable contract; a logic change revises the spec first, then the code; a refactor syncs both sides — never land one alone.
   - Skip only for pure typo/rename/format edits with no observable-behavior risk (return value, exit code, log line, side effect, ordering); note the skip.
