@@ -6,10 +6,13 @@
 
 ```mermaid
 flowchart TD
-    IN["Any incoming ask"] --> PIN["Pin the ask in concise English:<br/>restate as GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN<br/>and surface it as the PROMPT: line"]
-    PIN --> TRIV{"Trivial?<br/>one file, under 10 lines,<br/>no new behavior, no searching"}
+    IN["Any incoming ask"] --> TRIV{"Trivial?<br/>one file, under 10 lines,<br/>no new behavior, no searching"}
     TRIV -->|yes| DOIT["Do it, run the one obvious check (L1),<br/>report in two sentences"]
-    TRIV -->|no, or unsure| FIT{"Fit gate:<br/>where does the answer live?"}
+    TRIV -->|no, or unsure| PIN["Pin the ask in concise English — corrective, not a restatement:<br/>the reading you will execute as GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN,<br/>surfaced as the PROMPT: line"]
+    PIN --> CONF{"Corrected reading confirmed?<br/>(cap: 2 rounds)"}
+    CONF -->|"no — put it back as one question<br/>with your recommended interpretation"| WAIT["STOP. Wait for the answer"]
+    WAIT --> PIN
+    CONF -->|yes| FIT{"Fit gate:<br/>where does the answer live?"}
     FIT -->|"reachable source<br/>(code, doc, spec)"| SHAPE{"What shape is the ask?"}
     FIT -->|unknown but researchable| SRCH["Search / fetch the source,<br/>then classify"]
     FIT -->|"own inference only,<br/>on a load-bearing claim"| STOPASK["STOP. Ask exactly one pointed question,<br/>stating your recommended interpretation.<br/>Then wait"]
