@@ -6,7 +6,8 @@
 
 ```mermaid
 flowchart TD
-    IN["Any incoming ask"] --> TRIV{"Trivial?<br/>one file, under 10 lines,<br/>no new behavior, no searching"}
+    IN["Any incoming ask"] --> PIN["Pin the ask in concise English:<br/>restate as GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN<br/>and surface it as the PROMPT: line"]
+    PIN --> TRIV{"Trivial?<br/>one file, under 10 lines,<br/>no new behavior, no searching"}
     TRIV -->|yes| DOIT["Do it, run the one obvious check (L1),<br/>report in two sentences"]
     TRIV -->|no, or unsure| FIT{"Fit gate:<br/>where does the answer live?"}
     FIT -->|"reachable source<br/>(code, doc, spec)"| SHAPE{"What shape is the ask?"}
@@ -108,4 +109,4 @@ flowchart TD
 ## Cross-references
 
 - [verification](../SKILL.md) the loop in prose; the dial that decides how far these charts run on a given job.
-- [craft](../../craft/SKILL.md) the artifact gates (`INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`).
+- [craft](../../craft/SKILL.md) the artifact gates (`PROMPT:`, `INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`).

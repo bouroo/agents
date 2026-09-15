@@ -28,4 +28,4 @@ All six stages pass with command + exit code + actual output captured (a narrate
 
 **Abort/BLOCKED:** any stage still failing after three iterations; any security finding above threshold.
 
-Before reporting, run the artifact-gate sweep and add every owed `INTENT:`/`TWINS:`/`AUTH:`/`PENDING:` line ([craft](../skills/craft/SKILL.md)); delete scratch artifacts.
+Before reporting, run the artifact-gate sweep and add every owed `PROMPT:`/`INTENT:`/`TWINS:`/`AUTH:`/`PENDING:` line ([craft](../skills/craft/SKILL.md)); delete scratch artifacts.
