@@ -143,6 +143,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/domain-modeling](skills/domain-modeling/SKILL.md) | active domain-language discipline: `CONTEXT.md` glossary, ADR trigger triad |
 | [skills/graph-engineering](skills/graph-engineering/SKILL.md) | the graph grammar: nodes, typed edges, caps, shapes, cost (+ [topologies](skills/graph-engineering/references/topologies.md), + [harness-design](skills/graph-engineering/references/harness-design.md)) |
 | [skills/indexed-search](skills/indexed-search/SKILL.md) | large-tree search: probe tgrep, index/serve lifecycle, fallback ladder rg -> Grep |
+| [skills/security-audit](skills/security-audit/SKILL.md) | the candidate gate, calibrated severity, `needs_validation` discipline (+ [attack classes](skills/security-audit/references/attack-classes.md)) |
 | [commands/](commands/) | routine task workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |

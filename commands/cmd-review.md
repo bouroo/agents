@@ -18,7 +18,7 @@ Consider every row in one read pass over the diff plus touched neighbors:
 - **Correctness & spec parity** — does it do what it claims and match DONE_WHEN? Off-by-one, wrong edge/null handling, races, leaks.
 - **Safety & error handling** — every error checked and propagated with context; none swallowed; no branching on error strings.
 - **Tests** — happy, error, and boundary paths; assert behavior, not implementation details.
-- **Security** — input validation, authorization, no logged or committed secrets, dependency sanity.
+- **Security** — input validation, authorization, no logged or committed secrets, dependency sanity. A suspected boundary violation goes to the [security-audit](../skills/security-audit/SKILL.md) candidate gate; this pass does not run that hunt.
 - **Performance** — flag only with measurement or a clear algorithmic concern; never micro-optimize in review.
 - **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention. Comments earn their place by stating a non-derivable *why*: flag restatement, change narration, and doc blocks longer than the code they document ([craft](../skills/craft/SKILL.md) comments).
 - **Simplicity** — the least mechanism that works. Flag abstraction with one caller, dead configurability, forwarding wrappers, and dependencies for what the stdlib does; name the cost each imposes ([craft](../skills/craft/SKILL.md) simplicity). A finding with no nameable cost is taste, not a defect. Never trade a needed error path or a clarifying name for a smaller diff.

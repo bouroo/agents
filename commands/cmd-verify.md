@@ -18,7 +18,7 @@ Run each stage in order; on a finding apply the narrowest safe auto-fix at the *
 1. **Format** — project formatter; fail if files would change after auto-fix.
 2. **Lint** — warnings-as-errors; auto-fix where supported; include the doc-convention linter if configured, else note its absence.
 3. **Type-check** — strict; no auto-fix (issues go to review).
-4. **Scan** — secrets / SAST / vulnerabilities above threshold fail; **never auto-fix a security finding** — report and escalate.
+4. **Scan** — secrets / SAST / vulnerabilities above threshold fail; **never auto-fix a security finding** — report and escalate. A scanner hit is a lead, not a finding: confirming or dismissing it is a [security-audit](../skills/security-audit/SKILL.md) judgment, not a gate stage.
 5. **Test** — the full suite; a green suite is a signal, not proof, so grade high-stakes changes with a **mutation probe** (flip a semantic defect, require FAIL, revert).
 6. **Hook gate** — the repo's own verify script(s) (pre-commit/pre-push hooks, `scripts/verify.*`, package-script equivalents) must exit 0; note the absence if none exists.
 
