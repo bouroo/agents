@@ -14,6 +14,9 @@ Static gates over docs/skills plus the distribution layer:
                     (manifesto clause + skills/craft), so neither can lose it
     simplicity      the simplicity rule survives on both canonical surfaces
                     (manifesto clause + skills/craft), so neither can lose it
+    modernize       every modernize-coding adapter is present and version-pinned;
+                    Go and Java claims match their toolchain's own local record
+                    (GOROOT/api, JDK src.zip @since) of when each feature landed
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -31,6 +34,8 @@ import argparse
 import json
 import pathlib
 import re
+import shutil
+import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -334,6 +339,356 @@ def g_privacy() -> None:
     _add("PASS", f"{name}: {len(files)} doctrine file(s) free of real-work identifiers")
 
 
+# Every adapter's version table is a set of claims about a toolchain, and a wrong
+# one is a code-generation defect: told `maps.Copy` needs 1.23, an agent on a
+# `go 1.21` module hand-writes the legacy loop the whole skill exists to retire.
+# So pin each claim against a local, authoritative, regenerable anchor -- Go's
+# GOROOT/api, Java's JDK src.zip @since -- rather than trusting the prose. Where
+# no local anchor exists (the ecosystem publishes only web docs), assert the
+# claim is PINNED to a version still, so a rewrite silently losing its version
+# cell fails rather than passing unnoticed. Scoped per adapter.
+MODERNIZE_DOC = "pkg.go.dev/golang.org/x/tools/go/analysis/passes/modernize"
+
+# Go: (file, row token, GOROOT/api line prefix, claimed version). Every table row
+# whose feature is a stdlib symbol is covered; rows whose feature is a language
+# change (any, min/max, loopvar, range-over-int, omitzero, new(expr)) or has no
+# machine-readable record (unsafe, //go:build) are not anchorable here and are
+# deliberately absent rather than faked.
+GO_CLAIMS = [
+    ("guide.md", "wg.Go(", "pkg sync, method (*WaitGroup) Go(", "1.25"),
+    ("guide.md", "min(a, b)", None, "1.21"),
+    ("guide.md", "slices.Contains", "pkg slices, func Contains[", "1.21"),
+    ("guide.md", "slices.Sort", "pkg slices, func Sort[", "1.21"),
+    ("guide.md", "fmt.Appendf", "pkg fmt, func Appendf(", "1.19"),
+    ("guide.md", "maps.Copy", "pkg maps, func Copy[", "1.21"),
+    ("guide.md", "slices.Backward", "pkg slices, func Backward[", "1.23"),
+    ("guide.md", "strings.SplitSeq", "pkg strings, func SplitSeq(", "1.24"),
+    ("guide.md", "t.Context", "pkg testing, method (*T) Context(", "1.24"),
+    ("guide.md", "errors.AsType", "pkg errors, func AsType[", "1.26"),
+    ("analyzers.md", "`stringscut`", "pkg strings, func Cut(", "1.18"),
+    ("analyzers.md", "`stringscutprefix`", "pkg strings, func CutPrefix(", "1.20"),
+    ("analyzers.md", "`fmtappendf`", "pkg fmt, func Appendf(", "1.19"),
+    ("analyzers.md", "`slicescontains`", "pkg slices, func Contains[", "1.21"),
+    ("analyzers.md", "`slicesclip`", "pkg slices, func Clip[", "1.21"),
+    ("analyzers.md", "`slicessort`", "pkg slices, func Sort[", "1.21"),
+    ("analyzers.md", "`atomictypes`", "pkg sync/atomic, type Int32", "1.19"),
+    ("analyzers.md", "`reflecttypefor`", "pkg reflect, func TypeFor[", "1.22"),
+    ("analyzers.md", "`mapsloop`", "pkg maps, func Copy[", "1.21"),
+    ("analyzers.md", "`slicesbackward`", "pkg slices, func Backward[", "1.23"),
+    ("analyzers.md", "`stringsseq`", "pkg strings, func SplitSeq(", "1.24"),
+    ("analyzers.md", "`testingcontext`", "pkg testing, method (*T) Context(", "1.24"),
+    ("analyzers.md", "`waitgroup`", "pkg sync, method (*WaitGroup) Go(", "1.25"),
+    ("analyzers.md", "`reflecttypeassert`", "pkg reflect, func TypeAssert[", "1.25"),
+    ("analyzers.md", "`errorsastype`", "pkg errors, func AsType[", "1.26"),
+    ("analyzers.md", "`stringsbuilder`", "pkg strings, type Builder", "1.10"),
+    ("analyzers.md", "`plusbuild`", None, "1.17"),
+]
+
+# Java: (zip path, declaration regex, claimed version). Anchored to the @since
+# javadoc tag in the JDK's own lib/src.zip -- Java's analog of GOROOT/api. The
+# tag is taken from the text BEFORE the matched declaration: a file's last
+# @since belongs to some later member, not the type (HttpClient.java's last tag
+# is 21 while the type is 11).
+JAVA_SRC = "skills/modernize-coding/references/java/guide.md"
+JAVA_CLAIMS = [
+    ("List.of(", "java.base/java/util/List.java", r"static\s+<E>\s+List<E>\s+of\(", "9"),
+    ("Set.of(", "java.base/java/util/Set.java", r"static\s+<E>\s+Set<E>\s+of\(", "9"),
+    ("Map.of(", "java.base/java/util/Map.java", r"static\s+<K,\s*V>\s+Map<K,\s*V>\s+of\(", "9"),
+    ("ifPresentOrElse", "java.base/java/util/Optional.java", r"public\s+void\s+ifPresentOrElse\(", "9"),
+    ("stream()", "java.base/java/util/Optional.java", r"public\s+Stream<T>\s+stream\(\)", "9"),
+    ("List.copyOf(", "java.base/java/util/List.java", r"static\s+<E>\s+List<E>\s+copyOf\(", "10"),
+    ("str.strip()", "java.base/java/lang/String.java", r"public\s+String\s+strip\(\)", "11"),
+    ("str.isBlank()", "java.base/java/lang/String.java", r"public\s+boolean\s+isBlank\(\)", "11"),
+    ("str.repeat(", "java.base/java/lang/String.java", r"public\s+String\s+repeat\(int", "11"),
+    ("str.lines()", "java.base/java/lang/String.java", r"public\s+Stream<String>\s+lines\(\)", "11"),
+    ("opt.isEmpty()", "java.base/java/util/Optional.java", r"public\s+boolean\s+isEmpty\(\)", "11"),
+    ("Files.readString(", "java.base/java/nio/file/Files.java", r"public\s+static\s+String\s+readString\(", "11"),
+    ("str.indent(", "java.base/java/lang/String.java", r"public\s+String\s+indent\(int", "12"),
+    ("Files.mismatch(", "java.base/java/nio/file/Files.java", r"public\s+static\s+long\s+mismatch\(", "12"),
+    ("Collectors.teeing", "java.base/java/util/stream/Collectors.java",
+     r"public\s+static\s+<T,\s*R1,\s*R2,\s*R>\s+Collector<T,\s*\?,\s*R>\s+teeing\(", "12"),
+    ("stream.toList()", "java.base/java/util/stream/Stream.java", r"default\s+List<T>\s+toList\(\)", "16"),
+    ("mapMulti", "java.base/java/util/stream/Stream.java", r"default\s+<R>\s+Stream<R>\s+mapMulti\(", "16"),
+    ("Thread.ofVirtual(", "java.base/java/lang/Thread.java", r"public\s+static\s+Builder\.OfVirtual\s+ofVirtual\(\)", "21"),
+    ("SequencedCollection", "java.base/java/util/SequencedCollection.java",
+     r"public\s+interface\s+SequencedCollection", "21"),
+    ("SequencedMap", "java.base/java/util/SequencedMap.java", r"public\s+interface\s+SequencedMap", "21"),
+    ("newVirtualThreadPerTaskExecutor", "java.base/java/util/concurrent/Executors.java",
+     r"public\s+static\s+ExecutorService\s+newVirtualThreadPerTaskExecutor\(\)", "21"),
+]
+
+# Adapters whose ecosystem publishes version facts only as web docs (no local
+# machine-readable index). Their tables cannot be cross-checked against a
+# toolchain record here, but their values ARE pinned, so a silent edit to a
+# version is still a gate failure. Each was doc-verified when written; see the
+# adapter's verify.md for how to re-derive them.
+UNANCHORED_ADAPTERS = {
+    "rust": "skills/modernize-coding/references/rust/guide.md",
+    "python": "skills/modernize-coding/references/python/guide.md",
+    "typescript": "skills/modernize-coding/references/typescript/guide.md",
+}
+
+# (adapter, row token, claimed version) for the unanchored adapters. Versions
+# come from the docs each verify.md cites: CPython library-reference "Added in
+# version" notes and the 3.9 whats-new (PEP 584/585/654); TC39's finished-
+# proposals publication years; Rust's edition guide and stable-edition report.
+UNANCHORED_CLAIMS = [
+    ("python", "list[...]", "3.9"),
+    ("python", "X \\| None", "3.10"),
+    ("python", "(PEP 695)", "3.12"),
+    ("python", "typing.override", "3.12"),
+    ("python", "typing.Self", "3.11"),
+    ("python", "str.removeprefix", "3.9"),
+    ("python", "except*", "3.11"),
+    ("python", "functools.cache", "3.9"),
+    ("python", "itertools.pairwise", "3.10"),
+    ("python", "itertools.batched", "3.12"),
+    ("python", "Path.walk", "3.12"),
+    ("python", "Path.is_relative_to", "3.9"),
+    ("python", "zoneinfo", "3.9"),
+    ("python", "graphlib.TopologicalSorter", "3.9"),
+    ("python", "tomllib", "3.11"),
+    ("python", "asyncio.TaskGroup", "3.11"),
+    ("rust", "impl Trait", "1.26"),
+    ("rust", "`try!(x)`", "2018"),
+    ("rust", "`extern crate foo;`", "2018"),
+    ("rust", "`dyn Trait` written as bare", "2021"),
+    ("typescript", "arrow function", "ES2015"),
+    ("typescript", "template literal", "ES2015"),
+    ("typescript", "object spread", "ES2018"),
+    ("typescript", "optional chaining `x?.y?.z`", "ES2020"),
+    ("typescript", "nullish coalescing `x ?? d`", "ES2020"),
+    ("typescript", "x ??=", "ES2021"),
+    ("typescript", "Object.hasOwn(o, k)", "ES2022"),
+    ("typescript", "arr.at(-1)", "ES2022"),
+    ("typescript", "findLast()", "ES2023"),
+    ("typescript", "toSorted()", "ES2023"),
+    ("typescript", "toReversed()", "ES2023"),
+    ("typescript", "arr.with(n, x)", "ES2023"),
+    ("typescript", "toSpliced()", "ES2023"),
+    ("typescript", "`#private` fields", "ES2022"),
+    ("typescript", "top-level `await`", "ES2022"),
+]
+# A version cell must name a release, an edition, or a named idiom lint. Accepts
+# bare releases ("1.70", "2021"), "+"-ranges ("1.70+"), ECMAScript editions
+# ("ES2020"), TS versions ("TS 4.9"), and the lint/idiom classes where an
+# ecosystem has no version number for the change at all. Anything else -- "new",
+# "always", a bare "modern" -- is not a claim the toolchain could be probed
+# against, and fails.
+VERSION_CELL_RE = re.compile(
+    r"\|\s*("
+    r"\d+(?:\.\d+)*\+?"          # 1.70, 1.70+, 3.9
+    r"|ES\d{4}|ESNext"           # ECMAScript editions
+    r"|TS \d+\.\d+"              # TypeScript versions
+    r"|Node \d+\+"               # runtime floors
+    r"|ecma\b.*"                 # "ecma2015" style
+    r"|clippy lint|pre-1\.0 idiom|tsconfig|WHATWG.*"
+    r")\s*\|\s*$",
+    re.IGNORECASE,
+)
+
+# (file, row token, GOROOT/api line prefix, claimed version). Every table row
+# whose feature is a stdlib symbol is covered; rows whose feature is a language
+# change (any, min/max, loopvar, range-over-int, omitzero, new(expr)) or has no
+# machine-readable record (unsafe, //go:build) are not anchorable here and are
+# deliberately absent rather than faked.
+SYMBOL_CLAIMS = [
+    ("guide.md", "wg.Go(", "pkg sync, method (*WaitGroup) Go(", "1.25"),
+    ("guide.md", "min(a, b)", None, "1.21"),
+    ("guide.md", "slices.Contains", "pkg slices, func Contains[", "1.21"),
+    ("guide.md", "slices.Sort", "pkg slices, func Sort[", "1.21"),
+    ("guide.md", "fmt.Appendf", "pkg fmt, func Appendf(", "1.19"),
+    ("guide.md", "maps.Copy", "pkg maps, func Copy[", "1.21"),
+    ("guide.md", "slices.Backward", "pkg slices, func Backward[", "1.23"),
+    ("guide.md", "strings.SplitSeq", "pkg strings, func SplitSeq(", "1.24"),
+    ("guide.md", "t.Context", "pkg testing, method (*T) Context(", "1.24"),
+    ("guide.md", "errors.AsType", "pkg errors, func AsType[", "1.26"),
+    ("analyzers.md", "`stringscut`", "pkg strings, func Cut(", "1.18"),
+    ("analyzers.md", "`stringscutprefix`", "pkg strings, func CutPrefix(", "1.20"),
+    ("analyzers.md", "`fmtappendf`", "pkg fmt, func Appendf(", "1.19"),
+    ("analyzers.md", "`slicescontains`", "pkg slices, func Contains[", "1.21"),
+    ("analyzers.md", "`slicesclip`", "pkg slices, func Clip[", "1.21"),
+    ("analyzers.md", "`slicessort`", "pkg slices, func Sort[", "1.21"),
+    ("analyzers.md", "`atomictypes`", "pkg sync/atomic, type Int32", "1.19"),
+    ("analyzers.md", "`reflecttypefor`", "pkg reflect, func TypeFor[", "1.22"),
+    ("analyzers.md", "`mapsloop`", "pkg maps, func Copy[", "1.21"),
+    ("analyzers.md", "`slicesbackward`", "pkg slices, func Backward[", "1.23"),
+    ("analyzers.md", "`stringsseq`", "pkg strings, func SplitSeq(", "1.24"),
+    ("analyzers.md", "`testingcontext`", "pkg testing, method (*T) Context(", "1.24"),
+    ("analyzers.md", "`waitgroup`", "pkg sync, method (*WaitGroup) Go(", "1.25"),
+    ("analyzers.md", "`reflecttypeassert`", "pkg reflect, func TypeAssert[", "1.25"),
+    ("analyzers.md", "`errorsastype`", "pkg errors, func AsType[", "1.26"),
+    ("analyzers.md", "`stringsbuilder`", "pkg strings, type Builder", "1.10"),
+    ("analyzers.md", "`plusbuild`", None, "1.17"),
+]
+
+
+def _api_versions() -> dict[str, int]:
+    """Map each GOROOT/api line to the minor Go version that introduced it."""
+    out: dict[str, int] = {}
+    goroot = subprocess.run(["go", "env", "GOROOT"], capture_output=True,
+                            text=True, check=True).stdout.strip()
+    numbered: list[tuple[int, pathlib.Path]] = []
+    for f in pathlib.Path(goroot, "api").glob("go1.*.txt"):
+        if m := re.search(r"go1\.(\d+)\.txt$", f.name):
+            numbered.append((int(m.group(1)), f))
+    for minor, f in sorted(numbered):
+        for line in f.read_text().splitlines():
+            out.setdefault(line, minor)
+    return out
+
+
+def _find_java_src_zip() -> str | None:
+    """Locate a JDK lib/src.zip: JAVA_HOME, macOS layouts, then Homebrew."""
+    import glob
+    import os
+    java_home = os.environ.get("JAVA_HOME", "")
+    candidates = ([os.path.join(java_home, "lib/src.zip")] if java_home else []) + \
+        glob.glob("/Library/Java/JavaVirtualMachines/*/Contents/Home/lib/src.zip") + \
+        glob.glob("/opt/homebrew/Cellar/openjdk*/*/libexec/openjdk.jdk/Contents/Home/lib/src.zip") + \
+        glob.glob("/usr/lib/jvm/*/lib/src.zip")
+    return next((c for c in candidates if os.path.isfile(c)), None)
+
+
+def _json_doc_present(rel_path: str, doc: str, problems: list[str]) -> str | None:
+    path = ROOT / rel_path
+    if not path.is_file():
+        problems.append(f"{rel_path} missing")
+        return None
+    text = path.read_text()
+    if doc not in text:
+        problems.append(f"{rel_path} no longer points at the live inventory ({doc})")
+    return text
+
+
+def _table_row_version(text: str, token: str) -> str | None:
+    """The trailing version cell of the first table row containing token."""
+    row = next((ln for ln in text.splitlines()
+                if token in ln and ln.lstrip().startswith("|")), None)
+    if row is None:
+        return None
+    m = re.search(r"\|\s*([^|]+?)\s*\|\s*$", row)
+    return m.group(1) if m else None
+
+
+def g_modernize() -> None:
+    name = "modernize"
+    problems: list[str] = []
+    verified = 0
+    asserted = 0
+
+    # --- Go: anchored to GOROOT/api ---
+    texts = {}
+    for label, rel in (("guide.md", "skills/modernize-coding/references/go/guide.md"),
+                       ("analyzers.md", "skills/modernize-coding/references/go/analyzers.md")):
+        t = _json_doc_present(rel, MODERNIZE_DOC, problems)
+        if t is not None:
+            texts[label] = t
+    try:
+        api = _api_versions() if shutil.which("go") else {}
+    except (OSError, subprocess.SubprocessError):
+        api = {}
+    for label, token, prefix, claimed in GO_CLAIMS:
+        if label not in texts:
+            continue
+        got = _table_row_version(texts[label], token)
+        if got is None:
+            problems.append(f"go/{label}: no version row for {token}")
+            continue
+        if got != claimed:
+            problems.append(f"go/{label}: {token} says {got!r}, gate expects {claimed}")
+            continue
+        if prefix and api:
+            actual = next((v for line, v in api.items() if line.startswith(prefix)), None)
+            if actual is None:
+                problems.append(f"go/{label}: {token} absent from GOROOT/api")
+            elif actual != int(claimed.split(".")[1]):
+                problems.append(f"go/{label}: {token} says {claimed}, "
+                                f"toolchain added it in go1.{actual}")
+            else:
+                verified += 1
+        else:
+            asserted += 1
+
+    # --- Java: anchored to JDK src.zip @since ---
+    java_text = _json_doc_present(JAVA_SRC, "src.zip", problems)
+    src_zip = _find_java_src_zip()
+    if java_text is not None:
+        # The declared table is checked against the JDK first, so an edit that
+        # corrupts guide.md is caught even on a host with no src.zip; the @since
+        # cross-check then proves the DECLARED version is the true one.
+        for token, _path, _pattern, claimed in JAVA_CLAIMS:
+            got = _table_row_version(java_text, token)
+            if got is None:
+                problems.append(f"java: no version row for {token}")
+            elif got != claimed:
+                problems.append(f"java: {token} says {got!r}, gate expects {claimed}")
+        if src_zip is None:
+            asserted += len(JAVA_CLAIMS)
+        else:
+            import zipfile
+            z = zipfile.ZipFile(src_zip)
+            names = set(z.namelist())
+            cache: dict[str, str] = {}
+            for token, path, pattern, claimed in JAVA_CLAIMS:
+                if path not in names:
+                    problems.append(f"java: {path} not in src.zip")
+                    continue
+                if path not in cache:
+                    cache[path] = z.read(path).decode("utf-8", "replace")
+                m = re.search(pattern, cache[path])
+                if not m:
+                    problems.append(f"java: declaration not found in {path}")
+                    continue
+                tags = re.findall(r"@since\s+([0-9.]+)", cache[path][:m.start()])
+                actual = tags[-1] if tags else "?"
+                if actual != claimed:
+                    problems.append(f"java: {token} ({path}) claims {claimed}, "
+                                    f"@since says {actual}")
+                else:
+                    verified += 1
+
+    # --- Unanchored adapters: every row pinned, and each listed claim exact ---
+    texts_by_lang: dict[str, str] = {}
+    for lang, rel in UNANCHORED_ADAPTERS.items():
+        path = ROOT / rel
+        if not path.is_file():
+            problems.append(f"{lang}: {rel} missing")
+            continue
+        texts_by_lang[lang] = path.read_text()
+        rows = [ln for ln in texts_by_lang[lang].splitlines()
+                if ln.lstrip().startswith("|") and ln.count("|") >= 3]
+        datarows = [ln for ln in rows if not set(ln) <= set("|-: ")]
+        pinned = sum(1 for ln in datarows if VERSION_CELL_RE.search(ln))
+        if pinned == 0:
+            problems.append(f"{lang}: {rel} has no version-pinned rows")
+        asserted += pinned
+    for lang, token, claimed in UNANCHORED_CLAIMS:
+        if lang not in texts_by_lang:
+            continue
+        got = _table_row_version(texts_by_lang[lang], token)
+        if got is None:
+            problems.append(f"{lang}: no version row for {token}")
+        elif got != claimed:
+            problems.append(f"{lang}: {token} says {got!r}, gate expects {claimed}")
+        else:
+            asserted += 1
+
+    if problems:
+        _add("FAIL", f"{name}: " + "; ".join(problems[:8])
+             + (" ..." if len(problems) > 8 else ""))
+        return
+    anchors = []
+    if shutil.which("go"):
+        anchors.append("GOROOT/api")
+    if src_zip:
+        anchors.append("JDK src.zip")
+    suffix = (f"{verified} cross-checked against {', '.join(anchors)}"
+              if anchors else "no local anchor available to cross-check")
+    _add("PASS", f"{name}: {len(UNANCHORED_ADAPTERS) + 2} adapter(s) present; "
+                 f"{asserted} claim(s) version-pinned, {suffix}")
+
+
 def g_evals() -> None:
     name = "evals"
     path = ROOT / "evals" / "suite.json"
@@ -389,7 +744,7 @@ GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("links", g_links), ("agnostic", g_agnostic),
          ("manifests", g_manifests), ("privacy", g_privacy),
          ("comments", g_comments), ("simplicity", g_simplicity),
-         ("evals", g_evals)]
+         ("modernize", g_modernize), ("evals", g_evals)]
 
 
 def main(argv: list[str]) -> int:

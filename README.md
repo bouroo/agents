@@ -55,7 +55,9 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 │   │                                  IR, bundled template + validator, no installs
 │   ├── confluence/                    operate Atlassian wikis via Rovo or
 │   │                                  mcp-atlassian MCP servers
-│   ├── go-modernize/                  modernize Go per go.mod's declared version
+│   ├── modernize-coding/              bring a project's code to current patterns
+│   │   └── references/                per-language adapters: go, java, rust,
+│   │                                  python, typescript
 │   └── indexed-search/                large-tree search: probe tgrep, index/serve
 │                                      lifecycle, fallback ladder rg -> Grep
 ├── commands/
@@ -67,7 +69,7 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── gemini-extension.json              extension discovery metadata
 └── scripts/
-    ├── check.py                       nine deterministic gates (CI runs these)
+    ├── check.py                       ten deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -116,9 +118,10 @@ python3 scripts/check.py --all
 | `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
 | `simplicity` | the simplicity rule survives on both canonical surfaces (manifesto + craft) |
+| `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `evals` | the harness regression suite exists and is well-formed |
 
-CI runs all nine on every push and pull request. Pushing a version tag additionally runs the [release workflow](#versioning).
+CI runs all ten on every push and pull request. Pushing a version tag additionally runs the [release workflow](#versioning).
 
 ## Versioning
 
