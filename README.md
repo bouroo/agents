@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, sixteen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, seventeen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## The foundation: the delivery lifecycle
 
@@ -58,8 +58,11 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 │   ├── modernize-coding/              bring a project's code to current patterns
 │   │   └── references/                per-language adapters: go, java, rust,
 │   │                                  python, typescript
-│   └── indexed-search/                large-tree search: probe tgrep, index/serve
-│                                      lifecycle, fallback ladder rg -> Grep
+│   ├── indexed-search/                large-tree search: probe tgrep, index/serve
+│   │                                  lifecycle, fallback ladder rg -> Grep
+│   └── security-audit/                the candidate gate, calibrated severity,
+│       └── references/                needs_validation discipline; attack-class
+│                                      coverage and per-domain hunter rules
 ├── commands/
 │   ├── cmd-verify.md                  Test: quality-gate pipeline with fix/re-verify
 │   ├── cmd-review.md                  Test: severity-grouped review with one verdict

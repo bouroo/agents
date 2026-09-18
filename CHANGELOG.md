@@ -8,6 +8,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.4.0-beta.3] - 2026-09-18
+
+The doctrine had no security discipline of its own. `cmd-review`'s Security row
+was one line — input validation, authorization, no logged secrets, dependency
+sanity — and `cmd-verify`'s Scan stage said never to auto-fix a security finding
+without saying what one *is*. The missing piece was not detection; it was the
+test that separates a real boundary violation from a best-practice deviation. A
+review without that test produces a list of "add a rate limit" and "consider
+rotating keys", which costs an owner more to triage than it is worth, and buries
+the one real defect underneath it.
+
+`skills/security-audit` is that test. Its load-bearing rule is the **candidate
+gate**: a finding must name the lower-trust principal, the input or action it
+controls, the intended control, the boundary crossed, the affected principal or
+resource, and the concrete result — all six, or it is not a finding. This is the
+manifesto's §0 anchor discipline aimed at security: the chain has to terminate
+in a real victim and a real effect rather than in a missing practice, a guessed
+deployment, or self-impact.
+
+Two structural borrows. A **`needs_validation`** state, distinct from confirmed
+and from rejected, carrying one exact missing fact — a proxy, identity provider,
+or deployment behavior absent from the repository — and explicitly **no
+severity**, because a blocked hypothesis is not a low-confidence finding. And
+**coverage units** of entry surface × boundary × attack class rather than files,
+with `references/attack-classes.md` carrying the classes and per-domain hunter
+rules. Severity is calibrated to demonstrated impact, with the discriminator
+made explicit: does the result fully defeat an explicit control, or only weaken
+it?
+
+**What was deliberately not ported.** The source skill enforces its execution
+safety with an OS sandbox, a descriptor-based artifact-promotion ladder, and a
+budget ledger — machinery that is correct where an agent runs hostile target
+code and is unpayable here, where the audit reads a repository that is already
+the user's own. The skill states the gap rather than inheriting the promise:
+here the execution boundary rests on the `AUTH:` gate and §10, and it says so.
+The audit is read-only and describes fixes; it does not edit the target.
+
+### Added
+
+- **`skills/security-audit`** — a 76-line skill plus a 96-line attack-class
+  reference, loading [craft](skills/craft/SKILL.md), [verification](skills/
+  verification/SKILL.md), [teamwork](skills/teamwork/SKILL.md), and the
+  lifecycle rather than restating them. Guidance is the default mode: a security
+  question, a focused review, or triage of a reported finding writes no files.
+  The full audit workflow — and a `REPORT.md` — runs only on explicit request.
+- **Skill count 16 → 17** across all five manifest descriptions and their three
+  skill arrays, plus the README tree and the manifesto's §11 repository map.
+
+### Fixed
+
+- **The `modernize` gate no longer fails on an older toolchain** (`668cc3f`,
+  carried into this release). Its first CI run failed because GitHub's runners
+  ship older Go and JDK than a developer machine: their `GOROOT/api` has no
+  record of a symbol added after it, and the gate read that absence as a false
+  claim. An older toolchain having no record of a later feature is evidence that
+  host cannot judge it, not that the claim is wrong — and a gate that is red on
+  CI only is the worst place to discover a verdict that cannot be trusted.
+  Claims above the detected toolchain are now counted and reported as not
+  judgeable on that host, while every claim the host *can* judge is still
+  verified and a wrong one still fails.
+
 ## [6.4.0-beta.2] - 2026-09-18
 
 Modernization stops being a language fact and becomes a project fact. Users
