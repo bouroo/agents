@@ -29,7 +29,7 @@ Gates are literal lines owed at decision points; they belong verbatim in the fin
 
 1. **Separate orchestration from core logic.** Reusable packages with clean APIs; the entry point only parses input, handles errors, cleans up. Return data, not printouts; return errors, never crash the process.
 2. **Test everything.** Names read as behavior sentences; cover happy, error, edge; integration tests cross real boundaries. Tests are design feedback: a painful test is a symptom of bad API shape — fix the API.
-3. **Code for reading.** Name length scales with scope; drop type-like words (`users` over `userList`). Hide paperwork (`buildRequest`, `parseResponse`) in well-named helpers. Default is no comment; add one only when naming is exhausted and it states a non-derivable *why*. Doc comments on exported symbols follow the language's official convention.
+3. **Code for reading.** Name length scales with scope; drop type-like words (`users` over `userList`). Hide paperwork (`buildRequest`, `parseResponse`) in well-named helpers. Default is no comment; add one only when naming is exhausted and it states a non-derivable *why*. Doc comments on exported symbols follow the language's official convention. See [Comments](#comments).
 4. **Safe by default.** Make invalid states unrepresentable: validating constructors that refuse bad input at construction; named constants over magic values; least privilege; rules encoded in types/validators, never in caller discipline.
 5. **Wrap errors, preserve the causality chain.** Typed/sentinel errors wrapped with context so cause survives handling; never flatten to strings, never inspect error text, never discard silently.
 6. **No mutable globals.** Inject dependencies explicitly; shared state behind a single owner or synchronization. Global reachability makes control flow untraceable and concurrency unsafe.
@@ -39,6 +39,21 @@ Gates are literal lines owed at decision points; they belong verbatim in the fin
 10. **Log actionable information only.** Structured fields, never secrets. Match tool to purpose: logs = actionable errors, traces = request flows, metrics = statistics. Log-spam buries signal.
 11. **Ship a walking skeleton first.** End-to-end "shameless green" through the real path validates the design before refinement invests in details that may be wrong.
 12. **Refactor while context is fresh.** Invest ~10% right after building: names, duplication, dead branches. Maintenance outlasts writing; context decays fast.
+
+## Comments
+
+Default is **no comment**. One earns its place only by stating a non-derivable *why* — a rationale, an invariant, an external constraint, a trap the code cannot express.
+
+Named noise, each deleted on sight:
+
+- **Restates the code or the signature** — `// increment i`, `// returns the user`.
+- **Narrates the change** — `// added null check`, `// fix for the timeout bug`; git records that, and the code records the result.
+- **Banners inside a function** short enough to read whole — `// --- validation ---` in a five-line function is a table of contents for one page.
+- **A doc block longer than the code it documents** — the failure mode is a paragraph of prose on a two-line helper.
+
+**Language conventions set the form, the code's complexity sets the length.** Doc comments on exported symbols follow the language's own convention — GoDoc, TSDoc, PEP 257, rustdoc, Javadoc — at that convention's **minimum**: a one-line function gets a one-line doc. Elaborate only where behavior is genuinely non-obvious, never to satisfy a shape.
+
+**Pre-emit test:** re-read every comment you wrote. If a correct refactor would make it wrong, it was noise — delete it.
 
 ## Common mistakes
 
@@ -52,6 +67,8 @@ Gates are literal lines owed at decision points; they belong verbatim in the fin
 | `else` after a terminating `if` | Drop it; keep the happy path unindented |
 | 5+ params | Group into a struct/options object |
 | Comment restates code | Delete it |
+| Comment narrates the change | Delete it; git records the change |
+| Doc block longer than its function | Cut to one line, or delete |
 
 ## Enforce with tooling (GROW)
 

@@ -12,6 +12,7 @@ name: validate
 #   agnostic     core doctrine free of host-binding tokens
 #   manifests    marketplace manifests parse; version fields agree
 #   privacy      doctrine free of real-work identifiers
+#   comments     the comment rule survives on both canonical surfaces
 #   evals        the harness regression suite exists and is well-formed
 
 on:
