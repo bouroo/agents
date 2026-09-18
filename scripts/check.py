@@ -12,6 +12,8 @@ Static gates over docs/skills plus the distribution layer:
                     page ids, private hosts, engagement service names)
     comments        the comment rule survives on both canonical surfaces
                     (manifesto clause + skills/craft), so neither can lose it
+    simplicity      the simplicity rule survives on both canonical surfaces
+                    (manifesto clause + skills/craft), so neither can lose it
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -200,32 +202,46 @@ def g_links() -> None:
     _add("PASS", f"{name}: {checked} relative link(s) resolve")
 
 
-# The comment doctrine has two canonical surfaces: the always-loaded clause
-# in the manifesto, and the on-demand detail in skills/craft. Prose cannot be
-# linted for meaning, so this gate asserts PRESENCE instead - the failure mode
-# it catches is a surface silently losing the rule, not a surface wording it
-# differently. Rewording either surface means updating the marker here; that
-# is the deliberate cost of gating prose rather than code.
-COMMENT_RULE_SURFACES = [
-    ("AGENTS.md", re.compile(r"restates? the code", re.IGNORECASE)),
-    ("skills/craft/SKILL.md", re.compile(r"^## Comments$", re.MULTILINE)),
-]
+# A code rule lives on two canonical surfaces: the always-loaded clause in
+# the manifesto, and the on-demand detail in the skill that owns it. Prose
+# cannot be linted for meaning, so these gates assert PRESENCE instead - the
+# failure mode they catch is a surface silently losing the rule, not a
+# surface wording it differently. Rewording a surface means updating its
+# marker here; that is the deliberate cost of gating prose rather than code.
+RULE_SURFACES = {
+    "comments": [
+        ("AGENTS.md", re.compile(r"restates? the code", re.IGNORECASE)),
+        ("skills/craft/SKILL.md", re.compile(r"^## Comments$", re.MULTILINE)),
+    ],
+    "simplicity": [
+        ("AGENTS.md", re.compile(r"second real caller", re.IGNORECASE)),
+        ("skills/craft/SKILL.md", re.compile(r"^## Simplicity$", re.MULTILINE)),
+    ],
+}
 
 
-def g_comments() -> None:
-    name = "comments"
+def _g_rule_surfaces(name: str) -> None:
+    surfaces = RULE_SURFACES[name]
     missing: list[str] = []
-    for rel, pattern in COMMENT_RULE_SURFACES:
+    for rel, pattern in surfaces:
         path = ROOT / rel
         if not path.is_file():
             missing.append(f"{rel} missing")
         elif not pattern.search(path.read_text()):
-            missing.append(f"{rel} no longer states the comment rule")
+            missing.append(f"{rel} no longer states the rule")
     if missing:
         _add("FAIL", f"{name}: " + "; ".join(missing))
         return
-    _add("PASS", f"{name}: comment rule present on "
-                 f"{len(COMMENT_RULE_SURFACES)} canonical surface(s)")
+    _add("PASS", f"{name}: rule present on "
+                 f"{len(surfaces)} canonical surface(s)")
+
+
+def g_comments() -> None:
+    _g_rule_surfaces("comments")
+
+
+def g_simplicity() -> None:
+    _g_rule_surfaces("simplicity")
 
 
 MARKETPLACE_MANIFESTS = [
@@ -372,7 +388,8 @@ def g_evals() -> None:
 GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("links", g_links), ("agnostic", g_agnostic),
          ("manifests", g_manifests), ("privacy", g_privacy),
-         ("comments", g_comments), ("evals", g_evals)]
+         ("comments", g_comments), ("simplicity", g_simplicity),
+         ("evals", g_evals)]
 
 
 def main(argv: list[str]) -> int:
