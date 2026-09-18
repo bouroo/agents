@@ -21,6 +21,7 @@ Consider every row in one read pass over the diff plus touched neighbors:
 - **Security** — input validation, authorization, no logged or committed secrets, dependency sanity.
 - **Performance** — flag only with measurement or a clear algorithmic concern; never micro-optimize in review.
 - **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention. Comments earn their place by stating a non-derivable *why*: flag restatement, change narration, and doc blocks longer than the code they document ([craft](../skills/craft/SKILL.md) comments).
+- **Simplicity** — the least mechanism that works. Flag abstraction with one caller, dead configurability, forwarding wrappers, and dependencies for what the stdlib does; name the cost each imposes ([craft](../skills/craft/SKILL.md) simplicity). A finding with no nameable cost is taste, not a defect. Never trade a needed error path or a clarifying name for a smaller diff.
 
 ## Severity
 

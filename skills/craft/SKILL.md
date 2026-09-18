@@ -55,6 +55,21 @@ Named noise, each deleted on sight:
 
 **Pre-emit test:** re-read every comment you wrote. If a correct refactor would make it wrong, it was noise — delete it.
 
+## Simplicity
+
+Ranked third in §1 and enforced here. Complexity is a cost every future reader pays, so spend it only where it buys something: the default is the **least mechanism that works** — the standard library before a dependency, a plain function before a class, a direct call before a layer.
+
+Before adding structure, name what it buys. Structure that cannot answer is **unintended complexity**, and it is a defect:
+
+- **Speculative abstraction** — a general mechanism with one caller, an interface with one implementor, a hook nothing hooks. Extract on the second concrete caller, never the first imagined one.
+- **Dead configurability** — a flag, parameter, or option nobody sets, threaded through every layer to reach its default. A knob earns its place when a real caller turns it.
+- **Indirection the reader must decode** — a wrapper that only forwards, a name that hides a one-line body, a layer added to separate what was already separate.
+- **A dependency for the trivial** — a library pulled in for what a few standard-library lines do; using one is licensed by a named reason it carries.
+
+Flag it in review with the cost named — "this abstraction serves one caller and adds a file every change must cross" is a finding; "this feels complex" is not.
+
+**The counterweight.** Simplicity never overrides Correctness (first in §1): never collapse a needed error path, drop a boundary check, or flatten a clarifying name to look smaller. A hard problem deserves code that reads simply — clear names, a flat happy path, one concept per unit — not merely fewer lines. Optimize for the reader's comprehension, not the diff's line count.
+
 ## Common mistakes
 
 | Mistake | Fix |
@@ -69,6 +84,10 @@ Named noise, each deleted on sight:
 | Comment restates code | Delete it |
 | Comment narrates the change | Delete it; git records the change |
 | Doc block longer than its function | Cut to one line, or delete |
+| Abstraction with one caller | Inline it; extract on the second concrete caller |
+| Flag or option nobody sets | Delete the knob and its plumbing |
+| Wrapper that only forwards | Call the real thing directly |
+| Dependency for what the stdlib does | Use the stdlib lines |
 
 ## Enforce with tooling (GROW)
 

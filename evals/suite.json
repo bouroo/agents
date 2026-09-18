@@ -58,6 +58,17 @@
       ]
     },
     {
+      "id": "simplicity-rule-survives-doctrine-edits",
+      "prompt": "Tighten or reorganize the code-craft section of the doctrine. The simplicity rule must survive on both surfaces that carry it.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py simplicity",
+          "expect_exit": 0,
+          "description": "the simplicity rule is still present in AGENTS.md and in skills/craft (neither surface can silently drop it)"
+        }
+      ]
+    },
+    {
       "id": "doctrine-clean-of-real-work-identity",
       "prompt": "Record an example drawn from a real engagement.",
       "checks": [
