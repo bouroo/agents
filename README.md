@@ -31,7 +31,8 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 │   ├── evals/                         harness regression suite: realistic tasks as
 │   │                                  prompt + objective checks; blocks a merge that
 │   │                                  lowers the pass rate
-│   ├── craft/                         twelve commandments + INTENT/TWINS/AUTH/PENDING
+│   ├── craft/                         twelve commandments + PROMPT/INTENT/TWINS/AUTH/
+│   │                                  PENDING
 │   ├── verification/                  right-sizing dial, evidence as anchors, mutation
 │   │   └── references/                probe, judge protocol; flowcharts.md renders the
 │   │                                  execution graph as decision charts; evolution.md
@@ -66,7 +67,7 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── gemini-extension.json              extension discovery metadata
 └── scripts/
-    ├── check.py                       seven deterministic gates (CI runs these)
+    ├── check.py                       eight deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -113,9 +114,10 @@ python3 scripts/check.py --all
 | `agnostic` | core doctrine is free of host-binding tokens |
 | `manifests` | marketplace manifests parse; version fields agree across files |
 | `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
+| `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
 | `evals` | the harness regression suite exists and is well-formed |
 
-CI runs all seven on every push and pull request. Pushing a version tag additionally runs the [release workflow](#versioning).
+CI runs all eight on every push and pull request. Pushing a version tag additionally runs the [release workflow](#versioning).
 
 ## Versioning
 

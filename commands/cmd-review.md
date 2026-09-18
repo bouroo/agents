@@ -20,7 +20,7 @@ Consider every row in one read pass over the diff plus touched neighbors:
 - **Tests** — happy, error, and boundary paths; assert behavior, not implementation details.
 - **Security** — input validation, authorization, no logged or committed secrets, dependency sanity.
 - **Performance** — flag only with measurement or a clear algorithmic concern; never micro-optimize in review.
-- **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention.
+- **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention. Comments earn their place by stating a non-derivable *why*: flag restatement, change narration, and doc blocks longer than the code they document ([craft](../skills/craft/SKILL.md) comments).
 
 ## Severity
 

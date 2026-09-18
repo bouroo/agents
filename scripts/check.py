@@ -10,6 +10,8 @@ Static gates over docs/skills plus the distribution layer:
     manifests       marketplace discovery manifests parse; versions agree
     privacy         doctrine free of real-work identifiers (tiny links,
                     page ids, private hosts, engagement service names)
+    comments        the comment rule survives on both canonical surfaces
+                    (manifesto clause + skills/craft), so neither can lose it
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -198,6 +200,34 @@ def g_links() -> None:
     _add("PASS", f"{name}: {checked} relative link(s) resolve")
 
 
+# The comment doctrine has two canonical surfaces: the always-loaded clause
+# in the manifesto, and the on-demand detail in skills/craft. Prose cannot be
+# linted for meaning, so this gate asserts PRESENCE instead - the failure mode
+# it catches is a surface silently losing the rule, not a surface wording it
+# differently. Rewording either surface means updating the marker here; that
+# is the deliberate cost of gating prose rather than code.
+COMMENT_RULE_SURFACES = [
+    ("AGENTS.md", re.compile(r"restates? the code", re.IGNORECASE)),
+    ("skills/craft/SKILL.md", re.compile(r"^## Comments$", re.MULTILINE)),
+]
+
+
+def g_comments() -> None:
+    name = "comments"
+    missing: list[str] = []
+    for rel, pattern in COMMENT_RULE_SURFACES:
+        path = ROOT / rel
+        if not path.is_file():
+            missing.append(f"{rel} missing")
+        elif not pattern.search(path.read_text()):
+            missing.append(f"{rel} no longer states the comment rule")
+    if missing:
+        _add("FAIL", f"{name}: " + "; ".join(missing))
+        return
+    _add("PASS", f"{name}: comment rule present on "
+                 f"{len(COMMENT_RULE_SURFACES)} canonical surface(s)")
+
+
 MARKETPLACE_MANIFESTS = [
     ".claude-plugin/plugin.json",
     ".claude-plugin/marketplace.json",
@@ -342,7 +372,7 @@ def g_evals() -> None:
 GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("links", g_links), ("agnostic", g_agnostic),
          ("manifests", g_manifests), ("privacy", g_privacy),
-         ("evals", g_evals)]
+         ("comments", g_comments), ("evals", g_evals)]
 
 
 def main(argv: list[str]) -> int:
