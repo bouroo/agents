@@ -8,6 +8,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.4.0-beta.1] - 2026-09-18
+
+The simplicity rule stops being a ranking. §1 put Simplicity third and §10
+banned speculative features, but nothing was actionable: no clause told an agent
+to prefer the least mechanism, no rubric row let a reviewer reject an
+unnecessary abstraction, and no gate failed when the rule was diluted. Users saw
+the result as code too complex to read and maintain. The rule is now sharp:
+decidable tests for when structure has earned its place, and a counterweight so
+that "simpler" never means "smaller diff."
+
+Tagged as a **beta**: this is the same additive shape as v6.3.0, cut ahead of a
+stable patch so the release path runs end-to-end before the change is advertised
+as the latest download.
+
+### Added
+
+- **`skills/craft` — a `Simplicity` section** (loaded on demand): the default is
+  the least mechanism that works — the standard library before a dependency, a
+  plain function before a class, a direct call before a layer. Four named classes
+  of unintended complexity, each a defect: speculative abstraction (extract on
+  the second concrete caller, never the first imagined one), dead configurability
+  (a knob nobody turns), indirection the reader must decode (a wrapper that only
+  forwards), and a dependency for the trivial. Flagged in review with the cost
+  named — "this serves one caller and adds a file every change must cross" is a
+  finding; "this feels complex" is not.
+- **A `simplicity` gate** in `scripts/check.py`: the rule must be present on both
+  canonical surfaces (the always-loaded manifesto clause and `skills/craft`), so
+  neither can silently drop it. It shares a rule-presence helper with the
+  `comments` gate rather than duplicating it, so a third such rule costs one
+  dict entry.
+- **An eval case** — `simplicity-rule-survives-doctrine-edits` — so a doctrine
+  edit that drops the rule from either surface fails the suite.
+
+### Changed
+
+- **`AGENTS.md` §5** carries the always-loaded clause in place: least mechanism,
+  complexity pays its way, no abstraction before a second real caller, no flag
+  nobody sets, no forwarding wrapper, no dependency for what the standard library
+  does — and simplicity never overrides correctness.
+- **`AGENTS.md` §10** extends the speculative-feature ban to a layer, flag,
+  wrapper, or dependency that has not earned its cost.
+- **`cmd-review`** gains a Simplicity rubric row: a finding must name a concrete
+  cost or it is taste, not a defect, and a needed error path or clarifying name
+  is never traded for a smaller diff.
+- **Doc drift swept**: the gate count on the README verification table and
+  `validate.yml`'s gate list now include `simplicity`.
+
 ## [6.3.0] - 2026-09-18
 
 The comment rule stops being inert. "Default is no comment, add one only for the
