@@ -8,6 +8,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.4.0-beta.2] - 2026-09-18
+
+Modernization stops being a language fact and becomes a project fact. Users
+reported generated code and patterns coming out outdated; the cause was a wrong
+fact in the doctrine, not model drift, and it was wrong in the direction that
+produces the complaint. Told `maps.Copy` needs Go 1.23, an agent on a `go 1.21`
+module believes it is unavailable and hand-writes the legacy loop the skill
+exists to retire.
+
+`skills/go-modernize` becomes `skills/modernize-coding`, and "modern" is now
+defined by the project you are working in rather than by a language release. The
+skill derives a ceiling from what the project declares (`go.mod`,
+`package.json` `engines`, `tsconfig` `target`, `requires-python`), what its
+tooling actually runs, and what its neighbours do — then modernizes toward that
+ceiling and never past it. Go becomes the first of five language adapters.
+
+Tagged as a **beta**: continuing the open 6.4.0 series, whose beta.1 is already
+published. The skill rename is breaking under semver, but 6.4.0 has only ever
+existed as a beta, so no stable consumer contract breaks here — that question
+properly belongs to the 6.4.0 → stable promotion.
+
+### Fixed
+
+- **Four wrong version claims in the Go table**, corrected against `GOROOT/api`,
+  the toolchain's own record of when each stdlib symbol landed: `maps.Copy` and
+  `maps.Clone` are 1.21 (not 1.23); `fmt.Appendf` is 1.19 (not 1.20);
+  `plusbuild`'s `//go:build` is 1.17 (not 1.18). Compile probes cannot settle
+  this — the `go` directive gates language features, not stdlib availability —
+  so `GOROOT/api` is the anchor that decides, and the tests that would have
+  "confirmed" the wrong versions actually prove nothing.
+- **`.cursor-plugin/marketplace.json` was two major versions stale** (found by
+  the `TWINS:` sweep): it advertised "fourteen on-demand skills", listed
+  `plan-authoring` (the pre-v6 name of `artifacts`), and omitted `artifacts`,
+  `evals`, and `lifecycle`. All five manifests now agree.
+
+### Added
+
+- **Four language adapters**, each verified against a real toolchain rather than
+  recalled: **Java** (API claims anchored to the JDK's own `src.zip` `@since`
+  tags — Java's `GOROOT/api` analogue — and language features pinned by
+  compiling each against `javac --release N` and taking the first release that
+  accepts it: records 16, switch expressions 14, pattern-matching switch 21);
+  **Rust** (verified in a scratch crate — `clippy --fix` genuinely rewrote
+  source, `cargo fix --edition` migrates both `Cargo.toml` and source, and cargo
+  enforces `rust-version`); **Python** (anchored to the library reference's
+  structured "Added in version" notes and the what's-new page announcing each
+  PEP, runtime-verified on 3.14.7); **TypeScript/JS** (editions anchored to
+  TC39's finished-proposals publication years).
+- **A `verify.md` per doc-anchored adapter** recording how to re-derive its
+  table, including the two traps hit and corrected while building them:
+  windowing over flattened prose attributes the *next* entry's version note to
+  the symbol (this reported the dict-union operator as 3.8 and
+  `typing.override` as 3.11 — both wrong), and a keyword scan over what's-new
+  finds the first page that *mentions* a feature, not the one that introduced
+  it.
+
+### Changed
+
+- **The `modernize` gate covers all five adapters**: every claim must be
+  version-pinned, and Go and Java are cross-checked against two independent
+  local anchors. Where an ecosystem ships no local machine-readable index, the
+  gate says so in its own output rather than letting a uniform `PASS` imply
+  uniform rigor.
+- **`AGENTS.md` §11, `README`, and the adapter table** re-point at the renamed
+  skill and its adapter set.
+
 ## [6.4.0-beta.1] - 2026-09-18
 
 The simplicity rule stops being a ranking. §1 put Simplicity third and §10
