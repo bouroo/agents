@@ -8,6 +8,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.3.0] - 2026-09-18
+
+The comment rule stops being inert. "Default is no comment, add one only for the
+*why*" was already true and already written down — it sat mid-paragraph in §10
+with no language named, no length bound, and no check, so it lost to the model's
+prior of commenting everything. Users saw the result as comment spam in code the
+agents wrote. The rule is now sharp: it names the noise classes, points at each
+language's own convention, and bounds length by the code rather than the shape.
+
+### Added
+
+- **`skills/craft` — a `Comments` section** (loaded on demand): default is no
+  comment, earned only by a non-derivable *why*; four named noise classes deleted
+  on sight (restates the code or signature, narrates the change, banners inside a
+  short function, a doc block longer than the code it documents). The governing
+  line is that **language conventions set the form, the code's complexity sets
+  the length** — a one-line function gets a one-line doc — with a pre-emit test:
+  if a correct refactor would make the comment wrong, it was noise.
+- **A `comments` gate** in `scripts/check.py`: the rule must be present on both
+  canonical surfaces (the always-loaded manifesto clause and `skills/craft`), so
+  neither can silently drop it. The gate asserts presence, not wording — prose
+  cannot be linted for meaning — so rewording either surface means updating its
+  marker. That is the deliberate cost of gating prose rather than code.
+- **An eval case** — `comment-rule-survives-doctrine-edits` — so a doctrine edit
+  that drops the rule from either surface fails the suite.
+
+### Changed
+
+- **`AGENTS.md` §10** carries the sharpened clause in place, same line: three
+  named spam modes, the per-language conventions (GoDoc, TSDoc, PEP 257,
+  rustdoc, Javadoc), and "at that convention's minimum length."
+- **`cmd-review`** makes comment noise flaggable in the readability rubric rather
+  than tolerated; **`cmd-refactor`** deletes restating comments during Execute
+  instead of porting them to the new shape.
+- **Doc drift swept**: the gate count on the README verification table and
+  `validate.yml`'s gate list now include `comments`; a stale README line still
+  crediting `craft` with four artifact gates rather than five was corrected;
+  the stray space in the README's "sixteen on-demand skills" was fixed and the
+  skill-tree description realigned.
+
 ## [6.2.0] - 2026-09-15
 
 The intake gate: an agent now surfaces its **corrected reading** of an ask and
