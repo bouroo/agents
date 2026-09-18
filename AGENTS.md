@@ -136,7 +136,7 @@ Never swallow an error. Never branch on error strings. Never log secrets. Never 
 | [skills/teamwork](skills/teamwork/SKILL.md) | coordination graphs: escalation ladder, task ledger, file ownership, spawn briefs, adversarial verification |
 | [skills/wayfinder](skills/wayfinder/SKILL.md) | efforts too big for one session: map of decision tickets on the tracker, fog of war, one ticket per session |
 | [skills/confluence](skills/confluence/SKILL.md) | operate Atlassian wikis via the Rovo or mcp-atlassian MCP servers (domain adapter) |
-| [skills/go-modernize](skills/go-modernize/SKILL.md) | modernize Go per the module's declared version (`go fix` / `modernize` analyzer) |
+| [skills/modernize-coding](skills/modernize-coding/SKILL.md) | bring a project's code to current patterns (+ per-language adapters: Go, Java, Rust, Python, TS/JS) |
 | [skills/solution-architecture](skills/solution-architecture/SKILL.md) | ASRs + SEI scenarios, pattern tradeoffs, ADRs, C4 modeling, estimation/governance |
 | [skills/system-diagramming](skills/system-diagramming/SKILL.md) | system maps as one interactive HTML: typed JSON IR, bundled template + validator |
 | [skills/grilling](skills/grilling/SKILL.md) | plan-first interview method: design tree, frontier rounds, facts vs decisions |

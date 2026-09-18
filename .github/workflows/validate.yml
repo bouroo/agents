@@ -14,6 +14,9 @@ name: validate
 #   privacy      doctrine free of real-work identifiers
 #   comments     the comment rule survives on both canonical surfaces
 #   simplicity   the simplicity rule survives on both canonical surfaces
+#   modernize    every modernize-coding adapter is present and version-pinned;
+#                Go and Java claims are cross-checked against GOROOT/api and
+#                the JDK's own src.zip @since tags
 #   evals        the harness regression suite exists and is well-formed
 
 on:

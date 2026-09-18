@@ -78,6 +78,17 @@
           "description": "doctrine is free of real-work identifiers (tiny links, page ids, private hosts)"
         }
       ]
+    },
+    {
+      "id": "modernize-coding-claims-stay-true",
+      "prompt": "Update a modernize-coding adapter, add one, or bump a toolchain. Every version claim must stay pinned and, where the ecosystem ships a local machine-readable record, match it.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py modernize",
+          "expect_exit": 0,
+          "description": "every adapter is present and version-pinned; Go and Java claims cross-check against GOROOT/api and the JDK's own src.zip @since tags"
+        }
+      ]
     }
   ]
 }
