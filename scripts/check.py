@@ -571,11 +571,48 @@ def _table_row_version(text: str, token: str) -> str | None:
     return m.group(1) if m else None
 
 
+def _installed_go_minor() -> int | None:
+    """The installed Go minor version (e.g. 26 for go1.26.8), or None."""
+    out = subprocess.run(["go", "version"], capture_output=True, text=True).stdout
+    m = re.search(r"\bgo1\.(\d+)", out)
+    return int(m.group(1)) if m else None
+
+
+def _installed_java_major(src_zip: str | None = None) -> int | None:
+    """The JDK major version, preferring the JDK that owns src_zip.
+
+    Every JDK ships a `release` file beside lib/src.zip, so the version of the
+    source we are actually reading is readable directly -- more accurate than
+    asking `java -version`, which may be absent on a CI image that still has a
+    JDK unpacked, and may name a different JDK than src.zip came from.
+    """
+    if src_zip:
+        release = pathlib.Path(src_zip).parent.parent / "release"
+        if release.is_file():
+            m = re.search(r'JAVA_VERSION="(\d+)', release.read_text())
+            if m:
+                return int(m.group(1))
+    try:
+        out = subprocess.run(["java", "-version"], capture_output=True,
+                             text=True).stderr
+    except OSError:
+        return None
+    m = re.search(r'version "(\d+)', out)
+    return int(m.group(1)) if m else None
+
+
 def g_modernize() -> None:
     name = "modernize"
     problems: list[str] = []
     verified = 0
     asserted = 0
+    # Claims above the installed toolchain's version cannot be cross-checked
+    # here -- an older GOROOT/api simply has no record of a symbol added later,
+    # and an older JDK has no src.zip entry for a later class. That absence is
+    # NOT evidence the claim is wrong; it is evidence this host cannot judge it.
+    # CI runners ship older Go/JDK than a developer machine, so counting absence
+    # as failure would make the gate machine-dependent (and red on CI only).
+    skipped_beyond = 0
 
     # --- Go: anchored to GOROOT/api ---
     texts = {}
@@ -588,6 +625,12 @@ def g_modernize() -> None:
         api = _api_versions() if shutil.which("go") else {}
     except (OSError, subprocess.SubprocessError):
         api = {}
+    go_minor = None
+    if api:
+        try:
+            go_minor = _installed_go_minor()
+        except (OSError, subprocess.SubprocessError):
+            go_minor = None
     for label, token, prefix, claimed in GO_CLAIMS:
         if label not in texts:
             continue
@@ -599,10 +642,14 @@ def g_modernize() -> None:
             problems.append(f"go/{label}: {token} says {got!r}, gate expects {claimed}")
             continue
         if prefix and api:
+            want = int(claimed.split(".")[1])
+            if go_minor is not None and want > go_minor:
+                skipped_beyond += 1
+                continue
             actual = next((v for line, v in api.items() if line.startswith(prefix)), None)
             if actual is None:
                 problems.append(f"go/{label}: {token} absent from GOROOT/api")
-            elif actual != int(claimed.split(".")[1]):
+            elif actual != want:
                 problems.append(f"go/{label}: {token} says {claimed}, "
                                 f"toolchain added it in go1.{actual}")
             else:
@@ -630,15 +677,29 @@ def g_modernize() -> None:
             z = zipfile.ZipFile(src_zip)
             names = set(z.namelist())
             cache: dict[str, str] = {}
+            java_major = _installed_java_major(src_zip)
             for token, path, pattern, claimed in JAVA_CLAIMS:
+                # Same rule as Go: a JDK older than the claimed feature has no
+                # entry for it, which is not evidence the claim is wrong. When
+                # the version cannot be determined at all, a missing entry is
+                # likewise unjudgeable rather than false.
+                beyond = java_major is None or int(claimed) > java_major
                 if path not in names:
-                    problems.append(f"java: {path} not in src.zip")
+                    if beyond:
+                        skipped_beyond += 1
+                    else:
+                        problems.append(f"java: {path} not in src.zip")
                     continue
                 if path not in cache:
                     cache[path] = z.read(path).decode("utf-8", "replace")
                 m = re.search(pattern, cache[path])
                 if not m:
-                    problems.append(f"java: declaration not found in {path}")
+                    # An old JDK's class file differs from the one the claim was
+                    # derived from, so a pattern miss is unjudgeable there too.
+                    if beyond:
+                        skipped_beyond += 1
+                    else:
+                        problems.append(f"java: declaration not found in {path}")
                     continue
                 tags = re.findall(r"@since\s+([0-9.]+)", cache[path][:m.start()])
                 actual = tags[-1] if tags else "?"
@@ -685,6 +746,9 @@ def g_modernize() -> None:
         anchors.append("JDK src.zip")
     suffix = (f"{verified} cross-checked against {', '.join(anchors)}"
               if anchors else "no local anchor available to cross-check")
+    if skipped_beyond:
+        suffix += (f"; {skipped_beyond} above the installed toolchain, "
+                   "not judgeable here")
     _add("PASS", f"{name}: {len(UNANCHORED_ADAPTERS) + 2} adapter(s) present; "
                  f"{asserted} claim(s) version-pinned, {suffix}")
 

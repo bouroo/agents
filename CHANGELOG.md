@@ -71,6 +71,16 @@ properly belongs to the 6.4.0 → stable promotion.
   local anchors. Where an ecosystem ships no local machine-readable index, the
   gate says so in its own output rather than letting a uniform `PASS` imply
   uniform rigor.
+- **The cross-check is version-aware.** A toolchain older than a claim's
+  feature has no record of it — an older `GOROOT/api` lacks the symbol, an older
+  JDK lacks the `src.zip` entry — and that absence is not evidence the claim is
+  wrong. Counting it as failure made the gate machine-dependent and red only on
+  CI, whose runners ship older Go and JDK than a developer machine; the first
+  push of this very release failed that way. Claims above the detected toolchain
+  are now counted and reported as not judgeable on this host, while every claim
+  the host *can* judge is still verified and a wrong one still fails. The JDK
+  version is read from the `release` file that sits beside the `src.zip` being
+  read, so the version always matches the source actually examined.
 - **`AGENTS.md` §11, `README`, and the adapter table** re-point at the renamed
   skill and its adapter set.
 
