@@ -70,6 +70,7 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 │   └── cmd-document.md                Spec: bootstrap/sync a docs/ tree
 ├── evals/suite.json                   the harness regression suite (CI-gated)
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
+├── .minimax-plugin/                   MiniMax Code plugin metadata
 ├── gemini-extension.json              extension discovery metadata
 └── scripts/
     ├── check.py                       ten deterministic gates (CI runs these)
@@ -91,7 +92,8 @@ Manual consumption only:
 - **Manifesto** — copy `AGENTS.md` content into your assistant's instruction file at whatever location your tool reads, or point the tool at this file directly.
 - **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`).
 - **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
-- **Marketplaces** — the repository ships plugin/extension discovery metadata at its canonical paths (`.claude-plugin/`, `.cursor-plugin/`, `gemini-extension.json`), so Agent-Skills-compatible CLIs can add it directly from GitHub (`npx skills add bouroo/agents`) and host marketplaces consume it without any generation step.
+- **Marketplaces** — the repository ships plugin/extension discovery metadata at its canonical paths (`.claude-plugin/`, `.cursor-plugin/`, `.minimax-plugin/`, `gemini-extension.json`), so Agent-Skills-compatible CLIs can add it directly from GitHub (`npx skills add bouroo/agents`) and host marketplaces consume it without any generation step. MiniMax Code additionally accepts the repository directly as a plugin from a public GitHub repo, since its plugin root is the repository root.
+- **Hosts without a global instruction file** — some CLIs read project rules from the workspace rather than a user-level file (MiniMax Code reads `AGENTS.md` from the repository root and documents no global rules path). On those, the manifesto is not installed globally: the installer links skills only, and the workspace `AGENTS.md` is what the host consumes.
 - **Local installer** — `scripts/install.sh` detects which compatible tools live on the machine and links (or copies) the setup into each one's config directory:
 
   ```bash
