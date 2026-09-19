@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "name": "coder-agents",
+  "displayName": "Coder Agents",
+  "version": "6.4.0-beta.3",
+  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, seventeen on-demand skills (artifacts, confluence, craft, domain-modeling, evals, modernize-coding, graph-engineering, grilling, indexed-search, lifecycle, performance, security-audit, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, and deterministic verification gates.",
+  "author": "bouroo",
+  "exampleQueries": [
+    "Plan this feature through the delivery lifecycle and write the spec and PLAN.md",
+    "Review this diff against the doctrine's gates and report findings by severity",
+    "Modernize this module toward the patterns the project already declares"
+  ],
+  "apps": [],
+  "mcpServers": [],
+  "skills": [
+    "skills/artifacts/SKILL.md",
+    "skills/confluence/SKILL.md",
+    "skills/craft/SKILL.md",
+    "skills/domain-modeling/SKILL.md",
+    "skills/evals/SKILL.md",
+    "skills/modernize-coding/SKILL.md",
+    "skills/graph-engineering/SKILL.md",
+    "skills/grilling/SKILL.md",
+    "skills/indexed-search/SKILL.md",
+    "skills/lifecycle/SKILL.md",
+    "skills/performance/SKILL.md",
+    "skills/security-audit/SKILL.md",
+    "skills/solution-architecture/SKILL.md",
+    "skills/system-diagramming/SKILL.md",
+    "skills/teamwork/SKILL.md",
+    "skills/verification/SKILL.md",
+    "skills/wayfinder/SKILL.md"
+  ]
+}

@@ -37,6 +37,12 @@ log() { printf '%s\n' "$*" >&2; }
 
 # Host table. Antigravity shares the gemini config dir, so it needs no own row.
 # Format: code|config_dir|instruction_file|skills|commands   (surfaces 1/0)
+#
+# An empty instruction_file means the host has no global instruction surface:
+# doctrine installs to the workspace instead (its rules file is project-level),
+# and only the skills row applies. minimax is the first such host -- MiniMax Code
+# reads AGENTS.md from the workspace root and documents no user-level rules file,
+# so a global install for it is skills-only.
 HOSTS=(
   "gemini|$HOME/.gemini|GEMINI.md|1|1"
   "codex|$HOME/.codex|AGENTS.md|1|1"
@@ -47,6 +53,7 @@ HOSTS=(
   "openclaw|$HOME/.openclaw/workspace|AGENTS.md|1|0"
   "hermes|$HOME/.hermes|SOUL.md|1|0"
   "pi|$HOME/.pi/agent|AGENTS.md|1|0"
+  "minimax|$HOME/.minimax||1|0"
 )
 
 MODE="detect"
@@ -145,6 +152,7 @@ for h in $(selected_hosts); do
   instr="$(field 3 "$h")"
   has_skills="$(field 4 "$h")"
   has_cmds="$(field 5 "$h")"
+  [[ -n "$instr" ]] && has_instr=1 || has_instr=0
 
   case "$MODE" in
 
@@ -153,7 +161,7 @@ for h in $(selected_hosts); do
     ;;
 
   list)
-    log "$code | $(field 2 "$h") | instruction=$(field 3 "$h") | skills=$has_skills | commands=$has_cmds"
+    log "$code | $(field 2 "$h") | instruction=${instr:-(none: project-level only)} | skills=$has_skills | commands=$has_cmds"
     ;;
 
   install)
@@ -162,14 +170,14 @@ for h in $(selected_hosts); do
       log "  not detected (use --all to create $cdir)"
       continue
     fi
-    place "$REPO_DIR/$MANIFESTO" "$cdir/$instr" "$MANIFESTO->$instr"
+    [[ "$has_instr" == "1" ]] && place "$REPO_DIR/$MANIFESTO" "$cdir/$instr" "$MANIFESTO->$instr"
     [[ "$has_skills" == "1" ]] && place "$REPO_DIR/$SKILLS_DIR" "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
     [[ "$has_cmds" == "1" ]] && place "$REPO_DIR/$COMMANDS_DIR" "$cdir/$COMMANDS_DIR" "$COMMANDS_DIR/"
     ;;
 
   uninstall)
     log "== $code =="
-    remove_one "$cdir/$instr" "$instr"
+    [[ "$has_instr" == "1" ]] && remove_one "$cdir/$instr" "$instr"
     remove_one "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
     remove_one "$cdir/$COMMANDS_DIR" "$COMMANDS_DIR/"
     ;;
@@ -180,6 +188,7 @@ for h in $(selected_hosts); do
     for entry in "$instr:$cdir/$instr" "$SKILLS_DIR:$cdir/$SKILLS_DIR" "$COMMANDS_DIR:$cdir/$COMMANDS_DIR"; do
       name="${entry%%:*}"
       dest="${entry#*:}"
+      [[ -n "$name" ]] || continue
       if ours "$dest"; then s="ok"
       elif [[ -L "$dest" ]]; then s="stale"
       elif [[ -e "$dest" ]]; then s="real"

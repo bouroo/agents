@@ -48,9 +48,10 @@ ALLOWED_KEYS = {"name", "description"}
 # Host-binding tokens forbidden in core doctrine. A dotdir or host config
 # filename is an unambiguous signal of a host leak into an agnostic file.
 HOST_TOKEN_RE = re.compile(
-    r"\.claude|\.cursor|\.gemini|\.codex|\.qwen|\.kilo|"
+    r"\.claude|\.cursor|\.gemini|\.codex|\.qwen|\.kilo|\.minimax|"
     r"\bCLAUDE\.md\b|\bGEMINI\.md\b|"
-    r"\bopencode\b|\bkilo\b|\bantigravity\b|\bcodex\b|\bqwen\b",
+    r"\bopencode\b|\bkilo\b|\bantigravity\b|\bcodex\b|\bqwen\b|"
+    r"\bmcode\b|\bmavis\b|\bminimax\b",
     re.IGNORECASE,
 )
 
@@ -254,6 +255,18 @@ MARKETPLACE_MANIFESTS = [
     ".claude-plugin/marketplace.json",
     ".cursor-plugin/plugin.json",
     ".cursor-plugin/marketplace.json",
+    ".minimax-plugin/plugin.json",
+    "gemini-extension.json",
+]
+
+# The manifests a release bumps in lockstep. The two marketplace.json listing
+# files carry no version, so they are absent here -- but every manifest listed
+# must carry one, or a dropped version would silently drop out of the
+# agreement check below instead of failing it.
+VERSIONED_MANIFESTS = [
+    ".claude-plugin/plugin.json",
+    ".cursor-plugin/plugin.json",
+    ".minimax-plugin/plugin.json",
     "gemini-extension.json",
 ]
 
@@ -273,6 +286,11 @@ def g_manifests() -> None:
             errors.append(f"{rel}: invalid JSON: {exc}")
     versions = {rel: d.get("version") for rel, d in docs.items()
                 if isinstance(d, dict) and d.get("version")}
+    unversioned = [rel for rel in VERSIONED_MANIFESTS
+                   if rel in docs and not (isinstance(docs[rel], dict)
+                                           and docs[rel].get("version"))]
+    if unversioned:
+        errors.append(f"version field missing from {', '.join(unversioned)}")
     if not versions and not any("invalid" in e or "missing" in e for e in errors):
         errors.append("no version field found in any manifest")
     if len(set(versions.values())) > 1:
