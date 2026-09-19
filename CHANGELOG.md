@@ -8,6 +8,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.4.0] - 2026-09-19
+
+Stable promotion of the 6.4.0 series. `beta.1` through `beta.3` shipped the craft
+simplicity rule, the modernize-coding re-scope with four language adapters, and
+the security-audit skill; those sections are kept below as their own record, and
+this release adds the MiniMax Code host and plugin route.
+
+MiniMax Code (`mcode`) joined the distribution layer, and it is the first host
+with no global instruction file. Every other host installs the manifesto into a
+config directory (`CLAUDE.md`, `SOUL.md`, `AGENTS.md`); MiniMax Code reads
+`AGENTS.md` from the workspace root and documents no user-level rules path, so a
+global install for it links **skills only**. Rather than invent a
+`~/.minimax/AGENTS.md` the host does not read, the installer models the absence:
+a host row may leave its instruction field empty, install and uninstall skip that
+surface, and the README states the workspace contract.
+
+The second surface is the plugin route. MiniMax consumes plugins from a public
+GitHub repo whose root carries `.minimax-plugin/plugin.json` — a shape this
+repository already satisfies, since that manifest sits at the canonical path
+beside the existing plugin/extension families. Its `skills` array names each
+`SKILL.md` as a file path rather than a directory, and `schemaVersion` is the
+integer `1`.
+
+Compatibility was checked against MiniMax's own tooling rather than assumed. All
+seventeen skills pass the bundled `lint-skill.js` on every rule it enforces
+except one, where the linter strips a link's `../` prefix and resolves the
+remainder against the skill's own directory — so a legitimate cross-skill link
+such as `../verification/references/evolution.md` is misread as a missing
+same-skill `references/evolution.md`. The files exist and this repository's
+`links` gate, which resolves the path correctly, passes. The skills are
+unmodified; the false positive is recorded here rather than worked around.
+
+### Added
+
+- **`.minimax-plugin/plugin.json`** — MiniMax Code plugin metadata at the host's
+  canonical path, making the repository root directly installable as a MiniMax
+  plugin from GitHub. Registered in the `manifests` gate, which now holds six
+  manifests to a single version.
+- **MiniMax host row** in `scripts/install.sh` — links `skills/` into
+  `~/.minimax/skills`, the user-scope skill root MiniMax's own `skill-creator`
+  documents.
+
+### Changed
+
+- **`scripts/install.sh`** — a host may now declare no global instruction file:
+  the row's instruction field is empty, install/uninstall skip that surface, and
+  `status`/`list` report it as project-level instead of printing an empty name.
+- **`scripts/check.py`** — the `manifests` gate covers the sixth manifest, and
+  the `agnostic` gate forbids `minimax`/`mcode`/`mavis` tokens in core doctrine.
+
 ## [6.4.0-beta.3] - 2026-09-18
 
 The doctrine had no security discipline of its own. `cmd-review`'s Security row
