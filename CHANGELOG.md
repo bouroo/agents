@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.4.1] - 2026-09-20
+
+The MiniMax host row was wrong about its own host. 6.4.0 modeled MiniMax Code
+as having no user-level instruction file and installed skills only; the host
+does take a global `AGENTS.md`, so the row now installs the manifesto to
+`~/.minimax/AGENTS.md` like any other AGENTS.md host.
+
+### Changed
+
+- **`scripts/install.sh`** — the minimax row carries `AGENTS.md` again. The
+  empty-instruction mechanism stays for any host that genuinely has no global
+  rules path; no current host uses it.
+- **`README.md`** — the "hosts without a global instruction file" bullet is
+  gone, since nothing consumes the capability it described.
+
 ## [6.4.0] - 2026-09-19
 
 Stable promotion of the 6.4.0 series. `beta.1` through `beta.3` shipped the craft

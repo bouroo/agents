@@ -40,9 +40,7 @@ log() { printf '%s\n' "$*" >&2; }
 #
 # An empty instruction_file means the host has no global instruction surface:
 # doctrine installs to the workspace instead (its rules file is project-level),
-# and only the skills row applies. minimax is the first such host -- MiniMax Code
-# reads AGENTS.md from the workspace root and documents no user-level rules file,
-# so a global install for it is skills-only.
+# and only the skills row applies. No current host leaves it empty.
 HOSTS=(
   "gemini|$HOME/.gemini|GEMINI.md|1|1"
   "codex|$HOME/.codex|AGENTS.md|1|1"
@@ -53,7 +51,7 @@ HOSTS=(
   "openclaw|$HOME/.openclaw/workspace|AGENTS.md|1|0"
   "hermes|$HOME/.hermes|SOUL.md|1|0"
   "pi|$HOME/.pi/agent|AGENTS.md|1|0"
-  "minimax|$HOME/.minimax||1|0"
+  "minimax|$HOME/.minimax|AGENTS.md|1|0"
 )
 
 MODE="detect"
