@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, seventeen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, eighteen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## The foundation: the delivery lifecycle
 
@@ -49,6 +49,9 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 │   │                                  rounds, facts vs decisions
 │   ├── solution-architecture/         ASRs + SEI scenarios, pattern selection by
 │   │   └── references/                tradeoff, ADRs, C4 modeling, estimation
+│   ├── design-pattern-selection/      pain-first GoF selection: no-pattern gate,
+│   │   └── references/                shortlist of 2, language reality checks;
+│   │                                  condensed 22-pattern catalog
 │   ├── domain-modeling/               active domain-language discipline: CONTEXT.md
 │   │   └── references/                glossary; ADR trigger triad
 │   ├── system-diagramming/            system maps as one interactive HTML: typed JSON
