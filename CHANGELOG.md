@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.5.0] - 2026-09-20
+
+Eighteenth skill: `design-pattern-selection`.
+
+### Added
+
+- **`skills/design-pattern-selection/`** decision-first GoF selection: restate the pain as a variation sentence, apply the no-pattern gate first (a plain solution under ~50 lines is the common, valid verdict), shortlist at most 2 candidates against the pain→pattern table, run language reality checks (function values, stdlib, duck typing collapse several classics), deliver verdict + why + minimal skeleton + revisit signal. Condensed 22-pattern catalog in `references/patterns.md` (intent / use when / skip when / shape).
+- **`README.md`** skill count bumped to eighteen; tree lists the new skill.
+- **`.claude-plugin/`, `.cursor-plugin/`, `.minimax-plugin/`, `gemini-extension.json`** manifests carry the new skill and the eighteen-skill description.
+
 ## [6.4.1] - 2026-09-20
 
 The MiniMax host row was wrong about its own host. 6.4.0 modeled MiniMax Code
