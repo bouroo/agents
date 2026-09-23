@@ -25,6 +25,9 @@
 # installed basename). Format 'md' never consumes a '*.plain.md' file; 'md-plain'
 # consumes only '*.plain.md'.
 # Host-specific files from agents/<code>/ install first, then common files.
+# A legacy dir-level symlink into the repo at the declared agents subdir, or at
+# the sibling 'agent'/'agents' spelling (some hosts scan both), is migrated to
+# per-file links on install and removed on uninstall.
 #
 # Usage:
 #   install.sh detect               show every compatible tool found on this machine
@@ -240,6 +243,28 @@ for h in $(selected_hosts); do
     [[ "$has_skills" == "1" ]] && place "$REPO_DIR/$SKILLS_DIR" "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
     [[ "$has_cmds" == "1" ]] && place "$REPO_DIR/$COMMANDS_DIR" "$cdir/$COMMANDS_DIR" "$COMMANDS_DIR/"
     if [[ -n "$agents_dir" ]]; then
+      for alt in agent agents; do
+        [[ "$alt" == "$agents_dir" ]] && continue
+        if ours "$cdir/$alt"; then
+          [[ "$DRY_RUN" == "1" ]] || rm "$cdir/$alt"
+          log "  (agents/) removed stale legacy dir link $cdir/$alt"
+        fi
+      done
+      adir="$cdir/$agents_dir"
+      if [[ -L "$adir" ]]; then
+        atgt="$(readlink "$adir")"
+        case "$atgt" in
+          "$REPO_DIR"|"$REPO_DIR"/*)
+            # legacy install style: dir-level link into repo; migrate per-file links
+            [[ "$DRY_RUN" == "1" ]] || { rm "$adir"; mkdir -p "$adir"; }
+            log "  (agents/) migrated legacy dir link $adir -> per-file placement"
+            ;;
+          *)
+            log "  (agents/) SKIP: $adir symlink $atgt (not ours) (migrate manually)"
+            continue
+            ;;
+        esac
+      fi
       if [[ -d "$REPO_DIR/agents/$code" ]]; then
         for f in "$REPO_DIR/agents/$code"/*; do
           [[ -e "$f" ]] || continue
@@ -261,6 +286,12 @@ for h in $(selected_hosts); do
     remove_one "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
     remove_one "$cdir/$COMMANDS_DIR" "$COMMANDS_DIR/"
     if [[ -n "$agents_dir" ]]; then
+      for alt in agent agents; do
+        if ours "$cdir/$alt"; then
+          [[ "$DRY_RUN" == "1" ]] || rm "$cdir/$alt"
+          log "  (agents/) removed legacy dir link $cdir/$alt"
+        fi
+      done
       if [[ -d "$REPO_DIR/agents/$code" ]]; then
         for f in "$REPO_DIR/agents/$code"/*; do
           [[ -e "$f" ]] || continue
@@ -318,6 +349,9 @@ for h in $(selected_hosts); do
         elif [[ "$areal" == "1" ]]; then as="real"
         else as="-"; fi
       fi
+      for alt in agent agents; do
+        if ours "$cdir/$alt"; then as="legacy"; fi
+      done
     fi
     out+=" agents=$as"
     log "$code:$out"
