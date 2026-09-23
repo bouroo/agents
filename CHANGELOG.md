@@ -10,6 +10,43 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.6.0-beta.2] - 2026-09-23
+
+The beta.1 role definitions absorb a round of hardening, mostly borrowed
+from what the doctrine already knows. The **orchestrator** now draws a
+task graph before dispatching: nodes are units, edges exist only where a
+unit consumes another unit's result, and fake edges — steps that never
+read the prior output — are deleted so independent units actually run in
+parallel. A stop rule bounds the shape: sequential pieces become a chain
+of units dispatched one at a time, and one sequential piece runs as a
+single unit. The written graph is the plan, fan-out is capped at what
+can actually be verified, and the orchestrator is the single owner of
+the merge. The blanket "never run destructive actions" becomes gate
+placement: route irreversible actions through explicit approval where a
+mistake is expensive to undo. The **worker** becomes a full loop —
+classify the brief before acting, treat the DONE check as the only done
+criterion, orient before editing (primary sources beat memory), act
+surgically behind an `INTENT:` line, hold the standing prohibitions,
+verify by observation with a verbatim `TWINS:` search, and report
+outcome-first.
+
+### Changed
+
+- **`agents/common/`, `agents/codex/`** — all orchestrator and worker
+  variants (markdown, `.plain.md`, Codex TOML) rewritten to the shapes
+  above; the worker now carries the doctrine's ACT/PROVE discipline
+  (INTENT gate, TWINS search, three-cycle bound, outcome-first report)
+  instead of a bare "run the DONE check and report".
+
+### Fixed
+
+- **`scripts/install.sh`** — a legacy dir-level symlink into the repo at
+  the declared agents subdir is migrated to per-file placement on
+  install; a foreign symlink is skipped with a warning instead of being
+  deleted. Stale links at the sibling `agent`/`agents` spelling are
+  removed on install and uninstall, and status reports `agents=legacy`
+  while one is present.
+
 ## [6.6.0-beta.1] - 2026-09-23
 
 The orchestrator-worker shape stops being prose and becomes installable
