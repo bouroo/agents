@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Pre-4.0 entries were retired in the v4 fresh start; the full history lives in git
 tags and log (`v1.0.0` through `v3.11.0`).
 
+## [6.5.1-beta.1] - 2026-09-23
+
+### Changed
+
+- **`AGENTS.md`, `skills/craft/SKILL.md`** — the `PROMPT:` intake gate states explicitly that an ask in any language is first rewritten as one concise, clear English paragraph before work begins; the confirm-the-reading stop is unchanged.
+
 ## [6.5.0] - 2026-09-20
 
 Eighteenth skill: `design-pattern-selection`.

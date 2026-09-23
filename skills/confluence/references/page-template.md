@@ -256,6 +256,38 @@ the corresponding Confluence-HTML node or by mirroring the sibling's markup.
 | Field-To-Field Mapping | Input/Output · Field Name · Type · M/O/C · Source Field · Remarks |
 | Change Log | Date · Updated By · Description · Status |
 
+## Change Log + change highlighting (page updates)
+[changelog]
+
+An update must let a reader see the delta without opening version history. Three parts: baseline diff, marked rows, and one Change Log table per page.
+
+### Baseline diff first
+
+`confluence_get_page_history(page_id, version=N, convert_to_markdown=false)` returns the full stored body of any prior version (the tool defaults `convert_to_markdown=true` — always pass `false` for storage work; its `space` field returns "Unknown", a tool quirk, ignore it). Walk `N = current-1, current-2, …` until the version's timestamp precedes the current effort's start date; that version is the pre-change baseline. Diff section/field sets baseline vs new body — fields in the body missing from the baseline are `New`, fields only in the baseline are `Removed`, value/type/requirement drift is `Modified`, renames are `Renamed`.
+
+### Mark the changed points
+
+- Rebuilt tables add a trailing `Change` column: changed rows carry their `C#` and the field name in `<strong>`; untouched rows leave the cell empty. Storage form: `<td><p>C1</p></td>` / empty `<td><p></p></td>`.
+- Removed content leaves no live row — it is recorded only as a `Removed` Change Log row naming the baseline path.
+- Prose-level semantic shifts (e.g. an endpoint's error model changing) take a page-level row with Field `—`.
+
+### Change Log table (h3, placed after the changed sections)
+
+```xml
+<h3>Change Log</h3>
+<table><tbody>
+  <tr><th><p>Change #</p></th><th><p>Date</p></th><th><p>Field</p></th><th><p>Change Type</p></th><th><p>Description</p></th></tr>
+  <tr><td><p>C1</p></td><td><p>2026-09-22</p></td><td><p><strong>content.x</strong></p></td><td><p>Modified</p></td><td><p>…</p></td></tr>
+  <tr><td><p>C2</p></td><td><p>2026-09-22</p></td><td><p>—</p></td><td><p>Modified</p></td><td><p>page-level shift, e.g. error semantics</p></td></tr>
+</tbody></table>
+```
+
+Rules: `Date` = the edit date; `Change Type` ∈ `New | Modified | Renamed | Removed`; numbering restarts at `C1` per page; field-level rows preferred, page-level `—` only for shifts no single field carries; `Renamed` rows name the pre-rename path in the Description while the `C#` anchors on the live (renamed) row.
+
+### Integrity gate (add to the publish proof)
+
+After publish, re-fetch and check the refs bidirectionally: every `C#` used in body tables exists in the Change Log **and** every Change Log `C#` anchors in the body — under three documented relaxations: page-level rows (Field `—`) are exempt, aggregate rows (`X[].*`) match if any table row starts with `X[].`, and `Removed` rows anchor only in the baseline (no live row by definition). A dangling ref in either direction is a publish blocker, same tier as a failed `GATE OK`.
+
 ## Instance variant: "BFF API Specification" page families
 
 Verified by publishing 2026-08-14 (two shortlink pages + siblings under a
@@ -362,3 +394,4 @@ divergences; when publishing through mcp-atlassian, match this record:
    is compressed/truncated by the client, probe via bumped `version`,
    `text ~ "unique-string"` search, and the parent's children listing; render
    confirmation stays manual in a browser.
+7. Change refs bidirectional: every `C#` in body tables exists in the page's Change Log and vice versa (relaxations: Field `—`, `X[].*` prefix rows, `Removed` rows).

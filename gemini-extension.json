@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "6.5.0",
+  "version": "6.5.1-beta.1",
   "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, eighteen on-demand skills (artifacts, confluence, craft, domain-modeling, design-pattern-selection, evals, modernize-coding, graph-engineering, grilling, indexed-search, lifecycle, performance, security-audit, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, and deterministic verification gates.",
   "contextFileName": "AGENTS.md",
   "mcpServers": {}
