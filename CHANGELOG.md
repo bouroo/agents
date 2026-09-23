@@ -10,6 +10,64 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.6.0-beta.1] - 2026-09-23
+
+The orchestrator-worker shape stops being prose and becomes installable
+machinery. Teamwork described the lead's dispatch-and-verify loop, but nothing
+a host could load enacted it — every host rolled its own lead/worker prompts.
+`agents/` now ships the two definitions: an **orchestrator** that decomposes
+into units with explicit file ownership and executable DONE checks, dispatches
+each to a worker, re-verifies every returned unit itself (a worker's report is
+testimony, not proof), and stops after three failed cycles on one unit; and a
+**worker** that executes exactly one unit and returns files changed plus
+exit-code evidence. `scripts/install.sh` grows a fourth surface column that
+distributes them per host: common markdown for most, a `.plain` variant (no
+`name:` frontmatter — the host derives the agent id from the filename) for
+OpenCode and Kilo, copied TOML for Codex, and no agents surface for OpenClaw,
+Hermes, and MiniMax. A host-specific file under `agents/<code>/` wins over the
+common one by installed basename.
+
+The confluence skill absorbs one day's write-side failures and one discipline.
+Three guards, each paid for 2026-09-23: never copy a collapsed macro's rendered
+signature line back as markdown (three sample blocks corrupted that way —
+re-fence every sample instead); section updates are boundary-blind past the
+headings the matcher recognizes, so on unfamiliar pages always diff (n-1)→n
+after a section write and restore from the removed lines when the replacement
+swallowed to EOF; and MCP writes go out sequentially, one call per message —
+parallel write calls fused into a single garbled ~100 KB payload once, and
+size was never the trigger, batching was. The discipline: a page *update* must
+make the delta visible in the page itself — fetch a pre-change baseline
+version, mark every changed row with a `C#` ref and bold field name, record
+removals as `Removed` rows in one per-page Change Log table, and prove after
+publish that every `C#` resolves bidirectionally.
+
+### Added
+
+- **`agents/common/`, `agents/codex/`** — the orchestrator and worker agent
+  files in three encodings: common markdown, `.plain.md` for hosts that reject
+  a `name:` key, and Codex TOML (`developer_instructions`, plus a note on
+  raising `agents.max_depth` when spawning fails).
+- **The `agents` surface in `scripts/install.sh`** — a sixth host-table column
+  (`<subdir>[:<fmt>...][:copy]`, `-` for none) that installs per-file agent
+  definitions with the format rules above; the file-level precedence and the
+  `md` vs `md-plain` consumption rule are documented in the script's `--help`.
+- **`skills/confluence/references/page-template.md` — the `[changelog]`
+  section**: the baseline-diff workflow, storage-form snippets for the
+  Change column and the Change Log table, the change-type and numbering rules,
+  and the bidirectional `C#` integrity gate with its three documented
+  relaxations, added as item 7 of the publish proof.
+
+### Changed
+
+- **`skills/teamwork`** — a new "The lead's dispatch loop" section: one unit
+  per worker with a self-contained brief, re-run the failing worker rather
+  than re-dispatching (re-dispatch only on mis-specification), stop after
+  three failed cycles, and synthesize the final report outcome-first.
+- **`skills/confluence` write guards** — collapsed-macro copyback,
+  boundary-blind section edits, and sequential (never parallel) MCP writes
+  join the rules-paid-for-by-breakage list; the payload-corruption rule now
+  names batching, not size, as the trigger.
+
 ## [6.5.1-beta.1] - 2026-09-23
 
 ### Changed
