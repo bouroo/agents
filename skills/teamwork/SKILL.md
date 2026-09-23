@@ -1,6 +1,6 @@
 ---
 name: teamwork
-description: "Agent-agnostic multi-agent teamwork — the coordination graph: the solo-to-delegation-to-team topology ladder, shared task ledger with dependency edges, exclusive file ownership, spawn briefs as node contracts, milestone rotation, adversarial verification roles, and team failure modes. Use when a job's execution graph outgrows one context and parallelizes, when forming or joining a team of agents, or when judging a team's report."
+description: "Agent-agnostic multi-agent teamwork — the coordination graph: the solo-to-delegation-to-team topology ladder, shared task ledger with dependency edges, exclusive file ownership, spawn briefs as node contracts, the lead's dispatch-and-verify loop, milestone rotation, adversarial verification roles, and team failure modes. Use when a job's execution graph outgrows one context and parallelizes, when forming or joining a team of agents, or when judging a team's report."
 ---
 
 # Teamwork
@@ -39,6 +39,13 @@ Counter-signals — sequential work, same-file edits, heavy inter-task dependenc
 - **Spawn briefs are node contracts.** A fresh worker inherits the repository (instruction files, tools, skills), never the lead's conversation history. Every brief states GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN, the files the worker owns, the tools it may use, and the evidence owed — the node's boundary, exit condition, tool surface, and anchor class; scoping the surface to the task means less confusion, misuse, and injection exposure ([harness-design](../graph-engineering/references/harness-design.md)). Vague briefs produce confident off-target work. When clauses inside a brief disagree (prose contract vs. check example), the disagreement is the finding: the worker flags it and stops — rank spec over checks, never implement past an unresolved conflict.
 - **Milestone rotation.** Between milestones, hand off to a fresh context rebuilt from the plan artifacts rather than stretching one window across the whole project. The plan and the ledger are the coordination medium, not anyone's transcript.
 - **Monitor and steer.** A team running unattended accrues wasted effort: read transcripts, redirect stuck approaches, replace workers that stopped early instead of resurrecting them cold.
+
+## The lead's dispatch loop
+
+- **Dispatch one unit per worker, brief in hand.** Hand the brief, not the conversation: the worker inherits the repository, never the lead's history. On a host with a user-defined agent-file format, prefer a defined worker agent; otherwise dispatch on the host's native subagent surface. Bounded, well-specified units suit smaller models, leaving the lead's context for decomposition and verification; per-spawn models come from host configuration, not the brief. When the host caps concurrency, dispatch to the cap and queue the rest.
+- **Re-run, do not re-dispatch.** A unit that fails its check is re-run in place with the failing evidence attached — same worker, not a fresh one. Re-dispatch only when the unit itself was mis-specified.
+- **Stop after three failed cycles.** A repeated failure on one unit is a specification problem, not a dispatch problem: stop and hand back.
+- **Synthesize the final report.** Once every unit's check is green and the job's DONE_WHEN holds, report changes, evidence, caveats, and pending follow-ups — outcome first, caveats honest.
 
 ## Verification inside a team
 
