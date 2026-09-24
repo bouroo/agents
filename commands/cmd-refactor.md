@@ -5,11 +5,11 @@ description: "Refactor (ACT): analyze, plan, baseline, execute, verify, and sync
 
 # Refactor Phase
 
-Behavior-preserving restructuring in the **Build** stage (§4), its diff entering **Test**: measure before and after, keep only what the data supports, and do performance work only after correctness is proven. Not for new features, behavior-changing fixes, or trivial reformatting.
+Behavior-preserving restructuring in the **Build** stage (§4), its diff entering **Test**: measure before and after, keep only what the data supports, and do performance work only after correctness is proven. Not for new features, behavior-changing fixes, or trivial reformatting. **No options: fully autonomous** — target, scope, and thresholds resolve from the repo's own signals and the run proceeds without waiting on the user.
 
 ## Target
 
-The module, package, path, or file to restructure. **Empty -> ask which area before analyzing** — never guess. `--goal=<readability|safety|performance>` weights the plan (performance justifies profiler-driven targets, safety error-path hardening) but never relaxes the behavior-preserving constraint.
+The module, package, path, or file to restructure. **Empty -> infer from the repo's own signals**: the working diff first, else the most recently changed code — state the chosen target in one line and proceed. **No signal at all (clean tree, no context) -> report there is nothing to refactor and stop** — never fabricate a target. `--goal=<readability|safety|performance>` weights the plan (performance justifies profiler-driven targets, safety error-path hardening) but never relaxes the behavior-preserving constraint.
 
 ## Steps
 

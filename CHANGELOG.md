@@ -10,6 +10,21 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.7.0] - 2026-09-24
+
+The four command workflows (verify, review, refactor, document) no
+longer stop to ask on their no-options paths. No options now means
+fully autonomous: every in-command decision — refactor's target,
+document's type and scope, verify's layer dialing — resolves from the
+repo's own signals (working diff, recently changed code, prevailing
+conventions), the chosen assumption is stated in one line, and the run
+proceeds without waiting on the user. The stops that remain are the
+ones that are themselves best practices: nothing inferable to work on
+(no target is ever fabricated), security findings reported and
+escalated rather than auto-fixed, the three-iteration escalation
+bound, and the manifesto's `AUTH:` gate on outward or destructive
+actions. Explicit options keep their documented meaning.
+
 ## [6.6.0] - 2026-09-24
 
 Stable cut of the 6.6.0 line. The minor ships the two role agents
