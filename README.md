@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, eighteen on-demand skills, and four routine-task command workflows. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, eighteen on-demand skills, four routine-task command workflows, and two role agents (orchestrator, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## The foundation: the delivery lifecycle
 
@@ -66,6 +66,9 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 │   └── security-audit/                the candidate gate, calibrated severity,
 │       └── references/                needs_validation discipline; attack-class
 │                                      coverage and per-domain hunter rules
+├── agents/                           role agents: orchestrator (lead) + worker
+│   ├── common/                       md + plain.md variants of both
+│   └── codex/                        codex toml variants
 ├── commands/
 │   ├── cmd-verify.md                  Test: quality-gate pipeline with fix/re-verify
 │   ├── cmd-review.md                  Test: severity-grouped review with one verdict

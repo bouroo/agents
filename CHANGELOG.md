@@ -10,6 +10,36 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.6.0-beta.3] - 2026-09-24
+
+The plugin route shipped the role definitions but no Claude Code user
+could install them: `plugin.json` declared `repository` as an object
+(`{type, url}`), the Claude CLI rejects that shape, and the rejection
+aborts the whole install (`repository: Invalid input`) — no plugin,
+therefore no agents and no skills either. The field is now a plain URL
+string, and both claude manifests declare an `agents` array pointing
+at the named `orchestrator.md` / `worker.md` variants, so marketplace
+installs expose `coder-agents:orchestrator` and `coder-agents:worker`
+under flat scoped names. Verified end-to-end on the live CLI: strict
+validation passes, install succeeds, and a session lists both agents.
+
+### Changed
+
+- Manifest descriptions across all six surfaces now mention the two
+  role agents. The stale `.cursor-plugin/marketplace.json` listing —
+  still advertising "seventeen on-demand skills" and missing
+  design-pattern-selection — is re-synced to the shared text, and the
+  claude marketplace listing gains a top-level `description`.
+- README: the summary line and the repo tree now name the `agents/`
+  surface.
+
+### Fixed
+
+- **`.claude-plugin/plugin.json` + `marketplace.json`** — `repository`
+  object shape replaced with a plain URL string (the install blocker);
+  `agents` array added so the two role agents ship through the plugin
+  route.
+
 ## [6.6.0-beta.2] - 2026-09-23
 
 The beta.1 role definitions absorb a round of hardening, mostly borrowed
