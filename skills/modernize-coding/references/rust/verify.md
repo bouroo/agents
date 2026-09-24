@@ -4,6 +4,8 @@ Rust's claims need a real crate to check, but they are all locally verifiable �
 
 ## Editions and MSRV
 
+Run:
+
 ```bash
 rustc -h | grep edition                 # accepted editions + which is stable
 cargo metadata --no-deps --format-version 1 | jq '.packages[0] | {edition, rust_version}'
@@ -13,7 +15,7 @@ cargo metadata --no-deps --format-version 1 | jq '.packages[0] | {edition, rust_
 
 ## Fixer behaviour — verify, do not assume
 
-Create a throwaway crate and watch what each tool actually rewrites:
+Create a throwaway crate and watch what each tool actually rewrites. Run:
 
 ```bash
 cargo new /tmp/probe && cd /tmp/probe
@@ -28,7 +30,7 @@ Confirmed rewrites from `cargo clippy --fix` on a seeded snippet: `vec![1,2,3]` 
 
 ## The trap: no dry-run
 
-Unlike Go's `go fix -diff`, **Rust's fixers have no `--dry-run`** — verified against `cargo fix --help` and `cargo clippy --fix --help`. The diff-first discipline therefore rests on git:
+Unlike Go's `go fix -diff`, **Rust's fixers have no `--dry-run`** — verified against `cargo fix --help` and `cargo clippy --fix --help`. The diff-first discipline therefore rests on git. Run:
 
 ```bash
 git status --porcelain                    # empty; cargo fix refuses a dirty tree

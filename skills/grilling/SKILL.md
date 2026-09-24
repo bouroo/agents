@@ -5,7 +5,7 @@ description: "Interview the user in numbered frontier rounds to reach shared und
 
 # Grilling
 
-Interview the user relentlessly until you reach shared understanding of a plan, decision, or idea. This is the technique behind the manifesto's plan-first intake route (§2): ambiguity drains through conversation, never through guessing.
+Interview the user until you reach shared understanding of a plan, decision, or idea. This is the technique behind the manifesto's plan-first intake route (§2): ambiguity drains through conversation, never through guessing.
 
 > **Override.** A project-level planning process that explicitly supersedes this skill wins.
 
@@ -15,9 +15,7 @@ Map the decision space as a **design tree**: every decision branches into the de
 
 ## Rounds and the frontier
 
-Work the tree in **rounds**. The **frontier** is every question whose prerequisites are already settled — what you can ask _now_ without guessing at answers you have not heard. Ask the whole frontier in one round: number each question, give your recommended answer, then stop and wait. A question whose answer depends on one still open this round belongs to a _later_ round. Each round's answers reshape the tree: settled decisions push the frontier outward. Recompute it and ask the next round.
-
-Format a round like so:
+Work the tree in **rounds**. The **frontier** is every question whose prerequisites are settled — what you can ask _now_ without guessing at answers you have not heard. Ask the whole frontier in one round: number each question, give your recommended answer, then stop and wait. A question depending on one still open belongs to a _later_ round. Each round's answers push the frontier outward; recompute it and ask the next.
 
 ```markdown
 ❓ **Q1** - **<question title>**: <question body; may be several paragraphs, may offer choices>
@@ -33,11 +31,11 @@ Format a round like so:
 
 ## Facts are yours; decisions are theirs
 
-Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (code, files, tools), dispatch a sub-agent to look it up — never ask the user for anything you could find yourself. Do not block on it: a running lookup is an unsettled prerequisite, so only the questions downstream of it wait for the result; ask the rest of the frontier now. The _decisions_ are the user's: put each to them in the round, and wait.
+Finding _facts_ is your job, never the user's: when a frontier question needs a fact from the environment (code, files, tools), dispatch a sub-agent to look it up — never ask the user for anything you could find yourself. Do not block on it: a running lookup is an unsettled prerequisite, so only questions downstream of it wait; ask the rest of the frontier now. The _decisions_ are the user's: put each to them in the round, and wait.
 
 ## Completion
 
-The interview is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Then produce the plan with one recommendation and **STOP** for approval — never act on the interview's outcome on your own authority (§2). Give that plan a deterministic body: [artifacts](../artifacts/SKILL.md) owns the `intent` / `spec` / `PLAN.md` shapes the approval produces.
+The interview is done when the frontier is empty: every branch visited, nothing left silently assumed. Then produce the plan with one recommendation and **STOP** for approval — never act on the interview's outcome on your own authority (§2). [artifacts](../artifacts/SKILL.md) owns the `intent` / `spec` / `PLAN.md` shapes the approval produces.
 
 ## Common mistakes
 

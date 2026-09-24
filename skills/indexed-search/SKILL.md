@@ -5,7 +5,7 @@ description: "Fast repeated search over large repositories via a trigram-indexed
 
 # Indexed search
 
-A trigram index turns O(total bytes) scans into candidate-file lookups — up to an order of magnitude faster on large repos — but only if the lifecycle is managed. Probe first, degrade gracefully, never install: the doctrine ships dependency-free, and a skill that requires a build step is a broken skill on the next host.
+A trigram index turns O(total bytes) scans into candidate-file lookups — up to an order of magnitude faster on large repos — but only if its lifecycle is managed. Probe first, degrade gracefully, never install: the doctrine ships dependency-free, and a skill that requires a build step is broken on the next host.
 
 ## 1. Probe the host
 
@@ -55,4 +55,4 @@ tgrep -q -- "pat" . && echo HIT     # exit 0 match / 1 none / 2 error — probe,
 | ripgrep | near-identical surface: `-F -t -g -l -c -A/-B/-C --json` all carry over; drop `--no-index`, `--index-path`, `--stats`, `serve`/`status` |
 | Grep tool | built-in path/string search; lose type filters and JSON — accept, and scope with explicit globs |
 
-**Termination:** a search claim cites command + exit code. A **miss (exit 1) is evidence of absence only against a fresh index or a `--no-index` scan** — a negative from a stale index is the classic false-anchor: it looks like proof nothing exists while the index simply never saw the file. When a verdict hinges on absence, re-run `--no-index`.
+**Termination:** a search claim cites command + exit code. A **miss (exit 1) is evidence of absence only against a fresh index or a `--no-index` scan** — a negative from a stale index is the classic false-anchor: it looks like proof nothing exists while the index never saw the file. When a verdict hinges on absence, re-run `--no-index`.

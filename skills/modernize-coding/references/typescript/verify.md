@@ -4,7 +4,7 @@ Unlike Go and Java, this ecosystem ships no local machine-readable index — MDN
 
 ## The anchor: TC39's publication year
 
-A proposal reaching stage 4 is included in that year's spec. The list states the year per proposal:
+A proposal reaching stage 4 is included in that year's spec. The list states the year per proposal. Run:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/tc39/proposals/main/finished-proposals.md -o finished.md
@@ -22,7 +22,7 @@ for r in rows:
         print(name, "->", year)                                    # -> 2020
 ```
 
-Years this yields for the table in [guide.md](guide.md): Optional Chaining **2020**, Nullish Coalescing **2020**, Logical Assignment **2021**, `.at()` **2022**, Accessible `Object.hasOwn` **2022**, Change Array by Copy (`toSorted`/`toReversed`/`with`/`toSpliced`) **2023**, find-from-last **2023**.
+Years this yields for the guide's table: Optional Chaining **2020**, Nullish Coalescing **2020**, Logical Assignment **2021**, `.at()` **2022**, Accessible `Object.hasOwn` **2022**, Change Array by Copy (`toSorted`/`toReversed`/`with`/`toSpliced`) **2023**, find-from-last **2023**.
 
 ## Trap: the row shape
 
@@ -35,6 +35,8 @@ Years this yields for the table in [guide.md](guide.md): Optional Chaining **202
 3. **MDN's spec table is not an anchor.** It links the live draft. If you need a per-feature source, prefer the proposal's own repo README, which records the stage-4 date.
 
 ## Runtime check (availability, not provenance)
+
+Run:
 
 ```bash
 node -e "console.log(typeof [].toSorted, typeof Object.hasOwn, typeof structuredClone)"

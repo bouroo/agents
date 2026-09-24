@@ -17,14 +17,14 @@ Implements [modernize-coding](../../SKILL.md) for Java.
   `jdeprscan --release <N> --for-removal .` lists only what is slated for removal. This is a report, not a fixer.
 - **Error Prone** — compiler-integrated, rewrites at build time. Best wired into the build once; it then fixes continuously:
   `mvn -Derrorprone ...` with `-XepPatchChecks` + `-XepPatchLocation:IN_PLACE`, or the `error_prone_core` javac plugin.
-- **OpenRewrite** — recipe-driven, and the closest thing Java has to Go's `go fix`. It has an explicit `Modernize` recipe family and a **dry-run is first-class**:
+- **OpenRewrite** — recipe-driven, the closest thing Java has to Go's `go fix`. It has an explicit `Modernize` recipe family and a **dry-run is first-class**:
   `mvn -U org.openrewrite.maven:rewrite-maven-plugin:dryRun -Drewrite.activeRecipes=org.openrewrite.java.migrate.UpgradeToJava21`
   → review the printed patch → re-run without `dryRun` to apply.
 - **IDE/agent session** — `jdtls` (Eclipse JDT language server) exposes the same refactorings programmatically.
 
 ## 3. Write current from the start
 
-Language features below are anchored by compiling each against `javac --release N` and taking the first release that accepts it. API members are anchored to the `@since` javadoc tag in the JDK's own `lib/src.zip` — Java's equivalent of Go's `GOROOT/api` (see [verify](verify.md) to re-derive both locally).
+Language features below are anchored by compiling each against `javac --release N` and taking the first release that accepts it. API members are anchored to the `@since` javadoc tag in the JDK's own `lib/src.zip` — Java's equivalent of Go's `GOROOT/api` (re-derivable locally).
 
 ### Language
 

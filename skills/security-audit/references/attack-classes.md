@@ -8,13 +8,13 @@ Coverage units for a security audit, and the discipline that keeps each class fr
 
 ## Injection
 
-Trace untrusted input from entry point to sink. The sink depends on the target: SQL and HTML output, shell commands, template engines, file paths, redirects, and deserialization for web; any function that consumes caller data unvalidated for a library; command construction and path handling for a CLI; query construction and log injection for a service.
+Trace untrusted input from entry point to sink. The sink depends on the target: SQL and HTML output, shell commands, template engines, file paths, redirects, and deserialization for web; any function consuming caller data unvalidated for a library; command construction and path handling for a CLI; query construction and log injection for a service.
 
 Do not stop at the direct path. Look for **stored injection** — data written safely, then read and used in a dangerous context by other code — and for injection through **keys, headers, and metadata**, not only values. Look at secondary sinks: logs, caches, search indexes, analytics.
 
 ## Access control
 
-Go past whether a permission check exists and ask whether it checks the *right* permission, for the *right resource*, by the *right mechanism*.
+Go past whether a permission check exists and ask whether it checks the *right* permission, for the *right* resource, by the *right* mechanism.
 
 - Is there a second path to the same state change that checks a weaker permission?
 - Can a request-body field override what the permission intended to restrict?

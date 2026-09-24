@@ -10,6 +10,21 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.7.1] - 2026-09-25
+
+Prose and structure release, no behavior change. The manifesto gains
+the four-lever framing paragraph (right-sized context, explicit control
+flow, repository-held state, narrow supervised scope), renames §4 to
+"Delivery Lifecycle Is Control Flow" with the escape-hatch and
+deterministic-owns-specifiable rules as first-class protocol text, and
+retitles §9 "Teamwork: Narrow Agents, Firm Orchestration", stating the
+orchestrator-owned fan-out pattern. The command workflows gain fixed
+machine-scannable report templates (document, verify) and the
+clarifications that refactor's baseline is committed state outside the
+model and that review's mechanical checks are deterministic, with model
+judgment reserved for findings. A skills-wide pass tightens prose and
+adds contents and references sections.
+
 ## [6.7.0] - 2026-09-24
 
 The four command workflows (verify, review, refactor, document) no

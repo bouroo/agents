@@ -11,7 +11,7 @@ Architecture is the set of trade-offs you can defend. Requirements → architect
 
 ## 1. Frame: requirements before shapes
 
-1. Separate **ASRs** from ordinary requirements — high business impact, cross-cutting, quality-attribute-focused ([requirements](references/requirements.md)).
+1. Separate **ASRs** from ordinary requirements — high business impact, cross-cutting, quality-attribute-focused.
 2. Pin every NFR as an SEI scenario; "fast" and "scalable" are not requirements:
 
    > When a user submits a search under normal load, the search system shall return results within 2 s for 95% of requests at 1,000 concurrent users.
@@ -31,25 +31,38 @@ Start with the simplest style that meets the ASRs and evolve on evidence. Defaul
 | Audit, temporal queries | Event sourcing (+ CQRS) |
 | Prototype / MVP | Monolith on a familiar stack |
 
-Pattern catalog with trade-offs: [patterns](references/patterns.md); the code-level dependency-inward discipline for complex domains: [clean architecture](references/clean-architecture.md). Quality-attribute tactics and their conflicts (e.g. security ↔ performance, availability ↔ consistency): [quality attributes](references/quality-attributes.md).
+For complex domains, the code-level discipline is dependency-inward (clean/hexagonal); quality attributes carry tactics and predictable conflicts (e.g. security ↔ performance, availability ↔ consistency).
 
 ## 3. Decide: one ADR per significant choice
 
 Write an ADR when options were weighed and the choice binds future work; skip it for standards-covered or throwaway calls. The value is the neglected alternative:
 
-> In context X, facing Y, we decided Z, neglecting A and B, to achieve C, accepting D.
+> In context X, facing requirement Y, we decided Z, neglecting A and B, to achieve C, accepting D.
 
-Keep records immutable — supersede, never rewrite. Templates, naming, lifecycle: [decisions](references/decisions.md). The conversation-time trigger for offering one (hard to reverse, surprising without context, real trade-off) lives in [domain-modeling](../domain-modeling/SKILL.md); the format stays canonical here.
+Keep records immutable — supersede, never rewrite. The conversation-time trigger for offering one (hard to reverse, surprising without context, real trade-off) lives in [domain-modeling](../domain-modeling/SKILL.md); the format stays canonical here.
 
 ## 4. Model for the audience
 
-Diagrams are communication, not decoration. Zoom with C4: system context for executives and sponsors, containers for the delivery team, components for implementers; sequence diagrams for interactions; BPMN for process. One notation per diagram, current or deleted. Notation choices and drawing practice: [modeling](references/modeling.md); presenting it per audience and keeping the design alive in agile delivery: [communication](references/communication.md). To render one of these views as an explorable, self-contained system map, hand it to [system-diagramming](../system-diagramming/SKILL.md).
+Diagrams are communication, not decoration. Zoom with C4: system context for executives and sponsors, containers for the delivery team, components for implementers; sequence diagrams for interactions; BPMN for process. One notation per diagram, current or deleted. To render one of these views as an explorable, self-contained system map, hand it to [system-diagramming](../system-diagramming/SKILL.md).
 
 ## 5. Size and govern the delivery
 
-- **Estimate in ranges**: E = (O + 4M + P)/6, σ = (P − O)/6 — give E ± 2σ, never a point. Name the bias you are correcting (optimism, anchoring, scope creep).
+- **Estimate in ranges**: E = (O + 4M + P)/6, σ = (P − O)/6 — give E ± 2σ, never a point. Name the bias you are correcting (optimism, anchoring, scope creep); decompose an HLD into estimable **WPs**.
 - **Map stakeholders** on power × interest; manage closely only the top quadrant.
 - **Govern with guardrails**: federated model, tiered standards, exceptions with expiry; assess maturity L0–L5 before prescribing process.
-- Business capability/value-stream framing, estimation techniques, presales (RFP/HLD/pricing), cloud & DR choices: [delivery contexts](references/delivery-contexts.md). Governance models, review boards, portfolio, assessment checklists: [governance](references/governance.md).
 
 **Termination:** an architecture deliverable is done when every ASR has a measurable scenario, every significant decision has an ADR naming rejected alternatives, the C4 context + container diagrams render at their audience's zoom level, and each scenario that can be automated is encoded as a fitness function or test — an architecture review yielding no executable check is a narrative, not a design (§7 of the manifesto).
+
+## References
+
+Load the one that answers the question at hand.
+
+- [Requirements analysis](references/requirements.md) — ASRs, SEI scenarios, elicitation, prioritization, traceability.
+- [Patterns](references/patterns.md) — style catalog, data/scaling, resilience, integration, API styles, anti-patterns.
+- [Clean architecture](references/clean-architecture.md) — dependency-inward layers, principles, when to use.
+- [Quality attributes](references/quality-attributes.md) — catalog, tactics, trade-offs, testing map, fitness functions.
+- [Decisions](references/decisions.md) — ADR trigger, MADR template, Y-statement, practices.
+- [Modeling](references/modeling.md) — C4 zoom ladder, other notations, drawing practice.
+- [Communication](references/communication.md) — per-audience presentations, document skeleton, agile practice.
+- [Delivery contexts](references/delivery-contexts.md) — capability/value-stream framing, estimation, presales, cloud & DR.
+- [Governance](references/governance.md) — operating models, standards, review boards, maturity, portfolio.

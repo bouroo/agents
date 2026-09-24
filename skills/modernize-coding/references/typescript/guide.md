@@ -1,6 +1,6 @@
 # TypeScript / JS adapter
 
-Two baselines, and they answer different questions. `tsconfig.json` `target`/`lib` governs what the *type system and emitter* allow; `package.json` `engines.node` governs what the *runtime* actually has. A project can happily compile `Array.prototype.toSorted` and still crash on Node 18.
+Two baselines, answering different questions. `tsconfig.json` `target`/`lib` governs what the *type system and emitter* allow; `package.json` `engines.node` governs what the *runtime* actually has. A project can happily compile `Array.prototype.toSorted` and still crash on Node 18.
 
 Implements [modernize-coding](../../SKILL.md) for TypeScript and JavaScript.
 
@@ -8,7 +8,7 @@ Implements [modernize-coding](../../SKILL.md) for TypeScript and JavaScript.
 
 1. **`tsconfig.json` `compilerOptions.target`** — controls which features the compiler **downlevels** and sets the default `lib`. Values: `ES5`, `ES2015` (`ES6` alias), `ES2016`–`ES2024`, `ESNext` (case-insensitive; `ESNext` means "newest the installed TypeScript supports", not a fixed standard).
 2. **`compilerOptions.lib`** — controls which **type declarations** are available. Independent of `target`: `target: "ES5"` with `lib: ["ES2024"]` emits old syntax while type-checking modern APIs. **`target` provides no runtime polyfills** — it changes emitted syntax only.
-3. **`package.json` `engines.node`** and any `browserslist` — the real runtime floor, and the one that decides whether a modern API is *safe*, not merely compilable.
+3. **`package.json` `engines.node`** and any `browserslist` — the real runtime floor, the one that decides whether a modern API is *safe*, not merely compilable.
 4. **TypeScript version** (a devDependency) — some syntax is TS-only and has no JS-target equivalent.
 
 A modern `target` with an old `engines.node` is the single most common trap here: the code compiles, the types pass, and it crashes in production. Check both before calling anything modern.
@@ -26,7 +26,7 @@ Order: codemod the structure, `eslint --fix` the idiom, then format.
 
 ## 3. Write current from the start
 
-Edition years below are from TC39's own finished-proposals table (the year the proposal reached stage 4 / shipped in that year's spec) — see [verify](verify.md) to re-derive them.
+Edition years below are from TC39's own finished-proposals table (the year the proposal reached stage 4 / shipped in that year's spec) — re-derivable locally.
 
 ### Syntax
 

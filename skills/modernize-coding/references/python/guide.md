@@ -16,7 +16,7 @@ Absent any declaration, say so explicitly rather than assuming the newest — an
 
 - **`ruff`** — the practical default. Its `UP` (pyupgrade) rules are **in the default rule set** and are auto-fixable:
   `ruff check --diff .` → review → `ruff check --fix .`
-  `--diff` is the dry-run: it prints the patch without writing, which is exactly the diff-first discipline the parent skill requires.
+  `--diff` is the dry-run: it prints the patch without writing, the diff-first discipline the parent skill requires.
 - **`pyupgrade`** — the original tool for the same rewrites, targeting an explicit floor via a flag: `pyupgrade --py311-plus $(git ls-files '*.py')`. Use the flag matching the project's `requires-python`; running it without one assumes the oldest and rewrites too little.
 - **`black`** — formatting only. It is not a modernization tool; do not count it as one.
 
@@ -24,7 +24,7 @@ Order matters: let the fixer rewrite, then format, then verify.
 
 ## 3. Write current from the start
 
-Each "Needs" below is anchored to the CPython documentation's own version note for that entry (`Added in version X.Y`), or to the what's-new page that announced the PEP — see [verify](verify.md) to re-derive any of them.
+Each "Needs" below is anchored to the CPython documentation's own version note for that entry (`Added in version X.Y`), or to the what's-new page that announced the PEP — re-derivable locally.
 
 ### Typing
 

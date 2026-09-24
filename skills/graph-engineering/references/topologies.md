@@ -20,7 +20,7 @@ flowchart TD
     G -->|fail| W
 ```
 
-Read it in the grammar's edge vocabulary: `PRODUCES` from planner to worker, `FAN_OUT` to the three lens reviews, `JOINS` at the synthesizer, `ROUTES` at the gate — pass exits, fail `RETURNS` to the worker carrying the merged findings (the payload, not a flag) and counting against the cap. The review lenses fan out concurrently and rejoin at the synthesizer; the `RETURNS` edge is the whole feedback loop, so its payload and its cap are design decisions, not afterthoughts.
+Read it in the grammar's edge vocabulary: `PRODUCES` from planner to worker, `FAN_OUT` to the three lens reviews, `JOINS` at the synthesizer, `ROUTES` at the gate — pass exits, fail `RETURNS` to the worker carrying the merged findings (the payload, not a flag) and counting against the cap. The lenses fan out concurrently and rejoin at the synthesizer; the `RETURNS` edge is the whole feedback loop, so its payload and its cap are design decisions, not afterthoughts.
 
 ## Edge conditions
 

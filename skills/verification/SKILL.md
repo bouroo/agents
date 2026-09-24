@@ -5,13 +5,13 @@ description: "Proving work is actually done: right-sizing the controls, three-la
 
 # Verification
 
-**Stance:** "done" is the most common lie an agent tells. Its costume is verification theater — a transcript containing "the tests passed", "the build is green" while the observation is missing: intent to verify narrated, result asserted, captured command/exit/output absent. The other failure modes burn budget; this one ships broken work labeled *done* and breaks the trust budget every other check depends on. A gate that can fail is worth ten reminders that cannot.
+**Stance:** "done" is the most common lie an agent tells; its costume is **verification theater** — "tests passed" narrated while command, exit code, and output are absent. That failure ships broken work labeled done and burns the trust every other check depends on. A gate that can fail is worth ten reminders that cannot.
 
 > **Override.** A project-level harness spec that explicitly supersedes this skill wins.
 
 ## Right-size first (refuse the Average Answer Trap)
 
-Plot the job on two axes: **action complexity** (tools, decisions, outward effects coordinated) and **context complexity** (state gathered and retained).
+Plot the job on two axes: **action complexity** (tools, decisions, outward effects) and **context complexity** (state gathered and retained).
 
 | Axes | Example job | Layers | Mutation probe | Judge | Artifact lines | Retro |
 |---|---|---|---|---|---|---|
@@ -19,7 +19,7 @@ Plot the job on two axes: **action complexity** (tools, decisions, outward effec
 | Mid / Mid | fix within a module, runtime behavior | L1 + L2 | behavior-bearing lines | on demand | `INTENT:` / `TWINS:` owed | if a failure recurred |
 | High / High | cross-boundary, infra, security | L1 + L2 + L3 | yes | yes | full + decision log | yes |
 
-Two traps: the **Average Answer Trap** runs hardest-job controls on every task (a one-line typo does not need a judge); the **Kirby Effect** leaves components that encoded a model limitation after models improved — revisit each addition when a stronger model lands. Executable evidence is never optional; the dial chooses layers, never lowers the standard. When window or scope strains: **Reduce** actions, **Offload** context to `.agents/`, **Isolate** concerns (WIP 1). This doctrine calibrates source-code agents only; other domains build their own minimum viable harness.
+Two traps: the **Average Answer Trap** runs hardest-job controls on every task (a one-line typo needs no judge); the **Kirby Effect** leaves components that encoded a model limitation after models improved — revisit each addition when a stronger model lands. Executable evidence is never optional; the dial chooses layers, never lowers the standard. When window or scope strains: **Reduce** actions, **Offload** context to `.agents/`, **Isolate** concerns (WIP 1). This doctrine calibrates source-code agents only; other domains build their own minimum viable harness.
 
 ## Termination: three layers
 
@@ -27,22 +27,22 @@ Two traps: the **Average Answer Trap** runs hardest-job controls on every task (
 - **L2 runtime** tests run, critical paths execute, app starts — when the change runs.
 - **L3 end-to-end** one path crosses a real boundary — when the change crosses one (`n/a` allowed with a one-line reason).
 
-Guides steer before act, sensors detect after: run the cheapest check earliest; prefer computational sensors (deterministic, fast) over inferential ones (LLM judgment, costly). A red test beats a narrative pass; if review conflicts with a red test, the red test wins.
+Guides steer before act, sensors detect after: run the cheapest check earliest; prefer computational sensors (deterministic, fast) to inferential ones (LLM judgment, costly). A red test beats a narrative pass; if review conflicts with a red test, the red test wins.
 
 ## How hard a check grips the stop
 
 A check is worth what it can *prevent*, not what it can report. Four rungs of grip, each trading setup for attention — climb only as far as the job's risk earns:
 
-1. **In-prompt** — name the check and iterate inside the same turn. Works on any task today; relies on the agent remembering to run it.
+1. **In-prompt** — name the check and iterate inside the same turn. Applies to any task, but relies on the agent remembering to run it.
 2. **Standing condition** — the check persists across turns, so it keeps gripping after the next unrelated message. Use when one turn is not the whole job.
 3. **Deterministic gate** — a script or hook runs the check and fails the turn; the machine, not the model, decides pass. Use when the check **must always** run.
 4. **Independent verifier** — a fresh context re-derives the result, so the author is not the grader. Use when the work is load-bearing and unattended.
 
-The governing rule: **a check that must always run becomes a gate; a check that only guides stays a sentence.** An instruction to remember a check is advisory and fails open; a gate fails closed. When a rule keeps being forgotten, the fix is to climb a rung, not to repeat the rule louder. Each rung costs more to build, so the ladder descends as readily as it climbs — a check no longer at risk is stepped back down ([graph-engineering](../graph-engineering/SKILL.md), least-agency rung).
+The governing rule: **a check that must always run becomes a gate; a check that only guides stays a sentence.** A remembered check is advisory and fails open; a gate fails closed. When a rule keeps being forgotten, climb a rung rather than repeat the rule louder. Each rung costs more to build, so the ladder descends as readily as it climbs — a check no longer at risk is stepped back down ([graph-engineering](../graph-engineering/SKILL.md), least-agency rung).
 
 ## Executable evidence is the anchor
 
-Every done claim carries command (literal), exit code (explicit), and actual output (captured, not paraphrased) — on disk where it survives compaction. Evidence is the anchor class of last resort ([graph-engineering](../graph-engineering/SKILL.md)): the end of every `VERIFIES` chain, because it is the only node a later step cannot talk out of what it recorded. **Evidence audit**, five questions asked of any done claim:
+Every done claim carries command (literal), exit code (explicit), and actual output (captured, not paraphrased) — on disk where it survives compaction. Evidence is the anchor class of last resort ([graph-engineering](../graph-engineering/SKILL.md)): the end of every `VERIFIES` chain, the one node a later step cannot talk out of what it recorded. **Evidence audit** — five questions asked of any done claim:
 
 1. Is the command literally present, not paraphrased?
 2. Is the exit code captured?
@@ -54,7 +54,7 @@ Any "no" means unverified; the unit is not done.
 
 ## Mutation probe
 
-Introduce a single semantic defect (flip a boolean, shift a bound, drop a guard); run the suite and require it to FAIL; revert and confirm PASSES. A suite that cannot catch a deliberate defect is theater — the check itself becomes the defect under review.
+Introduce a single semantic defect (flip a boolean, shift a bound, drop a guard); run the suite and require it to FAIL; revert and confirm PASSES. A suite that cannot catch a deliberate defect is theater — the check itself is the defect under review.
 
 ## Judge a finished report
 
@@ -67,11 +67,11 @@ Judging changes nothing — read and run only; minutes, not hours. Hunt in order
 5. Re-run every re-runnable claim (cap 3 reproductions per claim); sweep debris and scope creep.
 6. Resolve conflicts by anchor rank: user statement > spec > checks > current code.
 
-Labels: a claim that cannot be re-run is **UNVERIFIABLE**, never assumed true; UNVERIFIABLE on a load-bearing claim forces caveats. Verdict is exactly one of **VERIFIED / VERIFIED WITH CAVEATS / REFUTED** — refutation names the claim and shows contradicting output plus smallest fix; never soften a refutation to be polite, never inflate a caveat to look rigorous. If the environment to verify is missing, hand back rather than guess.
+Labels: a claim that cannot be re-run is **UNVERIFIABLE**, never assumed true; UNVERIFIABLE on a load-bearing claim forces caveats. Verdict is exactly one of **VERIFIED / VERIFIED WITH CAVEATS / REFUTED** — a refutation names the claim and shows contradicting output plus the smallest fix; never soften a refutation to be polite, never inflate a caveat to look rigorous. If the environment to verify is missing, hand back rather than guess.
 
 ## Diagnosis
 
-Reason backward from the observed failure to the state that produced it and name the root cause before writing the next change; a symptom patch that leaves the cause in place is a defect. Before patching, **attribute the failure to its layer** — reasoning, tool interface, context, or control flow — because the wrong-layer fix (rewriting the prompt for an ambiguous tool signature, relaxing a check for a routing error) is a symptom patch by construction: [harness-design](../graph-engineering/references/harness-design.md). Route surprises backward, never forward: contradiction at PROVE re-enters at THINK; a mechanical mistake re-enters at ACT.
+Reason backward from the observed failure to the state that produced it and name the root cause before writing the next change; a symptom patch that leaves the cause in place is a defect. Before patching, **attribute the failure to its layer** — reasoning, tool interface, context, or control flow — because the wrong-layer fix (rewriting the prompt for an ambiguous tool signature, relaxing a check for a routing error) is a symptom patch by construction ([harness-design](../graph-engineering/references/harness-design.md)). Route surprises backward, never forward: contradiction at PROVE re-enters at THINK; a mechanical mistake re-enters at ACT.
 
 ## GROW: governed self-evolution
 

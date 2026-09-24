@@ -2,7 +2,7 @@
 
 ## Structure
 
-Single context — most repos — is one `CONTEXT.md` at the repo root:
+Most repos have a single context: one `CONTEXT.md` at the repo root.
 
 ```md
 # {Context Name}
@@ -26,9 +26,9 @@ _Avoid_: Client, buyer, account
 
 ## Rules
 
-- **Be opinionated.** When multiple words exist for one concept, pick the best and list the others under `_Avoid_`.
-- **Keep definitions tight.** One or two sentences; define what it IS, not what it does.
-- **Context-specific terms only.** General programming concepts (timeouts, error types, utility patterns) do not belong, however heavily the project uses them. Before adding a term, ask: unique to this context, or a general programming concept? Only the former.
+- **Be opinionated.** When several words exist for one concept, pick the best and list the rest under `_Avoid_`.
+- **Keep definitions tight.** One or two sentences; define what the term IS, not what it does.
+- **Context-specific terms only.** General programming concepts (timeouts, error types, utility patterns) do not belong, however heavily the project uses them. Ask: unique to this context, or general? Only the former.
 - **Group under subheadings** when natural clusters emerge; one cohesive area can stay a flat list.
 
 ## Multi-context repos
@@ -51,6 +51,6 @@ A `CONTEXT-MAP.md` at the repo root lists the contexts, where each lives, and ho
 - **Ordering <-> Billing**: shared types for `CustomerId` and `Money`
 ```
 
-Inferring which structure applies: `CONTEXT-MAP.md` present -> read it to find the contexts; only a root `CONTEXT.md` -> single context; neither -> create the root `CONTEXT.md` lazily when the first term resolves. In a multi-context repo, infer which context the current topic touches; ask only if genuinely unclear.
+Which structure applies: `CONTEXT-MAP.md` present -> read it to find the contexts; only a root `CONTEXT.md` -> single context; neither -> create the root `CONTEXT.md` lazily when the first term resolves. In a multi-context repo, infer which context the topic touches; ask only if genuinely unclear.
 
 Distilled from [mattpocock/skills](https://github.com/mattpocock/skills) (`domain-modeling/CONTEXT-FORMAT.md`, MIT).

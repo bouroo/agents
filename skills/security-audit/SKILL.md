@@ -5,7 +5,7 @@ description: "Vulnerability review of a codebase, API, service, CLI, or library:
 
 # Security Audit
 
-**Stance:** a finding is a boundary violation with a victim, not a best-practice deviation. The failure mode is a report of "missing rate limit" and "consider rotating keys" — claims that cost an owner more to triage than they are worth, and bury the one real defect underneath. A candidate that cannot name who is harmed and how does not survive the gate.
+**Stance:** a finding is a boundary violation with a victim, not a best-practice deviation. The failure mode is a report of "missing rate limit" and "consider rotating keys" — claims that cost an owner more to triage than they are worth, and bury the one real defect beneath. A candidate that cannot name who is harmed and how does not survive the gate.
 
 Load [craft](../craft/SKILL.md) for the artifact gates and [verification](../verification/SKILL.md) for the evidence discipline this skill applies. An audit is [Test](../lifecycle/SKILL.md)-stage work, run by the Verifier seat — never by the author of the code under review.
 
@@ -29,7 +29,7 @@ Every candidate names all six, or it is not a finding:
 5. the **affected principal or resource** — who is harmed
 6. the **concrete result**, observable by an owner
 
-This is §0's anchor discipline aimed at security: the chain must terminate in a real victim and a real effect — not in a missing practice, a guessed deployment, a generic crash, or self-impact (your own authority affecting only you).
+This is §0's anchor discipline aimed at security: the chain terminates in a real victim and a real effect — not in a missing practice, a guessed deployment, a generic crash, or self-impact (your own authority affecting only you).
 
 ## Three states
 
@@ -40,7 +40,7 @@ This is §0's anchor discipline aimed at security: the chain must terminate in a
 ## Severity (confirmed only)
 
 - **critical** — unauthenticated code execution, full data-store access, or takeover of arbitrary accounts.
-- **high** — an explicit control is *fully defeated* with real consequences: authentication bypass, cross-tenant read or write, stored script execution, authenticated code execution, unauthenticated remote stop of a shared service.
+- **high** — an explicit control *fully defeated* with real consequences: authentication bypass, cross-tenant read or write, stored script execution, authenticated code execution, unauthenticated remote stop of a shared service.
 - **medium** — a real boundary violation with limited blast radius, uncommon preconditions, or narrowly confined consequences.
 - **low** — disclosure of non-secret internals, or an effect needing sustained effort for minimal gain.
 - **informational** — confirmed, minimal impact, useful mainly as a prerequisite for a larger finding.
@@ -57,7 +57,7 @@ Any outward or irreversible step needs `AUTH:` (§3) — the user's own words au
 
 ## Hunting
 
-Coverage units are **entry surface × boundary × attack class**, never files. [`references/attack-classes.md`](references/attack-classes.md) lists the classes, the per-domain rules for choosing them, and what is not a finding; every unit traces untrusted input from its entry point toward a dangerous sink.
+Coverage units are **entry surface × boundary × attack class**, never files. [`references/attack-classes.md`](references/attack-classes.md) lists the classes, each domain's rules for choosing them, and what is not a finding; every unit traces untrusted input from its entry point toward a dangerous sink.
 
 Stay solo for a focused review. Fan out when coverage justifies it (§9 [teamwork](../teamwork/SKILL.md)): one hunter per unit with no shared file, then an agent that did *not* find a candidate re-derives it before it reaches `confirmed` ([verification](../verification/SKILL.md) judge protocol). A hunter's report is testimony; independent re-derivation is evidence.
 

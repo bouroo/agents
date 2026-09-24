@@ -5,9 +5,9 @@ description: "Turn a codebase or system description into a polished, interactive
 
 # System Diagramming
 
-One deliverable: a single self-contained HTML file — an inline-SVG system map drawn deterministically from a typed JSON IR embedded in the file, with dark/light themes, pan/zoom, hover tracing, and node search built in. Layout judgment is the agent's; drawing is the template's. Everything lives in this directory — the [template](references/template.html) (IR contract in its header comment) and the stdlib [validator](references/validate.py): nothing to install, nothing to fetch. Exports, motion, and share cards are out of scope; the browser's own screenshot/print covers them.
+One deliverable: a single self-contained HTML file — an inline-SVG system map drawn deterministically from a typed JSON IR embedded in the file, with dark/light themes, pan/zoom, hover tracing, and node search. Layout judgment is the agent's; drawing is the template's. Everything lives in this directory: the [template](references/template.html) (IR contract in its header comment) — read it as the reference and copy it per run — and the stdlib [validator](references/validate.py) — execute it, never edit it. Nothing to install, nothing to fetch. Exports, motion, and share cards are out of scope; the browser's screenshot/print covers them.
 
-**When to load:** asked to visualize architecture, topology, CI/CD, request lifecycles, pipelines, or state machines — or to beautify Mermaid. The design decisions themselves are [solution-architecture](../solution-architecture/SKILL.md) territory; this skill renders them.
+Load for architecture, topology, CI/CD, request lifecycles, pipelines, or state machines, or to beautify Mermaid. Design decisions are [solution-architecture](../solution-architecture/SKILL.md) territory; this skill renders them.
 
 ## 1. Choose the kind
 
@@ -28,7 +28,7 @@ The IR is the JSON inside the template's `ir` script block; the field contract i
 - Relationship labels are semantic data: name the protocol/action/direction; never delete a label to fix layout.
 - Box-to-box edges need only an `orient: "h"|"v"` hint; explicit `points` polylines are for sequence message rows.
 - Preserve exact product names, identifiers, protocols, and API paths.
-- Cards: at most 3–4 conclusion cards; every claim in a card must be visible in the diagram.
+- Cards: at most 3–4; every claim in a card must be visible in the diagram.
 
 ## 3. Deliver
 

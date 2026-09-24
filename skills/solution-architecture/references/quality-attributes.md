@@ -13,7 +13,7 @@ Quality attributes are the real requirements of architecture: users never compla
 | **Maintainability** | modularity, reusability, analysability, modifiability, testability | change lead time, coupling metrics, coverage |
 | **Scalability** | horizontal, vertical, elastic | load-test ceilings, cost per unit of load |
 
-Specify each as an SEI scenario (see [requirements](requirements.md)).
+Specify each as an SEI scenario (six-part template in the requirements reference).
 
 ## Tactics
 

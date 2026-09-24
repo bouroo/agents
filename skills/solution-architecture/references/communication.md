@@ -21,7 +21,7 @@ Keep it thin: the doc indexes and links (ADRs, diagrams, fitness tests); it does
 - **Just enough, just in time**: frame the load-bearing decisions early (boundaries, data ownership, NFR tactics), defer the rest until the requirement is real.
 - **Walking skeleton**: first milestone is the thinnest end-to-end slice through every layer — it proves the architecture, pipeline, and integration assumptions, not a feature.
 - **Architecture stories / NFRs in the backlog**: quality work gets scheduled, not wished for.
-- **Evolutionary design with guardrails**: fitness functions + conformance tests enforce the invariant parts so refactoring can move the rest (see [quality attributes](quality-attributes.md)).
+- **Evolutionary design with guardrails**: fitness functions + conformance tests enforce the invariant parts so refactoring can move the rest.
 - Refactoring cadence to pay architecture debt before it compounds.
 
 ## Workshops

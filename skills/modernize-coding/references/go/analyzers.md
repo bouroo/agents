@@ -4,19 +4,19 @@
 
     https://pkg.go.dev/golang.org/x/tools/go/analysis/passes/modernize
 
-The *running* set is whatever the installed tool reports, and it outranks both this file and that page:
+The *running* set is whatever the installed tool reports, and it outranks both this file and that page. Run:
 
     go tool fix help        # Go >= 1.26 built-in fixers
     modernize -flags        # x/tools modernize binary (prints JSON)
 
-**Refresh — do this on any toolchain bump, and whenever a rewrite is reported as unknown:**
+**Refresh — on any toolchain bump, and whenever a rewrite is reported as unknown:**
 
 1. Read the package doc for the analyzer set and each analyzer's required Go feature.
 2. Dump the installed set (`go tool fix help`, `modernize -flags`) and reconcile. In the doc but not the tool: upstream-only. In the tool but not the doc: newer than the page.
-3. Correct the version column against the release that actually added the feature. `$(go env GOROOT)/api/go1.N.txt` records exactly which release added each stdlib symbol — read it rather than recalling.
+3. Correct the version column against the release that actually added the feature: `$(go env GOROOT)/api/go1.N.txt` records exactly which release added each stdlib symbol — read it rather than recalling.
 4. Run `python3 scripts/check.py modernize`; it pins the version column below and cross-checks `GOROOT/api` whenever a toolchain is present.
 
-The table is a reconciliation, not a source of truth — the set below was reconciled against go1.26.8 and `modernize@2026-09`. "Runs": both / fix only (built-in `go fix` only) / standalone only (`modernize` only).
+The table is a reconciliation, not a source of truth; the snapshot below records a reconciliation against go1.26.8 and a 2026-09 modernize build. "Runs": both / fix only (built-in `go fix` only) / standalone only (`modernize` only).
 
 | Runs | Analyzer | Rewrite | Feature since |
 |---|---|---|---|
@@ -53,6 +53,6 @@ The table is a reconciliation, not a source of truth — the set below was recon
 
 Notes:
 
-- The package doc also lists `appendclipped`, `bloop` (→ `for b.Loop()`), and `slicesdelete`. None of the three appears as a selectable flag in go1.26.8's `go fix` or `modernize@latest` (2026-09): documented upstream, not yet shipped in the tools. Re-check on toolchain upgrade rather than assuming.
+- The package doc also lists `appendclipped`, `bloop` (→ `for b.Loop()`), and `slicesdelete`. None appears as a selectable flag in the snapshot's tools (go1.26.8 / 2026-09): documented upstream, not yet shipped. Re-check on toolchain upgrade rather than assuming.
 - Selection is per-analyzer in both tools (`-NAME`, `-NAME=false`/omit to disable); `-diff` with `-fix` prints a unified patch and exits non-zero when non-empty (built-in `go fix`) or zero (modernize).
 - Test files are analyzed by default (singlechecker `-test` defaults true).

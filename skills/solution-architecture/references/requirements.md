@@ -64,4 +64,4 @@ Maintain the chain business goal → requirement → decision (ADR) → test. Us
 - Functional-only analysis — quality attributes surface at the first peak load, too late.
 - Vague NFRs ("user-friendly", "fast") — convert to scenarios or drop.
 - Requirements creep without change control — route additions through impact analysis.
-- Missing stakeholders — map power × interest first (see [governance](governance.md)).
+- Missing stakeholders — map power × interest before scoping.

@@ -19,7 +19,7 @@ Governance is guardrails, not roadblocks: enough structure that fifty teams make
 
 ## Automated conformance over meetings
 
-Prefer executable governance: architecture-conformance tests (dependency rules), policy-as-code on IaC, SAST/dependency scanning, fitness functions in CI (see [quality attributes](quality-attributes.md)). A review board should judge what cannot be automated — trade-offs, context, strategy.
+Prefer executable governance: architecture-conformance tests (dependency rules), policy-as-code on IaC, SAST/dependency scanning, fitness functions in CI. A review board should judge what cannot be automated — trade-offs, context, strategy.
 
 ## Maturity levels
 

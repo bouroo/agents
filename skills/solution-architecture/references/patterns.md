@@ -12,7 +12,7 @@ Patterns are the trade-off catalog: each buys some quality attributes at the pri
 | **Microservices** | independent scaling/deploys, team autonomy, fault isolation | distributed-systems tax: latency, eventual consistency, ops burden | many teams, divergent scaling needs |
 | **Event-driven** | loose coupling, async throughput, real-time reaction | eventual consistency, hard debugging, ordering concerns | integrations, high-volume streams, audit trails |
 
-**Clean / hexagonal** (any style, at code level): dependencies point inward, business logic independent of frameworks and databases — full treatment in [clean-architecture](clean-architecture.md); use for complex domains and long-lived systems, skip for CRUD and prototypes.
+**Clean / hexagonal** (any style, at code level): dependencies point inward, business logic independent of frameworks and databases; use for complex domains and long-lived systems, skip for CRUD and prototypes.
 
 **CQRS + event sourcing**: separate write model (normalized) from read models (denormalized, projected from the event log). Buys optimized reads/writes, perfect audit, time travel; costs eventual consistency and real complexity. Only for rich domains with audit or temporal needs — not a default.
 
@@ -62,4 +62,4 @@ Blue-green (two environments, instant switch/rollback) · canary (gradual traffi
 
 Golden hammer (one pattern for every problem) · architecture astronautics (building for imaginary scale) · copy-paste architecture (pattern without its context) · big ball of mud (no enforced boundaries) · premature optimization (complexity before measurement).
 
-**Selection discipline**: name the ASRs the pattern serves, the attributes it degrades, and the team's ability to operate it — then pick the simplest survivor, and record it as an ADR (see [decisions](decisions.md)).
+**Selection discipline**: name the ASRs the pattern serves, the attributes it degrades, and the team's ability to operate it — then pick the simplest survivor, and record it as an ADR.

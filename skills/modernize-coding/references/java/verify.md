@@ -1,14 +1,14 @@
 # Re-deriving the Java version table
 
-The claims in [guide.md](guide.md) are re-derivable from the local JDK — no network, no recall. Both scripts below are the method, not a snapshot: run them after a JDK upgrade and reconcile any drift.
+The claims in the Java guide are re-derivable from the local JDK — no network, no recall. The scripts below are the method, not a snapshot: **run** them after a JDK upgrade and reconcile any drift.
 
 ## API members — the JDK's own `@since` tags
 
-Java's equivalent of Go's `GOROOT/api`: the JDK ships its full source in `lib/src.zip`, and every public member carries an `@since` javadoc tag. Grep it.
+Java's equivalent of Go's `GOROOT/api`: the JDK ships its full source in `lib/src.zip`, and every public member carries an `@since` javadoc tag. Run:
 
 ```python
 import re, zipfile
-SRC = "<JAVA_HOME>/lib/src.zip"           # e.g. /opt/homebrew/Cellar/openjdk/26.0.2.1/libexec/openjdk.jdk/Contents/Home/lib/src.zip
+SRC = "<JAVA_HOME>/lib/src.zip"
 z = zipfile.ZipFile(SRC)
 src = z.read("java.base/java/lang/String.java").decode("utf-8", "replace")
 m = re.search(r"public\s+String\s+strip\(\)", src)
@@ -19,7 +19,7 @@ print(re.findall(r"@since\s+([0-9.]+)", src[:m.start()])[-1])   # -> 11
 
 ## Language features — compile against `--release`
 
-`@since` covers APIs, not syntax. For language changes the anchor is `javac` itself: `--release N` enforces the language level *and* the API surface, so a snippet that fails at N and compiles at N+1 proves the feature landed at N+1.
+`@since` covers APIs, not syntax. For language changes the anchor is `javac` itself: `--release N` enforces the language level *and* the API surface, so a snippet that fails at N and compiles at N+1 proves the feature landed at N+1. Run:
 
 ```python
 import pathlib, subprocess, tempfile
@@ -32,9 +32,9 @@ def compiles(src, release):
 compiles("record T(int x) {}", 16)
 ```
 
-## Watch this trap
+## Trap: `-source`/`-target` are not substitutes for `--release`
 
-`-source`/`-target` are **not** substitutes for `--release`. Verified: with `List.of` (a Java 9 API),
+Verified against `List.of` (a Java 9 API):
 
 - `javac --release 8` → `error: cannot find symbol` ✓ correct
 - `javac -source 8 -target 8` → compiles, emits a class file that runs on JDK 8 and fails at runtime ✗

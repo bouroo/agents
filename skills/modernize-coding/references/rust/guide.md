@@ -6,9 +6,9 @@ Implements [modernize-coding](../../SKILL.md) for Rust.
 
 ## 1. Detect the baseline
 
-1. **Edition** — `edition = "2021"` (or `"2024"`) in `Cargo.toml`. This is a *language dialect*, not a version: each edition is opt-in and migrations are mechanical.
-2. **MSRV** — `rust-version = "1.70"` in `[package]`. This is the real ceiling for stdlib and language features. Absent, the crate claims no floor — say so rather than assuming latest.
-3. **Running** — `rustc --version`. Verified: cargo **enforces** MSRV, failing the build with `error: rustc 1.98.1 is not supported by the following package: requires rustc 1.99`. So an MSRV claim is load-bearing, not decorative.
+1. **Edition** — `edition = "2021"` (or `"2024"`) in `Cargo.toml`. A *language dialect*, not a version: each edition is opt-in and migrations are mechanical.
+2. **MSRV** — `rust-version = "1.70"` in `[package]`. The real ceiling for stdlib and language features. Absent, the crate claims no floor — say so rather than assuming latest.
+3. **Running** — `rustc --version`. Verified: cargo **enforces** MSRV, failing the build with `error: rustc 1.98.1 is not supported by the following package: requires rustc 1.99`. An MSRV claim is load-bearing, not decorative.
 
 ## 2. Rewrite existing code
 

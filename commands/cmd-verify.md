@@ -13,7 +13,7 @@ Default: the whole working tree. An argument narrows the target (`src/module`, a
 
 ## Pipeline
 
-Run each stage in order; on a finding apply the narrowest safe auto-fix at the **root cause** (never a band-aid) and re-run that stage. Cap: **three fix/re-verify iterations on one issue**, then escalate it — the hard verify bound ([verification](../skills/verification/SKILL.md)).
+Run each stage in order; on a finding apply the narrowest safe auto-fix at the **root cause** (never a band-aid) and re-run that stage. Cap: **three fix/re-verify iterations on one issue**, then escalate it — that cap is the loop's hard stop and only escape hatch, so a still-failing issue at the cap is reported BLOCKED, never re-run — the hard verify bound ([verification](../skills/verification/SKILL.md)).
 
 1. **Format** — project formatter; fail if files would change after auto-fix.
 2. **Lint** — warnings-as-errors; auto-fix where supported; include the doc-convention linter if configured, else note its absence.
@@ -25,6 +25,13 @@ Run each stage in order; on a finding apply the narrowest safe auto-fix at the *
 ## Done = CLEAN
 
 All six stages pass with command + exit code + actual output captured (a narrated pass is not evidence), hooks exit 0, and only intended changes remain in the tree. Otherwise report per-stage pass/fail (command, exit code, files changed, outstanding findings) and the final verdict.
+
+Report every run in this fixed, machine-scannable shape — one pipeline-ordered line per stage, then the outstanding findings and the verdict:
+```
+stage | command | exit | result
+outstanding findings: <none | list>
+verdict: CLEAN | BLOCKED
+```
 
 **Abort/BLOCKED:** any stage still failing after three iterations; any security finding above threshold.
 
