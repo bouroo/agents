@@ -5,7 +5,7 @@ description: "Verify phase (PROVE): format, lint, type-check, scan, test, and ho
 
 # Verify Quality-Gate Pipeline
 
-Leave the working tree passing every quality gate. This is the automated layer of **PROVE** in the **Test** stage (§4): gates enforce, prompts only request. Run the stages as one batched pass, not call by call; judgment enters only on findings.
+Leave the working tree passing every quality gate. This is the automated layer of **PROVE** in the **Test** stage (§4): gates enforce, prompts only request. Run the stages as one batched pass, not call by call; judgment enters only on findings. **No options: fully autonomous** — every decision resolves from the repo's own signals and the loop runs to CLEAN or a named bound, never to a question.
 
 ## Scope
 

@@ -5,11 +5,11 @@ description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API e
 
 # Document - Sync docs/ With Code
 
-Docs and code must agree; a stale doc is a bug. Documentation is a **Spec**-stage artifact (§4) that tracks the code through Build and Test — bootstrap a `docs/` tree where none exists, sync an existing one, and run it as an execution graph inside that stage (§4.2). One well-written doc beats many shallow ones.
+Docs and code must agree; a stale doc is a bug. Documentation is a **Spec**-stage artifact (§4) that tracks the code through Build and Test — bootstrap a `docs/` tree where none exists, sync an existing one, and run it as an execution graph inside that stage (§4.2). One well-written doc beats many shallow ones. **No options: fully autonomous** — target, type, and scope resolve from the repo's own signals; assumptions are stated in one line, gaps are marked, and nothing waits on a question.
 
 ## Target
 
-The area to document (`auth`, `email-verification flow`, `sessions-vs-tokens ADR`). **Empty -> detect from `git diff` / `git diff --cached`** and document what changed. `--type=<system|flow|adr|api|glossary>` pins the doc type; without it, infer from the target and ask only if genuinely ambiguous.
+The area to document (`auth`, `email-verification flow`, `sessions-vs-tokens ADR`). **Empty -> detect from `git diff` / `git diff --cached`** and document what changed. `--type=<system|flow|adr|api|glossary>` pins the doc type; without it, infer from the target, state the inference in one line, and proceed — ambiguity resolves toward the best-evidenced choice rather than a question.
 
 ## Doc types
 
