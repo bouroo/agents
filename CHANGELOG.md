@@ -10,6 +10,30 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.6.0-beta.4] - 2026-09-24
+
+The orchestrator hard-coded its dispatch target: every unit went to the
+`worker` subagent by name, even on hosts that ship better-fitting
+agents, and even when `worker` was not installed at all. Dispatch is
+now capability-based, enacting the teamwork skill's standing law —
+"route by capability, not by name". The lead surveys the agent types
+its harness actually exposes and picks per unit: implementation units
+go to `worker` when present, else the host's general-purpose agent;
+read-only units (search, exploration, evidence gathering) go to a
+research or read-only agent when the host offers one. Guards: never
+hand a unit to an agent whose tool surface cannot do its work, and
+fall back to `worker` or the general-purpose agent when nothing
+specialized fits. Briefs, file ownership, DONE checks, independent
+verification, and the 3-cycle bound are unchanged.
+
+### Changed
+
+- **Orchestrator dispatch** — capability-based routing across the
+  harness's available agent types, woven through all three surfaces
+  (`agents/common/orchestrator.md`, `orchestrator.plain.md`,
+  `agents/codex/orchestrator.toml`); agent descriptions updated to
+  match.
+
 ## [6.6.0-beta.3] - 2026-09-24
 
 The plugin route shipped the role definitions but no Claude Code user
