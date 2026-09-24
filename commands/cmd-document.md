@@ -41,4 +41,12 @@ Proposed -> Accepted. An Accepted ADR is **never rewritten** — supersede it wi
 - ADR frontmatter valid; superseded entries carry a real `superseded_by`.
 - The repo's own gate (formatter / link-check / markdown lint / tests) exits zero — noted as absent if none ships.
 
+Report in this fixed, machine-scannable shape:
+```
+files created/updated: <list | none>
+links checked: <n | command>
+gaps flagged: <[NEEDS CLARIFICATION] items | none>
+gate result: <PASS | FAIL (command + exit)>
+```
+
 **Hand back when:** the named area cannot be located or inferred from the diff; docs contradict verified code and cannot be reconciled in scope.
