@@ -7,10 +7,7 @@
     "url": "https://github.com/bouroo"
   },
   "homepage": "https://github.com/bouroo/agents",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bouroo/agents"
-  },
+  "repository": "https://github.com/bouroo/agents",
   "keywords": [
     "agents",
     "coding-agent",
@@ -38,5 +35,9 @@
     "./skills/teamwork",
     "./skills/verification",
     "./skills/wayfinder"
+  ],
+  "agents": [
+    "./agents/common/orchestrator.md",
+    "./agents/common/worker.md"
   ]
 }
