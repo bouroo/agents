@@ -4,7 +4,7 @@
 
 Use **one headless server per workspace**, not one instance per file or task. Each process owns one session rooted where it starts, so its workspace view, file watcher, and root discovery stay coherent. When a host can spawn a command, configure only `gopls mcp`; do not route it through `mcp-remote`. Treat an SSE listener as private to the supervisor/machine: bind it to localhost only, discover its address at spawn time, and do not expose it beyond the user session.
 
-Avoid `gopls serve -mcp.listen` as a standalone or multi-host workaround. It is designed to offer MCP alongside an LSP server; clients with different roots can create conflicting workspace intent. For shared analysis behind multiple hosts, use the official gopls daemon with a workspace-aware MCP server that forwards to it (see below).
+Avoid `gopls serve -mcp.listen` as a standalone or multi-host workaround. It is designed to offer MCP alongside an LSP server; clients with different roots can create conflicting workspace intent. For shared analysis behind multiple hosts, use the official gopls daemon with a workspace-aware MCP server that forwards to it (below).
 
 ## Official daemon sharing
 

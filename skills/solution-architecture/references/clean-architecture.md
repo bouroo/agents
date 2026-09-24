@@ -36,4 +36,4 @@ Dependencies invert at the boundary: the use case defines a repository *interfac
 | Cross-layer entity passing — domain entities as API payloads | DTOs at the boundary; mapping is the cost of isolation |
 | Circular dependencies | break with interfaces or domain events; never patch the dependency rule |
 
-**Relation to system-level styles:** clean architecture governs the *inside* of a service; monolith/microservices/event-driven govern deployment and communication ([patterns](patterns.md)). A well-bounded modular monolith with clean internals is usually the right monolith — and the cheapest extraction path if services ever split.
+**Relation to system-level styles:** clean architecture governs the *inside* of a service; monolith/microservices/event-driven govern deployment and communication. A well-bounded modular monolith with clean internals is usually the right monolith — and the cheapest extraction path if services ever split.

@@ -2,6 +2,16 @@
 
 > Load on demand. The prose lives in `AGENTS.md` (§2 intake, §4 execution graph, §7 verification) and [verification](../SKILL.md); this file renders the same doctrine as executable decision charts. **Follow the arrows literally**: at every diamond, read the condition against the actual situation, take exactly one outgoing edge, and do not skip a gate. A chart node with no outgoing arrow you satisfy is a stop, not a suggestion.
 
+## Contents
+
+1. [Master router: any ask, start to finish](#1-master-router-any-ask-start-to-finish)
+2. [THINK: bounded evidence](#2-think-bounded-evidence)
+3. [ACT: one bounded change](#3-act-one-bounded-change)
+4. [PROVE: two-half check with bounded retries](#4-prove-two-half-check-with-bounded-retries)
+5. [Judge: one verdict on a done report](#5-judge-one-verdict-on-a-done-report)
+6. [GROW: from failure to gate](#6-grow-from-failure-to-gate)
+7. [Reading rules](#reading-rules)
+
 ## 1. Master router: any ask, start to finish
 
 ```mermaid

@@ -4,7 +4,7 @@
 
 ## The loop to beat
 
-Self-evolution done wrong is the loop validating itself: an agent notices a failure, edits its own instructions, and reports the harness improved — with the edit as its only evidence. Every story of runaway or degraded self-modification is this shape. The corrective is structural, not tonal: **GROW is a graph, not a vibe** — a closed cycle whose every step closes on evidence and whose every authority chain terminates in an anchor.
+Self-evolution done wrong is the loop validating itself: an agent notices a failure, edits its own instructions, and reports the harness improved — with the edit as its only evidence. Every story of runaway self-modification is this shape. The corrective is structural, not tonal: **GROW is a graph, not a vibe** — a closed cycle whose every step closes on evidence and whose every authority chain terminates in an anchor.
 
 ## The evolution cycle
 
@@ -22,7 +22,7 @@ An uncommitted proposal is a pending item, not an improvement; a committed one w
 - **Intra-episode** (inside one session): state under `.agents/` — checkpoints, scratch notes, a scoped run's own checklist. Evolve freely; it dies with the episode and touches no one else.
 - **Inter-episode** (doctrine, gates, skills, shared instructions — what future runs execute): evolve only through the full cycle above, and only when the evidence clears the recurrence bar — a failure seen **twice or more**, or one whose cost was severe enough to catalog immediately. A first-time stumble is an episode note, not a doctrine edit.
 
-This split is the harness analogue of the wayfinder rule that decisions change one ticket at a time: the machinery that future runs execute must not churn on single-run noise.
+This split is the harness analogue of the wayfinder rule that decisions change one ticket at a time: the machinery future runs execute must not churn on single-run noise.
 
 ## What may never self-modify
 

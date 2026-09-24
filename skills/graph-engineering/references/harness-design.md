@@ -10,9 +10,9 @@ Start at the least agency that closes on evidence, and climb only on a measured 
 2. **Fixed workflow (linear / staged)** — a designed sequence of calls with known routes, composed ahead of time. Deterministic control flow means the model cannot wander, and the graph is inspectable.
 3. **Agent loop** — the model chooses its route at run time, iterating until it closes. The most capable rung and the most expensive; it buys adaptability only where the path genuinely cannot be known in advance.
 
-This is the shape ladder viewed from the **agency axis**: the four shapes say how a job's nodes connect, the ladder says how much of that connection the model decides. Both bind to the same rule — enter low, climb on a bottleneck, step down when the reason for the climb disappears.
+This is the shape ladder viewed from the **agency axis**: the four shapes say how a job's nodes connect, the ladder says how much of that connection the model decides. Both bind to one rule — enter low, climb on a bottleneck, step down when the reason for the climb disappears.
 
-**Walking-skeleton build order.** Build the smallest loop that closes end-to-end on evidence first — one prompt, or the linear sequence — then add a control only when an observed failure demands it. This is the Kirby Effect at harness level: every routing rule, retry, and sub-agent is a bet on a limitation, and bets are placed on evidence, not on speculation. A harness accreted control-by-control from the start is the framework the next section warns against, wearing the doctrine's own vocabulary.
+**Walking-skeleton build order.** Build the smallest loop that closes end-to-end on evidence first — one prompt, or the linear sequence — then add a control only when an observed failure demands it. This is the Kirby Effect at harness level: every routing rule, retry, and sub-agent is a bet on a limitation, placed on evidence, not speculation. A harness accreted control-by-control from the start is the framework the next section warns against, wearing the doctrine's own vocabulary.
 
 ## The pattern catalogue → the grammar
 
@@ -32,22 +32,22 @@ The composition follows: a real job is several of these nested, and the entry po
 
 ## Fan-out has two rationales
 
-The `FAN_OUT` edge carries one of two intents, and they are designed differently:
+The `FAN_OUT` edge carries one of two intents, designed differently:
 
 - **Sectioning** — the job splits into *independent subtasks* (per-file migrations, per-lens reviews). The branches differ; each does its own work; the `JOINS` merges distinct results.
 - **Voting** — the *same* task runs N times and the outputs are aggregated for confidence (majority answer, union of findings). The branches are nominally identical; the `JOINS` decides by agreement.
 
-Sectioning pays when the parts are genuinely disjoint. Voting pays only when the N runs are plausibly **decorrelated** — different sampling, different context, or different lens. Correlated runs fail together, so the aggregate carries no more confidence than one run and the N-fold premium becomes a tax. This is the same hazard as teamwork's **correlated lenses**: reviewers sharing one blind spot buy nothing by multiplying windows. Never cite "ensemble" or "N runs" as free confidence — state why the runs decorrelate, or do not vote.
+Sectioning pays when the parts are genuinely disjoint. Voting pays only when the N runs are plausibly **decorrelated** — different sampling, different context, or different lens. Correlated runs fail together, so the aggregate carries no more confidence than one run and the N-fold premium becomes a tax. This is teamwork's **correlated-lens** hazard: reviewers sharing one blind spot buy nothing by multiplying windows. Never cite "ensemble" or "N runs" as free confidence — state why the runs decorrelate, or do not vote.
 
 ## Design the tool surface (ACI)
 
-The tool definitions are as load-bearing as the prompt: they are the interface the model actually reads, so they are designed *for the model*, not written for the implementer.
+Tool definitions are as load-bearing as the prompt: they are the interface the model actually reads, so they are designed *for the model*, not written for the implementer.
 
 - **Document what, when, and how.** For each tool state what it does, when to use it (and when not), the input format, the returned fields, and its error behavior.
 - **Poka-yoke the arguments.** Make the wrong call hard to express — constrain enums, require the identifying field, remove the ambiguous optional. A misuse-prone signature is an interface defect, not a prompting problem.
 - **Use natural, model-friendly formats.** Plain structured text the model reads fluently beats a clever encoding it must decode.
 - **Boundary against neighbours.** Say how this tool differs from the similar one, or the model will pick the wrong sibling by name resemblance.
-- **Iterate on observed misuse.** When traces show a tool used wrongly, fix the interface first — tighten the description, the signature, the return — before adding an instruction to the prompt. The prompt compensates for a bad surface; the surface is what removes the failure class.
+- **Iterate on observed misuse.** When traces show a tool used wrongly, fix the interface first — tighten the description, the signature, the return — before adding a prompt instruction. The prompt compensates for a bad surface; the surface removes the failure class.
 
 ## Scope the tool surface
 

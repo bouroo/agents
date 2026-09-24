@@ -6,6 +6,13 @@ table shortlisted. "Skip when" outranks "use when": if any skip condition holds,
 drop the candidate. Before writing any skeleton, check the codebase's own idioms —
 a pattern in its classic form is wrong wherever the language already dissolves it.
 
+## Contents
+
+- [Creational](#creational): [Builder](#builder) · [Abstract Factory](#abstract-factory) · [Factory Method](#factory-method) · [Prototype](#prototype) · [Singleton](#singleton)
+- [Structural](#structural): [Adapter](#adapter) · [Bridge](#bridge) · [Composite](#composite) · [Decorator](#decorator) · [Facade](#facade) · [Flyweight](#flyweight) · [Proxy](#proxy)
+- [Behavioral](#behavioral): [Chain of Responsibility](#chain-of-responsibility) · [Command](#command) · [Iterator](#iterator) · [Mediator](#mediator) · [Memento](#memento) · [Observer](#observer) · [State](#state) · [Strategy](#strategy) · [Template Method](#template-method) · [Visitor](#visitor)
+- [Cross-cutting notes](#cross-cutting-notes)
+
 ## Creational
 
 ### Builder
@@ -42,8 +49,8 @@ Use when: one shared resource genuinely must exist once (process-wide config, po
 Skip when: the only motive is lazy init or avoiding parameter passing — inject the
 value; globals hide dependencies and break tests. Check the stdlib first: DB pools,
 HTTP clients, and loggers already exist as one-instance objects.
-Shape: module-level instance or language singleton facility (`OnceLock`, `double-checked
-lock`); prefer DI wiring in `main`/composition root.
+Shape: module-level instance or language singleton facility (`OnceLock`, double-checked
+lock); prefer DI wiring in `main`/composition root.
 
 ## Structural
 

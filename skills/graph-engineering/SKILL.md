@@ -35,7 +35,7 @@ Every cycle is bounded by a named cap, inherited from verification's hard bound:
 An **anchor** is a fixed external node the machinery may read but never rewrite: a spec clause, the user's own words, a red test, captured command output. Every `VERIFIES` edge must terminate in an anchor; work citing only its own outputs is a loop validating itself — an echo chamber with more nodes. The authority rank (§0) is the anchor ordering. **Goodhart's law** is the standing threat: a system drilled on its own measurements optimizes the measurement, not the goal. Two structural guards follow:
 
 - **Owned references.** A fast check may not set its own target: DONE_WHEN comes from the prompt or spec, not from what the diff made easy to assert. Pair every metric with its counter-metric (tests green *and* mutation probe catches).
-- **Read-only anchors.** An anchor that a later step may rewrite is not an anchor. If the target must change, that is a decision routed to the anchor's owner (the spec's author, the user) — never a silent edit at the step that benefits from it.
+- **Read-only anchors.** An anchor a later step may rewrite is not an anchor. If the target must change, that is a decision routed to the anchor's owner (the spec's author, the user) — never a silent edit at the step that benefits from it.
 
 ## The four shapes
 
@@ -103,6 +103,7 @@ Fan-out re-pays its token cost on every failed cycle, so it amortizes only when 
 ## Cross-references
 
 - [harness-design](references/harness-design.md) the minimal-harness ladder, the pattern catalogue mapped onto the grammar, voting vs. sectioning, and tool-surface (ACI) design.
+- [topologies](references/topologies.md) the canonical review graph, worked shapes, and the cost arithmetic behind the keep/drop verdict.
 - [lifecycle](../lifecycle/SKILL.md) owns *which stage and what it commits*; this skill owns how work is shaped inside a stage. A stage contains one or more graphs — the two compose.
 - [teamwork](../teamwork/SKILL.md) owns the coordination graph: this skill decides topology (shapes, edges, gates); teamwork's ladder, ledger, and adversarial roles govern conduct at each node.
 - [verification](../verification/SKILL.md) owns the evidence standard at every node and the caps that bound every `RETURNS` edge; its [flowcharts](../verification/references/flowcharts.md) render the doctrine's own execution graph.

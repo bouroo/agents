@@ -5,56 +5,56 @@ description: "The harness regression suite: a set of realistic tasks, each a pro
 
 # Evals
 
-The doctrine is **configuration an agent executes** — the manifesto, the skills, the commands, the hooks, the gates. That is exactly the definition of code, and it gets the same treatment: whatever steers the agent is versioned, reviewed, and **regression-tested**. An eval is one realistic task plus objective checks; the suite is the set of them. Its pass rate over time is the only honest answer to "did that change make the agent better or worse?" — because a doctrine edit that reads well and degrades behavior is indistinguishable from a good one until it is run.
+The doctrine is **configuration an agent executes** — manifesto, skills, commands, hooks, gates — which is the definition of code: versioned, reviewed, **regression-tested**. An eval is one realistic task plus objective checks; the suite is the set. Its pass rate over time is the only honest answer to "did that change make the agent better or worse?" — a doctrine edit that reads well and degrades behavior is indistinguishable from a good one until it is run.
 
 > **Override.** A project-level eval suite that explicitly supersedes this skill wins.
 
 ## An eval is a prompt plus objective checks
 
-Two parts, and the second is what makes it an eval rather than an example:
+Two parts, the second making it an eval rather than an example:
 
 - **The task** — a realistic request of the kind the agent actually receives, specific enough to have a right answer. "Refactor the config loader" is not an eval; "the loader duplicates env parsing in three places; consolidate it and keep the CLI flags identical" is.
-- **The checks** — executable conditions, run against the agent's output, that yield pass or fail without a human reading the transcript. A named command and its expected observable: exit 0, a query count, a response body, a file that now exists with a given shape.
+- **The checks** — executable conditions run against the agent's output, yielding pass or fail without a human reading the transcript: a named command and its expected observable — exit 0, a query count, a response body, a file that exists with a given shape.
 
-A check that needs a human to judge whether it passed is not objective, and an eval made of them drifts with whoever is reading. Keep the checks mechanical ([verification](../verification/SKILL.md) owns the evidence standard they invoke).
+A check a human must judge is not objective, and an eval made of them drifts with whoever reads it. Keep checks mechanical ([verification](../verification/SKILL.md) owns the evidence standard they invoke).
 
 ## Size it to the harness, not to completeness
 
-A suite is not a coverage exercise. Twenty to fifty realistic tasks spanning the behaviors the doctrine actually governs — intake routing, gate emission, verification discipline, context handling — is enough to catch a regression, and small enough to run often. A suite of three hundred nobody runs has a pass rate of zero in practice. Start with the failures you have already seen; grow on incident, not on ambition.
+A suite is not a coverage exercise. Twenty to fifty realistic tasks spanning the behaviors the doctrine governs — intake routing, gate emission, verification discipline, context handling — catch a regression and stay small enough to run often; three hundred nobody runs has a pass rate of zero in practice. Start with failures already seen; grow on incident, not ambition.
 
-**Prefer tasks drawn from real runs.** A task that extracts from an actual episode — a gate that went unemitted, a check that got narrated instead of run — is a regression test with a proven failure mode behind it. Invented tasks test what you imagined; extracted ones test what happened.
+**Prefer tasks drawn from real runs.** A task extracted from an actual episode — a gate that went unemitted, a check narrated instead of run — is a regression test with a proven failure mode. Invented tasks test what you imagined; extracted ones test what happened.
 
 ## When it runs
 
 - **On schedule** — a standing cadence, so drift from a model change is caught without anyone remembering to look.
 - **On any change to the harness** — the manifesto, any `SKILL.md`, a command, a hook, a gate, or the pinned model. This is the load-bearing trigger: a doctrine edit's whole claim is that it improves behavior, and the suite is where that claim is tested instead of asserted.
-- **On incident** — every production incident whose cause was agent behavior becomes a permanent eval *after the fix ships*, so the class cannot return silently.
+- **On incident** — every production incident caused by agent behavior becomes a permanent eval *after the fix ships*, so the class cannot return silently.
 
 ## What a regression means
 
-A change that lowers the pass rate **blocks the merge** until it is fixed or the eval is deliberately retired with a reason. Two honest outcomes and one dishonest one:
+A change that lowers the pass rate **blocks the merge** until fixed or the eval is deliberately retired with a reason. Two honest outcomes and one dishonest one:
 
 - **Fix the change** — the regression is real and the edit was wrong.
-- **Retire the eval, with a reason** — the behavior it asserted was itself wrong, and the doctrine deliberately moved. Retiring is legitimate; retiring *because it failed* is the doctrine grading its own homework, which is the failure [verification](../verification/SKILL.md) hunts under other names.
-- **The dishonest one** — loosen the check until it passes. That is a metric edited by the party it measures, and the anchor rank forbids it: the eval's target is set by the harness's intent, not by what the change made easy to assert.
+- **Retire the eval, with a reason** — the behavior it asserted was itself wrong and the doctrine deliberately moved. Retiring is legitimate; retiring *because it failed* is the doctrine grading its own homework, the failure [verification](../verification/SKILL.md) hunts under other names.
+- **The dishonest one** — loosen the check until it passes: a metric edited by the party it measures, which the anchor rank forbids. The eval's target is set by the harness's intent, not by what the change made easy to assert.
 
-Never let the agent that wrote the change write the check that judges it. Same independence rule as any verifier ([lifecycle](../lifecycle/SKILL.md)).
+Never let the agent that wrote the change write the check that judges it — the independence rule for any verifier ([lifecycle](../lifecycle/SKILL.md)).
 
 ## Running unattended
 
-A suite earns its keep when no human is reading the transcript — CI, a scheduled run, a batch of parallel invocations. Three conditions make that safe, and all three are the doctrine's own rules applied with nobody watching:
+A suite earns its keep when no human reads the transcript — CI, a scheduled run, parallel invocations. Three conditions make that safe, all the doctrine's own rules with nobody watching:
 
-- **The check gates the stop.** Unattended, "looks done" has no corrector, so the run must not end because the agent decided it was finished — it ends because the check passes. A check the agent only remembers to run fails open the moment attention drifts; wire it as a gate ([verification](../verification/SKILL.md), grip ladder).
-- **The tool surface is pre-scoped.** An unattended run is granted a narrow, declared set of tools before it starts, not asked to stay in bounds. Scope the surface to the task: less confusion, less misuse, less injection exposure ([harness-design](../graph-engineering/references/harness-design.md)).
-- **Authority still terminates in a human.** No amount of autonomy authorizes an outward or destructive step. A scheduled run ends local and emits `PENDING:`, exactly as an interactive one does — the `AUTH:` gate does not relax because nobody is present to be asked ([craft](../craft/SKILL.md)).
+- **The check gates the stop.** Unattended, "looks done" has no corrector, so the run ends because the check passes, not because the agent decided it was finished. A check the agent only remembers to run fails open as attention drifts; wire it as a gate ([verification](../verification/SKILL.md), grip ladder).
+- **The tool surface is pre-scoped.** An unattended run is granted a narrow, declared tool set before it starts, not asked to stay in bounds — less confusion, misuse, and injection exposure ([harness-design](../graph-engineering/references/harness-design.md)).
+- **Authority still terminates in a human.** No autonomy authorizes an outward or destructive step. A scheduled run ends local and emits `PENDING:`, exactly as an interactive one does — the `AUTH:` gate does not relax because nobody is present to be asked ([craft](../craft/SKILL.md)).
 
 Unattended operation is a *degree of attention*, never a degree of authority.
 
 ## Evals are how GROW proves itself
 
-GROW's whole cycle — instrument, propose, validate, commit — has one weak joint: *validate*. A new gate or a sharpened rule is a hypothesis that the harness will fail less often; the suite is where the hypothesis meets evidence. Run it before and after an evolution: a change that passes the gates and holds the suite is one you can commit with a rationale; one that regresses it is a change to revert, not to reconcile ([evolution](../verification/references/evolution.md)).
+GROW's cycle — instrument, propose, validate, commit — has one weak joint: *validate*. A new gate or sharpened rule is a hypothesis that the harness will fail less often; the suite is where it meets evidence. Run it before and after an evolution: a change that passes the gates and holds the suite is committed with a rationale; one that regresses it is reverted, not reconciled ([evolution](../verification/references/evolution.md)).
 
-Pair evals with the **Kirby Effect** discipline: when a model upgrade lands, run the suite *with a control removed* before assuming the control is still needed. A component the suite passes without is dead weight, and evals are the measurement that tells you so — the harness shrinks by evidence, not by taste.
+Pair evals with the **Kirby Effect**: on a model upgrade, run the suite *with a control removed* before assuming the control is still needed. A component the suite passes without is dead weight, and evals are the measurement that says so — the harness shrinks by evidence, not taste.
 
 ## Common mistakes
 

@@ -17,7 +17,7 @@ The *active* discipline for a project's domain language — for when you are **c
 4. **Cross-reference the code.** A claim about how things work is checked against the code; a contradiction is surfaced immediately — the same authority rank as the `INTENT:` gate: user statement > spec > checks > code.
 5. **Update `CONTEXT.md` inline.** A resolved term is written down the moment it settles, never batched.
 
-**Exit:** the session ends when every term under discussion is either pinned in `CONTEXT.md` or explicitly deferred; no term is left settled-in-conversation-but-unwritten. If a term cannot be resolved in scope, record it as an open question rather than guessing a definition.
+**Exit:** the session ends when every term under discussion is either pinned in `CONTEXT.md` or explicitly deferred; no term is left settled-in-conversation-but-unwritten. A term unresolvable in scope is recorded as an open question, not guessed at.
 
 ## The artifact: CONTEXT.md
 

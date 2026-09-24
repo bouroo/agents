@@ -11,7 +11,7 @@ Optimize only after correctness holds, and only by measurement.
 
 **When to load:** a profiler or benchmark names a hot path; you are optimizing speed, throughput, latency, or memory; or you review a module structurally (missing pools, unbounded concurrency, N+1 queries). Do **not** load for correctness or clarity work — that is [craft](../craft/SKILL.md).
 
-## The cycle: Define, Benchmark, Diagnose, Improve, Compare
+## The measure-first cycle: Define, Benchmark, Diagnose, Improve, Compare
 
 1. **Define** the target metric (latency, throughput, memory, CPU) and its target value. No target means random optimization.
 2. **Benchmark** isolate one function per benchmark; capture the baseline to a numbered file as the audit trail.
@@ -19,15 +19,13 @@ Optimize only after correctness holds, and only by measurement.
 4. **Improve** ONE change at a time, with a comment naming why.
 5. **Compare** confirm significance with a statistical comparator; paste the delta in report or commit.
 
-Hygiene details: [measurement](references/measurement.md).
-
 ## Rule out external bottlenecks first
 
-Before optimizing code, verify the time is actually yours. An off-CPU profiler showing I/O wait, a distributed trace naming a slow upstream span, or a thread dump full of workers blocked on socket reads means local tuning will not move the number — fix that component (query tuning, caching, pooling, batch sizing) and re-profile; the internal hot path may have moved or vanished. Detail: [measurement](references/measurement.md).
+Before optimizing code, verify the time is actually yours. An off-CPU profiler showing I/O wait, a distributed trace naming a slow upstream span, or a thread dump full of workers blocked on socket reads means local tuning will not move the number — fix that component (query tuning, caching, pooling, batch sizing) and re-profile; the internal hot path may have moved or vanished.
 
 ## Route the signal
 
-Time goes to one of four places. Match the profiler signal to the source, then load the countermeasures from [tactics](references/tactics.md):
+Time goes to one of four places. Match the profiler signal to the source, then load the countermeasures:
 
 | Signal | Overhead source | Countermeasures |
 |---|---|---|
@@ -43,4 +41,9 @@ Keep the cheap overrides in mind: wrong algorithm (swap the structure before tun
 
 **Goal:** boring code that stays fast when traffic spikes — not clever tricks.
 
-**Exit:** the cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move (external bottleneck) — report that and stop. Any metric regressed by a change -> revert it and re-diagnose; never keep an optimization the evidence does not support.
+**Exit:** the cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move (external bottleneck) — report that and stop. Any metric regressed by a change → revert it and re-diagnose; never keep an optimization the evidence does not support.
+
+## References
+
+- [Measurement](references/measurement.md) — benchmark hygiene, external-bottleneck diagnosis, the full cycle.
+- [Tactics](references/tactics.md) — countermeasures per overhead source; pitfall checklist.
