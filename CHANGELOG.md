@@ -10,6 +10,18 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.6.0] - 2026-09-24
+
+Stable cut of the 6.6.0 line. The minor ships the two role agents
+(`orchestrator` lead + `worker`) through every manifest route —
+including the Claude plugin `agents` array, with the `repository`
+shape fix that unblocked installs (beta.3) — and closes with the
+orchestrator's capability-based dispatch (beta.4): the lead surveys
+the agent types its harness actually exposes and routes each unit to
+the best fit instead of a hard-coded `worker` target. Per-beta detail
+in the sections below; nothing changed between beta.4 and this cut
+beyond the version fields.
+
 ## [6.6.0-beta.4] - 2026-09-24
 
 The orchestrator hard-coded its dispatch target: every unit went to the
