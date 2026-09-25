@@ -10,9 +10,16 @@ A shared setup for autonomous coding agents that is **agnostic of programming la
 
 The doctrine's spine is the **AI-native delivery lifecycle**. Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moved outward — to intent, review, and governance. The job is therefore a **loop, not a phase sequence**: every stage commits a readable artifact the next stage begins from, and the artifact chain is the audit trail.
 
-```
-Intent → Spec → Plan → Build → Test → Release → Operate → (new Intent)
-Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
+```mermaid
+flowchart LR
+    I["Intent · Originator<br/>intent.md"] --> S["Spec · Steward<br/>spec.md + ADRs"]
+    S --> P["Plan · Steward<br/>PLAN.md + STATUS.md"]
+    P --> B["Build · Implementer<br/>diff + tests"]
+    B --> T["Test · Verifier<br/>L1/L2/L3 evidence"]
+    T -->|"fails review"| B
+    T -->|"evidence passes"| R["Release · Approver<br/>record + AUTH:"]
+    R --> O["Operate · Operator<br/>incident → new Intent"]
+    O -.->|"reopens the lifecycle"| I
 ```
 
 `Test → Build` is the canonical review back-edge; `Operate → Intent` reopens the lifecycle. Seven **seats** own the stages — one agent may hold several at once, but the Implementer never approves its own work and the Verifier is always independent of what it judges. Within a stage, work is shaped by the **execution graph** (below): the lifecycle says *which stage and what it commits*; the graph says *how that work runs*.
@@ -86,6 +93,22 @@ Originator  Steward  Steward  Implementer  Verifier  Approver  Operator
 ## The execution graph
 
 Inside a lifecycle stage, every job runs as an **execution graph**: THINK → ACT → PROVE → GROW are the role-nodes most jobs need, edges are typed and conditional, and every cycle is capped — the forbidden shape is a node re-entering itself with no new evidence. Three graph structures organize anything above trivial: the **task graph** (what: units, dependencies, DONE_WHEN), the **coordination graph** (who: solo → delegation → team), and the **state graph** (how it operates: the repository as system of record). Every proof chain terminates in an **anchor** — a fixed external node like a spec clause, the user's words, or captured command output that the machinery may read but never rewrite; the authority rank (user statement > spec > checks > code) is the anchor ordering. The grammar lives in [graph-engineering](./skills/graph-engineering/SKILL.md); entering at the least agency that closes on evidence — a prompt before a workflow, a workflow before an agent loop — is the [minimal-harness ladder](./skills/graph-engineering/references/harness-design.md).
+
+The loop as a chart — the role-nodes, the surprise back-edges, the hard cap, and GROW's knowledge edge back into the machinery:
+
+```mermaid
+flowchart TD
+    THINK["THINK: define DONE_WHEN —<br/>the anchor every downstream edge cites"] --> ACT["ACT: one bounded change,<br/>state checkpointed under .agents/"]
+    ACT --> PROVE["PROVE: run the named check yourself,<br/>mutation-probe it, exactly one verdict"]
+    PROVE -->|"mechanical mistake<br/>in the change"| ACT
+    PROVE -->|"surprise: observation contradicts<br/>the model of the problem"| THINK
+    PROVE -->|"3rd failed cycle on one issue"| STOP(["STOP: hand back — attempts,<br/>failure output, current hypothesis"])
+    PROVE -->|"VERIFIED / VERIFIED WITH CAVEATS"| EXIT(["clean exit: evidence captured,<br/>next action stated"])
+    PROVE -->|"same failure class recurred"| GROW["GROW: the failure becomes a<br/>deterministic gate, proven by evals"]
+    GROW -.->|"knowledge: the machinery<br/>the next run executes"| THINK
+```
+
+The full decision charts — the intake router, each node's internal loop, and the judge protocol — render in [verification/references/flowcharts.md](./skills/verification/references/flowcharts.md).
 
 ## The doctrine in one line
 
