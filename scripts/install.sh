@@ -8,7 +8,7 @@
 # Per host it installs:
 #   AGENTS.md -> <instruction file>   (the manifesto, renamed per host)
 #   skills/   -> skills/              (whole directory, when the host has one)
-#   commands/ -> commands/            (when the host surfaces custom commands)
+#   commands/ -> <commands dir>       (when the host surfaces custom commands)
 #   agents/   -> agents/              (per-file agent definitions)
 #
 # The agents column declares the destination subdir, the formats the host
@@ -20,6 +20,10 @@
 #                      that reject a 'name:' key and derive the id from the filename
 #   agents:toml:copy   consume common/<base>.toml, copied (host rejects symlinks)
 #   -                  host has no agents surface
+# The commands column declares the destination subdir: '1' means the default
+# 'commands', '0' or '-' means the host has no commands surface, and any other
+# token is the subdir name itself (e.g. 'prompts' for hosts that read custom
+# slash commands from there).
 # A file agents/common/<f> applies to a host iff the host declares <f>'s format
 # AND agents/<code>/<installed-name> does not exist (host-specific file wins by
 # installed basename). Format 'md' never consumes a '*.plain.md' file; 'md-plain'
@@ -74,6 +78,7 @@ HOSTS=(
   "openclaw|$HOME/.openclaw/workspace|AGENTS.md|1|0|-"
   "hermes|$HOME/.hermes|SOUL.md|1|0|-"
   "pi|$HOME/.pi/agent|AGENTS.md|1|0|agents:md"
+  "omp|$HOME/.omp/agent|AGENTS.md|1|prompts|agents:md"
   "minimax|$HOME/.minimax|AGENTS.md|1|0|-"
 )
 
@@ -218,7 +223,12 @@ for h in $(selected_hosts); do
   cdir="$(expand_home "$raw_cdir")"
   instr="$(field 3 "$h")"
   has_skills="$(field 4 "$h")"
-  has_cmds="$(field 5 "$h")"
+  cmds_spec="$(field 5 "$h")"
+  case "$cmds_spec" in
+    1) cmds_dir="$COMMANDS_DIR" ;;
+    0|-|"") cmds_dir="" ;;
+    *) cmds_dir="$cmds_spec" ;;
+  esac
   agents_spec="$(field 6 "$h")"
   parse_agents_spec "$agents_spec"
   [[ -n "$instr" ]] && has_instr=1 || has_instr=0
@@ -230,7 +240,7 @@ for h in $(selected_hosts); do
     ;;
 
   list)
-    log "$code | $(field 2 "$h") | instruction=${instr:-(none: project-level only)} | skills=$has_skills | commands=$has_cmds | agents=${agents_spec:--}"
+    log "$code | $(field 2 "$h") | instruction=${instr:-(none: project-level only)} | skills=$has_skills | commands=${cmds_dir:--} | agents=${agents_spec:--}"
     ;;
 
   install)
@@ -241,7 +251,7 @@ for h in $(selected_hosts); do
     fi
     [[ "$has_instr" == "1" ]] && place "$REPO_DIR/$MANIFESTO" "$cdir/$instr" "$MANIFESTO->$instr"
     [[ "$has_skills" == "1" ]] && place "$REPO_DIR/$SKILLS_DIR" "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
-    [[ "$has_cmds" == "1" ]] && place "$REPO_DIR/$COMMANDS_DIR" "$cdir/$COMMANDS_DIR" "$COMMANDS_DIR/"
+    [[ -n "$cmds_dir" ]] && place "$REPO_DIR/$COMMANDS_DIR" "$cdir/$cmds_dir" "$cmds_dir/"
     if [[ -n "$agents_dir" ]]; then
       for alt in agent agents; do
         [[ "$alt" == "$agents_dir" ]] && continue
@@ -284,7 +294,7 @@ for h in $(selected_hosts); do
     log "== $code =="
     [[ "$has_instr" == "1" ]] && remove_one "$cdir/$instr" "$instr"
     remove_one "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
-    remove_one "$cdir/$COMMANDS_DIR" "$COMMANDS_DIR/"
+    [[ -n "$cmds_dir" ]] && remove_one "$cdir/$cmds_dir" "$cmds_dir/"
     if [[ -n "$agents_dir" ]]; then
       for alt in agent agents; do
         if ours "$cdir/$alt"; then
@@ -310,7 +320,9 @@ for h in $(selected_hosts); do
   status)
     if [[ ! -d "$cdir" ]]; then log "$code: absent (no $cdir)"; continue; fi
     out=""
-    for entry in "$instr:$cdir/$instr" "$SKILLS_DIR:$cdir/$SKILLS_DIR" "$COMMANDS_DIR:$cdir/$COMMANDS_DIR"; do
+    entries=("$instr:$cdir/$instr" "$SKILLS_DIR:$cdir/$SKILLS_DIR")
+    [[ -n "$cmds_dir" ]] && entries+=("$cmds_dir:$cdir/$cmds_dir")
+    for entry in "${entries[@]}"; do
       name="${entry%%:*}"
       dest="${entry#*:}"
       [[ -n "$name" ]] || continue
