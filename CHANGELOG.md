@@ -10,6 +10,18 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.8.0-beta.1] - 2026-09-26
+
+omp (oh-my-pi) support. The installer gains an `omp` host row
+(`~/.omp/agent`: manifesto, skills, role agents, and the command
+workflows into its `prompts/` directory), which required the commands
+column to declare its destination subdir instead of a bare flag ('1'
+keeps the default 'commands'). The two role agents are additionally
+linked at the root of `agents/` because omp's plugin loader discovers
+agents only at that level, ignoring the manifest path lists; the
+Claude-compatible marketplace fallback was verified to deliver the
+skills and agents into omp 18.3.2.
+
 ## [6.7.1] - 2026-09-25
 
 Prose and structure release, no behavior change. The manifesto gains
