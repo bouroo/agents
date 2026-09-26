@@ -24,7 +24,7 @@ Gates are literal lines owed at decision points and belong verbatim in the final
 ## Twelve commandments
 
 1. **Separate orchestration from core logic.** Reusable packages with clean APIs; the entry point only parses input, handles errors, cleans up. Return data, not printouts; return errors, never crash the process.
-2. **Test everything.** Names read as behavior sentences; cover happy, error, edge; integration tests cross real boundaries. A painful test is a symptom of bad API shape — fix the API.
+2. **Test everything.** Names read as behavior sentences; cover happy, error, edge; integration tests cross real boundaries. A painful test is a symptom of bad API shape — fix the API. Multiple cases over one behavior go **table-driven**: one test body over rows of (input, expected), not copy-pasted near-identical blocks.
 3. **Code for reading.** Name length scales with scope; drop type-like words (`users` over `userList`). Hide paperwork (`buildRequest`, `parseResponse`) in well-named helpers. Default no comment; add one only when naming is exhausted and it states a non-derivable *why*. Doc comments on exported symbols follow the language's official convention. See [Comments](#comments).
 4. **Safe by default.** Make invalid states unrepresentable: validating constructors that refuse bad input at construction; named constants over magic values; least privilege; rules encoded in types/validators, never in caller discipline.
 5. **Wrap errors, preserve the causality chain.** Typed/sentinel errors wrapped with context so cause survives handling; never flatten to strings, never inspect error text, never discard silently.
@@ -77,6 +77,7 @@ Flag it in review with the cost named — "this abstraction serves one caller an
 | Name by type (`userArray`) | Name by role (`users`) |
 | `else` after a terminating `if` | Drop it; keep the happy path unindented |
 | 5+ params | Group into a struct/options object |
+| Copy-pasted near-identical tests | One **table-driven** test: a single body over (input, expected) rows; row names state behavior |
 | Comment restates code | Delete it |
 | Comment narrates the change | Delete it; git records the change |
 | Doc block longer than its function | Cut to one line, or delete |
