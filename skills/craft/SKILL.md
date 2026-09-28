@@ -94,6 +94,10 @@ Same law for instructions: a project rule stated twice belongs in an instruction
 
 **The instruction file loads every session, so prune it like code.** Test each line: *would removing this cause the agent to err?* If not, cut it. Keep what the agent cannot derive — build/test commands, style rules that differ from convention, repo etiquette, environment quirks, non-obvious gotchas; drop what it can read itself — standard conventions, file maps, anything already true without the line. Two diagnostics: a rule that keeps being ignored means the file is **too long** and the rule is lost in noise (cut, don't re-emphasize); a question the agent keeps asking that the file answers means the **phrasing is ambiguous**, not that the rule is missing. Emphasize sparingly — if many lines shout, none stands out. A rule that must always hold belongs in a deterministic gate, not prose ([verification](../verification/SKILL.md)).
 
+## Typography
+
+This doctrine separates a clause from its qualifier with the em-dash - not the en-dash, and not a spaced hyphen. The same convention governs the doctrine's tables and the prose an agent writes from it; the `dashes` gate holds the corpus to it.
+
 ## Cross-references
 
 - [verification](../verification/SKILL.md) mutation probe, evidence audit, judging the finished work.

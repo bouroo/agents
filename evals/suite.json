@@ -863,6 +863,22 @@
           "description": "the skill still links a neighbouring SKILL.md, so its cross-reference section resolves after the edit"
         }
       ]
+    },
+    {
+      "id": "prose-uses-the-em-dash",
+      "prompt": "Rewrite or extend a section of the doctrine, or add a new skill, in the project's own voice. The prose must keep the doctrine's em-dash convention and the rule that enforces it must survive.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py dashes",
+          "expect_exit": 0,
+          "description": "the em-dash convention survives on both canonical surfaces (AGENTS.md, craft) and the doctrine corpus carries no en-dash"
+        },
+        {
+          "cmd": "grep -qE 'en-dash' AGENTS.md",
+          "expect_exit": 0,
+          "description": "the manifesto still states the rule in the always-loaded clause an agent reads"
+        }
+      ]
     }
   ]
 }
