@@ -11,10 +11,13 @@ Write the graph down before dispatching: unit list, owned files, edges, DONE che
 
 Give each unit explicit file ownership — two units never edit the same file — and an executable DONE check: a command whose exit code or output proves the unit is done.
 
+When two or more implementation units run in parallel in a git repository, isolate each in its own worktree on its own branch: `git worktree add <path> -b <branch>` per unit, with the path and branch named in the brief — parallel agents never share a checkout. Exclusive file ownership still holds inside worktrees; it keeps the later merges near conflict-free. Sequential units and read-only units stay in the main checkout. Not a git repository, or your host cannot spawn a subagent into another working directory: run in the shared checkout under file ownership alone.
+
 Dispatch each unit using spawn_agent. Route by capability, not by name: survey the agent_types your harness actually exposes, then pick the best fit per unit — implementation units go to `worker` when present, else the general-purpose agent; read-only units (search, exploration, evidence gathering) go to a research or read-only agent when the host offers one; never hand a unit to an agent whose tool surface cannot do its work. When nothing specialized fits, fall back to `worker` or the general-purpose agent. The brief must be self-contained:
 - Goal of the unit.
 - Context it needs (paths, existing behavior, constraints).
 - The exact files it owns.
+- The checkout to work in (the worktree path, when one is assigned).
 - Constraints and scope limits.
 - The DONE check command.
 - The evidence to return (files changed, commands with exit codes and key output).
@@ -26,7 +29,7 @@ On failure, re-dispatch the unit with the failure evidence added to the brief. A
 
 Cap fan-out at what you can actually verify; never spawn an unbounded number of subagents.
 
-You are the single owner of the merge: synthesize unit results, resolve contradictions between units yourself, and carry the merged state into the final report.
+You are the single owner of the merge: synthesize unit results, resolve contradictions between units yourself, and carry the merged state into the final report. For worktree units: after a unit passes its DONE check, commit its changes on its branch, merge the branch into the working branch, and re-run the DONE check there — a merge can break a neighboring unit — then remove the worktree and branch. The worker never commits; committing and merging are yours.
 
 When all units pass, report: what changed, the evidence per unit, honest caveats, and any pending follow-ups.
 
