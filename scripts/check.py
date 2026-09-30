@@ -223,10 +223,19 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"second real caller", re.IGNORECASE)),
         ("skills/craft/SKILL.md", re.compile(r"^## Simplicity$", re.MULTILINE)),
     ],
+    "dashes": [
+        ("AGENTS.md", re.compile(r"en-dash", re.IGNORECASE)),
+        ("skills/craft/SKILL.md", re.compile(r"^## Typography$", re.MULTILINE)),
+    ],
 }
 
 
-def _g_rule_surfaces(name: str) -> None:
+def _g_rule_surfaces(name: str) -> bool:
+    """Report whether RULE_SURFACES[name] holds; emit FAIL if not.
+
+    Returns True when every surface states the rule, so a gate that adds its
+    own body checks (dashes) reports one PASS instead of two.
+    """
     surfaces = RULE_SURFACES[name]
     missing: list[str] = []
     for rel, pattern in surfaces:
@@ -237,17 +246,62 @@ def _g_rule_surfaces(name: str) -> None:
             missing.append(f"{rel} no longer states the rule")
     if missing:
         _add("FAIL", f"{name}: " + "; ".join(missing))
-        return
-    _add("PASS", f"{name}: rule present on "
-                 f"{len(surfaces)} canonical surface(s)")
+        return False
+    return True
 
 
 def g_comments() -> None:
-    _g_rule_surfaces("comments")
+    if _g_rule_surfaces("comments"):
+        _add("PASS", "comments: rule present on "
+                     f"{len(RULE_SURFACES['comments'])} canonical surface(s)")
 
 
 def g_simplicity() -> None:
-    _g_rule_surfaces("simplicity")
+    if _g_rule_surfaces("simplicity"):
+        _add("PASS", "simplicity: rule present on "
+                     f"{len(RULE_SURFACES['simplicity'])} canonical surface(s)")
+
+
+# The doctrine separates a clause from its qualifier with the EM-dash; the
+# defect this gate catches is the EN-dash standing in for it. The discriminator
+# is spacing, not the character: an en-dash joins a closed range with no spaces
+# around it ("15\u201320 min", "L0\u2013L5", "`ES2016`\u2013`ES2024`") and is typographic data,
+# while a spaced en-dash is a sentence dash that should have been an em-dash.
+# The scan covers the doctrine an agent loads - AGENTS.md, skills, commands,
+# role agents - and not README.md or CHANGELOG.md, which document the
+# distribution layer for humans and are absent from the host-token scan for the
+# same reason (CHANGELOG bodies are additionally frozen by the release contract:
+# published notes must equal committed bytes).
+EN_PROSE_DASH_RE = re.compile(r"\s\u2013|\u2013\s")
+
+
+def g_dashes() -> None:
+    name = "dashes"
+    if not _g_rule_surfaces(name):
+        return
+    files = [ROOT / "AGENTS.md"]
+    for sub in ("skills", "commands", "agents"):
+        for suffix in ("*.md", "*.toml"):
+            files += sorted(p for p in (ROOT / sub).rglob(suffix)
+                            if _no_dotdir(p))
+    hits: list[str] = []
+    for f in files:
+        if not f.is_file():
+            continue
+        rel = str(f.relative_to(ROOT))
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            if EN_PROSE_DASH_RE.search(line):
+                hits.append(f"{rel}:{i} en-dash")
+                if len(hits) >= 10:
+                    break
+        if len(hits) >= 10:
+            break
+    if hits:
+        _add("FAIL", f"{name}: spaced en-dash in doctrine prose "
+                     f"(use an em-dash): " + "; ".join(hits))
+        return
+    _add("PASS", f"{name}: rule present on 2 canonical surface(s); "
+                 f"{len(files)} doctrine file(s) free of prose en-dashes")
 
 
 MARKETPLACE_MANIFESTS = [
@@ -826,7 +880,8 @@ GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("links", g_links), ("agnostic", g_agnostic),
          ("manifests", g_manifests), ("privacy", g_privacy),
          ("comments", g_comments), ("simplicity", g_simplicity),
-         ("modernize", g_modernize), ("evals", g_evals)]
+         ("dashes", g_dashes), ("modernize", g_modernize),
+         ("evals", g_evals)]
 
 
 def main(argv: list[str]) -> int:

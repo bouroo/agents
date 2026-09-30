@@ -10,6 +10,23 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.8.0-beta.2] - 2026-09-30
+
+Parallel fan-out gains worktree isolation. The `orchestrator` lead
+dispatches two or more parallel implementation units in a git
+repository one worktree and branch each (`git worktree add <path>
+-b <branch>`, path and branch named in the brief), keeps sequential
+and read-only units in the main checkout, and falls back to the
+shared checkout under exclusive file ownership when the repository
+is not git or the host cannot spawn a subagent into another working
+directory. The lead owns the combine: after a unit passes its DONE
+check it commits on the unit branch, merges into the working branch,
+re-runs the DONE check there, and removes the worktree, while the
+worker's never-commit prohibition stands. The teamwork skill's
+exclusive-file-ownership law states the same rule. Also ships the
+`dashes` gate — the eleventh deterministic gate — enforcing the
+em-dash convention across the doctrine's prose.
+
 ## [6.8.0-beta.1] - 2026-09-26
 
 omp (oh-my-pi) support. The installer gains an `omp` host row
