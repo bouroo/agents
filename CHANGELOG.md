@@ -10,6 +10,16 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [6.8.0] - 2026-10-01
+
+Stable cut of the 6.8.0 line. The minor ships omp (oh-my-pi) host
+support (beta.1) and the orchestrator's worktree isolation for
+parallel fan-out alongside the `dashes` gate, the eleventh
+deterministic gate (beta.2); the line also carries the README's role
+agents section with mermaid flowcharts and the table-driven-tests
+craft guidance. Per-beta detail in the sections below; nothing changed
+between beta.2 and this cut beyond the version fields.
+
 ## [6.8.0-beta.2] - 2026-09-30
 
 Parallel fan-out gains worktree isolation. The `orchestrator` lead
