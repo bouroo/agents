@@ -273,9 +273,9 @@
       "prompt": "Extract part of skills/delivery/SKILL.md into bundled reference material while keeping the skill a concise, well-linked artifact. Its internal section links must keep resolving after the edit.",
       "checks": [
         {
-          "cmd": "grep -qE '\\]\\(#[a-z-]+\\)' skills/delivery/SKILL.md",
+          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/delivery/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/delivery/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
           "expect_exit": 0,
-          "description": "the skill still links an internal section anchor, so its cross-reference links resolve after the edit"
+          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
         }
       ]
     },
