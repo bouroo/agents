@@ -3,7 +3,7 @@
   "name": "coder-agents",
   "displayName": "Coder Agents",
   "version": "6.8.0",
-  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, eighteen on-demand skills (artifacts, confluence, craft, domain-modeling, design-pattern-selection, evals, modernize-coding, graph-engineering, grilling, indexed-search, lifecycle, performance, security-audit, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, two role agents (orchestrator, worker), and deterministic verification gates.",
+  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, eight on-demand skills (delivery, execution, quality, architecture, confluence, security-audit, modernize-coding, indexed-search), four routine-task command workflows, two role agents (orchestrator, worker), and deterministic verification gates.",
   "author": "bouroo",
   "exampleQueries": [
     "Plan this feature through the delivery lifecycle and write the spec and PLAN.md",
@@ -13,23 +13,13 @@
   "apps": [],
   "mcpServers": [],
   "skills": [
-    "skills/artifacts/SKILL.md",
+    "skills/architecture/SKILL.md",
     "skills/confluence/SKILL.md",
-    "skills/craft/SKILL.md",
-    "skills/design-pattern-selection/SKILL.md",
-    "skills/domain-modeling/SKILL.md",
-    "skills/evals/SKILL.md",
-    "skills/graph-engineering/SKILL.md",
-    "skills/grilling/SKILL.md",
+    "skills/delivery/SKILL.md",
+    "skills/execution/SKILL.md",
     "skills/indexed-search/SKILL.md",
-    "skills/lifecycle/SKILL.md",
     "skills/modernize-coding/SKILL.md",
-    "skills/performance/SKILL.md",
-    "skills/security-audit/SKILL.md",
-    "skills/solution-architecture/SKILL.md",
-    "skills/system-diagramming/SKILL.md",
-    "skills/teamwork/SKILL.md",
-    "skills/verification/SKILL.md",
-    "skills/wayfinder/SKILL.md"
+    "skills/quality/SKILL.md",
+    "skills/security-audit/SKILL.md"
   ]
 }

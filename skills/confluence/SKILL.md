@@ -100,4 +100,4 @@ Rules paid for by real breakage (both servers):
 
 ## Safety
 
-Creating/updating/deleting pages is a hard-to-undo external write: hold the `AUTH:`/`PENDING:` gates ([craft](../craft/SKILL.md)) - quote authorization for the specific target, emit `PENDING:` when unsure. Deletion (`confluence_delete_page`) has no MCP undo - recovery is UI-only and retention-bound; on a permission error, **repurpose** the page (rename + blank body + pointer note) and flag it for manual cleanup.
+Creating/updating/deleting pages is a hard-to-undo external write: hold the `AUTH:`/`PENDING:` gates ([craft](../quality/SKILL.md#craft)) - quote authorization for the specific target, emit `PENDING:` when unsure. Deletion (`confluence_delete_page`) has no MCP undo - recovery is UI-only and retention-bound; on a permission error, **repurpose** the page (rename + blank body + pointer note) and flag it for manual cleanup.

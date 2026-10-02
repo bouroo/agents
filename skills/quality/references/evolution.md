@@ -1,6 +1,6 @@
 # Governed Self-Evolution (GROW)
 
-> Load on demand from [verification](../SKILL.md): the machinery behind the GROW node — how the system changes the system, under what guardrails, and what it may never change alone. Agents propose; anchors and gates accept.
+> Load on demand from [quality](../SKILL.md): the machinery behind the GROW node — how the system changes the system, under what guardrails, and what it may never change alone. Agents propose; anchors and gates accept.
 
 ## The loop to beat
 
@@ -12,7 +12,7 @@ Self-evolution done wrong is the loop validating itself: an agent notices a fail
 | --- | --- | --- |
 | **Instrument** | catalog the failure in `.agents/plans/{slug}/retro.md` — the trigger, the wrong behavior, the rule violated (cited by rule, never rottable path), the recurrence count | the failing evidence itself |
 | **Propose** | convert the finding into a deterministic gate or rule change as a reviewed diff to the harness (a check, a flowchart node, a table row) | the diff; one line of rationale per change |
-| **Validate** | run the new gate against the recorded failures — it must fail on the old evidence and pass on good runs; adversarial judging per [verification](../SKILL.md) | command + exit code + output on both sides |
+| **Validate** | run the new gate against the recorded failures — it must fail on the old evidence and pass on good runs; adversarial judging per [quality](../SKILL.md) | command + exit code + output on both sides |
 | **Commit** | land versioned (git history is the rollback), noted in the changelog, retro closed with the gate's location | a green gates run on the whole repo |
 
 An uncommitted proposal is a pending item, not an improvement; a committed one without validate-step evidence is fraud by the evidence audit.
@@ -26,7 +26,7 @@ This split is the harness analogue of the wayfinder rule that decisions change o
 
 ## What may never self-modify
 
-- **Anchors.** A step that benefits from a rule may not rewrite the rule: spec clauses, the user's words, red tests, and captured evidence are read-only to the machinery (the [graph grammar's](../../graph-engineering/SKILL.md) anchor rules). Target changes route to the anchor's owner.
+- **Anchors.** A step that benefits from a rule may not rewrite the rule: spec clauses, the user's words, red tests, and captured evidence are read-only to the machinery (the [execution grammar's](../../execution/SKILL.md) anchor rules). Target changes route to the anchor's owner.
 - **The evidence standard.** No evolution may weaken L1/L2/L3, the caps, or the audit questions — a gate may get stricter; loosening is a user decision (`AUTH:`).
 - **Verification's independence.** The role that validates an evolution may not be the role that proposes it — the same separation teamwork demands of implementer and auditor.
 
@@ -46,6 +46,7 @@ Every control is a bet that some failure keeps happening. When a stronger model 
 
 ## Cross-references
 
-- [verification](../SKILL.md) the GROW node this file works out; judging an evolution proposal is adversarial judging like any done report.
-- [graph-engineering](../../graph-engineering/SKILL.md) the anchor and cap grammar this cycle inherits.
-- [wayfinder](../../wayfinder/SKILL.md) cross-session efforts keep their decisions one ticket at a time; doctrine keeps its changes one validated gate at a time.
+- [quality](../SKILL.md) the GROW node this file works out; judging an evolution proposal is adversarial judging like any done report.
+- [execution](../../execution/SKILL.md) the anchor and cap grammar this cycle inherits.
+
+Cross-session efforts keep their decisions one ticket at a time; doctrine keeps its changes one validated gate at a time.

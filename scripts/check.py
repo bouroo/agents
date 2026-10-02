@@ -11,9 +11,9 @@ Static gates over docs/skills plus the distribution layer:
     privacy         doctrine free of real-work identifiers (tiny links,
                     page ids, private hosts, engagement service names)
     comments        the comment rule survives on both canonical surfaces
-                    (manifesto clause + skills/craft), so neither can lose it
+                    (manifesto clause + skills/quality), so neither can lose it
     simplicity      the simplicity rule survives on both canonical surfaces
-                    (manifesto clause + skills/craft), so neither can lose it
+                    (manifesto clause + skills/quality), so neither can lose it
     modernize       every modernize-coding adapter is present and version-pinned;
                     Go and Java claims match their toolchain's own local record
                     (GOROOT/api, JDK src.zip @since) of when each feature landed
@@ -217,15 +217,15 @@ def g_links() -> None:
 RULE_SURFACES = {
     "comments": [
         ("AGENTS.md", re.compile(r"restates? the code", re.IGNORECASE)),
-        ("skills/craft/SKILL.md", re.compile(r"^## Comments$", re.MULTILINE)),
+        ("skills/quality/SKILL.md", re.compile(r"^## Comments$", re.MULTILINE)),
     ],
     "simplicity": [
         ("AGENTS.md", re.compile(r"second real caller", re.IGNORECASE)),
-        ("skills/craft/SKILL.md", re.compile(r"^## Simplicity$", re.MULTILINE)),
+        ("skills/quality/SKILL.md", re.compile(r"^## Simplicity$", re.MULTILINE)),
     ],
     "dashes": [
         ("AGENTS.md", re.compile(r"en-dash", re.IGNORECASE)),
-        ("skills/craft/SKILL.md", re.compile(r"^## Typography$", re.MULTILINE)),
+        ("skills/quality/SKILL.md", re.compile(r"^## Typography$", re.MULTILINE)),
     ],
 }
 

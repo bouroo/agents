@@ -361,8 +361,7 @@ The audit is read-only and describes fixes; it does not edit the target.
 ### Added
 
 - **`skills/security-audit`** — a 76-line skill plus a 96-line attack-class
-  reference, loading [craft](skills/craft/SKILL.md), [verification](skills/
-  verification/SKILL.md), [teamwork](skills/teamwork/SKILL.md), and the
+  reference, loading `craft`, `verification`, `teamwork`, and the
   lifecycle rather than restating them. Guidance is the default mode: a security
   question, a focused review, or triage of a reported finding writes no files.
   The full audit workflow — and a `REPORT.md` — runs only on explicit request.

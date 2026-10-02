@@ -1,6 +1,6 @@
 # Harness Design
 
-> Load on demand from [graph-engineering](../SKILL.md): the minimal-harness ladder, the pattern catalogue mapped onto the graph grammar, and tool-surface design. Distilled from Anthropic's *Building effective agents* and Hugo Bowne-Anderson's *Stop overengineering your agent harness* — adopted as method, numbers re-derived locally.
+> Load on demand from [execution](../SKILL.md): the minimal-harness ladder, the pattern catalogue mapped onto the graph grammar, and tool-surface design. Distilled from Anthropic's *Building effective agents* and Hugo Bowne-Anderson's *Stop overengineering your agent harness* — adopted as method, numbers re-derived locally.
 
 ## The minimal-harness ladder
 
@@ -24,7 +24,7 @@ The industry's agent patterns are the doctrine's shape vocabulary under other na
 | Prompt chaining | linear / staged |
 | Routing | `ROUTES` (diamond, named conditions, exactly one edge taken) |
 | Parallelization — sectioning | `FAN_OUT` to independent subtasks, `JOINS` at the synthesis |
-| Orchestrator-workers | the coordination graph ([teamwork](../../teamwork/SKILL.md) rungs) |
+| Orchestrator-workers | the coordination graph ([teamwork](../SKILL.md#teamwork) rungs) |
 | Evaluator-optimizer | the canonical review graph's `VERIFIES` + gated `RETURNS` |
 | Agent | the graph itself |
 
@@ -51,7 +51,7 @@ Tool definitions are as load-bearing as the prompt: they are the interface the m
 
 ## Scope the tool surface
 
-Give the agent only the tools its job needs: a narrower surface means less confusion, fewer misuses, and less exposure to injected instructions arriving through tool output. Breadth is not capability — it is surface area. A worker's spawn brief scopes its tools to its task for the same reason ([teamwork](../../teamwork/SKILL.md)); the node contract names what the worker may touch, not just what it owes.
+Give the agent only the tools its job needs: a narrower surface means less confusion, fewer misuses, and less exposure to injected instructions arriving through tool output. Breadth is not capability — it is surface area. A worker's spawn brief scopes its tools to its task for the same reason ([teamwork](../SKILL.md#teamwork)); the node contract names what the worker may touch, not just what it owes.
 
 ## Inject known context; do not ask the model for it
 
@@ -59,7 +59,7 @@ Anything the system already knows — the date, the file path, the schema, the p
 
 ## Attribute the failure to its layer
 
-When a step fails, name the layer before patching: **reasoning** (the model decided wrongly), **tool interface** (it reached for the right action through a bad signature or description), **context** (the fact was absent, stale, or buried), or **control flow** (the graph routed wrongly, or a cap was too tight). The wrong-layer fix is a symptom patch — rewriting the prompt when the interface was ambiguous, or relaxing a check when the routing was wrong, leaves the cause in place. Diagnose per [verification](../../verification/SKILL.md), then patch the layer the evidence points to.
+When a step fails, name the layer before patching: **reasoning** (the model decided wrongly), **tool interface** (it reached for the right action through a bad signature or description), **context** (the fact was absent, stale, or buried), or **control flow** (the graph routed wrongly, or a cap was too tight). The wrong-layer fix is a symptom patch — rewriting the prompt when the interface was ambiguous, or relaxing a check when the routing was wrong, leaves the cause in place. Diagnose per the verification standard, then patch the layer the evidence points to.
 
 ## Do not surrender design to a framework
 
@@ -67,7 +67,7 @@ An SDK, an MCP server, or an orchestration library is an **implementation mechan
 
 ## Cross-references
 
-- [graph-engineering](../SKILL.md) the grammar these rules configure; the shape ladder and this agency ladder are the same entry discipline.
-- [teamwork](../../teamwork/SKILL.md) the coordination graph and spawn briefs that scope a worker's surface.
-- [verification](../../verification/SKILL.md) the evidence standard, the diagnosis discipline, and the caps that bound every `RETURNS`.
+- [execution](../SKILL.md) the grammar these rules configure; the shape ladder and this agency ladder are the same entry discipline.
+- [teamwork](../SKILL.md#teamwork) the coordination graph and spawn briefs that scope a worker's surface.
+- the verification standard: the evidence standard, the diagnosis discipline, and the caps that bound every `RETURNS`.
 - [topologies](topologies.md) the canonical review graph and shape cost arithmetic these patterns resolve to.

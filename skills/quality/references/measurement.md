@@ -1,6 +1,6 @@
 # Measurement Methodology
 
-> Load on demand. The short cycle lives in [performance](../SKILL.md); this file is the detail.
+> Load on demand. The short cycle lives in [quality](../SKILL.md); this file is the detail.
 
 Optimization without measurement is guessing, and guesses about bottlenecks are wrong ~80% of the time. Every step produces an artifact — a captured command, a report file, a benchmark result. The artifact is the evidence; the narrative is not.
 
@@ -37,4 +37,4 @@ Before optimizing code, verify the bottleneck is in your process. If 90% of late
 - **Beware micro-benchmark traps.** Dead-code elimination, constant folding, and escape analysis can make a benchmark "prove" a speedup the real code never gets. Inspect generated assembly or IR when a result looks too good.
 - **Re-baseline after structural change.** If the surrounding code or inputs change, the old baseline no longer compares.
 
-See [tactics](tactics.md) for the countermeasures each diagnosis routes to, and [verification](../../verification/SKILL.md) for the executable-evidence standard applied to a performance claim.
+See [tactics](tactics.md) for the countermeasures each diagnosis routes to, and [quality](../SKILL.md) for the executable-evidence standard applied to a performance claim.

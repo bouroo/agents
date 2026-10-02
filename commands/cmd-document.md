@@ -19,7 +19,7 @@ The area to document (`auth`, `email-verification flow`, `sessions-vs-tokens ADR
 | flow | a cross-system runtime path | `docs/flows/<flow>.md` |
 | adr | one architecture decision, immutable once accepted | `docs/architecture/decisions/<slug>.md` |
 | api | one HTTP endpoint: contract, auth, errors, sequence | `docs/api/<service>/<endpoint>.md` |
-| glossary term | a Title Case domain concept | entry in `CONTEXT.md` at the repo root; format: [domain-modeling](../skills/domain-modeling/SKILL.md) |
+| glossary term | a Title Case domain concept | entry in `CONTEXT.md` at the repo root; format: [domain-modeling](../skills/architecture/SKILL.md#domain-modeling) |
 
 Document as a system until it crosses systems; then promote to a flow.
 

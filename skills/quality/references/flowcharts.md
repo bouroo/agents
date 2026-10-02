@@ -1,6 +1,6 @@
 # The Loop as Decision Flowcharts
 
-> Load on demand. The prose lives in `AGENTS.md` (§2 intake, §4 execution graph, §7 verification) and [verification](../SKILL.md); this file renders the same doctrine as executable decision charts. **Follow the arrows literally**: at every diamond, read the condition against the actual situation, take exactly one outgoing edge, and do not skip a gate. A chart node with no outgoing arrow you satisfy is a stop, not a suggestion.
+> Load on demand. The prose lives in `AGENTS.md` (§2 intake, §4 execution graph, §7 verification) and [quality](../SKILL.md); this file renders the same doctrine as executable decision charts. **Follow the arrows literally**: at every diamond, read the condition against the actual situation, take exactly one outgoing edge, and do not skip a gate. A chart node with no outgoing arrow you satisfy is a stop, not a suggestion.
 
 ## Contents
 
@@ -107,7 +107,7 @@ flowchart TD
     G1{"Did any failure<br/>recur?"} -->|yes| CAT["Catalog the failure mode<br/>in .agents/plans/{slug}/retro.md"]
     G1 -->|no| EXIT["Record the decision, exit cleanly:<br/>startup checks pass, speculative edits<br/>reverted, next action stated"]
     CAT --> GATE["Convert it into a deterministic gate<br/>(a check that fails when the failure repeats)"]
-    GATE --> MAP["Update the Failure-Mode Map<br/>in verification/SKILL.md"]
+    GATE --> MAP["Update the Failure-Mode Map<br/>in quality/SKILL.md"]
     MAP --> KIRBY{"Any control that now encodes only a<br/>model limitation (Kirby bet)?"}
     KIRBY -->|yes| CUT["Cut or revisit it at the next<br/>model upgrade"]
     KIRBY -->|no| EXIT
@@ -121,5 +121,4 @@ flowchart TD
 
 ## Cross-references
 
-- [verification](../SKILL.md) the loop in prose; the dial that decides how far these charts run on a given job.
-- [craft](../../craft/SKILL.md) the artifact gates (`PROMPT:`, `INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`).
+- [quality](../SKILL.md) the loop in prose, the dial that decides how far these charts run on a given job, and the artifact gates (`PROMPT:`, `INTENT:`, `TWINS:`, `AUTH:`, `PENDING:`).
