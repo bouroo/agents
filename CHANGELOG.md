@@ -10,6 +10,25 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.0.0-beta.1] - 2026-10-03
+
+Breaking consolidation of the skill set: eighteen skills become eight.
+lifecycle + artifacts + grilling + wayfinder merge into delivery;
+graph-engineering + teamwork into execution; craft + verification + evals +
+performance into quality; solution-architecture + domain-modeling +
+design-pattern-selection + system-diagramming into architecture. The
+remaining four (confluence, security-audit, modernize-coding,
+indexed-search) are unchanged. Each merged skill is now a router-style
+SKILL.md whose deep detail lives in bundled references/, collapsing the
+eight bodies from 1441 to 559 lines with no rule dropped. AGENTS.md is
+condensed from 3575 to 2499 words, likewise losing no rule. check.py
+repoints its rule-surface checks (comments, simplicity, typography) to
+skills/quality/SKILL.md, and the eval suite is regenerated from 63 to 33
+cases against the new layout. The marketplace manifests and README move to
+the eight-skill layout. Consumers that reference the fourteen removed
+skill paths must repoint; scripts/install.sh copies the skills directory
+wholesale and needs no change.
+
 ## [6.8.0] - 2026-10-01
 
 Stable cut of the 6.8.0 line. The minor ships omp (oh-my-pi) host
