@@ -10,6 +10,23 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.0.0] - 2026-10-03
+
+Stable cut of the 7.0.0 line. The major consolidates the skill set from
+eighteen to eight: delivery, execution, and quality each absorb their
+former satellites as router-style SKILL.md files whose deep detail moves
+into bundled references (progressive disclosure), and architecture merges
+solution-architecture, domain-modeling, design-pattern-selection, and
+system-diagramming; confluence, security-audit, modernize-coding, and
+indexed-search are unchanged. AGENTS.md is condensed with no rule dropped,
+and the eval suite is regenerated from 63 to 33 cases against the new
+layout (beta.1). Link hygiene lands across the doctrine: 97 anchor-bearing
+relative links in 19 files drop their `#fragment`, because a host file
+resolver reads the fragment as a literal path segment and fails the link,
+and the `links` gate now rejects any relative target containing a `#`
+(beta.2). Per-beta detail in the sections below; nothing changed between
+beta.2 and this cut beyond the version fields.
+
 ## [7.0.0-beta.2] - 2026-10-03
 
 Link hygiene across the doctrine: 97 anchor-bearing relative links in 19
