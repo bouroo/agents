@@ -4,32 +4,22 @@
     "name": "bouroo",
     "url": "https://github.com/bouroo"
   },
-  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, eighteen on-demand skills (artifacts, confluence, craft, domain-modeling, design-pattern-selection, evals, modernize-coding, graph-engineering, grilling, indexed-search, lifecycle, performance, security-audit, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, two role agents (orchestrator, worker), and deterministic verification gates.",
+  "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, eight on-demand skills (delivery, execution, quality, architecture, confluence, security-audit, modernize-coding, indexed-search), four routine-task command workflows, two role agents (orchestrator, worker), and deterministic verification gates.",
   "plugins": [
     {
       "name": "coder-agents",
       "source": "./",
-      "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, eighteen on-demand skills (artifacts, confluence, craft, domain-modeling, design-pattern-selection, evals, modernize-coding, graph-engineering, grilling, indexed-search, lifecycle, performance, security-audit, solution-architecture, system-diagramming, teamwork, verification, wayfinder), four routine-task command workflows, two role agents (orchestrator, worker), and deterministic verification gates.",
-      "version": "6.8.0",
+      "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native delivery lifecycle, eight on-demand skills (delivery, execution, quality, architecture, confluence, security-audit, modernize-coding, indexed-search), four routine-task command workflows, two role agents (orchestrator, worker), and deterministic verification gates.",
+      "version": "7.0.0",
       "skills": [
-        "./skills/artifacts",
+        "./skills/architecture",
         "./skills/confluence",
-        "./skills/craft",
-        "./skills/design-pattern-selection",
-        "./skills/domain-modeling",
-        "./skills/evals",
-        "./skills/graph-engineering",
-        "./skills/grilling",
+        "./skills/delivery",
+        "./skills/execution",
         "./skills/indexed-search",
-        "./skills/lifecycle",
         "./skills/modernize-coding",
-        "./skills/performance",
-        "./skills/security-audit",
-        "./skills/solution-architecture",
-        "./skills/system-diagramming",
-        "./skills/teamwork",
-        "./skills/verification",
-        "./skills/wayfinder"
+        "./skills/quality",
+        "./skills/security-audit"
       ],
       "agents": [
         "./agents/common/orchestrator.md",

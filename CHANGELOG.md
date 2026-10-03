@@ -10,6 +10,53 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.0.0] - 2026-10-03
+
+Stable cut of the 7.0.0 line. The major consolidates the skill set from
+eighteen to eight: delivery, execution, and quality each absorb their
+former satellites as router-style SKILL.md files whose deep detail moves
+into bundled references (progressive disclosure), and architecture merges
+solution-architecture, domain-modeling, design-pattern-selection, and
+system-diagramming; confluence, security-audit, modernize-coding, and
+indexed-search are unchanged. AGENTS.md is condensed with no rule dropped,
+and the eval suite is regenerated from 63 to 33 cases against the new
+layout (beta.1). Link hygiene lands across the doctrine: 97 anchor-bearing
+relative links in 19 files drop their `#fragment`, because a host file
+resolver reads the fragment as a literal path segment and fails the link,
+and the `links` gate now rejects any relative target containing a `#`
+(beta.2). Per-beta detail in the sections below; nothing changed between
+beta.2 and this cut beyond the version fields.
+
+## [7.0.0-beta.2] - 2026-10-03
+
+Link hygiene across the doctrine: 97 anchor-bearing relative links in 19
+markdown files dropped their `#fragment`. Cross-file links keep the path
+and drop the fragment; same-file navigation lists become plain text and
+inline same-file links become prose or bold, since host file resolvers
+treat the fragment as a literal path segment and fail the link. The
+`links` gate (`g_links` in scripts/check.py) now rejects any relative
+target containing a `#`, so a fragment cannot silently pass again. Fix
+mutation-probed; gates: check.py --all 11/11 PASS.
+
+## [7.0.0-beta.1] - 2026-10-03
+
+Breaking consolidation of the skill set: eighteen skills become eight.
+lifecycle + artifacts + grilling + wayfinder merge into delivery;
+graph-engineering + teamwork into execution; craft + verification + evals +
+performance into quality; solution-architecture + domain-modeling +
+design-pattern-selection + system-diagramming into architecture. The
+remaining four (confluence, security-audit, modernize-coding,
+indexed-search) are unchanged. Each merged skill is now a router-style
+SKILL.md whose deep detail lives in bundled references/, collapsing the
+eight bodies from 1441 to 559 lines with no rule dropped. AGENTS.md is
+condensed from 3575 to 2499 words, likewise losing no rule. check.py
+repoints its rule-surface checks (comments, simplicity, typography) to
+skills/quality/SKILL.md, and the eval suite is regenerated from 63 to 33
+cases against the new layout. The marketplace manifests and README move to
+the eight-skill layout. Consumers that reference the fourteen removed
+skill paths must repoint; scripts/install.sh copies the skills directory
+wholesale and needs no change.
+
 ## [6.8.0] - 2026-10-01
 
 Stable cut of the 6.8.0 line. The minor ships omp (oh-my-pi) host
@@ -361,8 +408,7 @@ The audit is read-only and describes fixes; it does not edit the target.
 ### Added
 
 - **`skills/security-audit`** — a 76-line skill plus a 96-line attack-class
-  reference, loading [craft](skills/craft/SKILL.md), [verification](skills/
-  verification/SKILL.md), [teamwork](skills/teamwork/SKILL.md), and the
+  reference, loading `craft`, `verification`, `teamwork`, and the
   lifecycle rather than restating them. Guidance is the default mode: a security
   question, a focused review, or triage of a reported finding writes no files.
   The full audit workflow — and a `REPORT.md` — runs only on explicit request.

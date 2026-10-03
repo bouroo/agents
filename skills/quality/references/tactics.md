@@ -1,6 +1,6 @@
 # Performance Tactics
 
-> Load on demand when the profiler has named the bottleneck; routing lives in [performance](../SKILL.md). Time goes to four places: allocation churn, lock contention, syscall counts, and data copying. Apply only after correctness holds ([craft](../../craft/SKILL.md)); confirm each change helped by measurement, not intuition.
+> Load on demand when the profiler has named the bottleneck; routing lives in [quality](../SKILL.md). Time goes to four places: allocation churn, lock contention, syscall counts, and data copying. Apply only after correctness holds ([quality](../SKILL.md)); confirm each change helped by measurement, not intuition.
 
 ## Allocation churn
 

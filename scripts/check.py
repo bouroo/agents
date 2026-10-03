@@ -5,15 +5,16 @@ Static gates over docs/skills plus the distribution layer:
 
     budget          AGENTS.md stays within its line budget (the concision charter)
     frontmatter     every skill/command carries valid Agent-Skills-style metadata
-    links           every relative Markdown link resolves to an existing file
+    links           every relative Markdown link resolves to an existing file;
+                    a '#' anchor fragment in any relative target fails
     agnostic        core doctrine is free of host-binding tokens
     manifests       marketplace discovery manifests parse; versions agree
     privacy         doctrine free of real-work identifiers (tiny links,
                     page ids, private hosts, engagement service names)
     comments        the comment rule survives on both canonical surfaces
-                    (manifesto clause + skills/craft), so neither can lose it
+                    (manifesto clause + skills/quality), so neither can lose it
     simplicity      the simplicity rule survives on both canonical surfaces
-                    (manifesto clause + skills/craft), so neither can lose it
+                    (manifesto clause + skills/quality), so neither can lose it
     modernize       every modernize-coding adapter is present and version-pinned;
                     Go and Java claims match their toolchain's own local record
                     (GOROOT/api, JDK src.zip @since) of when each feature landed
@@ -188,6 +189,7 @@ def g_links() -> None:
     targets += sorted(p for p in (ROOT / "commands").rglob("*.md")
                       if _no_dotdir(p))
     dead: list[str] = []
+    anchors: list[str] = []
     checked = 0
     for f in targets:
         rel = f.relative_to(ROOT)
@@ -195,12 +197,24 @@ def g_links() -> None:
             continue
         for i, line in enumerate(f.read_text().splitlines(), 1):
             for target in LINK_RE.findall(line):
-                if target.startswith(("http://", "https://", "mailto:", "#")):
+                if target.startswith(("http://", "https://", "mailto:")):
+                    continue
+                # A '#' anywhere in a relative target is a fragment: host file
+                # resolvers read it as a literal path segment, so the link is a
+                # file-not-found there even though its path prefix exists.
+                if "#" in target:
+                    anchors.append(f"{rel}:{i} -> {target}")
                     continue
                 checked += 1
-                resolved = (f.parent / target.split("#")[0]).resolve()
-                if target.split("#")[0] and not resolved.exists():
+                resolved = (f.parent / target).resolve()
+                if not resolved.exists():
                     dead.append(f"{rel}:{i} -> {target}")
+    if anchors:
+        _add("FAIL", f"{name}: {len(anchors)} anchor-bearing relative link(s) "
+             "(a '#' fragment is read as a literal path segment by host file "
+             "resolvers): " + "; ".join(anchors[:10])
+             + (" ..." if len(anchors) > 10 else ""))
+        return
     if dead:
         _add("FAIL", f"{name}: {len(dead)} dangling link(s): "
              + "; ".join(dead[:10]) + (" ..." if len(dead) > 10 else ""))
@@ -217,15 +231,15 @@ def g_links() -> None:
 RULE_SURFACES = {
     "comments": [
         ("AGENTS.md", re.compile(r"restates? the code", re.IGNORECASE)),
-        ("skills/craft/SKILL.md", re.compile(r"^## Comments$", re.MULTILINE)),
+        ("skills/quality/SKILL.md", re.compile(r"^## Comments$", re.MULTILINE)),
     ],
     "simplicity": [
         ("AGENTS.md", re.compile(r"second real caller", re.IGNORECASE)),
-        ("skills/craft/SKILL.md", re.compile(r"^## Simplicity$", re.MULTILINE)),
+        ("skills/quality/SKILL.md", re.compile(r"^## Simplicity$", re.MULTILINE)),
     ],
     "dashes": [
         ("AGENTS.md", re.compile(r"en-dash", re.IGNORECASE)),
-        ("skills/craft/SKILL.md", re.compile(r"^## Typography$", re.MULTILINE)),
+        ("skills/quality/SKILL.md", re.compile(r"^## Typography$", re.MULTILINE)),
     ],
 }
 

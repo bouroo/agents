@@ -8,10 +8,10 @@ a pattern in its classic form is wrong wherever the language already dissolves i
 
 ## Contents
 
-- [Creational](#creational): [Builder](#builder) · [Abstract Factory](#abstract-factory) · [Factory Method](#factory-method) · [Prototype](#prototype) · [Singleton](#singleton)
-- [Structural](#structural): [Adapter](#adapter) · [Bridge](#bridge) · [Composite](#composite) · [Decorator](#decorator) · [Facade](#facade) · [Flyweight](#flyweight) · [Proxy](#proxy)
-- [Behavioral](#behavioral): [Chain of Responsibility](#chain-of-responsibility) · [Command](#command) · [Iterator](#iterator) · [Mediator](#mediator) · [Memento](#memento) · [Observer](#observer) · [State](#state) · [Strategy](#strategy) · [Template Method](#template-method) · [Visitor](#visitor)
-- [Cross-cutting notes](#cross-cutting-notes)
+- Creational: Builder · Abstract Factory · Factory Method · Prototype · Singleton
+- Structural: Adapter · Bridge · Composite · Decorator · Facade · Flyweight · Proxy
+- Behavioral: Chain of Responsibility · Command · Iterator · Mediator · Memento · Observer · State · Strategy · Template Method · Visitor
+- Cross-cutting notes
 
 ## Creational
 
@@ -184,3 +184,38 @@ or exhaustive pattern matching where the language has it.
   real use appears; delete one when its variation disappears.
 - Interfaces belong at the consumer side, small (1-3 methods), and only when a second
   implementation exists or is imminent.
+
+## Pain -> candidate index
+
+Look up the pain first; read only the shortlisted entries above.
+
+| Pain (what varies / hurts) | Candidates |
+| --- | --- |
+| Telescoping constructors, many optional params | Builder |
+| Families of related products chosen together | Abstract Factory |
+| One product; creation point should hide behind an interface | Factory Method |
+| Expensive setup; need copies | Prototype |
+| One shared resource (config, pool, registry) | Singleton — check stdlib first; usually a module-level object or DI |
+| Two interfaces don't fit (usually third-party) | Adapter |
+| One type split across two independent dimensions | Bridge |
+| Tree structures; uniform treatment of leaf and group | Composite |
+| Layer behavior without touching callers | Decorator (often: wrappers / middleware) |
+| Subsystem with too many entry points | Facade |
+| Huge count of identical small objects | Flyweight (usually: just share references) |
+| Lazy / controlled / remote access to an object | Proxy |
+| Pipeline of steps that each decide whether to continue | Chain of Responsibility (middleware chain) |
+| Operations as queueable, undoable, loggable requests | Command |
+| Walk a custom container without exposing internals | Iterator (built-in iterators usually suffice) |
+| N×N direct chatter between components | Mediator |
+| Snapshot and restore object state | Memento |
+| Many consumers of one event stream | Observer (callbacks / event emitter) |
+| Behavior changes with an internal phase | State |
+| Swap algorithms at runtime | Strategy (often: function values / lambdas) |
+| Fixed skeleton, variant steps | Template Method (often: hook functions) |
+| New operations over a stable set of types | Visitor (rare; consider plain methods) |
+
+## Worked example
+
+Input: "Payment service must support stripe/paypal/adyen and send email/slack/webhook notifications on status change."
+
+Output: `PaymentProvider` interface + one constructor per provider (Factory Method intent, no registry); notifications as a list of callbacks or an event emitter (Observer idiom). Skip Abstract Factory: only one product family. Skip a pub/sub library: three consumers, one process.

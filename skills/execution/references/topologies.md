@@ -1,6 +1,6 @@
 # Workflow Topologies
 
-> Load on demand from [graph-engineering](../SKILL.md): the canonical review graph, worked shapes, and the cost arithmetic behind the keep/drop verdict. Structure is doctrine; numbers are the guides' claims — re-derive them on your own runs before citing any.
+> Load on demand from [execution](../SKILL.md): the canonical review graph, worked shapes, and the cost arithmetic behind the keep/drop verdict. Structure is doctrine; numbers are the guides' claims — re-derive them on your own runs before citing any.
 
 ## The canonical review graph
 
@@ -60,5 +60,5 @@ Auto-derived graphs decay: the guide's illustration prices 85% per-hop entity re
 
 ## Cross-references
 
-- [graph-engineering](../SKILL.md) the grammar this file works out.
-- [verification](../../verification/SKILL.md) the evidence standard at the gate; the caps that bound every route back.
+- [execution](../SKILL.md) the grammar this file works out.
+- the verification standard: the evidence standard at the gate; the caps that bound every route back.
