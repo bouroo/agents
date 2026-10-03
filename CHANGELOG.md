@@ -10,6 +10,17 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.0.0-beta.2] - 2026-10-03
+
+Link hygiene across the doctrine: 97 anchor-bearing relative links in 19
+markdown files dropped their `#fragment`. Cross-file links keep the path
+and drop the fragment; same-file navigation lists become plain text and
+inline same-file links become prose or bold, since host file resolvers
+treat the fragment as a literal path segment and fail the link. The
+`links` gate (`g_links` in scripts/check.py) now rejects any relative
+target containing a `#`, so a fragment cannot silently pass again. Fix
+mutation-probed; gates: check.py --all 11/11 PASS.
+
 ## [7.0.0-beta.1] - 2026-10-03
 
 Breaking consolidation of the skill set: eighteen skills become eight.
