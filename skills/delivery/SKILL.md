@@ -5,7 +5,7 @@ description: "Delivery doctrine for plan-shaped agent work, in four faces. Lifec
 
 # Delivery
 
-Four faces of one doctrine for plan-shaped agent work, merged because they are one loop, not four topics: [Lifecycle](#lifecycle) names where work belongs and what each stage commits; [Artifacts](#artifacts) fixes the deterministic shapes those stages write; [Grilling](#grilling) settles a decision in one session; [Wayfinder](#wayfinder) runs that same interview across sessions as a map when the effort outgrows one.
+Four faces of one doctrine for plan-shaped agent work, merged because they are one loop, not four topics: **Lifecycle** names where work belongs and what each stage commits; **Artifacts** fixes the deterministic shapes those stages write; **Grilling** settles a decision in one session; **Wayfinder** runs that same interview across sessions as a map when the effort outgrows one.
 
 > **Override.** A project-level process spec that explicitly supersedes this skill wins.
 

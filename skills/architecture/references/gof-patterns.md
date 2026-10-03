@@ -8,10 +8,10 @@ a pattern in its classic form is wrong wherever the language already dissolves i
 
 ## Contents
 
-- [Creational](#creational): [Builder](#builder) · [Abstract Factory](#abstract-factory) · [Factory Method](#factory-method) · [Prototype](#prototype) · [Singleton](#singleton)
-- [Structural](#structural): [Adapter](#adapter) · [Bridge](#bridge) · [Composite](#composite) · [Decorator](#decorator) · [Facade](#facade) · [Flyweight](#flyweight) · [Proxy](#proxy)
-- [Behavioral](#behavioral): [Chain of Responsibility](#chain-of-responsibility) · [Command](#command) · [Iterator](#iterator) · [Mediator](#mediator) · [Memento](#memento) · [Observer](#observer) · [State](#state) · [Strategy](#strategy) · [Template Method](#template-method) · [Visitor](#visitor)
-- [Cross-cutting notes](#cross-cutting-notes)
+- Creational: Builder · Abstract Factory · Factory Method · Prototype · Singleton
+- Structural: Adapter · Bridge · Composite · Decorator · Facade · Flyweight · Proxy
+- Behavioral: Chain of Responsibility · Command · Iterator · Mediator · Memento · Observer · State · Strategy · Template Method · Visitor
+- Cross-cutting notes
 
 ## Creational
 

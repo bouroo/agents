@@ -7,7 +7,7 @@ description: "Vulnerability review of a codebase, API, service, CLI, or library:
 
 **Stance:** a finding is a boundary violation with a victim, not a best-practice deviation. The failure mode is a report of "missing rate limit" and "consider rotating keys" — claims that cost an owner more to triage than they are worth, and bury the one real defect beneath. A candidate that cannot name who is harmed and how does not survive the gate.
 
-Load [craft](../quality/SKILL.md#craft) for the artifact gates and [verification](../quality/SKILL.md#verification) for the evidence discipline this skill applies. An audit is [Test](../delivery/SKILL.md#lifecycle)-stage work, run by the Verifier seat — never by the author of the code under review.
+Load [craft](../quality/SKILL.md) for the artifact gates and [verification](../quality/SKILL.md) for the evidence discipline this skill applies. An audit is [Test](../delivery/SKILL.md)-stage work, run by the Verifier seat — never by the author of the code under review.
 
 ## Modes
 
@@ -35,7 +35,7 @@ This is §0's anchor discipline aimed at security: the chain terminates in a rea
 
 - **`confirmed`** — source evidence plus a bounded local check establish the whole chain. Only these carry severity.
 - **`needs_validation`** — one specific, source-grounded boundary hypothesis blocked by one *exact* missing fact (a proxy, identity provider, browser, deployment, or runtime behavior absent from the repository). State the missing fact and the safe check that resolves it. **No severity**: this is a blocked hypothesis, not a low-confidence finding.
-- **`rejected`** — the claim failed. Record the claim and why, so the next run does not re-litigate it ([artifacts](../delivery/SKILL.md#artifacts) ledger discipline).
+- **`rejected`** — the claim failed. Record the claim and why, so the next run does not re-litigate it ([artifacts](../delivery/SKILL.md) ledger discipline).
 
 ## Severity (confirmed only)
 
@@ -59,7 +59,7 @@ Any outward or irreversible step needs `AUTH:` (§3) — the user's own words au
 
 Coverage units are **entry surface × boundary × attack class**, never files. [`references/attack-classes.md`](references/attack-classes.md) lists the classes, each domain's rules for choosing them, and what is not a finding; every unit traces untrusted input from its entry point toward a dangerous sink.
 
-Stay solo for a focused review. Fan out when coverage justifies it (§9 [teamwork](../execution/SKILL.md#teamwork)): one hunter per unit with no shared file, then an agent that did *not* find a candidate re-derives it before it reaches `confirmed` ([verification](../quality/SKILL.md#verification) judge protocol). A hunter's report is testimony; independent re-derivation is evidence.
+Stay solo for a focused review. Fan out when coverage justifies it (§9 [teamwork](../execution/SKILL.md)): one hunter per unit with no shared file, then an agent that did *not* find a candidate re-derives it before it reaches `confirmed` ([verification](../quality/SKILL.md) judge protocol). A hunter's report is testimony; independent re-derivation is evidence.
 
 A fix names the invariant the code must enforce and the narrowest change that enforces it at the last trusted decision point — or it becomes a `needs_validation` for the control you cannot see. The audit describes fixes; it does not edit the target. Applying them is a separate task.
 

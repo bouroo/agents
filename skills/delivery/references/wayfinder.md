@@ -1,6 +1,6 @@
 # Wayfinder
 
-> Load on demand from [delivery](../SKILL.md#wayfinder): planning-by-default, the map anatomy, ticket types, fog-of-war, and the resolver and charting halves.
+> Load on demand from [delivery](../SKILL.md): planning-by-default, the map anatomy, ticket types, fog-of-war, and the resolver and charting halves.
 
 A loose idea arrives, too big for one agent session, wrapped in fog: the way to the destination is not visible yet. Wayfinding is finding the way, not charging at it. Chart the effort as a **map** on the issue tracker, then work its **decision tickets** — questions whose resolution is a decision, not build slices — until the route is clear. Naming the destination (a spec to hand off, decisions locked before build planning, or a change made in place) is the first act of charting, because it shapes every ticket.
 

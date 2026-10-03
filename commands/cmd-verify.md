@@ -9,11 +9,11 @@ Leave the working tree passing every quality gate. This is the automated layer o
 
 ## Scope
 
-Default: the whole working tree. An argument narrows the target (`src/module`, a file list). `--level=<L1|L2|L3>` caps the pipeline at that layer instead of dialing to the change's complexity; lower layers still run. Dial guidance: [verification](../skills/quality/SKILL.md#verification).
+Default: the whole working tree. An argument narrows the target (`src/module`, a file list). `--level=<L1|L2|L3>` caps the pipeline at that layer instead of dialing to the change's complexity; lower layers still run. Dial guidance: [verification](../skills/quality/SKILL.md).
 
 ## Pipeline
 
-Run each stage in order; on a finding apply the narrowest safe auto-fix at the **root cause** (never a band-aid) and re-run that stage. Cap: **three fix/re-verify iterations on one issue**, then escalate it — that cap is the loop's hard stop and only escape hatch, so a still-failing issue at the cap is reported BLOCKED, never re-run — the hard verify bound ([verification](../skills/quality/SKILL.md#verification)).
+Run each stage in order; on a finding apply the narrowest safe auto-fix at the **root cause** (never a band-aid) and re-run that stage. Cap: **three fix/re-verify iterations on one issue**, then escalate it — that cap is the loop's hard stop and only escape hatch, so a still-failing issue at the cap is reported BLOCKED, never re-run — the hard verify bound ([verification](../skills/quality/SKILL.md)).
 
 1. **Format** — project formatter; fail if files would change after auto-fix.
 2. **Lint** — warnings-as-errors; auto-fix where supported; include the doc-convention linter if configured, else note its absence.
@@ -35,4 +35,4 @@ verdict: CLEAN | BLOCKED
 
 **Abort/BLOCKED:** any stage still failing after three iterations; any security finding above threshold.
 
-Before reporting, run the artifact-gate sweep and add every owed `PROMPT:`/`INTENT:`/`TWINS:`/`AUTH:`/`PENDING:` line ([craft](../skills/quality/SKILL.md#craft)); delete scratch artifacts.
+Before reporting, run the artifact-gate sweep and add every owed `PROMPT:`/`INTENT:`/`TWINS:`/`AUTH:`/`PENDING:` line ([craft](../skills/quality/SKILL.md)); delete scratch artifacts.

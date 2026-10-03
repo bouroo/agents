@@ -1,6 +1,6 @@
 # Artifact Shapes
 
-> Load on demand from [delivery](../SKILL.md#artifacts): the deterministic shapes the Lifecycle stages commit, their shared vocabulary, and the drift sweep that keeps an existing plan well-formed.
+> Load on demand from [delivery](../SKILL.md): the deterministic shapes the Lifecycle stages commit, their shared vocabulary, and the drift sweep that keeps an existing plan well-formed.
 
 An artifact an execution session must **resume from** needs a **deterministic shape**: same sections in the same order, same vocabulary for the same things. Plans only humans read may stay prose. Three durable shapes belong to the lifecycle stages — `intent.md` (Intent), `spec.md` (Spec), `PLAN.md` + `STATUS.md` (Plan).
 

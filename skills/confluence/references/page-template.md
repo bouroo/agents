@@ -8,15 +8,15 @@ mcp-atlassian storage format - the `[storage-form]` snippets apply there.
 
 ## Contents
 
-- [Content-quality rules](#content-quality-rules-mandatory-on-every-endpoint-page)
-- [Match a live sibling first](#match-a-live-sibling-first)
-- [Diagrams: PlantUML macro + raw-source expand](#diagrams-plantuml-macro--raw-source-expand-always)
-- [Translating Mermaid to PlantUML](#translating-mermaid-sources-repo-docs-to-plantuml)
-- [Canonical document order](#canonical-document-order)
-- [Fixed table column sets](#fixed-table-column-sets-match-exactly)
-- [Change Log + highlighting](#change-log--change-highlighting-page-updates)
-- [Instance variant: BFF families](#instance-variant-bff-api-specification-page-families)
-- [Publish checklist](#publish-checklist)
+- Content-quality rules
+- Match a live sibling first
+- Diagrams: PlantUML macro + raw-source expand
+- Translating Mermaid to PlantUML
+- Canonical document order
+- Fixed table column sets
+- Change Log + highlighting
+- Instance variant: BFF families
+- Publish checklist
 
 ## Content-quality rules (mandatory on every endpoint page)
 

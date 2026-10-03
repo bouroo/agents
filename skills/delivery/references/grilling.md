@@ -1,6 +1,6 @@
 # Grilling
 
-> Load on demand from [delivery](../SKILL.md#grilling): the round mechanics, fact-versus-decision dispatch, and completion rule for a plan-first interview.
+> Load on demand from [delivery](../SKILL.md): the round mechanics, fact-versus-decision dispatch, and completion rule for a plan-first interview.
 
 Interview the user until you reach shared understanding of a plan, decision, or idea — the technique behind the manifesto's plan-first intake route. Ambiguity drains through conversation, never through guessing. Map the decision space as a **design tree**: every decision branches into the decisions that hang off it; settling a node unblocks its children.
 

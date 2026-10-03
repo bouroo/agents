@@ -24,7 +24,7 @@ The industry's agent patterns are the doctrine's shape vocabulary under other na
 | Prompt chaining | linear / staged |
 | Routing | `ROUTES` (diamond, named conditions, exactly one edge taken) |
 | Parallelization — sectioning | `FAN_OUT` to independent subtasks, `JOINS` at the synthesis |
-| Orchestrator-workers | the coordination graph ([teamwork](../SKILL.md#teamwork) rungs) |
+| Orchestrator-workers | the coordination graph ([teamwork](../SKILL.md) rungs) |
 | Evaluator-optimizer | the canonical review graph's `VERIFIES` + gated `RETURNS` |
 | Agent | the graph itself |
 
@@ -51,7 +51,7 @@ Tool definitions are as load-bearing as the prompt: they are the interface the m
 
 ## Scope the tool surface
 
-Give the agent only the tools its job needs: a narrower surface means less confusion, fewer misuses, and less exposure to injected instructions arriving through tool output. Breadth is not capability — it is surface area. A worker's spawn brief scopes its tools to its task for the same reason ([teamwork](../SKILL.md#teamwork)); the node contract names what the worker may touch, not just what it owes.
+Give the agent only the tools its job needs: a narrower surface means less confusion, fewer misuses, and less exposure to injected instructions arriving through tool output. Breadth is not capability — it is surface area. A worker's spawn brief scopes its tools to its task for the same reason ([teamwork](../SKILL.md)); the node contract names what the worker may touch, not just what it owes.
 
 ## Inject known context; do not ask the model for it
 
@@ -68,6 +68,6 @@ An SDK, an MCP server, or an orchestration library is an **implementation mechan
 ## Cross-references
 
 - [execution](../SKILL.md) the grammar these rules configure; the shape ladder and this agency ladder are the same entry discipline.
-- [teamwork](../SKILL.md#teamwork) the coordination graph and spawn briefs that scope a worker's surface.
+- [teamwork](../SKILL.md) the coordination graph and spawn briefs that scope a worker's surface.
 - the verification standard: the evidence standard, the diagnosis discipline, and the caps that bound every `RETURNS`.
 - [topologies](topologies.md) the canonical review graph and shape cost arithmetic these patterns resolve to.
