@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, eight on-demand skills, four routine-task command workflows, and two role agents (orchestrator, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, eight on-demand skills, four routine-task command workflows, and two role agents (lead, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## The foundation: the delivery lifecycle
 
@@ -54,8 +54,8 @@ flowchart LR
 │   └── security-audit/                the candidate gate, calibrated severity,
 │       └── references/                needs_validation discipline; attack-class
 │                                      coverage and per-domain hunter rules
-├── agents/                           role agents: orchestrator (lead) + worker
-│   ├── orchestrator.md, worker.md    root links, for omp's plugin-level scan
+├── agents/                           role agents: lead + worker
+│   ├── lead.md, worker.md            root links, for omp's plugin-level scan
 │   ├── common/                       md + plain.md variants of both
 │   └── codex/                        codex toml variants
 ├── commands/
@@ -103,13 +103,13 @@ Manual consumption only:
 - **Manifesto** — copy `AGENTS.md` content into your assistant's instruction file at whatever location your tool reads, or point the tool at this file directly.
 - **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`).
 - **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
-- **Role agents** — [agents/common/](./agents/common/) ships two ready-made role agents for the teamwork doctrine: **orchestrator**, the lead (decomposes a complex task into units, dispatches each to a subagent with an executable DONE check, verifies every returned unit itself, owns the merge — never implements a unit), and **worker**, which executes exactly one unit and returns files changed plus evidence. Three ways to activate them:
+- **Role agents** — [agents/common/](./agents/common/) ships two ready-made role agents for the teamwork doctrine: **lead** (decomposes a complex task into units, dispatches each to a subagent with an executable DONE check, verifies every returned unit itself, owns the merge — never implements a unit), and **worker**, which executes exactly one unit and returns files changed plus evidence. Three ways to activate them:
 
-  - **Installer (recommended)** — `./scripts/install.sh install` places the right variant in each host's agent directory automatically: hosts that accept a `name:` frontmatter key (Claude Code, Gemini CLI, Qwen, pi, omp) get [orchestrator.md](./agents/common/orchestrator.md) and [worker.md](./agents/common/worker.md); hosts that derive the id from the filename (opencode, kilo) get the `.plain.md` no-name variants (orchestrator as `mode: primary`, worker as `mode: subagent`); Codex gets the TOML variants copied into `~/.codex/agents/`. Confirm with `./scripts/install.sh status` — `agents=ok` means both are in place. Hosts without an agents surface (openclaw, hermes, MiniMax) install the manifesto and skills only.
+  - **Installer (recommended)** — `./scripts/install.sh install` places the right variant in each host's agent directory automatically: hosts that accept a `name:` frontmatter key (Claude Code, Gemini CLI, Qwen, pi, omp) get [lead.md](./agents/common/lead.md) and [worker.md](./agents/common/worker.md); hosts that derive the id from the filename (opencode, kilo) get the `.plain.md` no-name variants (lead as `mode: primary`, worker as `mode: subagent`); Codex gets the TOML variants copied into `~/.codex/agents/`. Confirm with `./scripts/install.sh status` — `agents=ok` means both are in place. Hosts without an agents surface (openclaw, hermes, MiniMax) install the manifesto and skills only.
   - **Claude Code plugin** — the marketplace metadata lists both agents, so `/plugin marketplace add bouroo/agents` then `/plugin install coder-agents@bouroo-agents` makes them dispatchable by name.
-  - **Manual** — copy or symlink [agents/common/orchestrator.md](./agents/common/orchestrator.md) (or its `.plain.md` variant where the host rejects a `name:` key) into the agent directory your runtime scans.
+  - **Manual** — copy or symlink [agents/common/lead.md](./agents/common/lead.md) (or its `.plain.md` variant where the host rejects a `name:` key) into the agent directory your runtime scans.
 
-  Once active, invoke the orchestrator by name through your host's subagent dispatch — a Task/agent tool call, an @mention, or a spawn by name — and it routes implementation units to `worker` when present, else to the host's general-purpose agent.
+  Once active, invoke the lead agent by name through your host's subagent dispatch — a Task/agent tool call, an @mention, or a spawn by name — and it routes implementation units to `worker` when present, else to the host's general-purpose agent.
 - **Marketplaces** — the repository ships plugin/extension discovery metadata at its canonical paths (`.claude-plugin/`, `.cursor-plugin/`, `.minimax-plugin/`, `gemini-extension.json`), so Agent-Skills-compatible CLIs can add it directly from GitHub (`npx skills add bouroo/agents`) and host marketplaces consume it without any generation step. omp consumes the same marketplace through its Claude Code-compatible fallback (`/marketplace add bouroo/agents`); its plugin loader takes skills from the manifest path lists and role agents from the repo-root `agents/` directory. MiniMax Code additionally accepts the repository directly as a plugin from a public GitHub repo, since its plugin root is the repository root.
 - **Local installer** — `scripts/install.sh` detects which compatible tools live on the machine and links (or copies) the setup into each one's config directory:
 
