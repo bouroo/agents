@@ -24,8 +24,28 @@ layout (beta.1). Link hygiene lands across the doctrine: 97 anchor-bearing
 relative links in 19 files drop their `#fragment`, because a host file
 resolver reads the fragment as a literal path segment and fails the link,
 and the `links` gate now rejects any relative target containing a `#`
-(beta.2). Per-beta detail in the sections below; nothing changed between
-beta.2 and this cut beyond the version fields.
+(beta.2).
+
+The stable cut additionally renames the repository's `orchestrator` role
+agent to `lead`: Kilo Code ships a deprecated built-in agent named
+`orchestrator`, and on hosts that derive the agent id from the
+installed filename (kilo, opencode) the role agent of the same
+name collided with the built-in. `lead` is the doctrine's own term
+for the role, collides with no supported host's built-in agent,
+and the agent body is unchanged. All artifacts move in lockstep:
+`agents/common/orchestrator.md` becomes `agents/common/lead.md`,
+`agents/common/orchestrator.plain.md` becomes
+`agents/common/lead.plain.md`, `agents/codex/orchestrator.toml`
+becomes `agents/codex/lead.toml`, the omp plugin-level root link
+`agents/orchestrator.md` becomes `agents/lead.md`, and the marketplace
+manifests and README point at the new paths. Consumers that dispatch
+the agent by name must spawn `lead` instead of `orchestrator`, and
+machines with a previous install should re-run
+`./scripts/install.sh install` and remove the stale
+`orchestrator.md` link left in their host agents directories. Gates:
+check.py --all 11/11 PASS.
+
+Per-beta detail in the sections below.
 
 ## [7.0.0-beta.2] - 2026-10-03
 
