@@ -67,6 +67,9 @@ flowchart LR
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── .minimax-plugin/                   MiniMax Code plugin metadata
 ├── gemini-extension.json              extension discovery metadata
+├── standalone/
+│   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
+│   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
     ├── check.py                       eleven deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
@@ -119,6 +122,7 @@ Manual consumption only:
   ./scripts/install.sh install --dry-run    # preview the exact actions
   ./scripts/install.sh status               # per-tool link state
   ./scripts/install.sh uninstall            # removes only links pointing into this repo
+  ./scripts/install.sh install --standalone # compact single-file doctrine only
   ```
 
 
