@@ -10,6 +10,25 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.1.0] - 2026-10-06
+
+A minor release shipping the doctrine in standalone form. `standalone/AGENTS.md`
+is a 94-line, fully self-contained edition of the manifesto plus its three
+essential skills (quality, delivery, execution), carrying zero repo-internal
+references so it can be dropped onto a host that has none of this repository.
+`standalone/SOUL.md` is its identity twin: a 35-line soul document in the
+soul.md convention (Core Truths, Boundaries, Vibe, Continuity), written in the
+first person and host- and model-agnostic, carrying an explicit clause that it
+evolves together with the doctrine it mirrors.
+
+`scripts/install.sh` gains `--standalone`: it installs only the standalone
+doctrine into each selected host's instruction-file slot, preferring
+`standalone/<instruction basename>` when that file exists so a host whose
+instruction file is SOUL.md receives `standalone/SOUL.md`, and falling back to
+`standalone/AGENTS.md` otherwise. The flag composes with `--copy`, `--force`,
+and `--dry-run`, and the default install is unchanged. README documents the
+new tree and option. Gates: check.py --all 11/11 PASS.
+
 ## [7.0.0] - 2026-10-03
 
 Stable cut of the 7.0.0 line. The major consolidates the skill set from
