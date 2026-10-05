@@ -40,6 +40,9 @@
 #   install.sh uninstall [<code>...]  remove what we installed (symlinks pointing
 #                                   into this repo; real files need --force)
 #   install.sh status               state of every artifact on every tool
+#   install.sh install --standalone  install ONLY the standalone manifesto into
+#                                    each host's instruction file (no skills/,
+#                                    commands/, agents/); standalone/<basename> wins
 #
 # Options:
 #   --all       include undetected tools too (creates their config dirs)
@@ -47,6 +50,9 @@
 #               re-run install --force --copy to refresh)
 #   --force     replace foreign symlinks / refresh copies / uninstall real files
 #   --dry-run   print planned actions without touching anything
+#   --standalone  install ONLY the standalone manifesto into each selected
+#               host's instruction file: standalone/<instruction basename> if
+#               present, else AGENTS.md; skip skills/commands/agents; none -> nothing
 #   -h          this help
 #
 set -euo pipefail
@@ -83,7 +89,7 @@ HOSTS=(
 )
 
 MODE="detect"
-DRY_RUN=0; FORCE=0; COPY=0; ALL=0; FILTERS=()
+DRY_RUN=0; FORCE=0; COPY=0; ALL=0; STANDALONE=0; FILTERS=()
 
 for arg in "$@"; do
   case "$arg" in
@@ -92,7 +98,8 @@ for arg in "$@"; do
     --force) FORCE=1 ;;
     --copy) COPY=1 ;;
     --all) ALL=1 ;;
-    -h|--help) sed -n '2,44p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    --standalone) STANDALONE=1 ;;
+    -h|--help) sed -n '2,57p' "${BASH_SOURCE[0]}"; exit 0 ;;
     -*) log "error: unknown option $arg"; exit 2 ;;
     *) FILTERS+=("$arg") ;;
   esac
@@ -247,6 +254,16 @@ for h in $(selected_hosts); do
     log "== $code =="
     if [[ ! -d "$cdir" && "$ALL" != "1" ]]; then
       log "  not detected (use --all to create $cdir)"
+      continue
+    fi
+    if [[ "$STANDALONE" == "1" ]]; then
+      if [[ "$has_instr" == "1" ]]; then
+        sa_src="$REPO_DIR/standalone/$MANIFESTO"
+        sa_name="$MANIFESTO"
+        candidate="$REPO_DIR/standalone/$(basename "$instr")"
+        if [[ -e "$candidate" ]]; then sa_src="$candidate"; sa_name="$(basename "$instr")"; fi
+        place "$sa_src" "$cdir/$instr" "standalone/$sa_name->$instr"
+      fi
       continue
     fi
     [[ "$has_instr" == "1" ]] && place "$REPO_DIR/$MANIFESTO" "$cdir/$instr" "$MANIFESTO->$instr"
