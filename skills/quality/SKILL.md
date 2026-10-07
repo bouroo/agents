@@ -69,11 +69,11 @@ Optimize only after correctness holds, and only by measurement. Every optimizati
 
 **The measure-first cycle: Define, Benchmark, Diagnose, Improve, Compare.** Define one target metric (latency, throughput, memory, CPU) and its target value; benchmark one function at a time and capture the baseline to a numbered file; diagnose by ruling out external bottlenecks first, then route the signal; improve ONE change at a time; compare with a statistical comparator and paste the delta. The artifact is the evidence; the narrative is not.
 
-**Rule out external bottlenecks first.** An off-CPU profiler showing I/O wait, a distributed trace naming a slow upstream span, or a thread dump of workers blocked on socket reads means local tuning will not move the number — fix that component (query tuning, caching, pooling, batch sizing) and re-profile.
+**Rule out external bottlenecks first.** When profiling says the time is not yours to move — a slow query, an upstream span, blocked workers — fix that component and re-profile; local tuning cannot move the number. Sensors and per-finding fixes: [measurement](references/measurement.md).
 
 **Route the signal.** Time goes to one of four places: allocation churn (pool, preallocate known sizes, reduce boxing/reflection), lock contention (bound concurrency, share immutably, atomics over locks), syscall count (buffer, batch, tune transports, cache repeated work), data copying (zero-copy views, stream, pass references). Cheap overrides first: wrong algorithm, repeated expensive work, slow upstream queries.
 
-**Exit.** The cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move — report that and stop. Never keep an optimization the evidence does not support. Detail: [measurement](references/measurement.md); countermeasures: [tactics](references/tactics.md).
+**Exit.** The cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move — report that and stop. Never keep an optimization the evidence does not support. Benchmark hygiene and per-overhead-source countermeasures: [measurement](references/measurement.md), [tactics](references/tactics.md); the same doctrine as executable decision charts: [flowcharts](references/flowcharts.md).
 
 ## Comments
 
@@ -86,10 +86,3 @@ The default is the **least mechanism that works**: the standard library before a
 ## Typography
 
 This doctrine separates a clause from its qualifier with the em-dash — not the en-dash, and not a spaced hyphen. The same convention governs the doctrine's tables and the prose an agent writes from it; the `dashes` gate holds the corpus to it.
-
-## References
-
-- [flowcharts](references/flowcharts.md) the whole discipline as executable decision charts.
-- [evolution](references/evolution.md) the governed GROW cycle.
-- [measurement](references/measurement.md) benchmark hygiene and the full measure-first cycle.
-- [tactics](references/tactics.md) countermeasures per overhead source; pitfall checklist.

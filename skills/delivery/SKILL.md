@@ -39,19 +39,12 @@ The templates, the shared vocabulary (`WPn`, `DONE_WHEN`, `PENDING`, the §0 `IN
 
 ## Grilling
 
-Interview the user until you reach shared understanding of a plan, decision, or idea — the technique behind the manifesto's plan-first intake route, ambiguity drained through conversation and never through guessing. Map the decision space as a **design tree** and work it in **rounds**: each round asks the whole **frontier** — every question whose prerequisites are settled — numbering each question and giving a recommended answer, then stops and waits. Facts are the agent's to look up; only decisions reach the user. Completion is an empty frontier, then a one-recommendation plan and **STOP** for approval.
+Interview the user until you reach shared understanding of a plan, decision, or idea — the technique behind the manifesto's plan-first intake route, ambiguity drained through conversation and never through guessing. Map the decision space as a **design tree** and work it in **rounds**: each round asks the whole **frontier** — every question whose prerequisites are settled — numbering each question and giving a recommended answer, then stops and waits. Facts are the agent's to look up; only decisions reach the user.
 
 The round template, the fact-versus-decision dispatch, and the completion rule: [grilling](references/grilling.md).
 
 ## Wayfinder
 
-A loose idea too big for one agent session, wrapped in fog, becomes a **map** — one issue labelled **`wayfinder:map`** whose child **decision tickets** are questions resolved one per session until the route is clear. Wayfinder is **planning** by default: the map is an **index, not a store**, and the urge to just do the work usually means you have reached the edge of the map and it is time to hand off.
+A loose idea too big for one agent session becomes a **map** — one issue labelled **`wayfinder:map`** whose child **decision tickets** are questions resolved one per session until the route is clear.
 
 The map anatomy, ticket types (Research / Prototype / Grilling / Task, AFK / HITL), the fog-of-war rules, and the resolver and charting invocation halves: [wayfinder](references/wayfinder.md).
-
-## References
-
-- [artifact-shapes](references/artifact-shapes.md) the three templates, the PLAN vocabulary, the ledger, and the drift sweep.
-- [grilling](references/grilling.md) the round mechanics, fact dispatch, and completion rule.
-- [wayfinder](references/wayfinder.md) map anatomy, ticket types, fog of war, and both invocation halves.
-- [common-mistakes](references/common-mistakes.md) the 18 failure modes and their fixes.
