@@ -4,7 +4,7 @@ Canonical structure for an endpoint/API-spec wiki page, decoded from real,
 correctly-rendering siblings rather than invented. Following this file reproduces the
 retired v3 generator's layout; its two hard rules survive verbatim. Transport rules
 live in [SKILL.md](../SKILL.md): Rovo uses Confluence-HTML data-type nodes,
-mcp-atlassian storage format - the `[storage-form]` snippets apply there.
+mcp-atlassian storage format — the `[storage-form]` snippets apply there.
 
 ## Contents
 
@@ -40,7 +40,7 @@ mcp-atlassian storage format - the `[storage-form]` snippets apply there.
 Structure (macro forms, table attributes, heading levels) is learned, not imposed:
 fetch a **known-good** sibling in the same space/folder with
 `getConfluencePage(contentFormat="html")`, record its skeleton, and match it. Never
-trust rendered-view summaries alone - diff stored bodies. The layout below is the
+trust rendered-view summaries alone — diff stored bodies. The layout below is the
 recorded abstraction and carries no host/space/page id; re-derive when the target
 space's conventions differ, and extend a page family by matching its siblings rather
 than imposing the canonical order.
@@ -48,11 +48,11 @@ than imposing the canonical order.
 For "render/update this page to match <URL>" requests, treat the supplied shortlink as
 the **template anchor**: fetch it in stored form before drafting, record its skeleton
 (headings, macro wrappers, panels, table attributes, column sets), and reuse that exact
-shape - do not substitute the canonical order unless the anchor uses it or the user asks
+shape — do not substitute the canonical order unless the anchor uses it or the user asks
 for normalization. If the anchor is only the target page (not a proven-rendering
 sibling), name a sibling and compare both stored bodies before choosing the stronger
 template. A decoded anchor graduates into an instance-variant record below. Real-work
-identity (page titles, spaces, shortlinks) never enters this doctrine - it lives in
+identity (page titles, spaces, shortlinks) never enters this doctrine — it lives in
 machine-local memory; the `privacy` gate (`scripts/check.py`) enforces it.
 
 ## Diagrams: PlantUML macro + raw-source expand, always
@@ -61,7 +61,7 @@ Where diagrams render through the PlantUML macro plugin, source ships twice:
 
 1. the diagram **macro**, rendering server-side to SVG, immediately followed by
 2. a collapsed expand titled e.g. "Raw sequence diagram source" holding the **exact
-   same `@startuml…@enduml` bytes** (html-escaped - arrows contain `>`).
+   same `@startuml…@enduml` bytes** (html-escaped — arrows contain `>`).
 
 Rovo-MCP html form:
 
@@ -70,7 +70,7 @@ Rovo-MCP html form:
 <pre><code class="language-none">SOURCE</code></pre></details>
 ```
 
-mcp-atlassian storage form - **must** be the native `expand` macro; Confluence
+mcp-atlassian storage form — **must** be the native `expand` macro; Confluence
 silently strips an HTML `<details>` from a storage-format body (the source survives
 but lands outside any collapsible):
 
@@ -87,7 +87,7 @@ but lands outside any collapsible):
 ```
 
 **Trap:** a bare code block containing `@startuml…` renders as literal text, never a
-diagram - the failure invisible when re-reading the body. Older siblings may keep only
+diagram — the failure invisible when re-reading the body. Older siblings may keep only
 that broken form; do not copy it. Verify a published diagram by confirming the macro
 wrapper survived in the stored body (`body.view`-style summaries hide it).
 
@@ -128,7 +128,7 @@ Repo docs keep Mermaid; wiki pages take PlantUML. Verified element mapping:
 | `loop every N` | `loop every N … end` |
 | `== Section ==` | `== Section ==` (identical) |
 
-Mermaid message-text that BREAKS PlantUML - rewrite before shipping:
+Mermaid message-text that BREAKS PlantUML — rewrite before shipping:
 
 - `<angle-bracket>` placeholders parse as tags → `[square-brackets]` or prose.
 - `<=` / `>=` in expressions → prose ("fire_at is due", "created after schedule").
@@ -144,22 +144,22 @@ source before upload. If diagrams live in a standalone generator (e.g.
 
 ## Canonical document order
 
-Top-level sections are H1 (no leading H1 title - the page title carries the endpoint
+Top-level sections are H1 (no leading H1 title — the page title carries the endpoint
 name). `[storage-form]` snippets below: on Rovo/html reproduce the equivalent
 Confluence-HTML node or mirror the sibling's markup.
 
-1. **Metadata table** - 3-col, centered, auto-sized. Labels bold `<th colspan="2">`;
+1. **Metadata table** — 3-col, centered, auto-sized. Labels bold `<th colspan="2">`;
    values `<td><p>...</p></td>`; the Overview row uses a highlighted label cell
    (`data-highlight-colour="#f4f5f7"` in html). Rows: Overview · Layer ·
    Microservice · Authentication Level · Dependency overview (divider, empty
    value) · Inbound component · Outbound component · Expose to Mobile · Access token
    required · Language · JIRA.
-2. **H1 Change Log** - 4-col table (column set below). Append a row per revision;
+2. **H1 Change Log** — 4-col table (column set below). Append a row per revision;
    never rewrite history.
-3. **H1 Table of Contents** - toc macro, minLevel 1 / maxLevel 3. `[storage-form]`
+3. **H1 Table of Contents** — toc macro, minLevel 1 / maxLevel 3. `[storage-form]`
    `<ac:structured-macro ac:name="toc">` with those parameters; on html use whatever
    TOC extension node the siblings carry.
-4. **H1 Sequence Diagram** - the macro + raw-source expand pair above. `[storage-form]`
+4. **H1 Sequence Diagram** — the macro + raw-source expand pair above. `[storage-form]`
    shape: `plantumlcloud` macro (compressed inline source) then `expand` >
    `code(language=none)` with the identical decompressed source. **The `plantumlcloud`
    `data` encoding is NOT standard PlantUML base64 and varies between pages on the
@@ -170,16 +170,16 @@ Confluence-HTML node or mirror the sibling's markup.
    detail is load-bearing: level 9 does not reproduce the reference bytes; stripping
    padding is off by exactly the two `=` characters (a padding mismatch, not an
    alphabet mismatch); `+` and `/` appear literally in known-good params, PlantUML's
-   `0-9A-Za-z-_` alphabet does not; the safe-set is `"/"` exactly - parens ARE
+   `0-9A-Za-z-_` alphabet does not; the safe-set is `"/"` exactly — parens ARE
    percent-encoded (`%28`/`%29` appear in known-good params; `"/()"` is
    byte-different). **Order matters:** percent-encode FIRST on the raw source; the
    final `data` is pure base64 with NO `%`. A param holding `%2B`/`%3D` means quote
-   ran *after* base64 - the `%` is the order-bug signature, not an alphabet or padding
+   ran *after* base64 — the `%` is the order-bug signature, not an alphabet or padding
    issue. Never ship a body still holding a template marker (`PLACEHOLDER`, `TODO`) -
    a substitution step that silently didn't run publishes it. Storage-form macro:
    `<ac:structured-macro ac:name="plantumlcloud"><ac:parameter ac:name="filename"><name>.svg</ac:parameter><ac:parameter ac:name="data"><encoded></ac:parameter><ac:parameter ac:name="compressed">true</ac:parameter></ac:structured-macro>`.
 
-   **Gated encoder - run this, don't hand-roll it.** It encodes AND gates; a push
+   **Gated encoder — run this, don't hand-roll it.** It encodes AND gates; a push
    without its `GATE OK` line is unverified:
 
    ```python
@@ -206,11 +206,11 @@ Confluence-HTML node or mirror the sibling's markup.
    **Prove a variant instance** (first diagram on a new tenant, or a changed recipe):
    decode the `data` of a page someone has seen **paint in a browser** (a sibling's
    mere existence proves nothing), then re-encode the *unquoted original*
-   byte-for-byte - the inflated bytes after `unquote_to_bytes`, never the still-encoded
+   byte-for-byte — the inflated bytes after `unquote_to_bytes`, never the still-encoded
    ones (double-quoting makes a correct encoder "fail" and a wrong one look close).
    Check the reference can *discriminate*: if its source has no parens (or whatever
    character the safe-sets disagree on), byte-match proves nothing about that
-   character - prefer a reference covering the ambiguous chars, else read the safe-set
+   character — prefer a reference covering the ambiguous chars, else read the safe-set
    off the inflated bytes: the RESERVED characters appearing literally there are the
    safe-set, and only those (RFC 3986 unreserved `-._~` and alphanumerics stay literal
    under any `safe`, so they are not evidence; `+`/`=` never appear literally either).
@@ -219,10 +219,10 @@ Confluence-HTML node or mirror the sibling's markup.
 5. **H1 Request**: H2 Request Header Schema (5-col field table) · H2 Request Body
    Schema (5-col field table) · H2 Example Request (wide json code block).
 6. **H1 Response**: H2 Custom HTTP Response Code (4-col table) · H2 Response Schema
-   (5-col field table) · H2 Example Response - single-cell tables per case
+   (5-col field table) · H2 Example Response — single-cell tables per case
    (`Case HTTP 200 Success`, `Case HTTP 400 Bad Request`, `Case HTTP 409 Business
    Error`, `Case HTTP 500 System Error`) each wrapping a json code block.
-7. **H1 Field-To-Field Mapping** - H2 per downstream call (`Field Mapping when
+7. **H1 Field-To-Field Mapping** — H2 per downstream call (`Field Mapping when
    calling to <upstream>`), 6-col table.
 
 ## Fixed table column sets (match exactly)
@@ -247,7 +247,7 @@ the full stored body of any prior version (the tool defaults `convert_to_markdow
 - always pass `false` for storage work; its `space` field returns "Unknown", a tool
 quirk, ignore it). Walk `N = current-1, current-2, …` until the version's timestamp
 precedes the current effort's start date; that version is the pre-change baseline.
-Diff section/field sets baseline vs new body - fields in the body missing from the
+Diff section/field sets baseline vs new body — fields in the body missing from the
 baseline are `New`, fields only in the baseline are `Removed`, value/type/requirement
 drift is `Modified`, renames are `Renamed`.
 
@@ -256,7 +256,7 @@ drift is `Modified`, renames are `Renamed`.
 - Rebuilt tables add a trailing `Change` column: changed rows carry their `C#` and the
   field name in `<strong>`; untouched rows leave the cell empty. Storage form:
   `<td><p>C1</p></td>` / empty `<td><p></p></td>`.
-- Removed content leaves no live row - recorded only as a `Removed` Change Log row
+- Removed content leaves no live row — recorded only as a `Removed` Change Log row
   naming the baseline path.
 - Prose-level semantic shifts (e.g. an endpoint's error model changing) take a
   page-level row with Field `—`.
@@ -280,7 +280,7 @@ Description while the `C#` anchors on the live (renamed) row.
 ### Integrity gate (add to the publish proof)
 
 After publish, re-fetch and check refs bidirectionally: every `C#` used in body tables
-exists in the Change Log **and** every Change Log `C#` anchors in the body - under
+exists in the Change Log **and** every Change Log `C#` anchors in the body — under
 three documented relaxations: page-level rows (Field `—`) are exempt, aggregate rows
 (`X[].*`) match if any table row starts with `X[].`, and `Removed` rows anchor only in
 the baseline (no live row by definition). A dangling ref either direction is a publish
@@ -288,7 +288,7 @@ blocker, same tier as a failed `GATE OK`.
 
 ## Instance variant: "BFF API Specification" page families
 
-These spaces follow a **different but self-consistent layout** - match the siblings
+These spaces follow a **different but self-consistent layout** — match the siblings
 instead of the canonical order. Two surface records; where they diverge, match the
 surface you publish through.
 
@@ -297,7 +297,7 @@ surface you publish through.
 - **H2 section headings** (not H1): `Change logs`, `Sequence diagram`, `Logic`,
   `API Details`, `Status Code`, `Field to Field Mapping`, each preceded by `<hr>`.
 - Opens with an info panel (`<div data-type="panel-info">`) titled "**BFF API
-  Specification:** \<service\> - \<METHOD\> \<path\>" plus a one-paragraph summary.
+  Specification:** \<service\> — \<METHOD\> \<path\>" plus a one-paragraph summary.
 - Metadata table: fixed width, label cells shaded (`data-background="#f4f5f7"`),
   `Dependency overview` using `rowspan` over nested Inbound/Outbound label rows.
 - Change logs row: date `DD-MM-YYYY`, a user mention span (omit rather than invent an
@@ -312,7 +312,7 @@ surface you publish through.
   each wrapped in a 1-col table around a json code block. M/O values: mandatory
   red-styled `M` (`style="color: #de350b"`), optional `O`, conditional `C`.
 - **Status Code** table: HTTP Code · Custom Status Code · Status Description ·
-  Scenario, including a passthrough row (`- | - | passthrough | …`) for inherited
+  Scenario, including a passthrough row (`- | — | passthrough | …`) for inherited
   downstream errors.
 - **Field to Field Mapping**: one `###` table per downstream call (`Input / Output |
   Target | Source | Mapping Logic | Remark`; I/O cell is `I` or `O`), plus a final
@@ -360,7 +360,7 @@ divergences:
   Success</strong>` for the response.
 - **Status Code:** `HTTP Code | Custom Status Code | Status Description | Scenario` -
   same set as the Rovo record. **Field to Field Mapping:** `Input / Output | Target |
-  Source | Mapping Logic | Remark` with `I`/`O` in the first cell - one table per
+  Source | Mapping Logic | Remark` with `I`/`O` in the first cell — one table per
   numbered H3.
 
 ## Publish checklist
@@ -373,7 +373,7 @@ divergences:
 4. Diagram = macro + byte-identical raw-source expand; no bare `@startuml` code blocks
    anywhere. `plantumlcloud` payloads: encoder proven against a known-good sibling's
    `data` param, and every generated `data` round-trips to a valid `@startuml…@enduml`
-   source - before upload, not after a blank render (SKILL.md `content_file` sandbox:
+   source — before upload, not after a blank render (SKILL.md `content_file` sandbox:
    payloads staged inside the workspace).
 5. Table column sets match the selected template anchor or the target family's
    recorded set.
