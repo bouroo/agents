@@ -365,7 +365,7 @@
       ]
     },
     {
-      "id": "indexed-search-progressive-disclosure",
+      "id": "indexed-search-keeps-frontmatter-valid",
       "prompt": "Extract part of skills/indexed-search/SKILL.md into bundled reference material. The skill must stay discoverable with valid frontmatter.",
       "checks": [
         {

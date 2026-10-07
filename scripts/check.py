@@ -15,9 +15,13 @@ Static gates over docs/skills plus the distribution layer:
                     (manifesto clause + skills/quality), so neither can lose it
     simplicity      the simplicity rule survives on both canonical surfaces
                     (manifesto clause + skills/quality), so neither can lose it
+    dashes          the em-dash convention survives on both canonical surfaces
+                    and no doctrine file carries a spaced en-dash
     modernize       every modernize-coding adapter is present and version-pinned;
                     Go and Java claims match their toolchain's own local record
                     (GOROOT/api, JDK src.zip @since) of when each feature landed
+    evals           the harness regression suite is present and every eval is
+                    well-formed (id, prompt, mechanical checks)
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -82,14 +86,17 @@ def _no_dotdir(p: pathlib.Path) -> bool:
 
 
 # Files scanned for host tokens: everything an assistant consumes as doctrine
-# (AGENTS.md, skills, commands). README.md and CHANGELOG.md are allowlisted:
-# they document the distribution layer for humans, so naming concrete hosts,
-# marketplaces, and removed machinery is their job, not a leak.
+# (AGENTS.md, skills, commands). README.md and CHANGELOG.md sit outside the scan
+# set rather than being allowlisted within it: they document the distribution
+# layer for humans, so naming concrete hosts, marketplaces, and removed machinery
+# is their job, not a leak.
 HOST_SCAN_FILES = [ROOT / "AGENTS.md"]
 HOST_SCAN_SKILLS = sorted(p for p in (ROOT / "skills").rglob("*.md")
                           if _no_dotdir(p)) \
     + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p))
-HOST_SCAN_ALLOWLIST = {"CHANGELOG.md", "README.md"}
+# agents/ is deliberately outside this scan: its codex TOML carries host-specific
+# `mode:` frontmatter, while the .plain variants stay agnostic. Scanning it would
+# force that frontmatter to be hedged everywhere to satisfy a gate.
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 
@@ -383,8 +390,7 @@ def g_manifests() -> None:
 
 def g_agnostic() -> None:
     name = "agnostic"
-    files = [f for f in HOST_SCAN_FILES + HOST_SCAN_SKILLS
-             if f.is_file() and f.name not in HOST_SCAN_ALLOWLIST]
+    files = [f for f in HOST_SCAN_FILES + HOST_SCAN_SKILLS if f.is_file()]
     hits: list[str] = []
     for f in files:
         rel = f.relative_to(ROOT)
@@ -572,42 +578,6 @@ VERSION_CELL_RE = re.compile(
     r")\s*\|\s*$",
     re.IGNORECASE,
 )
-
-# (file, row token, GOROOT/api line prefix, claimed version). Every table row
-# whose feature is a stdlib symbol is covered; rows whose feature is a language
-# change (any, min/max, loopvar, range-over-int, omitzero, new(expr)) or has no
-# machine-readable record (unsafe, //go:build) are not anchorable here and are
-# deliberately absent rather than faked.
-SYMBOL_CLAIMS = [
-    ("guide.md", "wg.Go(", "pkg sync, method (*WaitGroup) Go(", "1.25"),
-    ("guide.md", "min(a, b)", None, "1.21"),
-    ("guide.md", "slices.Contains", "pkg slices, func Contains[", "1.21"),
-    ("guide.md", "slices.Sort", "pkg slices, func Sort[", "1.21"),
-    ("guide.md", "fmt.Appendf", "pkg fmt, func Appendf(", "1.19"),
-    ("guide.md", "maps.Copy", "pkg maps, func Copy[", "1.21"),
-    ("guide.md", "slices.Backward", "pkg slices, func Backward[", "1.23"),
-    ("guide.md", "strings.SplitSeq", "pkg strings, func SplitSeq(", "1.24"),
-    ("guide.md", "t.Context", "pkg testing, method (*T) Context(", "1.24"),
-    ("guide.md", "errors.AsType", "pkg errors, func AsType[", "1.26"),
-    ("analyzers.md", "`stringscut`", "pkg strings, func Cut(", "1.18"),
-    ("analyzers.md", "`stringscutprefix`", "pkg strings, func CutPrefix(", "1.20"),
-    ("analyzers.md", "`fmtappendf`", "pkg fmt, func Appendf(", "1.19"),
-    ("analyzers.md", "`slicescontains`", "pkg slices, func Contains[", "1.21"),
-    ("analyzers.md", "`slicesclip`", "pkg slices, func Clip[", "1.21"),
-    ("analyzers.md", "`slicessort`", "pkg slices, func Sort[", "1.21"),
-    ("analyzers.md", "`atomictypes`", "pkg sync/atomic, type Int32", "1.19"),
-    ("analyzers.md", "`reflecttypefor`", "pkg reflect, func TypeFor[", "1.22"),
-    ("analyzers.md", "`mapsloop`", "pkg maps, func Copy[", "1.21"),
-    ("analyzers.md", "`slicesbackward`", "pkg slices, func Backward[", "1.23"),
-    ("analyzers.md", "`stringsseq`", "pkg strings, func SplitSeq(", "1.24"),
-    ("analyzers.md", "`testingcontext`", "pkg testing, method (*T) Context(", "1.24"),
-    ("analyzers.md", "`waitgroup`", "pkg sync, method (*WaitGroup) Go(", "1.25"),
-    ("analyzers.md", "`reflecttypeassert`", "pkg reflect, func TypeAssert[", "1.25"),
-    ("analyzers.md", "`errorsastype`", "pkg errors, func AsType[", "1.26"),
-    ("analyzers.md", "`stringsbuilder`", "pkg strings, type Builder", "1.10"),
-    ("analyzers.md", "`plusbuild`", None, "1.17"),
-]
-
 
 def _api_versions() -> dict[str, int]:
     """Map each GOROOT/api line to the minor Go version that introduced it."""
