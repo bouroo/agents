@@ -22,6 +22,7 @@ Consider every row in one read pass over the diff plus touched neighbors:
 - **Performance** — flag only with measurement or a clear algorithmic concern; never micro-optimize in review.
 - **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention; comments and simplicity per [craft](../skills/quality/SKILL.md).
 - **Simplicity** — the least mechanism that works; flag it only where the reviewer can name what it buys ([craft](../skills/quality/SKILL.md)).
+- **Structure & reuse** — same logic knowledge in two places (diff copies: drifted sibling latent defect), module needing "and" describe itself, dependencies pointing outward into transport framework ([craft](../skills/quality/SKILL.md)).
 
 ## Severity
 

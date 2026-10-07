@@ -13,7 +13,7 @@ The module, package, path, or file to restructure. **Empty -> infer from the rep
 
 ## Steps
 
-1. **Analyze** — map the target, its dependencies, and call sites in one read pass; name the smell, not the symptom.
+1. **Analyze** — map the target, dependencies, and call sites in one read pass; name smell, not symptom — duplication consolidates one canonical owner, mixed responsibilities split along reasons change, dead weight deletes ([craft](../skills/quality/SKILL.md)).
 2. **Plan** — lock scope, list unknowns, and fix the regression thresholds later comparisons must meet; tests and benchmarks are part of the plan, not an afterthought. State the `INTENT:` line first ([craft](../skills/quality/SKILL.md)).
 3. **Baseline** — before touching code, capture what proves current behavior and current numbers: behavior-sentence tests (happy, error, edge), integration tests for end-to-end flows, and — when performance is a goal — profile + benchmark output saved to files. Commit it: the baseline is state outside the model, so committed artifacts — tests, profiles, benchmarks — not memory, are what every later step compares against. **No reproducible baseline -> abort here.**
 4. **Execute** — small atomic commits, build green at every step, public behavior frozen. Apply [craft](../skills/quality/SKILL.md); apply [performance](../skills/quality/SKILL.md) only after correctness holds and only on measured hot paths. Restructuring falsifies comments first: delete rather than port them to the new shape.
