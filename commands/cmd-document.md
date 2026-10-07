@@ -28,7 +28,7 @@ Document as a system until it crosses systems; then promote to a flow.
 1. **Assess** — no `docs/` tree: bootstrap the minimal layout (`docs/README.md` index, `systems/`, `flows/`, `architecture/decisions/`, `api/`; the glossary lives at the repo root as `CONTEXT.md`, created lazily on the first resolved term). Present: use it as-is — never rearrange someone's tree.
 2. **Locate** — read the index/map; find the affected system doc, related flows, endpoint pages, governing ADRs, and glossary terms, and decide honestly whether the change needs a new doc or an edit to an existing one.
 3. **Draft** — each doc states purpose, inputs/outputs, key invariants, and a source map (the code paths that implement it) so readers can navigate both directions. Mark unresolved points `[NEEDS CLARIFICATION]`; never invent content.
-4. **Sync surroundings** — a new Title Case term -> a `CONTEXT.md` entry (opinionated definition + `_Avoid_` list); a new flow -> linked from its systems and the index; an accepted ADR -> propagate consequences into affected docs; any docs-vs-code disagreement -> update whichever side is wrong, or flag the gap explicitly.
+4. **Sync surroundings** — a new Title Case term -> a `CONTEXT.md` entry in the [domain-modeling](../skills/architecture/SKILL.md) format; a new flow -> linked from its systems and the index; an accepted ADR -> propagate consequences into affected docs; any docs-vs-code disagreement -> update whichever side is wrong, or flag the gap explicitly.
 5. **Verify** — every relative link resolves; ADR frontmatter valid; the repo gate is green.
 
 ## ADR lifecycle
