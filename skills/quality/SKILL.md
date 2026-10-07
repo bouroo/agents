@@ -83,6 +83,14 @@ Default is **no comment**. One earns its place only by stating a non-derivable *
 
 The default is the **least mechanism that works**: the standard library before a dependency, a plain function before a class, a direct call before a layer. Structure that cannot name what it buys is unintended complexity — a defect: speculative abstraction (extract on the **second real caller**, never the first imagined one), dead configurability (a knob nobody sets), indirection the reader must decode (a wrapper that only forwards), or a dependency for the trivial. Name the cost in review; "this feels complex" is not a finding. **Counterweight:** simplicity never overrides correctness — never collapse a needed error path, drop a boundary check, or flatten a clarifying name to look smaller.
 
+## Reuse (DRY)
+
+One canonical owner per piece of knowledge — a rule, a default, a format, an algorithm — and every other appearance of it points at that owner instead of restating it. A second copy is not neutral: duplicated logic drifts, and a fix applied to one copy leaves its siblings wrong, which is the defect the `TWINS:` gate exists to catch. **Extract on the second real caller, never the first** — extraction with a single caller is speculative and pays the Simplicity tax for nothing; when a refactor pass finds three near-identical blocks, consolidating them is the pass's work, never an incidental cleanup. The strongest duplication smell is copy-paste-with-edits: two blocks that look alike but differ in one line. Diff the copies against each other before trusting either.
+
+## Structure (SOLID)
+
+**One reason to change per module.** A unit whose name contains "and" is two units wearing one name — split it at the seam. **Dependencies point inward**: business logic never imports transport, storage, or framework code, so the core survives the swap that a dependency upgrade forces. **Interfaces stay narrower than their caller** — a parameter carries what the caller passes, not every value the callee could theoretically accept; widen only on a second real caller, never on speculation.
+
 ## Typography
 
 This doctrine separates a clause from its qualifier with the em-dash — not the en-dash, and not a spaced hyphen. The same convention governs the doctrine's tables and the prose an agent writes from it; the `dashes` gate holds the corpus to it.
