@@ -20,8 +20,9 @@ Consider every row in one read pass over the diff plus touched neighbors:
 - **Tests** — happy, error, and boundary paths; assert behavior, not implementation details.
 - **Security** — input validation, authorization, no logged or committed secrets, dependency sanity. A suspected boundary violation goes to the [security-audit](../skills/security-audit/SKILL.md) candidate gate; this pass does not run that hunt.
 - **Performance** — flag only with measurement or a clear algorithmic concern; never micro-optimize in review.
-- **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention. Comments earn their place by stating a non-derivable *why*: flag restatement, change narration, and doc blocks longer than the code they document ([craft](../skills/quality/SKILL.md) comments).
-- **Simplicity** — the least mechanism that works. Flag abstraction with one caller, dead configurability, forwarding wrappers, and dependencies for what the stdlib does; name the cost each imposes ([craft](../skills/quality/SKILL.md) simplicity). A finding with no nameable cost is taste, not a defect. Never trade a needed error path or a clarifying name for a smaller diff.
+- **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention; comments and simplicity per [craft](../skills/quality/SKILL.md).
+- **Simplicity** — the least mechanism that works; flag it only where the reviewer can name what it buys ([craft](../skills/quality/SKILL.md)).
+- **Structure & reuse** — same logic knowledge in two places (diff copies: drifted sibling latent defect), module needing "and" describe itself, dependencies pointing outward into transport framework ([craft](../skills/quality/SKILL.md)).
 
 ## Severity
 

@@ -10,6 +10,37 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.2.0-beta.1] - 2026-10-07
+
+A principle-alignment release: the doctrine now both teaches and obeys
+KISS, DRY, SOLID, and YAGNI. The manifesto's core principles carry their
+classic names, its Hard Constraints section is one clause per line, and
+every executing surface operationalizes the four.
+
+The craft skill gains `## Reuse (DRY)` — one canonical owner per piece of
+knowledge, extraction on the second real caller, copy-paste-with-edits as
+the strongest duplication smell — and `## Structure (SOLID)` — one reason
+to change per module, dependencies pointing inward, interfaces narrowed to
+their callers, substitutes keeping the base contract. cmd-review adds a
+Structure & reuse rubric row; cmd-refactor names the principle-driven moves
+(consolidate, split along reasons to change, delete dead weight); the lead
+and worker role agents carry the quality bar into every dispatch brief
+across all three variants, kept in sync; standalone/AGENTS.md carries the
+same tags as the root doctrine.
+
+The corpus itself was brought under the same principles: check.py drops a
+34-line dead duplicate of its Go claims table (SYMBOL_CLAIMS), a dead
+allowlist constant, and a drifted docstring gate list; skills lose their
+duplicated `## References` sections and reference-paraphrasing; the
+architecture skill sheds its off-mission presales content
+(delivery-contexts.md deleted) and its in-doctrine changelog line; the
+confluence skill's 1,000-plus-character bullets move to a new
+writing-failure-modes reference with em-dash typography throughout; the
+commands lose their restatements of skill-owned detail; standalone is
+realigned to the root doctrine (testimony-not-evidence, the wayfinder
+escape route, and L1/L2/L3 parity restored). Gates: check.py --all 11/11
+PASS; the eval suite's 70 mechanical checks pass.
+
 ## [7.1.0] - 2026-10-06
 
 A minor release shipping the doctrine in standalone form. `standalone/AGENTS.md`
