@@ -13,13 +13,13 @@ Default: the whole working tree. An argument narrows the target (`src/module`, a
 
 ## Pipeline
 
-Run each stage in order; on a finding apply the narrowest safe auto-fix at the **root cause** (never a band-aid) and re-run that stage. Cap: **three fix/re-verify iterations on one issue**, then escalate it — that cap is the loop's hard stop and only escape hatch, so a still-failing issue at the cap is reported BLOCKED, never re-run — the hard verify bound ([verification](../skills/quality/SKILL.md)).
+Run each stage in order; on a finding apply the narrowest safe auto-fix at the **root cause** (never a band-aid) and re-run that stage. Cap: **three fix/re-verify iterations on one issue**, then escalate it — never re-run past the cap; a still-failing issue is reported BLOCKED. That cap is the hard verify bound ([verification](../skills/quality/SKILL.md)).
 
 1. **Format** — project formatter; fail if files would change after auto-fix.
 2. **Lint** — warnings-as-errors; auto-fix where supported; include the doc-convention linter if configured, else note its absence.
 3. **Type-check** — strict; no auto-fix (issues go to review).
 4. **Scan** — secrets / SAST / vulnerabilities above threshold fail; **never auto-fix a security finding** — report and escalate. A scanner hit is a lead, not a finding: confirming or dismissing it is a [security-audit](../skills/security-audit/SKILL.md) judgment, not a gate stage.
-5. **Test** — the full suite; a green suite is a signal, not proof, so grade high-stakes changes with a **mutation probe** (flip a semantic defect, require FAIL, revert).
+5. **Test** — the full suite; a green suite is a signal, not proof, so grade high-stakes changes with a **mutation probe** ([quality](../skills/quality/SKILL.md)).
 6. **Hook gate** — the repo's own verify script(s) (pre-commit/pre-push hooks, `scripts/verify.*`, package-script equivalents) must exit 0; note the absence if none exists.
 
 ## Done = CLEAN
