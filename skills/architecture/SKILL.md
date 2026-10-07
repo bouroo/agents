@@ -13,11 +13,11 @@ Architecture is the set of trade-offs you can defend: requirements inform archit
 
 Requirements before shapes. Separate **Architecturally Significant Requirements (ASRs)** — high business impact, cross-cutting, quality-attribute-focused — from ordinary ones, and pin every non-functional requirement (quality attributes) as a six-part **SEI scenario**: `When <source> <stimulus> under <environment>, the <artifact> shall <response>, measured by <measure>`. "Fast" and "scalable" are wishes: no response measure means no requirement. Keep the traceability chain business goal → requirement → decision → test.
 
-Start with the simplest style that meets the ASRs and evolve on evidence: modular monolith for most new products, clean/hexagonal inside a service for complex long-lived domains, microservices only for many teams with divergent scaling. Dependencies point inward — business logic never imports a framework, database, or transport. Style catalog, quality-attribute tactics, predictable conflicts, and anti-patterns: [architecture patterns](references/architecture-patterns.md), [quality attributes](references/quality-attributes.md), [clean architecture](references/clean-architecture.md).
+Start with the simplest style that meets the ASRs and evolve on evidence: modular monolith for most new products, clean/hexagonal inside a service for complex long-lived domains, microservices only for many teams with divergent scaling. Style catalog, quality-attribute tactics, predictable conflicts, and anti-patterns: [architecture patterns](references/architecture-patterns.md), [quality attributes](references/quality-attributes.md), [clean architecture](references/clean-architecture.md).
 
 One **ADR** per significant choice, written when options were weighed and the choice binds future work; skip standards-covered or throwaway calls. The value is the neglected alternative: *In context X, facing requirement Y, we decided Z, neglecting A and B, to achieve C, accepting D.* Records are immutable — supersede, never rewrite. Trigger, MADR template, practices, pitfalls: [decisions](references/decisions.md).
 
-Model for the audience with the **C4** zoom ladder (system context, container, component, code); one notation per diagram, current or deleted. Estimate in ranges (E = (O + 4M + P)/6, quote E ± 2σ, never a point), map stakeholders on power × interest, and govern with federated guardrails — [modeling](references/modeling.md), [delivery contexts](references/delivery-contexts.md), [governance](references/governance.md), [communication](references/communication.md), [requirements](references/requirements.md).
+Model for the audience with the **C4** zoom ladder (system context, container, component, code); one notation per diagram, current or deleted. Zoom ladder and drawing practice: [modeling](references/modeling.md). Federation, guardrails, and maturity: [governance](references/governance.md). Per-audience presentation: [communication](references/communication.md). ASRs, elicitation, and traceability: [requirements](references/requirements.md).
 
 **Done** when every ASR has a measurable scenario, every significant decision has an ADR naming rejected alternatives, the C4 context and container views render at their audience's zoom, and each automatable scenario is encoded as a fitness function or test.
 
@@ -41,22 +41,4 @@ Choose the kind — `architecture`, `workflow`, `sequence`, `dataflow`, `lifecyc
 
 Validate: `python3 skills/architecture/references/validate.py <slug>.html`. `E_*` lines are defects — fix the diagnosed subject and rerun (3-cycle cap); `W_*` lines are judgment calls to resolve or knowingly accept. Prove it renders with one real look (open it or take a headless-browser screenshot); no browser, say so and hand over the validated file. Iterate by editing the `ir` block in place — it is the source of truth — and never edit the renderer. Mermaid in: read it for topology and meaning, then author fresh IR (`flowchart`/`graph` → `workflow`, `sequenceDiagram` → `sequence`, `stateDiagram` → `lifecycle`); never carry Mermaid styling over. Report the artifact path, kind, and validator receipt (0 errors).
 
-## References
-
-Load the one that answers the question at hand.
-
-- [Requirements](references/requirements.md) — ASRs, SEI scenarios, elicitation, prioritization, traceability.
-- [Architecture patterns](references/architecture-patterns.md) — style catalog, data/scaling, resilience, integration, API styles, anti-patterns.
-- [Quality attributes](references/quality-attributes.md) — catalog, tactics, trade-offs, testing map, fitness functions.
-- [Clean architecture](references/clean-architecture.md) — dependency-inward layers, principles, when to use.
-- [Decisions](references/decisions.md) — ADR trigger, MADR template, Y-statement, practices.
-- [Modeling](references/modeling.md) — C4 zoom ladder, other notations, drawing practice.
-- [Communication](references/communication.md) — per-audience presentations, document skeleton, agile practice.
-- [Delivery contexts](references/delivery-contexts.md) — capability/value-stream framing, estimation, presales, cloud & DR.
-- [Governance](references/governance.md) — operating models, standards, review boards, maturity, portfolio.
-- [Context format](references/context-format.md) — CONTEXT.md entry rules, glossary structure, CONTEXT-MAP.
-- [GoF patterns](references/gof-patterns.md) — condensed 22-pattern catalog: intent / use when / skip when / shape.
-- [Template](references/template.html) — self-contained renderer; the IR contract lives in its header comment.
-- [Validator](references/validate.py) — stdlib gate for diagram HTML or raw IR JSON.
-
-Merged from the former solution-architecture, domain-modeling, design-pattern-selection, and system-diagramming skills.
+Load the reference the question at hand needs; each SKILL.md section links the one that answers it.
