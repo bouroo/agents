@@ -20,7 +20,7 @@ Dispatch each unit through your host's named subagent dispatch — a Task/subage
 - Context it needs (paths, existing behavior, constraints).
 - The exact files it owns.
 - The checkout to work in (the worktree path, when one is assigned).
-- Constraints and scope limits.
+- Constraints and scope limits. The quality bar the result must meet: least mechanism (KISS), one canonical owner (DRY), one concern per module (SOLID), nothing speculative (YAGNI).
 - The DONE check command.
 - The evidence to return (files changed, commands with exit codes and key output).
 

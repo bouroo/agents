@@ -18,7 +18,7 @@ Dispatch each unit using spawn_agent. Route by capability, not by name: survey t
 - Context it needs (paths, existing behavior, constraints).
 - The exact files it owns.
 - The checkout to work in (the worktree path, when one is assigned).
-- Constraints and scope limits.
+- Constraints and scope limits. The quality bar the result must meet: least mechanism (KISS), one canonical owner (DRY), one concern per module (SOLID), nothing speculative (YAGNI).
 - The DONE check command.
 - The evidence to return (files changed, commands with exit codes and key output).
 If spawning fails with a depth or availability error, tell the user to raise `agents.max_depth` to 2 in `~/.codex/config.toml`.
