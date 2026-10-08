@@ -10,6 +10,20 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.2.0] - 2026-10-08
+
+Stable cut of the 7.2.0 line, unchanged in content since v7.2.0-beta.1:
+the doctrine now both teaches and obeys KISS, DRY, SOLID, and YAGNI. Craft
+gains Reuse (DRY) and Structure (SOLID) as checkable rules; review and
+refactor carry structure-and-reuse checks; the lead and worker role agents
+carry the four-principle quality bar into every dispatch brief; standalone
+carries the same tags as the root doctrine. The corpus itself was
+de-duplicated and de-bloated: dead code out of check.py, duplicate
+reference lists out of skills, off-mission presales content out of
+architecture, confluence restructured, standalone realigned to root.
+Gates: check.py --all 11/11 PASS; the eval suite's 70 mechanical checks
+pass.
+
 ## [7.2.0-beta.1] - 2026-10-07
 
 A principle-alignment release: the doctrine now both teaches and obeys
