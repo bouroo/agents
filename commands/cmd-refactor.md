@@ -26,6 +26,15 @@ The module, package, path, or file to restructure. **Empty -> infer from the rep
 - Before/after recorded with evidence; no metric regresses past the plan's thresholds; improvements cited as command + output + delta.
 - Spec and affected docs describe the new shape with no stale references.
 
+Report in this fixed, machine-scannable shape:
+```
+target: <chosen target + one-line basis>
+baseline: <evidence commands/files committed>
+commits: <n>
+before/after: <metric deltas | n/a>
+verdict: BEHAVIOR PRESERVED | REVERTED | HANDED BACK — one-line justification
+```
+
 **Hand back when:** no reproducible baseline exists; public behavior changes and cannot be restored in scope; scope expands past the locked plan.
 
 ## References
