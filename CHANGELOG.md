@@ -10,6 +10,18 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.3.0] - 2026-10-08
+
+The four command workflows now complete a uniform no-options autonomy
+contract: invoked without options, each resolves every decision from the
+repo's own signals, states its inferences in one line, and stops only at
+its named bound. cmd-verify notes absent tooling and states its inference
+rather than asking; cmd-review states the diff bounds it took; cmd-refactor
+gains the fixed machine-scannable report shape (target, baseline, commits,
+before/after, verdict) that cmd-verify and cmd-document already carry.
+cmd-document already met the contract and is unchanged. Gates: check.py
+--all 11/11 PASS.
+
 ## [7.2.0] - 2026-10-08
 
 Stable cut of the 7.2.0 line, unchanged in content since v7.2.0-beta.1:
