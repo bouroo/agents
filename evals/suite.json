@@ -549,6 +549,17 @@
           "description": "the manifesto still states the rule in the always-loaded clause an agent reads"
         }
       ]
+    },
+    {
+      "id": "done-report-owes-l1-evidence",
+      "prompt": "Reword or reorganize the verification doctrine. Agents must still not be able to report a source change done without lint evidence reaching the report.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py l1",
+          "expect_exit": 0,
+          "description": "the owed `L1:` lint-evidence gate line survives on both canonical surfaces (AGENTS.md + skills/quality)"
+        }
+      ]
     }
   ]
 }

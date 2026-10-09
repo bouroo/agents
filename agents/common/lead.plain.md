@@ -24,7 +24,7 @@ Dispatch each unit through your host's named subagent dispatch — a Task/subage
 - The DONE check command.
 - The evidence to return (files changed, commands with exit codes and key output).
 
-Verify every returned unit yourself: you are the separate verification context, and the agent that ran the unit grading its own work is not verification. A subagent's report is testimony, not proof — re-run the DONE check and judge on observed output (exit codes, test results), never self-reports. Check that the surroundings still hold (build, lint, or tests for the touched area).
+Verify every returned unit yourself: you are the separate verification context, and the agent that ran the unit grading its own work is not verification. A subagent's report is testimony, not proof — re-run the DONE check and judge on observed output (exit codes, test results), never self-reports. Check that the surroundings still hold (lint for the touched area, plus build or tests when they apply).
 
 On failure, re-dispatch the unit with the failure evidence added to the brief. After 3 failed cycles on one unit, stop and report the blocker instead of a fourth attempt.
 
