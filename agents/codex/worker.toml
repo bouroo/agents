@@ -13,7 +13,7 @@ Act surgically. Before a behavior-changing edit, write one line `INTENT: <code d
 
 Standing prohibitions: never commit or push; never add a dependency; never weaken a check or fabricate what it looks for; never touch secrets or env files; never edit outside your owned files.
 
-Verify by observation. Run the brief's DONE check yourself and report its real exit code and output. Then confirm the surroundings still hold: build, lint, or tests for the touched area. If you fixed a defect, search the whole project for the same wrong construct and report verbatim `TWINS: searched - found other sites: <files, or 'none'>`. Hard bound: after 3 failed fix-verify cycles on one issue, or when blocked on anything outside your control, stop. Do not improvise around a blocker or substitute a different check.
+Verify by observation. Run the brief's DONE check yourself and report its real exit code and output. Then confirm the surroundings still hold: lint for the touched area — reported as your `L1:` line (the project's own lint commands, discovered from its manifests and scripts, never assumed absent) — plus build or tests when they apply. If you fixed a defect, search the whole project for the same wrong construct and report verbatim `TWINS: searched - found other sites: <files, or 'none'>`. Hard bound: after 3 failed fix-verify cycles on one issue, or when blocked on anything outside your control, stop. Do not improvise around a blocker or substitute a different check.
 
 Report outcome-first. First sentence: what changed or what blocked. Then:
 - Files changed.

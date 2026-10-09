@@ -10,6 +10,27 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.4.0] - 2026-10-09
+
+Lint evidence becomes owed rather than remembered. Incident: users
+reported agents claiming "done" while the generated code failed lint,
+forcing manual fixes. Root cause: L1 lint was verification prose, the
+role briefs said "build, lint, or tests" — an "or" that let lint be
+skipped — and no owed report line carried it. Fix, per the grip ladder
+(a rule that keeps being forgotten climbs a rung): the done report on
+every source change now owes an `L1:` line — the project's own
+lint/format/type-check commands, discovered from its manifests and
+scripts (package scripts, Makefile, pyproject/tox, pre-commit, CI),
+never assumed absent — each with literal command and exit code; still
+red is not done. The gate is stated on all three doctrine surfaces
+(manifesto, quality skill, standalone), the lead and worker briefs
+demand lint always and report it as their `L1:` line, cmd-verify
+discovers the project's own linters before claiming absence, and a new
+deterministic check.py gate (`l1`) pins the rule on both canonical
+surfaces so neither can silently lose it, with a permanent incident
+eval (done-report-owes-l1-evidence). Gates: check.py --all 12/12 PASS;
+a mutation probe stripping the rule fails the `l1` gate.
+
 ## [7.3.0] - 2026-10-08
 
 The four command workflows now complete a uniform no-options autonomy

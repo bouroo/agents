@@ -17,6 +17,7 @@ Static gates over docs/skills plus the distribution layer:
                     (manifesto clause + skills/quality), so neither can lose it
     dashes          the em-dash convention survives on both canonical surfaces
                     and no doctrine file carries a spaced en-dash
+    l1              the owed L1 done-report lint-evidence line survives on both canonical surfaces (manifesto clause + skills/quality), so neither can lose it
     modernize       every modernize-coding adapter is present and version-pinned;
                     Go and Java claims match their toolchain's own local record
                     (GOROOT/api, JDK src.zip @since) of when each feature landed
@@ -248,6 +249,10 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"en-dash", re.IGNORECASE)),
         ("skills/quality/SKILL.md", re.compile(r"^## Typography$", re.MULTILINE)),
     ],
+    "l1": [
+        ("AGENTS.md", re.compile(r"`L1:` in the done report")),
+        ("skills/quality/SKILL.md", re.compile(r"^- `L1:` in the done report", re.MULTILINE)),
+    ],
 }
 
 
@@ -281,6 +286,12 @@ def g_simplicity() -> None:
     if _g_rule_surfaces("simplicity"):
         _add("PASS", "simplicity: rule present on "
                      f"{len(RULE_SURFACES['simplicity'])} canonical surface(s)")
+
+
+def g_l1() -> None:
+    if _g_rule_surfaces("l1"):
+        _add("PASS", "l1: rule present on "
+                     f"{len(RULE_SURFACES['l1'])} canonical surface(s)")
 
 
 # The doctrine separates a clause from its qualifier with the EM-dash; the
@@ -864,7 +875,7 @@ GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("links", g_links), ("agnostic", g_agnostic),
          ("manifests", g_manifests), ("privacy", g_privacy),
          ("comments", g_comments), ("simplicity", g_simplicity),
-         ("dashes", g_dashes), ("modernize", g_modernize),
+         ("dashes", g_dashes), ("l1", g_l1), ("modernize", g_modernize),
          ("evals", g_evals)]
 
 

@@ -29,6 +29,7 @@ Twelve commandments, plus the artifact gates every report owes.
 - `TWINS:` on every defect fix: search the project for the same wrong construct; fix siblings or list them.
 - `AUTH:` before any outward effect: only the user's own words authorizing this exact action count; completion is never authorization — end local and emit `PENDING:`.
 - `PENDING:` for every prescribed-but-untaken follow-up.
+- `L1:` in the done report on every source change: the project's own lint/format/type-check commands — **discovered from its manifests and scripts** (`package.json` scripts, `Makefile`, `pyproject`/`tox`, pre-commit config, the CI file), never assumed absent; absence is claimed only after checking those. Each command carries its literal command line and exit code; a red command fails done. `L1: n/a — <one-line reason>` only when the change touched no source.
 
 **Enforce with tooling.** Move rules out of review into deterministic gates: formatter, linter, type-checker, then tests in pre-commit and CI. Prune instruction files like code — keep what an agent cannot derive (build/test commands, divergent style, gotchas), cut what it can read itself; a rule that must always hold becomes a gate, not prose.
 
@@ -38,7 +39,7 @@ Twelve commandments, plus the artifact gates every report owes.
 
 **Right-size first.** A low/low job (typo, rename) needs L1 only, no judge. Mid (a module fix with runtime behavior) needs L1 + L2, with `INTENT:`/`TWINS:` owed. High (cross-boundary, infra, security) needs L1 + L2 + L3, a mutation probe, a judge, and full artifact lines. Two traps: the **Average Answer Trap** runs hardest-job controls on every task; the **Kirby Effect** leaves controls that encoded a superseded model limitation — cut them on a model upgrade. The dial chooses layers, never lowers the standard.
 
-**Three layers.** **L1 static** lint, type-check, format on every source change. **L2 runtime** tests run, critical paths execute, app starts, when the change runs. **L3 end-to-end** one path crosses a real boundary, when the change crosses one (`n/a` with a one-line reason). Run the cheapest check earliest; a red test beats a narrative pass.
+**Three layers.** **L1 static** lint, type-check, format on every source change, owed in the report as the `L1:` line (the artifact gates above). **L2 runtime** tests run, critical paths execute, app starts, when the change runs. **L3 end-to-end** one path crosses a real boundary, when the change crosses one (`n/a` with a one-line reason). Run the cheapest check earliest; a red test beats a narrative pass.
 
 **Grip ladder** — a check is worth what it can *prevent*. 1 in-prompt (advisory, relies on memory); 2 standing condition (persists across turns); 3 deterministic gate (fails the turn; a check that **must always** run); 4 independent verifier (a fresh context re-derives it). Climb only as far as the risk earns; a rule that keeps being forgotten climbs a rung rather than being repeated louder.
 
@@ -46,7 +47,7 @@ Twelve commandments, plus the artifact gates every report owes.
 
 **Mutation probe.** Introduce a single semantic defect (flip a boolean, shift a bound, drop a guard); run the suite and require it to FAIL; revert and confirm it PASSES. A suite that cannot catch a deliberate defect is theater — the check itself is the defect under review.
 
-**Judge a finished report.** Judging changes nothing — read and run only. The diff outranks the report; diff test files first (dropped/weakened asserts, loosened tolerances, added skips, swapped mocks); trace every `AUTH:` quote; confirm every owed artifact line; re-run each re-runnable claim (cap 3); resolve conflicts by anchor rank. A claim that cannot be re-run is **UNVERIFIABLE**, never assumed true. The verdict is exactly one of **VERIFIED / VERIFIED WITH CAVEATS / REFUTED**; a refutation names the claim and shows contradicting output plus the smallest fix.
+**Judge a finished report.** Judging changes nothing — read and run only. The diff outranks the report; diff test files first (dropped/weakened asserts, loosened tolerances, added skips, swapped mocks); trace every `AUTH:` quote; confirm every owed artifact line (an absent `L1:` line on a source-change report refutes done on the spot); re-run each re-runnable claim (cap 3); resolve conflicts by anchor rank. A claim that cannot be re-run is **UNVERIFIABLE**, never assumed true. The verdict is exactly one of **VERIFIED / VERIFIED WITH CAVEATS / REFUTED**; a refutation names the claim and shows contradicting output plus the smallest fix.
 
 **Diagnosis.** Reason backward from the observed failure to its root cause before writing the next change; attribute the failure to its layer — reasoning, tool interface, context, or control flow — because the wrong-layer fix is a symptom patch by construction. Contradiction routes backward, never forward: a surprise at PROVE re-enters at THINK.
 

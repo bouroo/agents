@@ -45,6 +45,7 @@ Gates are literal lines owed at decision points and belong **verbatim** in the f
 - **`TWINS:`** on every defect fix: search the project for the same wrong construct; fix siblings or list them.
 - **`AUTH:`** before any outward, irreversible, or destructive effect: quote the user's own words authorizing **this exact action**. Documentation is not authorization, and **completion is never authorization** — a finished task, clean tree, or green build authorizes nothing beyond itself. Without a quote, emit `PENDING:` and do not act.
 - **`PENDING:`** for every prescribed-but-untaken follow-up; an unmentioned one reads as fraud.
+- `L1:` in the done report on every source change: the project's own lint/format/type-check commands, **discovered from its manifests and scripts** (`package.json` scripts, `Makefile`, `pyproject`, pre-commit config, CI) — never assumed absent — each with literal command + exit code; still red is not done. `n/a` only with a one-line reason.
 
 **Surprise protocol:** contradictions route backward, never forward — a surprise at PROVE re-enters at THINK, a mechanical mistake at ACT. Never patch past a surprise.
 
@@ -83,7 +84,7 @@ Optimize only after correctness holds, and only by measurement: profile first, c
 
 ## 7. Verification & Termination
 
-Run the cheapest check earliest; prefer computational sensors. Completion has three layers, dialed to job complexity — **L1 static** (lint, type-check, format) on every source change; **L2 runtime** (tests run, critical paths execute, app starts) when the change runs; **L3 end-to-end** (one path crosses a real boundary) when it crosses one. No repro means no fix; a red test beats a narrative pass. **Hard bound: 3 failed cycles on one issue -> stop and hand back.** If no single executable check would confirm DONE, stop and ask. A check you must remember to run is advisory; one that must always run is a gate — climb the grip ladder ([verification](skills/quality/SKILL.md)).
+Run the cheapest check earliest; prefer computational sensors. Completion has three layers, dialed to job complexity — **L1 static** (lint, type-check, format) on every source change; **L2 runtime** (tests run, critical paths execute, app starts) when the change runs; **L3 end-to-end** (one path crosses a real boundary) when it crosses one. No repro means no fix; a red test beats a narrative pass. **Hard bound: 3 failed cycles on one issue -> stop and hand back.** If no single executable check would confirm DONE, stop and ask. A check you must remember to run is advisory; one that must always run is a gate — climb the grip ladder ([verification](skills/quality/SKILL.md)); the owed `L1:` line is L1 evidence reaching the report, not remembered.
 
 **Evals regression-test the harness itself.** The doctrine is configuration an agent executes: a suite of realistic tasks (prompt plus objective checks) runs on any change to the manifesto, a skill, a hook, or the model; one that lowers the pass rate blocks the merge — [evals](skills/quality/SKILL.md).
 
