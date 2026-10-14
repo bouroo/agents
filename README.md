@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, eight on-demand skills, four routine-task command workflows, and two role agents (lead, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, nine on-demand skills, four routine-task command workflows, and two role agents (lead, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## The foundation: the delivery lifecycle
 
@@ -51,6 +51,10 @@ flowchart LR
 │   │                                  python, typescript
 │   ├── indexed-search/                large-tree search: probe tgrep, index/serve
 │   │                                  lifecycle, fallback ladder rg -> Grep
+│   ├── problem-details/               RFC 9457 error responses: five-member
+│   │   └── references/                application/problem+json contract, extension
+│   │                                  members, greenfield + retrofit adoption;
+│   │                                  schema, stack snippets, contract test
 │   └── security-audit/                the candidate gate, calibrated severity,
 │       └── references/                needs_validation discipline; attack-class
 │                                      coverage and per-domain hunter rules

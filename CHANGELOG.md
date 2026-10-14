@@ -10,6 +10,28 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.5.0-beta.1] - 2026-10-14
+
+Ninth on-demand skill: `problem-details`, a plug-and-play RFC 9457
+(Problem Details for HTTP APIs, superseding RFC 7807) error-response
+guide, for targets with no existing error pattern and for enforcing one
+on demand. The skill pins the shared contract — the
+`application/problem+json` media type and the five standard members
+(`type`, `title`, `status`, `detail`, `instance`) with their exact
+semantics — and states the load-bearing rule plainly: `title` is fixed
+per problem class, so per-request variability lives in `detail`,
+`instance`, or an extension member, never in `title`. Two adoption paths
+ship: greenfield (one handler, map errors to type/title/status, verify
+with a DONE check) and retrofit (inventory shapes, define the type URI
+scheme, wrap legacy payloads as an `errors` extension, enforce with a
+schema-validating contract test). `references/blueprints.md` carries a
+draft 2020-12 JSON Schema, idiomatic Express, FastAPI, and Spring Boot
+(6+ native `ProblemDetail`) implementations, and the contract test.
+The skill also covers a hybrid topology for clients that already speak
+JSend: user-facing JSend over an internal 9457 record, with the edge
+serializer generated rather than hand-built per handler.
+Gates: check.py --all 12/12 PASS.
+
 ## [7.4.0] - 2026-10-09
 
 Lint evidence becomes owed rather than remembered. Incident: users

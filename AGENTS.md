@@ -134,6 +134,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | [skills/security-audit](skills/security-audit/SKILL.md) | candidate gate, severity, `needs_validation` (+ [attack classes](skills/security-audit/references/attack-classes.md)) |
 | [skills/modernize-coding](skills/modernize-coding/SKILL.md) | bring code to current patterns (Go, Java, Rust, Python, TS/JS) |
 | [skills/indexed-search](skills/indexed-search/SKILL.md) | large-tree search: tgrep, index/serve, rg -> Grep |
+| [skills/problem-details](skills/problem-details/SKILL.md) | RFC 9457 error responses: five-member contract, adoption paths (+ [blueprints](skills/problem-details/references/blueprints.md)) |
 | [commands/](commands/) | workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
