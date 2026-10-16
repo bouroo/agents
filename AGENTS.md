@@ -86,6 +86,8 @@ Optimize only after correctness holds, and only by measurement: profile first, c
 
 Run the cheapest check earliest; prefer computational sensors. Completion has three layers, dialed to job complexity — **L1 static** (lint, type-check, format) on every source change; **L2 runtime** (tests run, critical paths execute, app starts) when the change runs; **L3 end-to-end** (one path crosses a real boundary) when it crosses one. No repro means no fix; a red test beats a narrative pass. **Hard bound: 3 failed cycles on one issue -> stop and hand back.** If no single executable check would confirm DONE, stop and ask. A check you must remember to run is advisory; one that must always run is a gate — climb the grip ladder ([verification](skills/quality/SKILL.md)); the owed `L1:` line is L1 evidence reaching the report, not remembered.
 
+**Non-trivial deliverables pass through Generate-Verify-Refine-Deliver** — an adversarial **Verifier** persona re-derives the pinned `PROMPT:` constraints point-by-point against the artifact, defects return to generation under the 3-cycle bound above, and a **Verification Report** (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable; a trivial ask skips it as it skips `PROMPT:`. Detail: [verification loop](skills/quality/SKILL.md).
+
 **Evals regression-test the harness itself.** The doctrine is configuration an agent executes: a suite of realistic tasks (prompt plus objective checks) runs on any change to the manifesto, a skill, a hook, or the model; one that lowers the pass rate blocks the merge — [evals](skills/quality/SKILL.md).
 
 ## 8. Context & State

@@ -75,7 +75,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       eleven deterministic gates (CI runs these)
+    ├── check.py                       thirteen deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -101,7 +101,7 @@ The full decision charts — the intake router, each node's internal loop, and t
 
 ## The doctrine in one line
 
-Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job through the delivery lifecycle, with its stages looping rather than waterfalling; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe, and a hard verify bound of 3 failed cycles; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
+Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job through the delivery lifecycle, with its stages looping rather than waterfalling; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe, and a hard verify bound of 3 failed cycles; pass non-trivial deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
 
 ## Using it
 
@@ -149,10 +149,12 @@ python3 scripts/check.py --all
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
 | `simplicity` | the simplicity rule survives on both canonical surfaces (manifesto + craft) |
 | `dashes` | the em-dash convention survives on both canonical surfaces (manifesto + craft), and the doctrine corpus carries no en-dash (digit-to-digit ranges are exempt as typographic data) |
+| `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
+| `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `evals` | the harness regression suite exists and is well-formed |
 
-CI runs all eleven on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all thirteen on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 ## Versioning
 
