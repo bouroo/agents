@@ -10,6 +10,26 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.5.0-beta.2] - 2026-10-17
+
+An agentic verification loop closes the gap between generating a
+deliverable and delivering it. The workflow moves from
+Generate-and-Deliver to **Generate-Verify-Refine-Deliver**: what the
+model first produces for a non-trivial ask is a draft, never the
+deliverable. An adversarial **Verifier** persona re-derives the user's
+pinned `PROMPT:` constraints and checks the artifact against them
+point-by-point, each explicit constraint earning its own Pass/Fail/Partial
+verdict rather than a global impression; defect fixes return to
+generation under the existing 3-failed-cycle bound and are re-verified
+before the next pass, and the **Verification Report** (Requirement Check /
+Logic Audit / Final Verdict) is emitted before the deliverable, never
+after it. A trivial ask skips the loop exactly as it skips the `PROMPT:`
+gate. The rule is stated on both canonical surfaces (AGENTS.md §7 and the
+quality skill's new `## Verification Loop`), and a new deterministic
+check.py gate (`veriloop`) pins it on both so neither surface can
+silently lose it, bringing the suite to 13 gates. Gates: check.py --all
+13/13 PASS.
+
 ## [7.5.0-beta.1] - 2026-10-14
 
 Ninth on-demand skill: `problem-details`, a plug-and-play RFC 9457

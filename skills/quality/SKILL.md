@@ -53,6 +53,22 @@ Twelve commandments, plus the artifact gates every report owes.
 
 **GROW.** A recurring failure is a **harness problem, not a prompt problem**: durable reliability updates the surrounding system, not the wording. The governed self-evolution cycle — instrument, propose, validate, commit — edits the machinery future runs execute; anchors stay read-only and the evidence standard may tighten only, never loosen. The full cycle, cadence, and failure modes: [evolution](references/evolution.md).
 
+## Verification Loop
+
+Generation alone is **Generate-and-Deliver** — legal only for a trivial ask. Every non-trivial deliverable ships through **Generate-Verify-Refine-Deliver**: what the model first produces is a draft, never the deliverable.
+
+**Personas.** The **Generator** and the **Verifier** are separate mental personas. The Verifier's job is to actively seek the reasons the output is wrong or incomplete — adversarial, never confirmatory; a Verifier whose verdict is "looks good" has produced verification theater, not verification.
+
+**Evidence-based checking.** The Verifier re-derives the user's original constraints from the pinned `PROMPT:` line and checks the artifact against them point-by-point — each explicit constraint earns its own verdict, never a global impression. A non-trivial deliverable is never collapsed into a summary that hides an unchecked constraint.
+
+- **Requirement Check** — every constraint carries **Pass / Fail / Partial**; a Fail or Partial returns to generation, and each fix is re-verified before the next pass, bounded by the 3-failed-cycle rule.
+- **Logic Audit** — the edge cases and reasoning flaws the generator missed, each named together with its resolution.
+- **Final Verdict** — exactly one of **Ready / Needs Revision**.
+
+The **Verification Report** (Requirement Check / Logic Audit / Final Verdict) is emitted before the deliverable, never after it.
+
+**Right-size.** The loop is skipped only for a trivial ask — the same skip the `PROMPT:` gate allows. Skipping it for any non-trivial deliverable is an unmet gate, not a style choice.
+
 ## Evals
 
 The doctrine is configuration an agent executes, so it is regression-tested like code. An **eval** is one realistic task plus **objective checks** — executable conditions (a named command and its expected observable) that yield pass/fail without a human reading the transcript; a check a human must judge is not objective. The suite's **pass rate** over time is the only honest answer to whether a change made the agent better or worse.
