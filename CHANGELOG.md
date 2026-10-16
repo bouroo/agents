@@ -10,6 +10,36 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.5.0-beta.2] - 2026-10-16
+
+Fifth command workflow: `cmd-verify-loop`, the agentic verification loop —
+Generator / adversarial Verifier / Refiner, per Addy Osmani's "Agentic
+Verification". Generation is the cheap half; verification is the bottleneck,
+so a major deliverable now carries its own adversarial pass before a human
+reads it. The loop is oracle-first: DONE_WHEN and its check
+(requirement-coverage list, executable check, or differential baseline) are
+written before the draft exists, so the check can catch a plausible-but-wrong
+draft. The Verifier runs in a fresh context that never produced the draft —
+a generator verifying its own draft shares one misunderstanding and reads it
+as agreement — and hunts requirement gaps, factual inaccuracies, internal
+contradictions, and check sufficiency. Every finding lands in the
+Verification Log with evidence; an empty log counts only when it lists what
+was probed (no silent success); the Refiner integrates the log and the loop
+returns to the Verifier, capped at three cycles per issue. Every loop ships
+three artifacts — Draft / Verification Log / Final Deliverable — with exactly
+one verdict (VERIFIED / VERIFIED WITH CAVEATS / REFUTED). Checks in the loop
+stay fast and deterministic: a slow or flaky check teaches an agent to retry
+instead of fix. Doctrine wiring: AGENTS.md §3/§7 gain the loop and its
+artifact contract, the quality skill's `## Verification` gains the
+agentic-verification paragraph (roles and independence stay owned by the
+execution skill), and the loop composes with — never replaces — the
+quality-gate pipeline. Also fixes stale counts and drift the new command
+exposed: "four routine-task command workflows" → "five" across all six
+manifest descriptions, README's "eleven deterministic gates" → "twelve",
+the CI gate comment gains the missing `l1` entry, and the claude marketplace
+entry's plugin version moves off its stale `7.3.0`.
+Gates: check.py --all 12/12 PASS.
+
 ## [7.5.0-beta.1] - 2026-10-14
 
 Ninth on-demand skill: `problem-details`, a plug-and-play RFC 9457

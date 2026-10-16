@@ -13,6 +13,8 @@ name: validate
 #   manifests    marketplace manifests parse; version fields agree
 #   privacy      doctrine free of real-work identifiers
 #   comments     the comment rule survives on both canonical surfaces
+#   l1           the owed L1 done-report lint-evidence line survives on both
+#                canonical surfaces
 #   simplicity   the simplicity rule survives on both canonical surfaces
 #   dashes       the em-dash convention survives on both canonical surfaces,
 #                and the doctrine corpus carries no en-dash (digit-to-digit

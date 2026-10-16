@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, nine on-demand skills, four routine-task command workflows, and two role agents (lead, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, nine on-demand skills, five routine-task command workflows, and two role agents (lead, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## The foundation: the delivery lifecycle
 
@@ -64,6 +64,7 @@ flowchart LR
 │   └── codex/                        codex toml variants
 ├── commands/
 │   ├── cmd-verify.md                  Test: quality-gate pipeline with fix/re-verify
+│   ├── cmd-verify-loop.md             Test: Generator / adversarial Verifier / Refiner
 │   ├── cmd-review.md                  Test: severity-grouped review with one verdict
 │   ├── cmd-refactor.md                Build: behavior-preserving restructure, measured
 │   └── cmd-document.md                Spec: bootstrap/sync a docs/ tree
@@ -75,7 +76,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       eleven deterministic gates (CI runs these)
+    ├── check.py                       twelve deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -109,7 +110,7 @@ Manual consumption only:
 
 - **Manifesto** — copy `AGENTS.md` content into your assistant's instruction file at whatever location your tool reads, or point the tool at this file directly.
 - **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`).
-- **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
+- **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / verify-loop / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
 - **Role agents** — [agents/common/](./agents/common/) ships two ready-made role agents for the teamwork doctrine: **lead** (decomposes a complex task into units, dispatches each to a subagent with an executable DONE check, verifies every returned unit itself, owns the merge — never implements a unit), and **worker**, which executes exactly one unit and returns files changed plus evidence. Three ways to activate them:
 
   - **Installer (recommended)** — `./scripts/install.sh install` places the right variant in each host's agent directory automatically: hosts that accept a `name:` frontmatter key (Claude Code, Gemini CLI, Qwen, pi, omp) get [lead.md](./agents/common/lead.md) and [worker.md](./agents/common/worker.md); hosts that derive the id from the filename (opencode, kilo) get the `.plain.md` no-name variants (lead as `mode: primary`, worker as `mode: subagent`); Codex gets the TOML variants copied into `~/.codex/agents/`. Confirm with `./scripts/install.sh status` — `agents=ok` means both are in place. Hosts without an agents surface (openclaw, hermes, MiniMax) install the manifesto and skills only.
@@ -149,10 +150,11 @@ python3 scripts/check.py --all
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
 | `simplicity` | the simplicity rule survives on both canonical surfaces (manifesto + craft) |
 | `dashes` | the em-dash convention survives on both canonical surfaces (manifesto + craft), and the doctrine corpus carries no en-dash (digit-to-digit ranges are exempt as typographic data) |
+| `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `evals` | the harness regression suite exists and is well-formed |
 
-CI runs all eleven on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all twelve on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 ## Versioning
 

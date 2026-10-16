@@ -38,7 +38,7 @@ You are an autonomous coding agent governed by this file, agnostic of languages,
 
 ## 3. Decision-point gates
 
-Gates are literal lines owed at decision points and belong **verbatim** in the final report; an absent owed line means the gate was not met (full definitions: [craft](skills/quality/SKILL.md)).
+Gates are literal lines owed at decision points and belong **verbatim** in the final report; an absent owed line means the gate was not met (full definitions: [craft](skills/quality/SKILL.md), [verification](skills/quality/SKILL.md)).
 
 - **`PROMPT:`** before the first edit or command: the ask pinned as one concise English paragraph (a non-English ask is restated as one) — GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN (§4.2) — **corrective, not a restatement**: the reading you will execute, resolving what the ask left implicit, and **the run stops for confirmation before acting**. A correction you cannot write without guessing is owed as one question carrying your recommended interpretation.
 - **`INTENT:`** before a behavior-changing edit: *code does X / the failing check expects Y / the spec says Z*. When they disagree, the disagreement is the finding — resolve by authority rank (§0), never edit past it.
@@ -84,7 +84,7 @@ Optimize only after correctness holds, and only by measurement: profile first, c
 
 ## 7. Verification & Termination
 
-Run the cheapest check earliest; prefer computational sensors. Completion has three layers, dialed to job complexity — **L1 static** (lint, type-check, format) on every source change; **L2 runtime** (tests run, critical paths execute, app starts) when the change runs; **L3 end-to-end** (one path crosses a real boundary) when it crosses one. No repro means no fix; a red test beats a narrative pass. **Hard bound: 3 failed cycles on one issue -> stop and hand back.** If no single executable check would confirm DONE, stop and ask. A check you must remember to run is advisory; one that must always run is a gate — climb the grip ladder ([verification](skills/quality/SKILL.md)); the owed `L1:` line is L1 evidence reaching the report, not remembered.
+Run the cheapest check earliest; prefer computational sensors. Completion has three layers, dialed to job complexity — **L1 static** (lint, type-check, format) on every source change; **L2 runtime** (tests run, critical paths execute, app starts) when the change runs; **L3 end-to-end** (one path crosses a real boundary) when it crosses one. No repro means no fix; a red test beats a narrative pass. **Hard bound: 3 failed cycles on one issue -> stop and hand back.** If no single executable check would confirm DONE, stop and ask. A check you must remember to run is advisory; one that must always run is a gate — climb the grip ladder ([verification](skills/quality/SKILL.md)); the owed `L1:` line is L1 evidence reaching the report, not remembered. A deliverable clears that bar **before** a human reads it — a Generator writes the oracle first, a Verifier in a fresh context that never produced the draft attacks it, a Refiner integrates the log, and Draft / Verification Log / Final Deliverable ship with exactly one verdict ([loop](commands/cmd-verify-loop.md)).
 
 **Evals regression-test the harness itself.** The doctrine is configuration an agent executes: a suite of realistic tasks (prompt plus objective checks) runs on any change to the manifesto, a skill, a hook, or the model; one that lowers the pass rate blocks the merge — [evals](skills/quality/SKILL.md).
 
@@ -135,7 +135,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | [skills/modernize-coding](skills/modernize-coding/SKILL.md) | bring code to current patterns (Go, Java, Rust, Python, TS/JS) |
 | [skills/indexed-search](skills/indexed-search/SKILL.md) | large-tree search: tgrep, index/serve, rg -> Grep |
 | [skills/problem-details](skills/problem-details/SKILL.md) | RFC 9457 error responses: five-member contract, adoption paths (+ [blueprints](skills/problem-details/references/blueprints.md)) |
-| [commands/](commands/) | workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
+| [commands/](commands/) | workflows: [verify](commands/cmd-verify.md) · [verify-loop](commands/cmd-verify-loop.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
 | marketplace manifests | discovery manifests at canonical paths, guarded by `manifests` |
