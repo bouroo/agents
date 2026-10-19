@@ -10,7 +10,7 @@ The doctrine governing produced work: code craft, the proof it is done, the regr
 Twelve commandments, plus the artifact gates every report owes.
 
 1. **Separate orchestration from core logic.** The entry point parses input, handles errors, cleans up; the core returns data and errors, never printouts or process exits.
-2. **Test everything.** Names read as behavior sentences; cover happy, error, edge; integration tests cross real boundaries. Many cases over one behavior go **table-driven** — one body over rows of (input, expected). A painful test is a bad API's symptom.
+2. **Test everything.** Names read as behavior sentences; cover happy, error, edge; integration tests cross real boundaries. Many cases over one behavior go **table-driven** — one body over rows of (input, expected). A painful test is a bad API's symptom. Tests and doubles obey the same type discipline as the code under test: mocks, fakes, and stubs are typed against the real interface, never loosened to `any` or untyped maps because "it's only a test" — an `any`-typed double makes the test compile against a lie.
 3. **Code for reading.** Name length scales with scope; drop type-like words (`users` over `userList`); hide paperwork in well-named helpers. Default no comment (see the Comments section below).
 4. **Safe by default.** Make invalid states unrepresentable — validating constructors, named constants, least privilege; rules live in types and validators, never caller discipline.
 5. **Wrap errors, preserve causality.** Typed/sentinel errors wrapped with context; never flatten to strings, branch on error text, or discard silently.

@@ -49,6 +49,12 @@ git diff                        # review the actual patch
 
 **Editions** (opt-in; migrate in order): 2015 → 2018 (path/`extern crate`/`dyn`) → 2021 (disjoint captures, `IntoIterator` for arrays, panic macro consistency) → **2024** (current stable; stricter `self`/`super` paths, `unsafe extern`, `gen` keyword reservation). Verified: `rustc --edition` accepts `2015|2018|2021|2024|future`, stable is 2024.
 
+**Tests and mocks (strong typing):** Rust's type system leaves little room for `any`-style doubles, so the failure mode is subtler — escaped dynamic typing.
+
+- No `Box<dyn Any>`, `serde_json::Value` fixtures, or `unsafe` transmutes to squeeze a test double past the compiler; implement the real trait for a fake.
+- Prefer hand-written fakes over `mockall` for small traits; `#[automock]` where the trait is large — either way the double is trait-checked.
+- Test fixtures are concrete types, not `Value`/`String` round-trips through serialization.
+
 ## 4. Verify
 
 `cargo fmt --check` → `cargo clippy -- -D warnings` → `cargo build` → `cargo test`, plus `cargo doc --no-deps` when public API moved. Edition jumps touch semantics, so test after each edition step rather than after all of them.

@@ -65,6 +65,19 @@ Each "Needs" below is anchored to the CPython documentation's own version note f
 
 `Path.is_relative_to` (3.9) is also the correct replacement for the common `str(path).startswith(str(base))` bug — which is not merely dated but wrong on prefixes like `/data` vs `/database`.
 
+### Tests and mocks (strong typing)
+
+An `Any`-typed double makes the test compile against a lie; the type checker must check test files like any other source.
+
+| Instead of | Write |
+|---|---|
+| `mock: dict[str, Any] = {...}` | a `dataclass`/`TypedDict`/Pydantic model matching the real interface |
+| `unittest.mock.MagicMock()` bare | `cast(Sut, MagicMock(spec=Sut))` or `create_autospec(Sut)` — `spec` makes attribute drift a test failure |
+| `mock.return_value: Any` | typed via autospec; assert calls through `mock.call_args` and type the unpack |
+| fixtures and test data without annotations | explicit annotations (`user: User = User(...)`), so factory drift fails the check |
+
+Prefer small in-memory fakes typed against the real `Protocol` over mocks — the checker updates the fake when the interface changes.
+
 ## 4. Verify
 
 `ruff check .` → `python -m compileall -q <pkg>` (catches syntax errors the linter may not) → the project's type checker if any (`mypy` / `pyright`) → `pytest`. If `requires-python` is lower than the interpreter you ran under, the tests prove nothing about the floor — check with the oldest supported interpreter, or say you did not.

@@ -10,9 +10,27 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
-## [7.5.0-beta.2] - 2026-10-17
+## [7.5.0] - 2026-10-19
 
-An agentic verification loop closes the gap between generating a
+Three features ship stable, consolidating the 7.5 pre-releases. First,
+typed test doubles close the gap between production type discipline and
+test code: tests and doubles obey the same type discipline as the code
+under test — mocks, fakes, and stubs are typed against the real
+interface, never loosened to `any` or an untyped map because "it's only
+a test", an any-typed double making the test compile against a lie. The
+rule is stated once on the language-agnostic surface (the quality
+skill's second commandment) and idiom-specific on all five adapters:
+typed `MagicMock(spec=...)`/`create_autospec` with `Protocol` or
+`TypedDict` fixtures for Python, hand-written fakes implementing the
+real interface and no `any`-parameter stubs for Go, records over
+`Map<String, Object>` with typed captors and strict stubs for Java, no
+`Box<dyn Any>` or `serde_json::Value` fixtures with trait-checked fakes
+for Rust, and `satisfies`, `Partial<T>`, typed `vi.fn<Sut['save']>()`,
+and a documented `as unknown as` last resort for TypeScript. Prefer
+small in-memory fakes over deep stubs everywhere: interface changes
+then break the fake at compile time instead of the test passing anyway.
+
+Second, an agentic verification loop closes the gap between generating a
 deliverable and delivering it. The workflow moves from
 Generate-and-Deliver to **Generate-Verify-Refine-Deliver**: what the
 model first produces for a non-trivial ask is a draft, never the
@@ -25,32 +43,29 @@ before the next pass, and the **Verification Report** (Requirement Check /
 Logic Audit / Final Verdict) is emitted before the deliverable, never
 after it. A trivial ask skips the loop exactly as it skips the `PROMPT:`
 gate. The rule is stated on both canonical surfaces (AGENTS.md §7 and the
-quality skill's new `## Verification Loop`), and a new deterministic
+quality skill's `## Verification Loop`), and a deterministic
 check.py gate (`veriloop`) pins it on both so neither surface can
-silently lose it, bringing the suite to 13 gates. Gates: check.py --all
-13/13 PASS.
+silently lose it, bringing the suite to 13 gates.
 
-## [7.5.0-beta.1] - 2026-10-14
-
-Ninth on-demand skill: `problem-details`, a plug-and-play RFC 9457
-(Problem Details for HTTP APIs, superseding RFC 7807) error-response
-guide, for targets with no existing error pattern and for enforcing one
-on demand. The skill pins the shared contract — the
+Third, a ninth on-demand skill: `problem-details`, a plug-and-play RFC
+9457 (Problem Details for HTTP APIs, superseding RFC 7807)
+error-response guide, for targets with no existing error pattern and
+for enforcing one on demand. The skill pins the shared contract — the
 `application/problem+json` media type and the five standard members
 (`type`, `title`, `status`, `detail`, `instance`) with their exact
 semantics — and states the load-bearing rule plainly: `title` is fixed
 per problem class, so per-request variability lives in `detail`,
-`instance`, or an extension member, never in `title`. Two adoption paths
-ship: greenfield (one handler, map errors to type/title/status, verify
-with a DONE check) and retrofit (inventory shapes, define the type URI
-scheme, wrap legacy payloads as an `errors` extension, enforce with a
-schema-validating contract test). `references/blueprints.md` carries a
-draft 2020-12 JSON Schema, idiomatic Express, FastAPI, and Spring Boot
-(6+ native `ProblemDetail`) implementations, and the contract test.
-The skill also covers a hybrid topology for clients that already speak
-JSend: user-facing JSend over an internal 9457 record, with the edge
-serializer generated rather than hand-built per handler.
-Gates: check.py --all 12/12 PASS.
+`instance`, or an extension member, never in `title`. Two adoption
+paths ship: greenfield (one handler, map errors to type/title/status,
+verify with a DONE check) and retrofit (inventory shapes, define the
+type URI scheme, wrap legacy payloads as an `errors` extension, enforce
+with a schema-validating contract test). `references/blueprints.md`
+carries a draft 2020-12 JSON Schema, idiomatic Express, FastAPI, and
+Spring Boot (6+ native `ProblemDetail`) implementations, and the
+contract test. The skill also covers a hybrid topology for clients that
+already speak JSend: user-facing JSend over an internal 9457 record,
+with the edge serializer generated rather than hand-built per handler.
+Gates: check.py --all 13/13 PASS.
 
 ## [7.4.0] - 2026-10-09
 

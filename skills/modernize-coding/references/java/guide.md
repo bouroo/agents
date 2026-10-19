@@ -64,6 +64,20 @@ Language features below are anchored by compiling each against `javac --release 
 
 `String.formatted` (15) exists but `String.format` is not deprecated; treat it as optional style, not a defect.
 
+### Tests and mocks (strong typing)
+
+Generics and `var` make an `Object`-typed double invisible until production; the test sources must compile under the same strictness as main.
+
+| Instead of | Write |
+|---|---|
+| `Map<String, Object> payload` test fixtures | a record/POJO matching the real interface, or a builder |
+| `mock(Foo.class, RETURNS_DEEP_STUBS)` bare | `@Mock Foo` with strict stubs (Mockito), so unused and mistyped stubs fail |
+| raw or wildcard-typed captors | typed captors: `ArgumentCaptor<User>`, or `@Captor User` fields |
+| `any()` matchers where a type is known | `any(User.class)` / `any()`, never `anyObject()` |
+| `List` / `Map` without generics in tests | parameterized collections; raw types fail the build under `-Xlint:rawtypes` |
+
+Prefer hand-written fakes (a small class implementing the real interface) over deep stubs — interface changes then break the fake at compile time.
+
 ## 4. Verify
 
 Apply the project's own gates, escalating with the change: `mvn -q compile` (or `gradle compileJava`), then the full build, then tests. `--release` in the build already enforces the API ceiling — if the build passes, no rewrite broke the declared floor.
