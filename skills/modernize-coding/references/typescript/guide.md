@@ -62,6 +62,21 @@ Edition years below are from TC39's own finished-proposals table (the year the p
 
 **`structuredClone` is not ECMAScript** — it comes from the WHATWG HTML spec, so its floor is a runtime version, not an edition. It also cannot clone functions, DOM nodes, or class prototypes, and it throws on those; it is not a drop-in for every `JSON.parse(JSON.stringify(...))`.
 
+### Tests and mocks (strong typing)
+
+The compiler must check test files and doubles like any other source: `tsconfig` `include` covers the test directory, and `skipLibCheck` does not excuse `any` there.
+
+| Instead of | Write |
+|---|---|
+| `const mock: any = { ... }` | `const mock: Sut = { ... }` typed against the real interface |
+| a loose `{ ... }` argument where a param is expected | `satisfies` (`const mock = {...} satisfies Sut`) to keep inference with checking |
+| a full hand-built object when only some fields matter | `Partial<Sut>` (with a default-completion helper on reuse) — not `any` |
+| `jest.fn()` / `vi.fn()` bare | typed doubles: `vi.fn<Sut['save']>()`, `jest.mocked<...>`, or a helper typed `Mocked<Sut>` |
+| `as any` to force an impossible value into a test | an explicit `as unknown as Sut` **with a one-line comment naming why the real type forbids it** (last resort; most such casts hide a wrong test) |
+| `x: any` on captured callback arguments | `vi.mocked(fn).mock.calls[0]` / `jest.mocked(fn).mock.lastCall` for inferred argument types |
+
+Prefer fakes over mocks where a small in-memory implementation of the real interface works — the compiler then updates the fake when the interface changes. A double that drifts from the real interface and passes anyway is the defect this rule exists to catch.
+
 ## 4. Verify
 
 `tsc --noEmit` → `eslint .` → the bundler/build → `npm test` (or the repo's runner). Then the step the tooling cannot do for you: confirm every modern API used is available at the declared `engines.node`. `npx browserslist` / `npx caniuse` help; when unsure, state the assumption rather than claiming it verified.

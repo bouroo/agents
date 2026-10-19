@@ -46,4 +46,10 @@ Before writing a construct, spend it against the version table (the analyzer inv
 
 Prefer the standard library before third-party for exactly these cases — the analyzer enforces them, so drifting back is visible in review.
 
+**Tests and mocks (strong typing):** the compiler checks test files like any other source, and Go's toolchain already forces it — lean on that instead of weakening it.
+
+- Do not stub with `interface{}` / `any` parameters or embed `_ = x` to dodge a type mismatch; implement the real interface (usually tiny) or narrow the dependency to the interface the code actually uses.
+- Prefer hand-written fakes (`type fakeStore struct{ ... }` implementing the real interface) over `gomock.Any()`-style matchers and reflective mocks — when the interface changes, the fake fails to compile instead of the test passing anyway.
+- Test data is typed: table-driven rows carry concrete struct types, not `interface{}` fields.
+
 **Termination:** after any application, prove with the standard ladder — `gofmt -l .`, `go vet ./...`, build, tests — at the level the change touches (§7 of the manifesto). A clean diff with a failing build is not done.
