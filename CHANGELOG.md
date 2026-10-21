@@ -10,6 +10,25 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.5.1-beta.1] - 2026-10-21
+
+Fixes the stuck subagent loop users hit when the lead agent config is
+installed. The lead prompt looped "until every unit passes its check"
+with only a per-unit three-cycle cap, leaving three unbounded paths:
+a failed subagent spawn was retried with identical arguments forever,
+re-splitting a failed unit reset its cycle count, and the teamwork
+skill licensed workers to spawn their own result-back workers —
+nesting that deadlocks outright on hosts where a subagent cannot
+spawn (omp subagent kernels, Codex depth 1). All three are now closed
+in every shipped variant (md, plain-md, codex toml): a spawn error is
+terminal for that route (vary the agent type once or stop), the job
+carries a dispatch budget of twice the initial graph's units plus one
+re-split per failed unit with failure history carried over, workers
+are forbidden from spawning subagents, and a lead with no dispatch
+surface at all stops and reports the host remedy — raise the nesting
+or depth limit — instead of stalling.
+Gates: check.py --all 13/13 PASS.
+
 ## [7.5.0] - 2026-10-19
 
 Three features ship stable, consolidating the 7.5 pre-releases. First,
