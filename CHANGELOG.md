@@ -10,7 +10,7 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [7.6.0-beta.1] - 2026-10-23
 
 Skills, commands, and evals follow the Agentskills authoring guidance: a
 description now carries the whole triggering decision, and it is measured
