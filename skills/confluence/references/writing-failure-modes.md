@@ -55,15 +55,16 @@ Fetch the pre-change baseline first: mcp-atlassian
 version N's full stored body (Rovo: `getConfluencePageDiff`) — walking N backwards until
 the version's timestamp precedes the current effort — then diff baseline vs new body.
 
-Mark every added/changed point with in-page refs: rebuilt tables carry a `Change` column
-whose New/Modified/Renamed cells hold `C#` (bold the changed field name); removed content
-ships as `Removed` rows in a `Change Log` table (h3 near the changed sections:
-`Change # | Date | Field/Section | Change Type | Description`, per-page `C1..Cn`);
-prose-level shifts take a page-level row (Field `—`). After publish, prove refs
-bidirectional: every `C#` in the body exists in the Change Log and vice versa, under
-documented relaxations (`—` page-level rows, `X[].*` aggregate-prefix rows, `Removed` rows
-anchored only in the baseline). Snippets and gate wording: [page-template.md](page-template.md)
-`[changelog]`.
+Mark every added/changed point with in-page refs: the round's marker `#changeN` goes in
+the **Field Name** cell of each row it adds or edits (outside any code span), and every
+marker needs a `**#changeN — <short title>**` row in the page's `Change logs` table.
+`N` is the page's own next round — count the round rows already in Change logs
+(`Continued from …` and `Initiate specification` rows are not rounds) and use that
+count + 1; a page with 13 rounds publishes its 14th as `#change14`. Delete the previous
+round's markers in the same sync, and delete struck-through rows outright rather than
+shipping `~~`. After publish, prove refs bidirectional: every `#changeN` in the body has
+a Change logs row and every declared marker appears in the body. Snippets, the exact
+table shape, and gate wording: [page-template.md](page-template.md) `[changelog]`.
 
 ## Large pages corrupt in transit, not in the body
 

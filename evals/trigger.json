@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "description": "Description-trigger eval set: realistic user prompts labelled with whether the skill's description should activate. Positives probe the skill's scope (casual phrasing, unstated need, buried inside a larger ask); negatives are near-misses that share vocabulary but need a different skill, so they test precision, not just breadth. train guides edits to a description; validation is held out and only scores the result. Run `python3 evals/run_triggers.py --invoke '<cmd>'`; see skills/quality/SKILL.md.",
+  "threshold": 0.5,
+  "runs": 3,
+  "skills": {
+    "architecture": {
+      "train": [
+        {"query": "we're starting a payments service and I need to decide between a modular monolith and microservices — what should the HLD say?", "should_trigger": true},
+        {"query": "write an ADR for choosing Postgres over DynamoDB, including what we rejected", "should_trigger": true},
+        {"query": "our glossary has 'account', 'customer' and 'client' used interchangeably — can you clean up CONTEXT.md?", "should_trigger": true},
+        {"query": "the CTO keeps saying the system must be 'highly available' — help me turn that into something measurable", "should_trigger": true},
+        {"query": "draw me a diagram of how the order pipeline flows from checkout to fulfilment", "should_trigger": true},
+        {"query": "our CI pipeline takes 40 minutes, can you find why it's slow?", "should_trigger": false},
+        {"query": "refactor this 300-line function into smaller ones", "should_trigger": false},
+        {"query": "write a Confluence page documenting the payments architecture", "should_trigger": false},
+        {"query": "upgrade our Spring Boot dependencies to the latest", "should_trigger": false},
+        {"query": "our REST errors return a different shape on every endpoint", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "should this be a strategy pattern or just a switch statement?", "should_trigger": true},
+        {"query": "review our proposed architecture for the notification subsystem before we commit", "should_trigger": true},
+        {"query": "convert this mermaid sequence diagram into something we can put in the design doc", "should_trigger": true},
+        {"query": "the team wants a plan for next quarter's migration", "should_trigger": false},
+        {"query": "make the /orders endpoint stop leaking stack traces", "should_trigger": false},
+        {"query": "search the repo for every place we open a database connection", "should_trigger": false}
+      ]
+    },
+    "confluence": {
+      "train": [
+        {"query": "put the incident postmortem on our wiki under the Platform space", "should_trigger": true},
+        {"query": "what does the onboarding runbook say about VPN setup?", "should_trigger": true},
+        {"query": "update the API spec page — the retry section is stale", "should_trigger": true},
+        {"query": "someone sent me a wiki/x/ shortlink, which page is that?", "should_trigger": true},
+        {"query": "find every page in the ENG space that mentions the deprecated auth flow", "should_trigger": true},
+        {"query": "create a Jira ticket for the login bug", "should_trigger": false},
+        {"query": "summarize this PDF for me", "should_trigger": false},
+        {"query": "write a README for this repository", "should_trigger": false},
+        {"query": "search our codebase for the retry logic", "should_trigger": false},
+        {"query": "update the ADR in docs/architecture/decisions", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "add a comment on the design page asking about the caching decision", "should_trigger": true},
+        {"query": "the PlantUML diagram on our new page renders blank, fix it", "should_trigger": true},
+        {"query": "copy the template page into the new project space", "should_trigger": true},
+        {"query": "add a page to our Notion workspace for the new process", "should_trigger": false},
+        {"query": "delete the stale remote branch", "should_trigger": false},
+        {"query": "the diagram in our README doesn't render", "should_trigger": false}
+      ]
+    },
+    "delivery": {
+      "train": [
+        {"query": "this is a big migration, I want a plan before anyone writes code", "should_trigger": true},
+        {"query": "where should this change live — do we need a spec or just a patch?", "should_trigger": true},
+        {"query": "grill me on this idea until the design is settled", "should_trigger": true},
+        {"query": "we keep losing track across sessions — set up a wayfinder map", "should_trigger": true},
+        {"query": "what goes in STATUS.md versus PLAN.md?", "should_trigger": true},
+        {"query": "how many agents should I spawn for this refactor?", "should_trigger": false},
+        {"query": "run the tests and tell me whether we're done", "should_trigger": false},
+        {"query": "make a todo list for today", "should_trigger": false},
+        {"query": "write the sprint tickets in Jira", "should_trigger": false},
+        {"query": "document the auth module in docs/", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "who approves a release in this process?", "should_trigger": true},
+        {"query": "this effort is too big for one session, how do we split it?", "should_trigger": true},
+        {"query": "write the intent.md for this feature", "should_trigger": true},
+        {"query": "why is this function slow?", "should_trigger": false},
+        {"query": "review my diff", "should_trigger": false},
+        {"query": "create a Confluence page for the plan", "should_trigger": false}
+      ]
+    },
+    "execution": {
+      "train": [
+        {"query": "should I fan out three agents to explore this, or just do it myself?", "should_trigger": true},
+        {"query": "my subagents keep colliding on the same file — how do I split the work?", "should_trigger": true},
+        {"query": "this run keeps looping without progress, how do I bound it?", "should_trigger": true},
+        {"query": "design the graph for a build-test-release flow with a rollback branch", "should_trigger": true},
+        {"query": "is a team worth it here or is one context enough?", "should_trigger": true},
+        {"query": "which stage does this work belong to?", "should_trigger": false},
+        {"query": "prove the tests actually catch bugs", "should_trigger": false},
+        {"query": "set up CI to run the suite on every push", "should_trigger": false},
+        {"query": "what's the ADR template?", "should_trigger": false},
+        {"query": "find all callers of this function", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "how do I write a spawn brief a worker can actually act on?", "should_trigger": true},
+        {"query": "the reviewer and the implementer agree too easily — what's wrong?", "should_trigger": true},
+        {"query": "when does running the same task three times actually pay off?", "should_trigger": true},
+        {"query": "post the plan to the wiki", "should_trigger": false},
+        {"query": "upgrade this module to Go 1.26 idioms", "should_trigger": false},
+        {"query": "summarize what the three agents did", "should_trigger": false}
+      ]
+    },
+    "indexed-search": {
+      "train": [
+        {"query": "grep keeps timing out on this monorepo — can you find all uses of parse_config?", "should_trigger": true},
+        {"query": "search the whole tree for TODO markers mentioning billing", "should_trigger": true},
+        {"query": "I need to run about twenty searches across this repo today", "should_trigger": true},
+        {"query": "does anything in this 40k-file tree reference the legacy endpoint?", "should_trigger": true},
+        {"query": "prove that no file imports the deprecated package", "should_trigger": true},
+        {"query": "make our API's search endpoint faster", "should_trigger": false},
+        {"query": "find the definition of parse_config", "should_trigger": false},
+        {"query": "list the files in src/", "should_trigger": false},
+        {"query": "look up the tgrep docs on the web", "should_trigger": false},
+        {"query": "our Postgres full-text search is slow", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "use tgrep to find the retry helper", "should_trigger": true},
+        {"query": "find every YAML file that sets replicas: 0", "should_trigger": true},
+        {"query": "my search returned nothing — is the file really absent, or is the index stale?", "should_trigger": true},
+        {"query": "find the Confluence page about retries", "should_trigger": false},
+        {"query": "what does this function do?", "should_trigger": false},
+        {"query": "index our docs into Elasticsearch", "should_trigger": false}
+      ]
+    },
+    "modernize-coding": {
+      "train": [
+        {"query": "this Go module is on 1.26 but the code still uses ioutil — clean it up", "should_trigger": true},
+        {"query": "is maps.Copy OK to use here, or is the module too old?", "should_trigger": true},
+        {"query": "our Java service is on 21 but nobody uses records or virtual threads yet", "should_trigger": true},
+        {"query": "write this new handler in the house style of this repo", "should_trigger": true},
+        {"query": "the linter keeps flagging old Python idioms — can you modernize the package?", "should_trigger": true},
+        {"query": "upgrade React from 17 to 19", "should_trigger": false},
+        {"query": "this function is O(n^2), make it faster", "should_trigger": false},
+        {"query": "set up a brand-new Next.js project", "should_trigger": false},
+        {"query": "fix the null pointer bug in the order service", "should_trigger": false},
+        {"query": "why is our build failing?", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "should this be slices.Contains or a manual loop?", "should_trigger": true},
+        {"query": "review this diff for constructs behind our tsconfig target", "should_trigger": true},
+        {"query": "run the ecosystem's default fixer on this Rust crate", "should_trigger": true},
+        {"query": "add a feature flag for the new checkout", "should_trigger": false},
+        {"query": "write the migration plan for the Go upgrade", "should_trigger": false},
+        {"query": "explain what generics are", "should_trigger": false}
+      ]
+    },
+    "problem-details": {
+      "train": [
+        {"query": "our API returns {error: 'not found'} on one endpoint and a bare string on another", "should_trigger": true},
+        {"query": "design the error contract for a new REST service", "should_trigger": true},
+        {"query": "clients break whenever we reword an error message", "should_trigger": true},
+        {"query": "how should we return validation failures for a form with five fields?", "should_trigger": true},
+        {"query": "add a machine-readable error type so the SDK can branch", "should_trigger": true},
+        {"query": "design our GraphQL error payload", "should_trigger": false},
+        {"query": "why is the API returning 500 on checkout?", "should_trigger": false},
+        {"query": "add retry with backoff to the HTTP client", "should_trigger": false},
+        {"query": "document our endpoints in docs/api", "should_trigger": false},
+        {"query": "our gRPC service returns status codes inconsistently", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "we need to retrofit RFC 9457 onto an existing Spring Boot API", "should_trigger": true},
+        {"query": "what status code and body for a 429 with retry-after?", "should_trigger": true},
+        {"query": "our error responses leak stack traces and internal IDs", "should_trigger": true},
+        {"query": "write a 404 page for the marketing site", "should_trigger": false},
+        {"query": "log failures with structured fields", "should_trigger": false},
+        {"query": "set up the API gateway", "should_trigger": false}
+      ]
+    },
+    "quality": {
+      "train": [
+        {"query": "is this actually done? here's the report", "should_trigger": true},
+        {"query": "tests pass but I don't trust them — make sure they'd catch a real bug", "should_trigger": true},
+        {"query": "review this PR for craft issues", "should_trigger": true},
+        {"query": "the hot path is slow — profile it and keep only what the numbers support", "should_trigger": true},
+        {"query": "we keep shipping the same mistake, how do we stop it happening again?", "should_trigger": true},
+        {"query": "which architecture pattern should this service use?", "should_trigger": false},
+        {"query": "run the linter and fix what it finds", "should_trigger": false},
+        {"query": "write unit tests for the parser", "should_trigger": false},
+        {"query": "our deployment pipeline needs a rollback step", "should_trigger": false},
+        {"query": "find the security hole in this handler", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "what evidence do I owe before calling this complete?", "should_trigger": true},
+        {"query": "add a regression eval so this doctrine change can't silently break", "should_trigger": true},
+        {"query": "refactor this module but keep behavior identical", "should_trigger": true},
+        {"query": "the wiki page needs updating", "should_trigger": false},
+        {"query": "make searching this codebase faster", "should_trigger": false},
+        {"query": "plan the migration across three sprints", "should_trigger": false}
+      ]
+    },
+    "security-audit": {
+      "train": [
+        {"query": "is this upload handler safe?", "should_trigger": true},
+        {"query": "triage these Snyk findings — which are real?", "should_trigger": true},
+        {"query": "threat model the new file-sharing feature before we build it", "should_trigger": true},
+        {"query": "a pen-test report says we have an IDOR on /invoices — verify it", "should_trigger": true},
+        {"query": "do a security review of the auth middleware", "should_trigger": true},
+        {"query": "fix the XSS we found yesterday", "should_trigger": false},
+        {"query": "add rate limiting to the login endpoint", "should_trigger": false},
+        {"query": "rotate the leaked API key", "should_trigger": false},
+        {"query": "set up Dependabot on the repo", "should_trigger": false},
+        {"query": "review this PR for readability", "should_trigger": false}
+      ],
+      "validation": [
+        {"query": "can a user in tenant A read tenant B's data through this query?", "should_trigger": true},
+        {"query": "run a full security audit of this service", "should_trigger": true},
+        {"query": "is this SQL string concatenation exploitable given the WAF?", "should_trigger": true},
+        {"query": "write a threat-model doc in Confluence", "should_trigger": false},
+        {"query": "our tests are flaky, find out why", "should_trigger": false},
+        {"query": "harden the Dockerfile", "should_trigger": false}
+      ]
+    }
+  }
+}

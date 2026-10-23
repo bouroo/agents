@@ -12,9 +12,10 @@ mcp-atlassian storage format — the `[storage-form]` snippets apply there.
 - Match a live sibling first
 - Diagrams: PlantUML macro + raw-source expand
 - Translating Mermaid to PlantUML
-- Canonical document order
+- Canonical document order (Overview table → Change logs → TOC → Sequence diagram →
+  Request → Response → Field to Field Mapping)
 - Fixed table column sets
-- Change Log + highlighting
+- Change logs + round markers (`#changeN`)
 - Instance variant: BFF families
 - Publish checklist
 
@@ -34,6 +35,23 @@ mcp-atlassian storage format — the `[storage-form]` snippets apply there.
    remark; never fabricate sub-fields.
 4. **Field names come from the source's serialization tags** (e.g. JSON struct tags),
    verified in source, not memory (`headerResp.statusCd`, not `statusCode`).
+
+5. **Samples look like real traffic, not placeholders.** No `"string"`, `"req-1"`,
+   `"xxx"`: fill every field with a value of the right type, length, and format —
+   real-looking IDs, RFC3339 timestamps in the service's offset, amounts at the right
+   scale, enum values that exist in the code. `headerReq.reqID` and
+   `headerReq.correlationID` are always lower-case UUID v4 and **differ** in the request
+   sample. Sample values are illustrations, never real customer data.
+6. **Every cell traces to a source** — the source spec page, code under the service
+   repo, a plan the user pointed to, or the user's own words. No source, no guess: write
+   `TBD` and name who owes it. "Just put something plausible" is not a source; a guessed
+   error code gets implemented by the next reader.
+7. **Error Mapping lists every failure path** the flow has — validation, each downstream
+   error, business rules. A path whose code is unknown still gets a row, with `TBD` for
+   the code.
+8. **Table hygiene:** every row has the header's cell count (`| |` for an empty cell);
+   `<br>` for a line break inside a cell; a `|` inside a cell stays inside backticks or
+   is escaped `\|`.
 
 ## Match a live sibling first
 
@@ -144,22 +162,23 @@ source before upload. If diagrams live in a standalone generator (e.g.
 
 ## Canonical document order
 
-Top-level sections are H1 (no leading H1 title — the page title carries the endpoint
-name). `[storage-form]` snippets below: on Rovo/html reproduce the equivalent
+The page opens with a **front-matter-derived Overview table**, then these sections in
+this order. `[storage-form]` snippets below: on Rovo/html reproduce the equivalent
 Confluence-HTML node or mirror the sibling's markup.
 
-1. **Metadata table** — 3-col, centered, auto-sized. Labels bold `<th colspan="2">`;
-   values `<td><p>...</p></td>`; the Overview row uses a highlighted label cell
-   (`data-highlight-colour="#f4f5f7"` in html). Rows: Overview · Layer ·
-   Microservice · Authentication Level · Dependency overview (divider, empty
-   value) · Inbound component · Outbound component · Expose to Mobile · Access token
-   required · Language · JIRA.
-2. **H1 Change Log** — 4-col table (column set below). Append a row per revision;
+0. **Overview table** — generated from the spec front matter (`title`, `overview`,
+   `microservice`, `auth`, `api_type`, `swagger`, `inbound`, `outbound`, `language`,
+   `people`, `jira`), never written by hand in the body. Each `inbound`/`outbound` item
+   is **one API**, not one service: a markdown link to that API's spec page becomes an
+   inline card; a page-less API is plain text `<service> - <METHOD> /<path>`. A `people`
+   entry maps `Full Name` to its `accountId`, which makes every `@Full Name` in the
+   Change logs a real mention.
+1. **`## Change logs`** — 4-col table (column set below). Append a row per revision;
    never rewrite history.
-3. **H1 Table of Contents** — toc macro, minLevel 1 / maxLevel 3. `[storage-form]`
-   `<ac:structured-macro ac:name="toc">` with those parameters; on html use whatever
-   TOC extension node the siblings carry.
-4. **H1 Sequence Diagram** — the macro + raw-source expand pair above. `[storage-form]`
+2. **`## Table of Contents`** — heading with nothing beneath it; it becomes the toc
+   macro (minLevel 1 / maxLevel 3). `[storage-form]`
+   `<ac:structured-macro ac:name="toc">` with those parameters.
+3. **`## Sequence diagram`** — the macro + raw-source expand pair above. `[storage-form]`
    shape: `plantumlcloud` macro (compressed inline source) then `expand` >
    `code(language=none)` with the identical decompressed source. **The `plantumlcloud`
    `data` encoding is NOT standard PlantUML base64 and varies between pages on the
@@ -216,75 +235,90 @@ Confluence-HTML node or mirror the sibling's markup.
    under any `safe`, so they are not evidence; `+`/`=` never appear literally either).
    One exact match beats three plausible decoders.
 
-5. **H1 Request**: H2 Request Header Schema (5-col field table) · H2 Request Body
-   Schema (5-col field table) · H2 Example Request (wide json code block).
-6. **H1 Response**: H2 Custom HTTP Response Code (4-col table) · H2 Response Schema
-   (5-col field table) · H2 Example Response — single-cell tables per case
-   (`Case HTTP 200 Success`, `Case HTTP 400 Bad Request`, `Case HTTP 409 Business
-   Error`, `Case HTTP 500 System Error`) each wrapping a json code block.
-7. **H1 Field-To-Field Mapping** — H2 per downstream call (`Field Mapping when
-   calling to <upstream>`), 6-col table.
+4. **`## Request`**: `### Request header` (4-col field table) · `### Request body`
+   (5-col field table) · `### Sample request` (wide json code block).
+5. **`## Response`**: `### Response body` (5-col field table, with a `Mapping Logic`
+   column) · `### Sample response` (wide json code block) · `### Error Mapping`
+   (4-col table).
+6. **`## Field to Field Mapping`** — one `### When calling <service> to <purpose>` per
+   downstream call, with the link to that API's spec page **on its own line under the
+   heading** (a link inside a heading lands in the anchor), then a 6-col table.
 
 ## Fixed table column sets (match exactly)
 
 | Section | Headers |
 | --- | --- |
-| Field schema (header/body/response) | Field Name · Data Type · Mandatory (M)/Optional (O)/Conditional (C) · Description · Remark |
-| Custom HTTP Response Code | HTTP Code · Custom Status Code · Scenario · Status Description |
-| Field-To-Field Mapping | Input/Output · Field Name · Type · M/O/C · Source Field · Remarks |
-| Change Log | Date · Updated By · Description · Status |
+| Request header | Field Name · M/O/C · Datatype · Description |
+| Request body | Field Name · M/O/C · Datatype · Length · Description |
+| Response body | Field Name · Data type · M/O/C · Mapping Logic · Description |
+| Error Mapping | HTTP Code · Custom Status Code · Status Description · Scenario |
+| Field to Field Mapping | Target Field Name · M/O/C · Data Type · Source Field · Mapping Logic · Remark |
+| Change logs | Date · Update By · Description · Status |
 
-## Change Log + change highlighting (page updates)
+`M/O/C` holds exactly `M`, `O`, or `C`. Field to Field Mapping is **input fields only** —
+no `Input/Output` column and no separate output table.
+
+These sets bind pages that follow the canonical order. A page family with its own
+recorded skeleton (the BFF variant below) keeps **its** column set instead: matching a
+live sibling outranks imposing this table, and a page that mixes the two is worse than
+either. Decide by the anchor you decoded, never by preference.
+
+## Change logs + round markers (page updates)
 [changelog]
 
-An update must let a reader see the delta without opening version history: baseline
-diff, marked rows, one Change Log table per page.
+An update must let a reader see the delta without opening version history: a baseline
+diff, then in-place `#changeN` markers, with one Change logs table per page.
 
 ### Baseline diff first
 
 `confluence_get_page_history(page_id, version=N, convert_to_markdown=false)` returns
 the full stored body of any prior version (the tool defaults `convert_to_markdown=true`
 - always pass `false` for storage work; its `space` field returns "Unknown", a tool
-quirk, ignore it). Walk `N = current-1, current-2, …` until the version's timestamp
-precedes the current effort's start date; that version is the pre-change baseline.
-Diff section/field sets baseline vs new body — fields in the body missing from the
-baseline are `New`, fields only in the baseline are `Removed`, value/type/requirement
-drift is `Modified`, renames are `Renamed`.
+quirk, ignore it). `confluence_get_page_diff(from_version, to_version)` answers "what
+did this field look like at v5" directly — prefer it over fetching and parsing a whole
+version. Walk backwards until the version's timestamp precedes the current effort's
+start date; that version is the pre-change baseline.
 
-### Mark the changed points
+### N is the round, not the field
 
-- Rebuilt tables add a trailing `Change` column: changed rows carry their `C#` and the
-  field name in `<strong>`; untouched rows leave the cell empty. Storage form:
-  `<td><p>C1</p></td>` / empty `<td><p></p></td>`.
-- Removed content leaves no live row — recorded only as a `Removed` Change Log row
-  naming the baseline path.
-- Prose-level semantic shifts (e.g. an endpoint's error model changing) take a
-  page-level row with Field `—`.
+- The page numbers its change rounds 1, 2, 3 … and keeps counting across publishes. A
+  page with 13 recorded rounds publishes its 14th as `#change14`, and **every** marker
+  that round adds in the body says `14`. Writing `#change1` on a later round is the
+  defect the round-number check rejects.
+- Count the earlier round rows in Change logs first: a `Continued from …` row and an
+  `Initiate specification` row are not rounds. Use that count + 1.
+- Put the marker in the **Field Name** cell of every row the round adds or edits, and
+  at the start of any note it adds. Never mark a row the round left untouched.
+- **Delete the previous round's markers** as part of the sync: a marker records that
+  *this* round touched the row, not that the field is special.
+- Write the marker **outside** any code span — `#change14` then the field, never
+  `` `#change14` ``: markdown escapes the highlight span and the page shows raw
+  `<span>` markup. The build step colours each marker per N; write plain `#change14`.
+- A new version shows **current state only**: delete every struck-through row or word
+  (a removed field is removed, not struck through) and every old marker.
 
-### Change Log table (h3, after the changed sections)
+### Change logs table (`## Change logs`, page top)
 
-```xml
-<h3>Change Log</h3>
-<table><tbody>
-  <tr><th><p>Change #</p></th><th><p>Date</p></th><th><p>Field</p></th><th><p>Change Type</p></th><th><p>Description</p></th></tr>
-  <tr><td><p>C1</p></td><td><p>&lt;edit-date&gt;</p></td><td><p><strong>content.x</strong></p></td><td><p>Modified</p></td><td><p>…</p></td></tr>
-  <tr><td><p>C2</p></td><td><p>&lt;edit-date&gt;</p></td><td><p>—</p></td><td><p>Modified</p></td><td><p>page-level shift, e.g. error semantics</p></td></tr>
-</tbody></table>
-```
+Columns exactly `Date | Update By | Description | Status`:
 
-Rules: `Date` = the edit date; `Change Type` ∈ `New | Modified | Renamed | Removed`;
-numbering restarts at `C1` per page; field-level rows preferred, page-level `—` only
-for shifts no single field carries; `Renamed` rows name the pre-rename path in the
-Description while the `C#` anchors on the live (renamed) row.
+| **Date** | **Update By** | **Description** | **Status** |
+| --- | --- | --- | --- |
+| YYYY-MM-DD | @Full Name | **#change14 — <short title>**<br>what changed | |
+
+- `Date` = the edit date; `Update By` = `@Full Name`, which needs that name's
+  `accountId` in the spec's `people` map to render as a mention (a name without one
+  stays plain text — omit rather than invent an id).
+- New API: one row, `Initiate specification`. New version of an existing page: row 1 is
+  `Continued from [<old page title>](<old page url>) — earlier changes are recorded on
+  that page`, then one `**#changeN — <short title>**` row per round, `<br>` for line
+  breaks.
+- Revising a draft that is not yet published: add a row and bump every marker to it.
 
 ### Integrity gate (add to the publish proof)
 
-After publish, re-fetch and check refs bidirectionally: every `C#` used in body tables
-exists in the Change Log **and** every Change Log `C#` anchors in the body — under
-three documented relaxations: page-level rows (Field `—`) are exempt, aggregate rows
-(`X[].*`) match if any table row starts with `X[].`, and `Removed` rows anchor only in
-the baseline (no live row by definition). A dangling ref either direction is a publish
-blocker, same tier as a failed `GATE OK`.
+Every `#changeN` used in the body needs a row in Change logs, and every marker a
+Change logs row declares must appear in the body. A dangling ref either direction is a
+publish blocker, same tier as a failed `GATE OK`.
 
 ## Instance variant: "BFF API Specification" page families
 
@@ -381,5 +415,6 @@ divergences:
    you intended (SKILL.md, publish-then-prove). If the read-back is compressed/truncated
    by the client, probe via bumped `version`, `text ~ "unique-string"` search, and the
    parent's children listing; render confirmation stays manual in a browser.
-7. Change refs bidirectional: every `C#` in body tables exists in the page's Change Log
-   and vice versa (relaxations: Field `—`, `X[].*` prefix rows, `Removed` rows).
+7. Change refs bidirectional: every `#changeN` in the body has a row in Change logs,
+   and every declared marker appears in the body; no `~~` strikethrough survives, no
+   old-round marker survives, and the round number is the page's previous count + 1.

@@ -1,6 +1,6 @@
 ---
 name: confluence
-description: "Operate Atlassian wikis end-to-end through either supported MCP server — the official Rovo remote MCP server (OAuth; read/search/graph surface) or mcp-atlassian (open-source; hosted or local stdio with an API token; full page CRUD): detect the live surface, resolve sites/shortlinks, search and read pages, author pages whose code blocks and diagrams render, update safely. Load before any Confluence create/update/get/delete."
+description: "Create, read, search, move, or delete Confluence content through a connected Atlassian MCP server — the official Rovo remote server (OAuth; read and graph surface) or mcp-atlassian (full page CRUD): detect which server is live, resolve sites and shortlinks, find pages, author bodies whose code blocks and diagrams actually render, and update without clobbering. Use before any Confluence read or write, when a page must be authored or corrected, or when a wiki link must be resolved — even if the user only says 'put this on the wiki'. Not for Jira issue operations, or for wiki products other than Atlassian."
 ---
 
 # Confluence via MCP: Rovo and mcp-atlassian
@@ -98,11 +98,14 @@ endpoint/spec page contract in [references/page-template.md](references/page-tem
   re-read.
 - **Native Mermaid macros are not installed everywhere**: mermaid fences never publish;
   translate to the family's PlantUML form and keep the raw Mermaid in the repo doc.
-- **Endpoint/spec pages** follow a fixed template: canonical document order,
-  content-quality rules, fixed column sets, per-family variants. Decode a live sibling
-  first and match its family.
-- **An update must be visible in the page**, not only in version history: baseline diff,
-  `C#` markers, a Change Log table, then prove refs bidirectional after publish.
+- **Endpoint/spec pages** follow a fixed template: a front-matter-derived Overview
+  table, then Change logs · Table of Contents · Sequence diagram · Request · Response ·
+  Field to Field Mapping, with exact column sets and content-quality rules. Decode a
+  live sibling first and match its family.
+- **An update must be visible in the page**, not only in version history: baseline
+  diff, `#changeN` round markers in the changed cells, a Change logs row for the round,
+  then prove refs bidirectional after publish. `N` is the page's next round, never
+  restarted at 1.
 - **Large inline bodies corrupt in transit**, not in the body: emit writes sequentially,
   one call per message, and ladder up to `content_file` staged inside the workspace.
 - **Body reads that collapse to `<<ccr:…>>` pointers** are deterministic per (page,

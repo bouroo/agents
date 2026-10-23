@@ -1,6 +1,6 @@
 ---
 name: problem-details
-description: "RFC 9457 (Problem Details for HTTP APIs, superseding RFC 7807) error-response design: the five-member application/problem+json document, the type/title/status/detail/instance contract, extension members, and two adoption paths — a greenfield single error handler or retrofitting and enforcing a standard on an existing API. Use when designing or reviewing an HTTP API's error responses, when an API has no consistent error pattern, or when a standard must be enforced on demand."
+description: "Design and enforce RFC 9457 error responses for an HTTP API (superseding RFC 7807): the application/problem+json document, the type/title/status/detail/instance contract, extension members, and two adoption paths — one greenfield error handler, or retrofitting a standard onto an existing surface with a contract test that fails ad-hoc bodies. Use when an API's errors are inconsistent, when clients break on message changes, when designing a new REST service's failure shape, or when a standard must be enforced on demand — even if the ask is only 'our error responses are a mess'. Not for GraphQL or RPC error modelling, and not for deciding what the errors should say."
 ---
 
 # Problem Details

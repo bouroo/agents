@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Harness regression suite for bouroo/agents. Each eval is a realistic task the doctrine governs, plus objective checks a runner executes without reading a transcript. Run on any change to AGENTS.md, a SKILL.md, a command, check.py, or the pinned model; a regression blocks the merge. See skills/quality/SKILL.md.",
+  "description": "Harness regression suite for bouroo/agents. Each eval is a realistic task the doctrine governs, plus objective checks a runner executes without reading a transcript. Run on any change to AGENTS.md, a SKILL.md, a command, a description, the trigger set, check.py, or the pinned model; a regression blocks the merge. See skills/quality/SKILL.md.",
   "evals": [
     {
       "id": "new-skill-keeps-frontmatter-valid",
@@ -10,6 +10,11 @@
           "cmd": "python3 scripts/check.py frontmatter",
           "expect_exit": 0,
           "description": "every skills/*/SKILL.md and commands/*.md carries valid, colon-safe name+description frontmatter"
+        },
+        {
+          "cmd": "python3 scripts/check.py descriptions",
+          "expect_exit": 0,
+          "description": "every description carries an imperative trigger clause and a boundary, so a new skill both fires on the right prompts and stays quiet on near-misses"
         }
       ]
     },
@@ -91,91 +96,48 @@
       ]
     },
     {
-      "id": "architecture-structure-holds-under-edit",
-      "prompt": "Extend skills/architecture/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/architecture/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
-        },
-        {
-          "cmd": "python3 scripts/check.py links",
-          "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
-        }
-      ]
-    },
-    {
       "id": "architecture-anchor-rules-survive",
       "prompt": "Reorganize and condense skills/architecture/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'quality attributes' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE 'quality attributes'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'quality attributes' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'ADR' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE 'ADR'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'ADR' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'CONTEXT.md' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE 'CONTEXT.md'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'CONTEXT.md' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE '_Avoid_' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE '_Avoid_'",
           "expect_exit": 0,
           "description": "the load-bearing phrase '_Avoid_' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'no-pattern' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE 'no-pattern'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'no-pattern' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'refactoring.guru' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE 'refactoring.guru'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'refactoring.guru' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'validator' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE 'validator'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'validator' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'IR contract' skills/architecture/SKILL.md",
+          "cmd": "tail -n +5 skills/architecture/SKILL.md | grep -qE 'IR contract'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'IR contract' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "architecture-progressive-disclosure",
-      "prompt": "Add a bundled reference under skills/architecture/references/ and reorganize the skill's reference material so every bundled file stays discoverable from SKILL.md.",
-      "checks": [
-        {
-          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/architecture/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/architecture/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
-          "expect_exit": 0,
-          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
-        }
-      ]
-    },
-    {
-      "id": "confluence-structure-holds-under-edit",
-      "prompt": "Extend skills/confluence/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/confluence/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
-        },
-        {
-          "cmd": "python3 scripts/check.py links",
-          "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
         }
       ]
     },
@@ -184,41 +146,34 @@
       "prompt": "Reorganize and condense skills/confluence/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'GATE OK' skills/confluence/SKILL.md",
+          "cmd": "tail -n +5 skills/confluence/SKILL.md | grep -qE 'GATE OK'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'GATE OK' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'confluence_update_page_section' skills/confluence/SKILL.md",
+          "cmd": "tail -n +5 skills/confluence/SKILL.md | grep -qE 'confluence_update_page_section'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'confluence_update_page_section' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "confluence-progressive-disclosure",
-      "prompt": "Add a bundled reference under skills/confluence/references/ and reorganize the skill's reference material so every bundled file stays discoverable from SKILL.md.",
-      "checks": [
-        {
-          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/confluence/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/confluence/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
-          "expect_exit": 0,
-          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
-        }
-      ]
-    },
-    {
-      "id": "delivery-structure-holds-under-edit",
-      "prompt": "Extend skills/delivery/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/delivery/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
         },
         {
-          "cmd": "python3 scripts/check.py links",
+          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Target Field Name · M/O/C · Data Type · Source Field · Mapping Logic · Remark'",
           "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
+          "description": "the Field to Field Mapping column set matching the spec-page contract survives a reorganize or condense"
+        },
+        {
+          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Date · Update By · Description · Status'",
+          "expect_exit": 0,
+          "description": "the Change logs column set matching the spec-page contract survives a reorganize or condense"
+        },
+        {
+          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Continued from'",
+          "expect_exit": 0,
+          "description": "the new-version change-log row rule survives a reorganize or condense"
+        },
+        {
+          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF '#change14'",
+          "expect_exit": 0,
+          "description": "the round-numbering rule (N continues the page count, never restarts at 1) survives a reorganize or condense"
         }
       ]
     },
@@ -227,71 +182,44 @@
       "prompt": "Reorganize and condense skills/delivery/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'seven stages' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'seven stages'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'seven stages' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'canonical back-edges' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'canonical back-edges'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'canonical back-edges' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'DONE_WHEN' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'DONE_WHEN'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'DONE_WHEN' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'WPn' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'WPn'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'WPn' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'frontier' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'frontier'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'frontier' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'design tree' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'design tree'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'design tree' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'wayfinder:map' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'wayfinder:map'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'wayfinder:map' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'fog' skills/delivery/SKILL.md",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'fog'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'fog' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "delivery-progressive-disclosure",
-      "prompt": "Extract part of skills/delivery/SKILL.md into bundled reference material while keeping the skill a concise, well-linked artifact. Its internal section links must keep resolving after the edit.",
-      "checks": [
-        {
-          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/delivery/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/delivery/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
-          "expect_exit": 0,
-          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
-        }
-      ]
-    },
-    {
-      "id": "execution-structure-holds-under-edit",
-      "prompt": "Extend skills/execution/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/execution/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
-        },
-        {
-          "cmd": "python3 scripts/check.py links",
-          "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
         }
       ]
     },
@@ -300,51 +228,24 @@
       "prompt": "Reorganize and condense skills/execution/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'minimal-harness' skills/execution/SKILL.md",
+          "cmd": "tail -n +5 skills/execution/SKILL.md | grep -qE 'minimal-harness'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'minimal-harness' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'FAN_OUT' skills/execution/SKILL.md",
+          "cmd": "tail -n +5 skills/execution/SKILL.md | grep -qE 'FAN_OUT'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'FAN_OUT' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'file ownership' skills/execution/SKILL.md",
+          "cmd": "tail -n +5 skills/execution/SKILL.md | grep -qE 'file ownership'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'file ownership' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'Spawn briefs' skills/execution/SKILL.md",
+          "cmd": "tail -n +5 skills/execution/SKILL.md | grep -qE 'Spawn briefs'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'Spawn briefs' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "execution-progressive-disclosure",
-      "prompt": "Add a bundled reference under skills/execution/references/ and reorganize the skill's reference material so every bundled file stays discoverable from SKILL.md.",
-      "checks": [
-        {
-          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/execution/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/execution/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
-          "expect_exit": 0,
-          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
-        }
-      ]
-    },
-    {
-      "id": "indexed-search-structure-holds-under-edit",
-      "prompt": "Extend skills/indexed-search/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/indexed-search/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
-        },
-        {
-          "cmd": "python3 scripts/check.py links",
-          "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
         }
       ]
     },
@@ -353,41 +254,14 @@
       "prompt": "Reorganize and condense skills/indexed-search/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'tgrep' skills/indexed-search/SKILL.md",
+          "cmd": "tail -n +5 skills/indexed-search/SKILL.md | grep -qE 'tgrep'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'tgrep' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'false-anchor' skills/indexed-search/SKILL.md",
+          "cmd": "tail -n +5 skills/indexed-search/SKILL.md | grep -qE 'false-anchor'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'false-anchor' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "indexed-search-keeps-frontmatter-valid",
-      "prompt": "Extract part of skills/indexed-search/SKILL.md into bundled reference material. The skill must stay discoverable with valid frontmatter.",
-      "checks": [
-        {
-          "cmd": "python3 scripts/check.py frontmatter",
-          "expect_exit": 0,
-          "description": "the skill keeps valid, Agent-Skills-discoverable name/description frontmatter"
-        }
-      ]
-    },
-    {
-      "id": "modernize-coding-structure-holds-under-edit",
-      "prompt": "Extend skills/modernize-coding/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/modernize-coding/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
-        },
-        {
-          "cmd": "python3 scripts/check.py links",
-          "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
         }
       ]
     },
@@ -396,41 +270,14 @@
       "prompt": "Reorganize and condense skills/modernize-coding/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'GOROOT/api' skills/modernize-coding/SKILL.md",
+          "cmd": "tail -n +5 skills/modernize-coding/SKILL.md | grep -qE 'GOROOT/api'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'GOROOT/api' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'fixer' skills/modernize-coding/SKILL.md",
+          "cmd": "tail -n +5 skills/modernize-coding/SKILL.md | grep -qE 'fixer'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'fixer' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "modernize-coding-progressive-disclosure",
-      "prompt": "Add a bundled reference under skills/modernize-coding/references/ and reorganize the skill's reference material so every bundled file stays discoverable from SKILL.md.",
-      "checks": [
-        {
-          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/modernize-coding/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/modernize-coding/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
-          "expect_exit": 0,
-          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
-        }
-      ]
-    },
-    {
-      "id": "quality-structure-holds-under-edit",
-      "prompt": "Extend skills/quality/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/quality/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
-        },
-        {
-          "cmd": "python3 scripts/check.py links",
-          "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
         }
       ]
     },
@@ -439,71 +286,44 @@
       "prompt": "Reorganize and condense skills/quality/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'non-derivable' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'non-derivable'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'non-derivable' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'TWINS:' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'TWINS:'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'TWINS:' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'pass rate' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'pass rate'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'pass rate' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'objective checks' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'objective checks'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'objective checks' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'mutation probe' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'mutation probe'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'mutation probe' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'evidence audit' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'evidence audit'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'evidence audit' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'measure-first' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'measure-first'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'measure-first' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'benchmark evidence' skills/quality/SKILL.md",
+          "cmd": "tail -n +5 skills/quality/SKILL.md | grep -qE 'benchmark evidence'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'benchmark evidence' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "quality-progressive-disclosure",
-      "prompt": "Add a bundled reference under skills/quality/references/ and reorganize the skill's reference material so every bundled file stays discoverable from SKILL.md.",
-      "checks": [
-        {
-          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/quality/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/quality/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
-          "expect_exit": 0,
-          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
-        }
-      ]
-    },
-    {
-      "id": "security-audit-structure-holds-under-edit",
-      "prompt": "Extend skills/security-audit/SKILL.md with one more rule and tighten two verbose paragraphs. Nothing load-bearing may be lost, and the skill must stay a concise, well-linked artifact.",
-      "checks": [
-        {
-          "cmd": "test $(wc -l < skills/security-audit/SKILL.md) -lt 500",
-          "expect_exit": 0,
-          "description": "the skill body stays within its 500-line budget (Anthropic skill-authoring best practice)"
-        },
-        {
-          "cmd": "python3 scripts/check.py links",
-          "expect_exit": 0,
-          "description": "every relative doctrine link still resolves after the edit"
         }
       ]
     },
@@ -512,25 +332,14 @@
       "prompt": "Reorganize and condense skills/security-audit/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "grep -qE 'needs_validation' skills/security-audit/SKILL.md",
+          "cmd": "tail -n +5 skills/security-audit/SKILL.md | grep -qE 'needs_validation'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'needs_validation' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "grep -qE 'lower-trust principal' skills/security-audit/SKILL.md",
+          "cmd": "tail -n +5 skills/security-audit/SKILL.md | grep -qE 'lower-trust principal'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'lower-trust principal' survives a reorganize or condense of the skill"
-        }
-      ]
-    },
-    {
-      "id": "security-audit-progressive-disclosure",
-      "prompt": "Add a bundled reference under skills/security-audit/references/ and reorganize the skill's reference material so every bundled file stays discoverable from SKILL.md.",
-      "checks": [
-        {
-          "cmd": "python3 -c 'import pathlib,sys; s=pathlib.Path(\"skills/security-audit/SKILL.md\").read_text(); miss=[p.name for p in pathlib.Path(\"skills/security-audit/references\").rglob(\"*\") if p.is_file() and p.name not in s]; sys.exit(1 if miss else 0)'",
-          "expect_exit": 0,
-          "description": "every file under references/ (recursive) is mentioned by basename in SKILL.md, so no bundled material is orphaned"
         }
       ]
     },
@@ -558,6 +367,86 @@
           "cmd": "python3 scripts/check.py l1",
           "expect_exit": 0,
           "description": "the owed `L1:` lint-evidence gate line survives on both canonical surfaces (AGENTS.md + skills/quality)"
+        }
+      ]
+    },
+    {
+      "id": "skill-body-stays-loadable",
+      "prompt": "Extend skills/<any>/SKILL.md with one more rule, or add a new skill. Reference material may grow, but activating a skill must not flood the window.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "every skill body stays within 500 lines / 5000 tokens and every command within 120 lines; overflow means the detail belongs in references/, loaded on demand"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "every relative doctrine link still resolves after the edit"
+        }
+      ]
+    },
+    {
+      "id": "bundled-references-stay-reachable",
+      "prompt": "Add or reorganize reference material under skills/<any>/references/ and keep the skill a concise artifact.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "every bundled reference is named from its SKILL.md, so progressive disclosure reaches it instead of orphaning it"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the moved material left the skill body within budget rather than accumulating in both places"
+        }
+      ]
+    },
+    {
+      "id": "descriptions-stay-measurable",
+      "prompt": "Reword a skill description, or add a skill. Triggering is the description's whole job, so the query set that measures it must survive the edit.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py triggers",
+          "expect_exit": 0,
+          "description": "evals/trigger.json still holds a well-formed train/validation set with at least 8 should-trigger and 6 should-not-trigger queries per skill, no duplicated prompt, and every skill named by a real skills/<name>/SKILL.md"
+        },
+        {
+          "cmd": "python3 scripts/check.py descriptions",
+          "expect_exit": 0,
+          "description": "the description keeps both halves it is gated on: a trigger clause and a boundary"
+        }
+      ]
+    },
+    {
+      "id": "standalone-copy-keeps-the-rules",
+      "prompt": "Add or amend a hard constraint in AGENTS.md, or tighten the compact standalone doctrine. The standalone copy is a full second surface installed into hosts that never see skills/ or the manifesto.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py standalone",
+          "expect_exit": 0,
+          "description": "every hard-constraint phrase the manifesto states is present in standalone/AGENTS.md too, so the two copies cannot drift apart silently"
+        },
+        {
+          "cmd": "python3 scripts/check.py dashes",
+          "expect_exit": 0,
+          "description": "the standalone copy is inside the dash scan, so it follows the corpus typography"
+        }
+      ]
+    },
+    {
+      "id": "role-agent-descriptions-stay-selectable",
+      "prompt": "Reword a role agent under agents/ or add one. A host selects a role agent by its description, exactly as it selects a skill.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py descriptions",
+          "expect_exit": 0,
+          "description": "every lead/worker description, in md and toml form, carries a trigger clause and a boundary like any skill"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "the repo map still links the agent and standalone surfaces it names"
         }
       ]
     }

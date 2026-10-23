@@ -1,5 +1,5 @@
 ---
-description: "Executes exactly ONE implementation unit handed over by the lead and returns files changed plus executable evidence."
+description: "Use to execute exactly one bounded implementation unit handed over by a lead, and to report files changed plus executable evidence. Suits a scoped change with an explicit DONE check and named owned files. Not for decomposition or dispatch (lead), not for deciding what work is worth doing, and not for a unit whose DONE check is missing or unrunnable - report that instead."
 mode: subagent
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: quality
-description: "Language-agnostic craftsmanship, verification, evals, and performance: the twelve commandments and artifact gates (PROMPT:/INTENT:/TWINS:/AUTH:/PENDING:); proving work done via L1/L2/L3, the evidence audit, and the mutation probe; the harness regression eval suite of realistic tasks with objective checks and a blocking pass rate; and measurement-first performance discipline that keeps only what benchmark evidence supports. Use when writing, reviewing, or refactoring code, applying the artifact gates, judging a done report, changing the doctrine, or profiling a measured hot path."
+description: "Use when writing, reviewing, refactoring, or judging code, and when deciding whether work is actually done: the twelve commandments, the artifact gates (PROMPT:, INTENT:, TWINS:, AUTH:, PENDING:, L1:), L1/L2/L3 evidence, the evidence audit and mutation probe, the Generate-Verify-Refine-Deliver loop for non-trivial deliverables, the harness eval suite with its blocking pass rate, and measurement-first performance that keeps only what benchmarks support. Reach for it before declaring a change complete, when a done report needs judging, when tests pass but you do not believe them, or when a hot path must get faster. Not for architecture-level decisions (architecture), wiki operations (confluence), or repository-wide search (indexed-search)."
 ---
 
 The doctrine governing produced work: code craft, the proof it is done, the regression suite that keeps the harness honest, and the measurement that keeps it fast. Where a rule serves more than one concern it is stated once here.
@@ -75,10 +75,15 @@ The doctrine is configuration an agent executes, so it is regression-tested like
 
 - **Size to the harness:** 20-50 realistic tasks spanning the behaviors the doctrine governs — intake routing, gate emission, verification discipline, context handling; grow on incident, not ambition.
 - **Prefer tasks drawn from real runs:** a task extracted from an actual episode has a proven failure mode; invented tasks test only what you imagined.
-- **When it runs:** on a standing schedule; on any change to the manifesto, a skill, a command, a hook, a gate, or the pinned model (the load-bearing trigger); and on incident, each becoming a permanent eval after the fix ships.
+- **When it runs:** on a standing schedule; on any change to the manifesto, a skill, a command, a description, the trigger set, a hook, a gate, or the pinned model (the load-bearing trigger); and on incident, each becoming a permanent eval after the fix ships.
 - **A regression blocks the merge** until the change is fixed or the eval is deliberately retired with a reason. Never loosen a check so that a change passes — a metric edited by the party it measures. The author of a change never writes the check that judges it.
 - **Unattended:** the check gates the stop; the tool surface is pre-scoped; and authority still terminates in a human — a scheduled run ends local and emits `PENDING:`, with the `AUTH:` gate unrelaxed. Autonomy is a degree of attention, never a degree of authority.
 - **GROW's proof:** run the suite before and after an evolution. Pair it with the Kirby Effect — run the suite with a control removed on each model upgrade, and cut what it passes without.
+
+**Descriptions are gated by measurement, not by prose.** A skill's `description` is the entire triggering decision — the host loads nothing else before deciding whether the skill applies — so it is the one field where wording is behavior. Two halves are mandatory: a **trigger clause** phrased as an instruction ("Use when …") naming the user intents and phrasings that apply, including asks that never name the domain; and a **boundary** ("Not for …") naming the near-miss another skill owns. Widen until the positives fire; sharpen until the near-misses stay quiet; both halves are asserted by the `descriptions` gate, and whether the wording actually works is measured, never argued.
+
+**Trigger evals hold a labelled query set with a held-out split.** `evals/trigger.json` carries, per skill, 8-10 should-trigger and 6-8 should-not-trigger prompts written the way a user writes them — file paths, casual phrasing, the need stated without the domain word, buried inside a larger ask — with near-misses as negatives, since an obviously irrelevant negative tests nothing. Run each 3 times and score a **trigger rate** (`evals/run_triggers.py`): positives pass above the threshold, negatives below. Edit from **train** failures only; **validation** is scored, never tuned on, and the best iteration is chosen by its validation rate — an earlier draft that generalizes beats a later one fitted to the queries.
+
 
 ## Performance
 
