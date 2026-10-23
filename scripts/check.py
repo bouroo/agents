@@ -77,7 +77,9 @@ PRIVACY_TOKEN_RE = re.compile(
     r"|\b(?!mcp\.|support\.)[a-z0-9-]+\.atlassian\.(?:net|com)\b",
     re.IGNORECASE,
 )
-PRIVACY_SCAN_FILES = [ROOT / "AGENTS.md", ROOT / "CHANGELOG.md"]
+PRIVACY_SCAN_FILES = [ROOT / "AGENTS.md", ROOT / "CHANGELOG.md",
+                      ROOT / "standalone" / "AGENTS.md",
+                      ROOT / "standalone" / "SOUL.md"]
 
 def _no_dotdir(p: pathlib.Path) -> bool:
     """True unless some path part is a dot-directory: untracked tool state
@@ -109,12 +111,40 @@ def _add(level: str, msg: str) -> None:
     _msgs.append((level, msg))
 
 
+def _toml_meta(path: pathlib.Path) -> dict:
+    """Read the top-level `key = "value"` pairs of a role-agent TOML.
+
+    TOML carries the same selection metadata as skill frontmatter without a
+    `---` fence, so the same rule gate has to read it. Only the leading scalar
+    block is scanned: the multi-line `developer_instructions` string follows it
+    and would otherwise be parsed as keys.
+    """
+    fields: dict = {}
+    for line in path.read_text().splitlines():
+        s = line.strip()
+        if not s or s.startswith("#"):
+            continue
+        if s.startswith("[") or s.startswith('"""') or "=" not in s:
+            break
+        k, v = s.split("=", 1)
+        if k.strip() in fields:
+            break
+        fields[k.strip()] = v.strip().strip('"').strip("'")
+        if '"""' in v:
+            break
+    return fields
+
+
 def _frontmatter(path: pathlib.Path) -> tuple[dict, list[str], bool]:
     """Parse an indent-free `key: value` frontmatter block.
 
     Returns (fields, all_key_lines, starts_with_fence). Colon-safe checking
-    needs the raw key lines, hence the third element pairs with them.
+    needs the raw key lines, hence the third element pairs with them. A `.toml`
+    role agent carries the same metadata without a fence; it is read by
+    `_toml_meta` and reported as fenced so callers need no special case.
     """
+    if path.suffix == ".toml":
+        return _toml_meta(path), [], True
     text = path.read_text()
     if not text.startswith("---"):
         return {}, [], False
@@ -323,7 +353,7 @@ def g_dashes() -> None:
     if not _g_rule_surfaces(name):
         return
     files = [ROOT / "AGENTS.md"]
-    for sub in ("skills", "commands", "agents"):
+    for sub in ("skills", "commands", "agents", "standalone"):
         for suffix in ("*.md", "*.toml"):
             files += sorted(p for p in (ROOT / sub).rglob(suffix)
                             if _no_dotdir(p))
@@ -434,7 +464,8 @@ def g_privacy() -> None:
     name = "privacy"
     scanned = PRIVACY_SCAN_FILES \
         + sorted(p for p in (ROOT / "skills").rglob("*.md") if _no_dotdir(p)) \
-        + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p))
+        + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p)) \
+        + sorted(p for p in (ROOT / "agents").rglob("*.md") if _no_dotdir(p))
     files = [f for f in scanned if f.is_file()]
     hits: list[str] = []
     for f in files:
@@ -882,12 +913,194 @@ def g_evals() -> None:
                  f"(id, prompt, mechanical checks)")
 
 
+SKILL_LINE_BUDGET = 500
+SKILL_TOKEN_BUDGET = 5000
+COMMAND_LINE_BUDGET = 120
+
+
+def g_skillbudget() -> None:
+    """Every skill body stays loadable whole; every command stays runnable whole.
+
+    The failure mode is a skill that has absorbed so much reference material
+    that activating it floods the window the doctrine exists to protect. Detail
+    belongs in references/, loaded on demand; 500 lines / 5000 tokens is the
+    skill specification's own shape, so a body over it is a structural defect.
+    Scoped to every skill, so a new one cannot enter ungated.
+    """
+    name = "skillbudget"
+    skills = sorted(p for p in (ROOT / "skills").glob("*/SKILL.md")
+                    if _no_dotdir(p))
+    commands = sorted(p for p in (ROOT / "commands").glob("*.md")
+                      if _no_dotdir(p))
+    if not skills:
+        _add("FAIL", f"{name}: no skills/*/SKILL.md found")
+        return
+    bad: list[str] = []
+    subjects = [(p, SKILL_LINE_BUDGET, SKILL_TOKEN_BUDGET) for p in skills]
+    subjects += [(p, COMMAND_LINE_BUDGET, None) for p in commands]
+    for path, lines_cap, tokens_cap in subjects:
+        rel = path.relative_to(ROOT)
+        text = path.read_text()
+        lines = len(text.splitlines())
+        if lines > lines_cap:
+            bad.append(f"{rel}: {lines} lines > {lines_cap}")
+            continue
+        if tokens_cap:
+            tokens = len(text.encode()) // 4
+            if tokens > tokens_cap:
+                bad.append(f"{rel}: ~{tokens} tokens > {tokens_cap}")
+    if bad:
+        _add("FAIL", f"{name}: " + "; ".join(bad))
+        return
+    _add("PASS", f"{name}: {len(skills)} skill body(s) within "
+                 f"{SKILL_LINE_BUDGET} lines / {SKILL_TOKEN_BUDGET} tokens, "
+                 f"{len(commands)} command(s) within {COMMAND_LINE_BUDGET} lines")
+
+
+def g_triggers() -> None:
+    """The description-trigger set stays present, well-formed, and big enough
+    to measure a description. The runner owns that validation -- restating it
+    here would let the two copies drift -- so this gate runs it in validate
+    mode, which makes no model call."""
+    name = "triggers"
+    runner = ROOT / "evals" / "run_triggers.py"
+    if not runner.is_file():
+        _add("FAIL", f"{name}: evals/run_triggers.py missing "
+                     "(descriptions cannot be measured without it)")
+        return
+    try:
+        res = subprocess.run([sys.executable, str(runner)], cwd=ROOT,
+                             capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        _add("FAIL", f"{name}: runner did not complete: {exc}")
+        return
+    if res.returncode != 0:
+        detail = "; ".join((res.stdout + res.stderr).strip().splitlines()[:6])
+        _add("FAIL", f"{name}: {detail}")
+        return
+    _add("PASS", f"{name}: {res.stdout.strip().splitlines()[0].removeprefix('OK ')}")
+
+TRIGGER_RE = re.compile(r"\b(use (when|for|before|to|it)|load (before|when)|reach for it)\b",
+                        re.IGNORECASE)
+BOUNDARY_RE = re.compile(r"\b(not for|never|only when|only on|except)\b", re.IGNORECASE)
+
+
+def g_descriptions() -> None:
+    """Every description carries a trigger clause and a boundary.
+
+    The description is the whole triggering decision: the host loads nothing
+    else before deciding whether the skill, command, or role agent applies.
+    Two failures follow from that and are gated here by shape, since prose
+    meaning is not lintable. A description with no imperative trigger clause
+    ("Use when ...") reads as documentation and under-triggers; one with no
+    boundary ("Not for ...") over-triggers on near-misses that share its
+    vocabulary. The query set in evals/trigger.json measures whether the wording
+    actually works; this gate only guarantees both halves are attempted.
+
+    Scanned as one set: skills, commands, and role agents each carry frontmatter
+    a host selects on, so a rule that covered only skills would let the agent
+    definitions drift back to prose that never fires.
+    """
+    name = "descriptions"
+    subjects = [(p, p.parent.name) for p in sorted((ROOT / "skills").glob("*/SKILL.md"))
+                if _no_dotdir(p)]
+    subjects += [(p, p.stem) for p in sorted((ROOT / "commands").glob("*.md"))
+                 if _no_dotdir(p)]
+    subjects += [(p, p.stem.replace(".plain", ""))
+                 for p in sorted((ROOT / "agents" / "common").glob("*.md"))]
+    subjects += [(p, p.stem) for p in sorted((ROOT / "agents" / "codex").glob("*.toml"))]
+    bad: list[str] = []
+    for path, _ in subjects:
+        rel = path.relative_to(ROOT)
+        desc = _frontmatter(path)[0].get("description", "")
+        missing = []
+        if not TRIGGER_RE.search(desc):
+            missing.append("no trigger clause")
+        if not BOUNDARY_RE.search(desc):
+            missing.append("no boundary")
+        if missing:
+            bad.append(f"{rel}: {', '.join(missing)}")
+    if bad:
+        _add("FAIL", f"{name}: " + "; ".join(bad))
+        return
+    _add("PASS", f"{name}: {len(subjects)} description(s) carry a trigger clause "
+                 f"and a boundary")
+
+
+def g_references() -> None:
+    """Every bundled reference is reachable from its SKILL.md.
+
+    A reference file no SKILL.md names is dead weight that still ships: the
+    agent never learns it exists, so the material is invisible while the
+    repository carries it. Naming by basename is the test, because that is what
+    a loader instruction looks like ("read references/api-errors.md when ...").
+    """
+    name = "references"
+    checked = 0
+    orphans: list[str] = []
+    for skill in sorted((ROOT / "skills").glob("*/SKILL.md")):
+        if not _no_dotdir(skill):
+            continue
+        body = skill.read_text()
+        refs = skill.parent / "references"
+        if not refs.is_dir():
+            continue
+        for bundled in sorted(p for p in refs.rglob("*") if p.is_file()):
+            checked += 1
+            if bundled.name not in body:
+                orphans.append(f"{bundled.relative_to(ROOT)} not named in "
+                               f"{skill.relative_to(ROOT)}")
+    if orphans:
+        _add("FAIL", f"{name}: " + "; ".join(orphans))
+        return
+    _add("PASS", f"{name}: {checked} bundled reference(s) named from their SKILL.md")
+
+
+# The standalone manifesto is a second full copy of the rules, installed alone
+# into a host that never sees skills/ or AGENTS.md. Two copies drift: a rule
+# added to one and not the other leaves half the installs ungoverned, and prose
+# cannot be diffed for meaning. Each entry is a rule's load-bearing phrase, so
+# the gate fails when a copy loses the rule rather than when it words it
+# differently.
+STANDALONE_RULES = [
+    "swallow an error", "branch on error strings", "log secrets", "en-dash",
+    "real-work identity", "speculative features", "restates the code",
+    "non-derivable", "exported symbol", "executable evidence",
+    "optimize without measurement", "deterministic logic", "dirty checkout",
+    "destructive", "proof chain", "identical arguments", "not read this session",
+]
+
+
+def g_standalone() -> None:
+    """The standalone copy carries every hard constraint the manifesto states."""
+    name = "standalone"
+    surfaces = [ROOT / "AGENTS.md", ROOT / "standalone" / "AGENTS.md"]
+    missing: list[str] = []
+    for surface in surfaces:
+        if not surface.is_file():
+            missing.append(f"{surface.relative_to(ROOT)} missing")
+            continue
+        text = surface.read_text().lower()
+        absent = [r for r in STANDALONE_RULES if r not in text]
+        if absent:
+            missing.append(f"{surface.relative_to(ROOT)}: lacks {', '.join(absent)}")
+    if missing:
+        _add("FAIL", f"{name}: rule drift between the two doctrines: "
+             + "; ".join(missing))
+        return
+    _add("PASS", f"{name}: {len(STANDALONE_RULES)} hard constraint(s) present in "
+                 f"both the manifesto and the standalone copy")
+
+
 GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
-         ("links", g_links), ("agnostic", g_agnostic),
-         ("manifests", g_manifests), ("privacy", g_privacy),
-         ("comments", g_comments), ("simplicity", g_simplicity),
-         ("dashes", g_dashes), ("l1", g_l1), ("veriloop", g_veriloop),
-         ("modernize", g_modernize), ("evals", g_evals)]
+         ("descriptions", g_descriptions), ("skillbudget", g_skillbudget),
+         ("references", g_references), ("links", g_links),
+         ("agnostic", g_agnostic), ("manifests", g_manifests),
+         ("privacy", g_privacy), ("comments", g_comments),
+         ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
+         ("veriloop", g_veriloop), ("modernize", g_modernize),
+         ("evals", g_evals), ("triggers", g_triggers),
+         ("standalone", g_standalone)]
 
 
 def main(argv: list[str]) -> int:

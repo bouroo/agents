@@ -1,6 +1,6 @@
 ---
 name: cmd-review
-description: "Review phase (PROVE): review current code changes for correctness, safety, tests, security, performance, and readability, grouped by severity with one verdict. Use to review a diff while trusting the author; for adversarial re-verification use the judge protocol."
+description: "Use to review the current diff for correctness, safety, tests, security, performance, readability, simplicity, and structure, reported by severity with one verdict. Reach for it when a change is written and someone must decide whether it merges, trusting the author's evidence. Not for adversarial re-verification that re-runs claims (the judge protocol in quality), for restructuring (cmd-refactor), or for gate mechanics (cmd-verify)."
 ---
 
 # Review Code Changes

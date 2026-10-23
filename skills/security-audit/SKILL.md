@@ -1,6 +1,6 @@
 ---
 name: security-audit
-description: "Vulnerability review of a codebase, API, service, CLI, or library: the candidate gate that separates a real boundary violation from a best-practice deviation, severity calibrated to demonstrated impact, needs_validation discipline, attack-class coverage, and the report shape. Use for a security question, a focused security review, triage of a reported finding, threat modeling, or a full audit. The full audit workflow runs only on explicit request."
+description: "Vulnerability review of a codebase, API, service, CLI, or library: pass suspected issues through the candidate gate that separates a real boundary violation from a best-practice deviation, calibrate severity to demonstrated impact, hold unproven claims at needs_validation, cover entry surface by boundary by attack class, and report in the fixed shape. Use for a security question, a focused review, triage of a scanner hit or pen-test finding, threat modeling a design, or a full audit when explicitly requested — even when the ask is phrased as 'is this safe?'. Not for fixing the defect (that is ordinary code work under quality), and never a substitute for the AUTH: gate before any live probe."
 ---
 
 # Security Audit

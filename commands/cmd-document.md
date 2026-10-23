@@ -1,6 +1,6 @@
 ---
 name: cmd-document
-description: "Bootstrap or sync a repo's docs/ tree (systems, flows, ADRs, API endpoints, glossary) with code changes. Use when a behavior, interface, invariant, or domain-term change must be reflected in project documentation."
+description: "Use to bootstrap or sync a repo's docs/ tree — systems, flows, ADRs, API endpoints, and the CONTEXT.md glossary — against code changes. Reach for it when a behavior, interface, invariant, or domain term changed and the documentation must catch up, or when a repo has no docs/ tree and needs the minimal one. Not for wiki pages on an external server (confluence), for architectural decisions nobody has made yet (architecture), or for README and contributor docs."
 ---
 
 # Document - Sync docs/ With Code

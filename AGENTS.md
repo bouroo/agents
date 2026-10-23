@@ -138,6 +138,9 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | [skills/indexed-search](skills/indexed-search/SKILL.md) | large-tree search: tgrep, index/serve, rg -> Grep |
 | [skills/problem-details](skills/problem-details/SKILL.md) | RFC 9457 error responses: five-member contract, adoption paths (+ [blueprints](skills/problem-details/references/blueprints.md)) |
 | [commands/](commands/) | workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
+| [agents/](agents/lead.md) | role agents for §9: [lead](agents/lead.md) decomposes and verifies, [worker](agents/worker.md) executes one unit; per-host variants under `common/` |
+| [standalone/](standalone/AGENTS.md) | the compact single-file doctrine, for `install.sh --standalone` |
+| `evals/` | harness regression suite: [suite](evals/suite.json) plus the [description-trigger set](evals/trigger.json) and its [runner](evals/run_triggers.py) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
 | marketplace manifests | discovery manifests at canonical paths, guarded by `manifests` |

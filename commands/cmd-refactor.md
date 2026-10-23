@@ -1,6 +1,6 @@
 ---
 name: cmd-refactor
-description: "Refactor (ACT): analyze, plan, baseline, execute, verify, and sync a behavior-preserving restructuring with before/after measurement. Use to restructure correct-but-unclear, unsafe, or slow code without changing observable behavior."
+description: "Use to restructure correct-but-unclear, unsafe, or slow code without changing observable behavior: analyze, plan, baseline, execute in atomic commits, verify before/after, and sync the spec. Reach for it when behavior must stay frozen while the shape changes, or when a measured hot path needs work after correctness is proven. Not for new features or behavior-changing fixes, for trivial reformatting, or for reviewing someone else's diff (cmd-review)."
 ---
 
 # Refactor Phase

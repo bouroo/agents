@@ -1,6 +1,6 @@
 ---
 name: modernize-coding
-description: "Bring a project's code to current patterns — detect what the project itself declares and uses (manifests, toolchain config, prevailing conventions), modernize toward that ceiling, and write current style from the start. Use when modernizing, reviewing, or writing code in an existing project."
+description: "Bring an existing project's code to its own declared ceiling — detect what the project uses from manifests, toolchain config, and prevailing conventions, then modernize toward that baseline rather than toward the newest language release. Per-language adapters name the ecosystem's default fixer and the version the rewrites key to (Go, Java, Rust, Python, TypeScript/JS). Use when modernizing, reviewing, or writing code inside an existing repository, when new code must match house style, or when asked whether a construct is idiomatic here — even if nobody says 'modernize'. Not for a greenfield project with no conventions yet, for dependency upgrades, or for correctness and performance work (quality)."
 ---
 
 # Modernize Coding

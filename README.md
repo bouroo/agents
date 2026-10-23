@@ -67,7 +67,10 @@ flowchart LR
 │   ├── cmd-review.md                  Test: severity-grouped review with one verdict
 │   ├── cmd-refactor.md                Build: behavior-preserving restructure, measured
 │   └── cmd-document.md                Spec: bootstrap/sync a docs/ tree
-├── evals/suite.json                   the harness regression suite (CI-gated)
+├── evals/                            the harness regression suite (CI-gated):
+│   ├── suite.json                    one realistic task per eval, objective checks
+│   ├── trigger.json                  labelled prompt set that measures descriptions
+│   └── run_triggers.py               trigger-rate runner (train/validation split)
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── .minimax-plugin/                   MiniMax Code plugin metadata
 ├── gemini-extension.json              extension discovery metadata
@@ -75,7 +78,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       thirteen deterministic gates (CI runs these)
+    ├── check.py                       eighteen deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -142,6 +145,9 @@ python3 scripts/check.py --all
 | --- | --- |
 | `budget` | `AGENTS.md` stays within its line budget (the concision charter) |
 | `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata |
+| `descriptions` | every description carries an imperative trigger clause and a boundary naming what it is not for |
+| `skillbudget` | every skill body stays within 500 lines / 5000 tokens and every command within 120 lines |
+| `references` | every bundled reference is named from its skill, so progressive disclosure reaches it |
 | `links` | every relative Markdown link resolves |
 | `agnostic` | core doctrine is free of host-binding tokens |
 | `manifests` | marketplace manifests parse; version fields agree across files |
@@ -153,8 +159,10 @@ python3 scripts/check.py --all
 | `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `evals` | the harness regression suite exists and is well-formed |
+| `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
+| `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all thirteen on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all eighteen on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 ## Versioning
 

@@ -1,6 +1,6 @@
 ---
 name: cmd-verify
-description: "Verify phase (PROVE): format, lint, type-check, scan, test, and hook gates with a fix/re-verify loop. Use to leave a working tree passing every quality gate."
+description: "Use to bring a working tree to green before handing work over: format, lint, type-check, scan, test, and hook gates in one batched pass, each narrowing to a root-cause fix and re-running, with a stage/command/exit report and a CLEAN or BLOCKED verdict. Reach for it after any change that must pass the repo's own gates. Not for judging whether the change is the right one (cmd-review) or for restructuring without behavior change (cmd-refactor)."
 ---
 
 # Verify Quality-Gate Pipeline

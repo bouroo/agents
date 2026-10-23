@@ -10,6 +10,46 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+Skills, commands, and evals follow the Agentskills authoring guidance: a
+description now carries the whole triggering decision, and it is measured
+instead of argued.
+
+- **Descriptions rewritten for triggering.** Every skill and command
+  description now leads with an imperative trigger clause naming the user
+  intents and phrasings that activate it (including asks that never name the
+  domain) and closes with a boundary naming the near-miss another skill owns.
+  The old descriptions led with internal mechanics ("the twelve commandments
+  and artifact gates..."), which reads as documentation and both
+  under-triggers and over-triggers.
+- **Trigger evals.** `evals/trigger.json` adds a labelled prompt set — 144
+  queries across 9 skills, 8-10 positives and 6-8 near-miss negatives each,
+  split train/validation so a description tuned on train is scored on held-out
+  queries. `evals/run_triggers.py` runs each query N times against a host
+  command, matches a load marker, and reports trigger rate per split.
+- **Four new gates.** `descriptions` (trigger clause + boundary present),
+  `skillbudget` (skill body within 500 lines / 5000 tokens, command within 120
+  lines, covering every skill so a new one cannot enter ungated), `references`
+  (every bundled reference named from its SKILL.md), and `triggers` (the query
+  set is well-formed and large enough to measure). Gates: 13 -> 18.
+- **Eval suite deduplicated.** Eight near-identical
+  `<skill>-structure-holds-under-edit` evals and eight
+  `<skill>-progressive-disclosure` evals collapsed into two gate-backed evals
+  covering every skill; 34 evals -> 21, with no coverage lost and new skills
+  now covered on arrival. Two evals were added for the agent and standalone
+  surfaces: 23 total.
+- **The always-loaded surfaces follow the same rule.** Role agents
+  (`agents/common/*`, `agents/codex/*`) are selected by description exactly as
+  skills are, so their descriptions gained a trigger clause and a boundary, and
+  the `descriptions` gate now reads TOML metadata too. `standalone/` and
+  `agents/` joined the privacy and dash scans, and the new `standalone` gate
+  asserts that every hard constraint in `AGENTS.md` is present in the compact
+  copy (a rule had already gone missing there: the exported-symbol doc-comment
+  rule). The repo map now names `agents/`, `standalone/`, and `evals/`.
+
+Gates: check.py --all 18/18 PASS.
+
 ## [7.5.1-beta.1] - 2026-10-21
 
 Fixes the stuck subagent loop users hit when the lead agent config is
