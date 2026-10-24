@@ -57,6 +57,10 @@ Give the agent only the tools its job needs: a narrower surface means less confu
 
 Anything the system already knows — the date, the file path, the schema, the project's conventions — is supplied deterministically into the context, never inferred by the model or requested through a tool. Asking the model to recall or fetch a known fact spends a round-trip and adds a failure mode to information the harness already holds. This is §10's *never put deterministic logic in the model* applied at the context boundary: retrieval is for what the system does not know.
 
+## External systems extend the context boundary
+
+Context the job needs often lives outside the repository — issue trackers, CI results, database schemas, API references, internal automation — and a protocol that exposes those systems as resources or tools (MCP being the common one) is how it arrives. Prefer the connected retrieval to a pasted excerpt: the boundary stays explicit, the retrieval is repeatable, and the trace shows what the agent actually read. This changes what the agent can do, so treat each connection as authority and exposure rather than free capability: scope it to the systems the job reads, keep write access narrower than read, and keep every result in the untrusted-input class the tool-surface rules above already bind — a fetched document or tool response is a claim to verify, never consent.
+
 ## Attribute the failure to its layer
 
 When a step fails, name the layer before patching: **reasoning** (the model decided wrongly), **tool interface** (it reached for the right action through a bad signature or description), **context** (the fact was absent, stale, or buried), or **control flow** (the graph routed wrongly, or a cap was too tight). The wrong-layer fix is a symptom patch — rewriting the prompt when the interface was ambiguous, or relaxing a check when the routing was wrong, leaves the cause in place. Diagnose per the verification standard, then patch the layer the evidence points to.
@@ -71,3 +75,4 @@ An SDK, an MCP server, or an orchestration library is an **implementation mechan
 - [teamwork](../SKILL.md) the coordination graph and spawn briefs that scope a worker's surface.
 - the verification standard: the evidence standard, the diagnosis discipline, and the caps that bound every `RETURNS`.
 - [topologies](topologies.md) the canonical review graph and shape cost arithmetic these patterns resolve to.
+- [memory](memory.md) what survives a session boundary, and why a rule that lives only in the conversation does not.

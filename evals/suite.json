@@ -371,6 +371,38 @@
       ]
     },
     {
+      "id": "memory-rule-survives-doctrine-edits",
+      "prompt": "Reword or reorganize the context/state doctrine, or extend the execution skill. The rule that knowledge is written down rather than remembered, with instruction memory kept separate from learning memory, must survive.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py memory",
+          "expect_exit": 0,
+          "description": "the memory rule survives on both canonical surfaces (manifesto clause + the execution skill's Memory section)"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "the memory reference is still reachable through a resolving relative link"
+        }
+      ]
+    },
+    {
+      "id": "memory-reference-stays-loadable",
+      "prompt": "Add or extend reference material about memory layers, authoring rules, or troubleshooting under skills/execution/references/.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the memory reference is named from its SKILL.md, so progressive disclosure reaches it"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the growth stayed in references/ rather than flooding the skill body"
+        }
+      ]
+    },
+    {
       "id": "skill-body-stays-loadable",
       "prompt": "Extend skills/<any>/SKILL.md with one more rule, or add a new skill. Reference material may grow, but activating a skill must not flood the window.",
       "checks": [

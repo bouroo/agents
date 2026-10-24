@@ -93,11 +93,11 @@ Run the cheapest check earliest; prefer computational sensors. Completion has th
 ## 8. Context & State
 
 - **The repository is the system of record, not the conversation.** Execution state — current unit, done units with evidence pointers, pending gates, SCOPE — is checkpointed under `.agents/`, never narrative, so a fresh context resumes deterministically.
-- **Keep the window small:** lazy-load skill bodies; add no compaction subsystem, retrieval store, or sub-agent fleet until a real failure demands it. If the window will be compacted, name what must survive (modified files, test commands).
+- **Keep the window small:** lazy-load skill bodies; add no compaction subsystem, retrieval store, or sub-agent fleet until a real failure demands it. A fresh window is the default, so a rule carried only in the conversation dies at compaction or session end: name what must survive (modified files, test commands) and write it to disk, because only disk reloads.
 - **One task per session**; open a new investigation fresh, not atop this history.
 - **Corrected twice on one issue** -> the window is polluted: reset and rewrite the prompt carrying what you learned, never correct a third time.
-- **Results inconsistent on identical input** -> suspect **Environment Context** first (working directory, permissions, tool surface, integrations) before blaming reasoning.
-- **Place knowledge deliberately:** rules -> instruction memory; corrections -> learning memory; procedures -> skills; episodes -> retros; facts -> repo docs. Memory precedence: organization > project-shared (versioned) > personal > machine-local (never committed); delegated workers keep role-scoped memory. **WIP 1:** finish and verify one unit before the next. **Clean exit:** startup verification passes, speculative edits reverted, next action stated.
+- **Results inconsistent on identical input** -> suspect **Environment Context** first (working directory, permissions, tool surface, integrations) before blaming reasoning; it decides what the agent *can* do, so it outranks reasoning as a suspect.
+- **Place knowledge deliberately:** rules -> instruction memory; corrections -> learning memory; procedures -> skills; episodes -> retros; facts -> repo docs. Keep instruction and learning memory in separate files so accumulated experience cannot quietly rewrite policy. Precedence: organization > project-shared (versioned) > user > machine-local (never committed); a rule scoped to a path or role loads only where it applies, and delegated workers keep role-scoped memory. Write rules as checks rather than virtues, promote a repeated correction on its second occurrence, and prune what the repository already states. Layers, authoring, and troubleshooting: [memory](skills/execution/references/memory.md). **WIP 1:** finish and verify one unit before the next. **Clean exit:** startup verification passes, speculative edits reverted, next action stated.
 
 ## 9. Teamwork: Narrow Agents, Firm Orchestration
 
@@ -129,7 +129,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | --- | --- |
 | `AGENTS.md` | this manifesto |
 | [skills/delivery](skills/delivery/SKILL.md) | lifecycle, artifact chain, grilling, wayfinder |
-| [skills/execution](skills/execution/SKILL.md) | graph grammar, multi-agent coordination (+ [topologies](skills/execution/references/topologies.md), + [harness-design](skills/execution/references/harness-design.md)) |
+| [skills/execution](skills/execution/SKILL.md) | graph grammar, multi-agent coordination, memory layers (+ [topologies](skills/execution/references/topologies.md), + [harness-design](skills/execution/references/harness-design.md), + [memory](skills/execution/references/memory.md)) |
 | [skills/quality](skills/quality/SKILL.md) | craftsmanship, gates, verification, evals, performance (+ [flowcharts](skills/quality/references/flowcharts.md), + [evolution](skills/quality/references/evolution.md), + [tactics](skills/quality/references/tactics.md)) |
 | [skills/architecture](skills/architecture/SKILL.md) | ASRs, SEI scenarios, patterns, ADRs, C4, domain language, maps |
 | [skills/confluence](skills/confluence/SKILL.md) | Atlassian wikis (Rovo or mcp-atlassian) |

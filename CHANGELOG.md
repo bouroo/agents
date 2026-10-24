@@ -10,6 +10,40 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+Sessions are the default unit of forgetting, so the doctrine now says where
+knowledge goes and what a connected system is allowed to mean.
+
+- **Memory is a design decision, not a hope.** `skills/execution/SKILL.md` gains
+  a `Memory` section and `skills/execution/references/memory.md` the detail:
+  five layers (session, project, user, machine-local, role) under an
+  organization ceiling, instruction memory (policy, written by a human) kept in
+  a separate file from learning memory (corrections, written by the agent) so
+  accumulated experience cannot quietly rewrite policy, and rules authored as
+  checks rather than virtues, one topic per file, loaded by path, promoted on
+  their second occurrence, and pruned like code. A troubleshooting ladder
+  follows the failure from stale rule to wrong scope to a surface that never
+  loaded.
+- **External systems extend the context boundary.**
+  `skills/execution/references/harness-design.md` adds the rule that issue
+  trackers, CI results, schemas, and API docs arrive through a connected
+  protocol (MCP being the common one), that connected retrieval beats a pasted
+  excerpt, and that every connection carries authority and exposure at once:
+  results are claims, not consent.
+- **The always-loaded clause sharpened.** `AGENTS.md` section 8 states a fresh
+  window as the default and disk as the only thing that reloads, ranks
+  environment context above reasoning when identical input disagrees, and spells
+  out where each kind of knowledge lives, in what precedence, scoped how, and
+  pruned when. `standalone/AGENTS.md` carries the same clause so the two
+  installed surfaces cannot drift.
+- **New `memory` gate.** Both canonical surfaces must keep stating the rule;
+  gates 18 -> 19.
+- **Two new evals, two new trigger queries.** The suite (23 -> 25) covers the
+  memory rule surviving a doctrine edit and the reference staying loadable; the
+  execution trigger set gains a forgotten-rules query and a
+  read-my-tracker-directly query (144 -> 146).
+
 ## [7.6.0-beta.1] - 2026-10-23
 
 Skills, commands, and evals follow the Agentskills authoring guidance: a
