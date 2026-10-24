@@ -10,7 +10,7 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [7.7.0-beta.1] - 2026-10-24
 
 Sessions are the default unit of forgetting, so the doctrine now says where
 knowledge goes and what a connected system is allowed to mean.
