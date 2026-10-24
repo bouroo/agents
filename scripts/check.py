@@ -288,6 +288,10 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"Generate-Verify-Refine-Deliver")),
         ("skills/quality/SKILL.md", re.compile(r"^## Verification Loop$", re.MULTILINE)),
     ],
+    "memory": [
+        ("AGENTS.md", re.compile(r"instruction memory", re.IGNORECASE)),
+        ("skills/execution/SKILL.md", re.compile(r"^## Memory$", re.MULTILINE)),
+    ],
 }
 
 
@@ -333,6 +337,12 @@ def g_veriloop() -> None:
     if _g_rule_surfaces("veriloop"):
         _add("PASS", "veriloop: rule present on "
                      f"{len(RULE_SURFACES['veriloop'])} canonical surface(s)")
+
+
+def g_memory() -> None:
+    if _g_rule_surfaces("memory"):
+        _add("PASS", "memory: rule present on "
+                     f"{len(RULE_SURFACES['memory'])} canonical surface(s)")
 
 
 # The doctrine separates a clause from its qualifier with the EM-dash; the
@@ -1098,7 +1108,8 @@ GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("agnostic", g_agnostic), ("manifests", g_manifests),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
-         ("veriloop", g_veriloop), ("modernize", g_modernize),
+         ("veriloop", g_veriloop), ("memory", g_memory),
+         ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
          ("standalone", g_standalone)]
 

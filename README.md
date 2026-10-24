@@ -36,7 +36,8 @@ flowchart LR
 │   │                                  wayfinder decision map
 │   ├── execution/                     the execution-graph grammar: nodes, typed edges,
 │   │   └── references/                caps, anchors, shapes, cost; worked topologies;
-│   │                                  harness design: minimal-harness ladder, ACI
+│   │                                  harness design: minimal-harness ladder, ACI,
+│   │                                  memory layers, external-system context
 │   ├── quality/                       craftsmanship, verification, evals, and
 │   │   └── references/                performance: the twelve commandments, evidence as
 │   │                                  anchors, the regression suite, measure-first;
@@ -78,7 +79,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       eighteen deterministic gates (CI runs these)
+    ├── check.py                       nineteen deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -157,12 +158,13 @@ python3 scripts/check.py --all
 | `dashes` | the em-dash convention survives on both canonical surfaces (manifesto + craft), and the doctrine corpus carries no en-dash (digit-to-digit ranges are exempt as typographic data) |
 | `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
 | `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
+| `memory` | the memory rule (instruction memory separate from learning memory, written down rather than conversational) survives on both canonical surfaces (manifesto + execution) |
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `evals` | the harness regression suite exists and is well-formed |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all eighteen on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all nineteen on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 ## Versioning
 

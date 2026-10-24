@@ -81,6 +81,8 @@
         {"query": "prove the tests actually catch bugs", "should_trigger": false},
         {"query": "set up CI to run the suite on every push", "should_trigger": false},
         {"query": "what's the ADR template?", "should_trigger": false},
+        {"query": "our project rules keep getting ignored between sessions — where are they supposed to live?", "should_trigger": true},
+        {"query": "can the agent read our issue tracker and CI results directly instead of me pasting them?", "should_trigger": true},
         {"query": "find all callers of this function", "should_trigger": false}
       ],
       "validation": [
