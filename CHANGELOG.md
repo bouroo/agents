@@ -10,9 +10,9 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
-## [7.8.0-beta.1] - 2026-10-25
+## [7.8.0] - 2026-10-25
 
-A skill is addressed by the name the runtime already knows, so an agent never has to resolve a path it cannot see.
+Skills ship stable: a skill is addressed by the name the runtime already knows, so an agent never has to resolve a path it cannot see.
 
 - **Skills are called by name.** Every skill reference in `AGENTS.md`, in the
   four command workflows, and in the skill bodies now names the skill ("the
