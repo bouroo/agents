@@ -122,4 +122,4 @@ diagram paints only when a browser showed it.
 
 ## Safety
 
-Creating/updating/deleting pages is a hard-to-undo external write: hold the `AUTH:`/`PENDING:` gates ([craft](../quality/SKILL.md)) — quote authorization for the specific target, emit `PENDING:` when unsure. Deletion (`confluence_delete_page`) has no MCP undo — recovery is UI-only and retention-bound; on a permission error, **repurpose** the page (rename + blank body + pointer note) and flag it for manual cleanup.
+Creating/updating/deleting pages is a hard-to-undo external write: hold the `AUTH:`/`PENDING:` gates (the `quality` skill's Craft section) — quote authorization for the specific target, emit `PENDING:` when unsure. Deletion (`confluence_delete_page`) has no MCP undo — recovery is UI-only and retention-bound; on a permission error, **repurpose** the page (rename + blank body + pointer note) and flag it for manual cleanup.

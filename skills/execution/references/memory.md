@@ -54,4 +54,4 @@ Memory files are context, not enforced configuration: the agent reads and follow
 
 - [harness-design](harness-design.md) — deterministic injection: a known fact is supplied, never requested from the model.
 - [execution](../SKILL.md) — role-scoped memory inside a team, and why a worker inherits the repository but never the lead's history.
-- the verification standard in [quality](../../quality/SKILL.md) — a rule that must always hold becomes a gate, not prose.
+- the verification standard in the `quality` skill — a rule that must always hold becomes a gate, not prose.

@@ -5,7 +5,7 @@ description: "Use to review the current diff for correctness, safety, tests, sec
 
 # Review Code Changes
 
-A thorough, language-agnostic review of the current changes, reported by severity. This is the **Test** stage's review pass (§4), run by the Verifier seat — never the Implementer. Review trusts the author's evidence; adversarial re-running is the [judge protocol](../skills/quality/SKILL.md)'s job. Right-size: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences. **No options: fully autonomous** — this pass is read-only, asks nothing, states any inference (e.g. which diff bounds it took) in one line rather than asking, and ends at its verdict; the only stop is the no-diff rule below. Everything mechanical — diff bounds, the output template's shape, the no-diff stop — is deterministic; the model judges only the findings. Flag any owed artifact line the author skipped — an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:` — as SHOULD FIX ([craft](../skills/quality/SKILL.md)); full fraud hunting is out of scope.
+A thorough, language-agnostic review of the current changes, reported by severity. This is the **Test** stage's review pass (§4), run by the Verifier seat — never the Implementer. Review trusts the author's evidence; adversarial re-running is the judge protocol's job (the `quality` skill's Verification section). Right-size: a trivial diff (one file, <10 lines, no behavior change) narrows to correctness + safety and reports in two sentences. **No options: fully autonomous** — this pass is read-only, asks nothing, states any inference (e.g. which diff bounds it took) in one line rather than asking, and ends at its verdict; the only stop is the no-diff rule below. Everything mechanical — diff bounds, the output template's shape, the no-diff stop — is deterministic; the model judges only the findings. Flag any owed artifact line the author skipped — an outward action without `AUTH:`, a behavior change without `INTENT:`, a defect fix without `TWINS:` — as SHOULD FIX per the `quality` skill's Craft section; full fraud hunting is out of scope.
 
 ## Target
 
@@ -18,11 +18,11 @@ Consider every row in one read pass over the diff plus touched neighbors:
 - **Correctness & spec parity** — does it do what it claims and match DONE_WHEN? Off-by-one, wrong edge/null handling, races, leaks.
 - **Safety & error handling** — every error checked and propagated with context; none swallowed; no branching on error strings.
 - **Tests** — happy, error, and boundary paths; assert behavior, not implementation details.
-- **Security** — input validation, authorization, no logged or committed secrets, dependency sanity. A suspected boundary violation goes to the [security-audit](../skills/security-audit/SKILL.md) candidate gate; this pass does not run that hunt.
+- **Security** — input validation, authorization, no logged or committed secrets, dependency sanity. A suspected boundary violation goes to the `security-audit` skill's candidate gate; this pass does not run that hunt.
 - **Performance** — flag only with measurement or a clear algorithmic concern; never micro-optimize in review.
-- **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention; comments and simplicity per [craft](../skills/quality/SKILL.md).
-- **Simplicity** — the least mechanism that works; flag it only where the reviewer can name what it buys ([craft](../skills/quality/SKILL.md)).
-- **Structure & reuse** — same logic knowledge in two places (diff copies: drifted sibling latent defect), module needing "and" describe itself, dependencies pointing outward into transport framework ([craft](../skills/quality/SKILL.md)).
+- **Readability & consistency** — single-purpose functions, minimally indented happy path, errors handled first, matches surrounding convention; comments and simplicity per the `quality` skill's Craft section.
+- **Simplicity** — the least mechanism that works; flag it only where the reviewer can name what it buys per the `quality` skill's Craft section.
+- **Structure & reuse** — same logic knowledge in two places (diff copies: drifted sibling latent defect), module needing "and" describe itself, dependencies pointing outward into transport framework per the `quality` skill's Craft section.
 
 ## Severity
 
