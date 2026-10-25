@@ -7,7 +7,7 @@ description: "Design or review a system's architecture: distil architecturally s
 
 Architecture is the set of trade-offs you can defend: requirements inform architecture inform technology, never in reverse; every significant choice names what it neglected, and every quality claim carries a measure. Domain language, design patterns, and diagrams are one discipline at different zoom levels.
 
-**When to load:** designing or reviewing a system or a structure-changing evolution; writing ADRs / HLDs / SADs / proposals; framing ASRs and non-functional requirements; choosing a pattern; shaping a domain glossary; selecting a GoF pattern; or rendering a system map. **Not for:** code-level craftsmanship, measured hot paths, or proving a build ([quality](../quality/SKILL.md)); the delivery lifecycle itself ([delivery](../delivery/SKILL.md)).
+**When to load:** designing or reviewing a system or a structure-changing evolution; writing ADRs / HLDs / SADs / proposals; framing ASRs and non-functional requirements; choosing a pattern; shaping a domain glossary; selecting a GoF pattern; or rendering a system map. **Not for:** code-level craftsmanship, measured hot paths, or proving a build (the `quality` skill); the delivery lifecycle itself (the `delivery` skill).
 
 ## Solution Architecture
 

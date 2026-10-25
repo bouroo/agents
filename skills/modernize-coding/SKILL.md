@@ -7,7 +7,7 @@ description: "Bring an existing project's code to its own declared ceiling — d
 
 "Modern" is a property of **the project you are working in**, not of a language release: the same construct is current in one repository and out of place in another. The question is never *is this the newest syntax?* but **what does this project use, and is this code behind it?**
 
-**When to load:** modernizing a codebase, reviewing a diff for outdated patterns, or writing new code into an existing project. Not for correctness or performance work — that is [craft](../quality/SKILL.md) / [performance](../quality/SKILL.md).
+**When to load:** modernizing a codebase, reviewing a diff for outdated patterns, or writing new code into an existing project. Not for correctness or performance work — that is the `quality` skill's Craft section / its Performance section.
 
 ## 1. Detect the project's ceiling
 

@@ -7,7 +7,7 @@ description: "Design and enforce RFC 9457 error responses for an HTTP API (super
 
 **Stance:** an HTTP error is a **contract**, not a message. RFC 9457 gives every failure one machine-readable shape — a `type` a client branches on, a `title` it renders, a `detail` naming this occurrence — so an API grows one error-handling code path instead of one per endpoint. The failure mode is the ad-hoc body: `{"error": "..."}` on one handler, a bare string on the next, a different key on a third.
 
-**When to load:** designing or reviewing an HTTP API's error responses; retrofitting an API that has no consistent error pattern; enforcing a standard across an existing surface. For the gates and evidence discipline this skill applies, load [craft](../quality/SKILL.md).
+**When to load:** designing or reviewing an HTTP API's error responses; retrofitting an API that has no consistent error pattern; enforcing a standard across an existing surface. For the gates and evidence discipline this skill applies, load the `quality` skill's Craft section.
 
 ## 1. Overview & Objectives
 

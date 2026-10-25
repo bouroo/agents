@@ -26,7 +26,7 @@ This split is the harness analogue of the wayfinder rule that decisions change o
 
 ## What may never self-modify
 
-- **Anchors.** A step that benefits from a rule may not rewrite the rule: spec clauses, the user's words, red tests, and captured evidence are read-only to the machinery (the [execution grammar's](../../execution/SKILL.md) anchor rules). Target changes route to the anchor's owner.
+- **Anchors.** A step that benefits from a rule may not rewrite the rule: spec clauses, the user's words, red tests, and captured evidence are read-only to the machinery (the `execution` skill's anchor rules). Target changes route to the anchor's owner.
 - **The evidence standard.** No evolution may weaken L1/L2/L3, the caps, or the audit questions — a gate may get stricter; loosening is a user decision (`AUTH:`).
 - **Verification's independence.** The role that validates an evolution may not be the role that proposes it — the same separation teamwork demands of implementer and auditor.
 
@@ -47,6 +47,6 @@ Every control is a bet that some failure keeps happening. When a stronger model 
 ## Cross-references
 
 - [quality](../SKILL.md) the GROW node this file works out; judging an evolution proposal is adversarial judging like any done report.
-- [execution](../../execution/SKILL.md) the anchor and cap grammar this cycle inherits.
+- the `execution` skill: the anchor and cap grammar this cycle inherits.
 
 Cross-session efforts keep their decisions one ticket at a time; doctrine keeps its changes one validated gate at a time.
