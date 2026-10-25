@@ -10,6 +10,28 @@ through 6.3.0 were retired in the 6.6.0 compaction. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.3.0:CHANGELOG.md` for the retired detail).
 
+## [7.8.0-beta.1] - 2026-10-25
+
+A skill is addressed by the name the runtime already knows, so an agent never has to resolve a path it cannot see.
+
+- **Skills are called by name.** Every skill reference in `AGENTS.md`, in the
+  four command workflows, and in the skill bodies now names the skill ("the
+  `quality` skill's Craft section") instead of linking `SKILL.md`. Some
+  harnesses cannot resolve a skill's file path — the doctrine may be installed
+  outside the repository, or the agent's working directory differs — while
+  every harness that loads a skill knows its name, so a name is the only
+  reference that always resolves.
+- **A section is named, not linked.** The topic that used to be the link text
+  (craft, verification, grilling, wayfinder, domain modeling) is now the
+  skill's section: "the `delivery` skill's Grilling section". The Repository
+  Map in `AGENTS.md` section 11 lists the nine skills by name, with their
+  bundled references, and without directory paths.
+- **The sibling construct is gone.** The 14 cross-skill path links inside the
+  skill bodies and the 3 inside two bundled reference files are converted too,
+  so no runtime-loaded file points at a skill by path.
+- **Nothing else moved.** No rule, gate, description, or trigger set changed;
+  `python3 scripts/check.py --all` stays green at 19/19.
+
 ## [7.7.0-beta.1] - 2026-10-24
 
 Sessions are the default unit of forgetting, so the doctrine now says where
