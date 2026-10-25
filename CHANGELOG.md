@@ -10,6 +10,22 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [7.8.1] - 2026-10-25
+
+The changelog carries the current line in full and the closed lines as one line each, so it says what changed recently without burying it.
+
+- **The 6.x line retires.** The 17 versions from `6.4.0-beta.1` to `6.8.0` move
+  into the retired list, one line each; the full text stays reachable in git
+  history (`git show v6.8.0:CHANGELOG.md`). The 7.x line keeps its detail,
+  because each release there documents a load-bearing doctrine change.
+- **The header states the boundary.** It names the new retirement range and
+  the tag that still carries the retired detail, instead of pointing at the
+  6.6.0 compaction that stopped at 6.3.0.
+- **No release section lost.** `scripts/release_notes.py --tag v7.8.0` still
+  extracts the stable release body verbatim from its kept section.
+
+Gates: check.py --all 19/19 PASS.
+
 ## [7.8.0] - 2026-10-25
 
 Skills ship stable: a skill is addressed by the name the runtime already
