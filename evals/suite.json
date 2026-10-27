@@ -156,12 +156,12 @@
           "description": "the load-bearing phrase 'confluence_update_page_section' survives a reorganize or condense of the skill"
         },
         {
-          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Target Field Name · M/O/C · Data Type · Source Field · Mapping Logic · Remark'",
+          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Target Field Name \u00b7 M/O/C \u00b7 Data Type \u00b7 Source Field \u00b7 Mapping Logic \u00b7 Remark'",
           "expect_exit": 0,
           "description": "the Field to Field Mapping column set matching the spec-page contract survives a reorganize or condense"
         },
         {
-          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Date · Update By · Description · Status'",
+          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Date \u00b7 Update By \u00b7 Description \u00b7 Status'",
           "expect_exit": 0,
           "description": "the Change logs column set matching the spec-page contract survives a reorganize or condense"
         },
@@ -479,6 +479,70 @@
           "cmd": "python3 scripts/check.py links",
           "expect_exit": 0,
           "description": "the repo map still links the agent and standalone surfaces it names"
+        }
+      ]
+    },
+    {
+      "id": "environment-clause-survives-doctrine-edits",
+      "prompt": "Tighten or reorganize the context-and-state section of the doctrine. The execution-environment rule must survive on both installed surfaces.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py environment",
+          "expect_exit": 0,
+          "description": "the execution-environment clause is present in AGENTS.md and in the standalone copy, so neither install treats a missing permission as a model failure"
+        },
+        {
+          "cmd": "python3 scripts/check.py standalone",
+          "expect_exit": 0,
+          "description": "the standalone copy still carries the manifesto's hard constraints after the edit"
+        }
+      ]
+    },
+    {
+      "id": "automation-layer-survives-doctrine-edits",
+      "prompt": "Restructure the delivery or execution sections. The automation-layer rule and its reference must stay reachable.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py automation",
+          "expect_exit": 0,
+          "description": "the automation-layer clause is present in both doctrines and on the execution skill"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the automation reference is named from its SKILL.md, so progressive disclosure reaches it"
+        }
+      ]
+    },
+    {
+      "id": "work-lands-on-a-task-branch",
+      "prompt": "Reword the hard constraints, the teamwork doctrine, or the lead and worker role agents. The rule that edits and commits never touch the default branch must survive on every surface that can reach a git repository.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py branch",
+          "expect_exit": 0,
+          "description": "the task-branch rule is present in both doctrines, the execution skill, and the lead and worker agents"
+        },
+        {
+          "cmd": "python3 scripts/check.py standalone",
+          "expect_exit": 0,
+          "description": "the standalone copy still carries the branch constraint alongside every other hard constraint"
+        }
+      ]
+    },
+    {
+      "id": "suite-runner-executes-the-evals",
+      "prompt": "Add or change an eval in the harness regression suite. The suite must still run green through its runner.",
+      "checks": [
+        {
+          "cmd": "python3 evals/run_suite.py",
+          "expect_exit": 0,
+          "description": "the runner executes every eval's objective checks and the suite's pass rate is green"
+        },
+        {
+          "cmd": "python3 scripts/check.py evals",
+          "expect_exit": 0,
+          "description": "the evals gate requires the runner to exist and the suite to be green"
         }
       ]
     }

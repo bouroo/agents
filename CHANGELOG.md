@@ -10,6 +10,54 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+
+## [7.9.0-beta.1] - 2026-10-27
+
+The shared setup adopts the general coding-agent practice for managing
+prompts, plans, skills, and workflows, closing the three gaps it left open:
+the execution environment, the automation layer, and session hygiene.
+
+- **The execution environment is a design decision.** `AGENTS.md` section 8
+  and the standalone copy now state that a run's capability — the root it
+  resolves paths against, what it may read and write, the build/test/lint
+  commands it can execute, the external systems it is connected to — is
+  decided before the model acts. A run that cannot locate the project, reach
+  a file, or run the check reports the environment's limits, not its own.
+  The `execution` skill's harness-design reference carries the four
+  categories and the diagnosis order.
+- **Automation is the layer above a skill.** A skill says how a workflow
+  runs; an automation says when it runs and how it keeps running. The new
+  `skills/execution/references/automation.md` states the unattended contract
+  (pre-declared scope, the check that gates the stop, the authority held by
+  a human) and ships a reusable template plus the failure modes. Both
+  doctrines carry the clause; an automated run ends local and emits
+  `PENDING:` rather than acting outward on its own.
+- **A session is a working context, not a transcript to keep growing.**
+  One task per session, a new session for a new line of investigation, and
+  a long session summarized rather than carried — stated in both doctrines.
+- **The harness regression suite runs.** `evals/run_suite.py` executes every
+  eval's objective checks and reports the pass rate, exiting non-zero when
+  a check misses its expected exit code. The `evals` gate now requires the
+  runner and a green suite, so a suite nobody runs cannot pass the gates.
+- **Three gates added.** `environment`, `automation`, and `branch` hold the
+  new clauses on every surface that carries them (manifesto, standalone copy,
+  execution skill, role agents), so no surface can silently lose one.
+- **Four evals added.** `environment-clause-survives-doctrine-edits`,
+  `automation-layer-survives-doctrine-edits`,
+  `work-lands-on-a-task-branch`, and `suite-runner-executes-the-evals` keep
+  the above from drifting.
+- **Work lands on a branch, never the trunk.** Users reported agents editing
+  on the default branch, leaving nothing to review and no merge request to
+  open. The hard constraints now forbid editing or committing on the branch
+  `origin/HEAD` points at (or the trunk the repository names): a task branch
+  is created first, unit worktrees are cut from it, and worktree branches
+  merge back into it. The `lead` and `worker` role agents say the same, so a
+  worker on the trunk stops and reports instead of editing. The `branch` gate
+  and the `work-lands-on-a-task-branch` eval hold the rule on all five
+  surfaces.
+
+Gates: `python3 scripts/check.py --all` 22/22 PASS; `python3 evals/run_suite.py` 74/74 = 1.00.
+
 ## [7.8.1] - 2026-10-25
 
 The changelog carries the current line in full and the closed lines as one line each, so it says what changed recently without burying it.

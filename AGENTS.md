@@ -57,6 +57,8 @@ Two rules: a stage exits only on its check — the **escape hatch** that halts t
 
 **Seven stages**, each exiting only on its check: **Intent** (`intent.md`) -> **Spec** (`spec.md` + ADRs) -> **Plan** (`PLAN.md` + `STATUS.md`) -> **Build** (diff + tests) -> **Test** (L1/L2/L3 evidence) -> **Release** (record + `AUTH:`) -> **Operate** (incident -> new intent). `Test -> Build` is the review back-edge; `Operate -> Intent` reopens the loop; skipping a stage requires naming why in the next artifact.
 
+**Automation is the layer above a skill** — it decides when a workflow runs, not how. Automate only a workflow that has proven itself interactively: declare the unattended run's scope, let the check gate its stop, and keep the authority with a human — an automated run ends local and emits `PENDING:` rather than posting, publishing, merging, or deleting on its own. Template and failure modes: the `execution` skill's automation reference.
+
 ### 4.1 Seats, not people
 
 Seven seats: **Originator** (files intent) · **Steward** (owns spec, domain language) · **Architect** (design review) · **Implementer** (executes plan) · **Verifier** (independent re-derivation) · **Approver** (human gate on outward/destructive/release steps) · **Operator** (maintains, reopens loop). One actor may hold several; **the Implementer never approves its own work**, **the Verifier is independent of what it judges**. Org roles: release manager -> Approver, auditor -> Verifier, on-call -> Operator. Approval is the human gate above the production stop, carried by the chain's `AUTH:`/`PENDING:` lines.
@@ -97,6 +99,8 @@ Run the cheapest check earliest; prefer computational sensors. Completion has th
 - **One task per session**; open a new investigation fresh, not atop this history.
 - **Corrected twice on one issue** -> the window is polluted: reset and rewrite the prompt carrying what you learned, never correct a third time.
 - **Results inconsistent on identical input** -> suspect **Environment Context** first (working directory, permissions, tool surface, integrations) before blaming reasoning; it decides what the agent *can* do, so it outranks reasoning as a suspect.
+- **A session is a working context, not a transcript to keep growing.** Unrelated tasks accumulate context and degrade the reasoning behind them, so one task per session; open a new line of investigation in a new session rather than piling changes onto the current one; when a session grows long, summarize the older history to keep the window cheap, and push what must survive to disk.
+- **The execution environment is a design decision, not a default:** where the run resolves paths, what it may read and write, which build/test/lint commands it can execute, and which external systems it is connected to. A run that cannot locate the project, reach a file, or run the check is reporting the environment's limits — fix the environment before blaming reasoning, and widen a permission deliberately rather than by accident.
 - **Place knowledge deliberately:** rules -> instruction memory; corrections -> learning memory; procedures -> skills; episodes -> retros; facts -> repo docs. Keep instruction and learning memory in separate files so accumulated experience cannot quietly rewrite policy. Precedence: organization > project-shared (versioned) > user > machine-local (never committed); a rule scoped to a path or role loads only where it applies, and delegated workers keep role-scoped memory. Write rules as checks rather than virtues, promote a repeated correction on its second occurrence, and prune what the repository already states. Layers, authoring, and troubleshooting: the `execution` skill's Memory section. **WIP 1:** finish and verify one unit before the next. **Clean exit:** startup verification passes, speculative edits reverted, next action stated.
 
 ## 9. Teamwork: Narrow Agents, Firm Orchestration
@@ -118,6 +122,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 - Never optimize without measurement.
 - Never put deterministic logic in the model.
 - Never leave a dirty checkout.
+- Never edit or commit on the default branch — what `origin/HEAD` points at, or the trunk the repository names (`main`, `master`, `develop`): create a task branch first (`feat/<slug>`, `fix/<slug>`, `docs/<slug>`), so the work lands as a merge request or pull request. Pushing it is outward: `AUTH:` first.
 - Never run a destructive or outward-reaching command without the user's explicit go-ahead; completing the task authorizes nothing beyond it, outward actions named in `PENDING:`.
 - Never let a proof chain terminate in anything but an anchor.
 - Never loop a failed call on identical arguments expecting different output — deterministic failures are terminal; only transient faults earn a backoff retry.
@@ -149,3 +154,5 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 Version history: git tags; release notes in [CHANGELOG](CHANGELOG.md).
 
 The context / control-flow / state / scope framing distills production-agent practice: Twelve-Factor Agents lineage from Anthropic, Cognition, and Intercom postmortems.
+
+The prompt / plan / skill / workflow framing follows the general coding-agent practice for managing those four nouns — the prompt carries the task, the plan the intent, the skill the method, the workflow the repetition — with the execution environment, the automation layer, and session discipline closing the three places a run's behavior otherwise drifts.

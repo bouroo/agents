@@ -22,8 +22,15 @@ Static gates over docs/skills plus the distribution layer:
     modernize       every modernize-coding adapter is present and version-pinned;
                     Go and Java claims match their toolchain's own local record
                     (GOROOT/api, JDK src.zip @since) of when each feature landed
-    evals           the harness regression suite is present and every eval is
-                    well-formed (id, prompt, mechanical checks)
+    evals           the harness regression suite is present, every eval is
+                    well-formed (id, prompt, mechanical checks), and the suite
+                    runs green
+    environment     the execution-environment clause survives on both installed
+                    surfaces (manifesto + standalone copy)
+    automation      the automation-layer clause survives on both installed
+                    surfaces and on the execution skill
+    branch          work lands on a task branch, never on the default branch,
+                    on every surface that can reach a git repository
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -39,6 +46,7 @@ doctrine, while installers/manifests are precisely where concrete hosts live.
 
 import argparse
 import json
+import os
 import pathlib
 import re
 import shutil
@@ -46,6 +54,12 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+# Marks a nested gate run. The evals gate shells out to the suite runner,
+# whose checks call this script again; the nested run verifies the suite's
+# shape and stops, so the recursion terminates.
+DEPTH_ENV = "AGENTS_EVAL_DEPTH"
 
 AGENTS_MD_BUDGET = 250
 
@@ -292,6 +306,25 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"instruction memory", re.IGNORECASE)),
         ("skills/execution/SKILL.md", re.compile(r"^## Memory$", re.MULTILINE)),
     ],
+    "environment": [
+        ("AGENTS.md", re.compile(r"execution environment is a design decision",
+                                 re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"execution environment is a design decision",
+                                            re.IGNORECASE)),
+    ],
+    "automation": [
+        ("AGENTS.md", re.compile(r"layer above a skill", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"layer above a skill", re.IGNORECASE)),
+        ("skills/execution/SKILL.md", re.compile(r"automation layer", re.IGNORECASE)),
+    ],
+    "branch": [
+        ("AGENTS.md", re.compile(r"Never edit or commit on the default branch")),
+        ("standalone/AGENTS.md", re.compile(r"Never edit or commit on the default branch")),
+        ("skills/execution/SKILL.md", re.compile(r"task branch cut from the default branch",
+                                                 re.IGNORECASE)),
+        ("agents/common/lead.md", re.compile(r"Never work on the default branch")),
+        ("agents/common/worker.md", re.compile(r"sits on the default branch")),
+    ],
 }
 
 
@@ -343,6 +376,44 @@ def g_memory() -> None:
     if _g_rule_surfaces("memory"):
         _add("PASS", "memory: rule present on "
                      f"{len(RULE_SURFACES['memory'])} canonical surface(s)")
+
+
+def g_environment() -> None:
+    """The execution-environment clause survives on both installed surfaces.
+
+    A run's capability is decided by its environment, not by its prompt, so
+    the rule that says so belongs in the always-loaded clause of both
+    doctrines -- otherwise half the installs read a missing permission as a
+    model failure.
+    """
+    if _g_rule_surfaces("environment"):
+        _add("PASS", "environment: rule present on "
+                     f"{len(RULE_SURFACES['environment'])} canonical surface(s)")
+
+
+def g_automation() -> None:
+    """The automation-layer clause survives on both doctrines and the skill.
+
+    Automation is the workflow layer above a skill, and its guard -- an
+    unattended run ends local and holds the authority with a human -- is
+    load-bearing wherever the clause appears.
+    """
+    if _g_rule_surfaces("automation"):
+        _add("PASS", "automation: rule present on "
+                     f"{len(RULE_SURFACES['automation'])} canonical surface(s)")
+
+
+def g_branch() -> None:
+    """Work lands on a task branch, never on the default branch.
+
+    Editing on the trunk leaves no diff to review and no merge request to open,
+    so every surface that can reach a git repository states the same rule: the
+    checkout starts on a task branch cut from the default branch, and unit
+    branches merge into it.
+    """
+    if _g_rule_surfaces("branch"):
+        _add("PASS", "branch: rule present on "
+                     f"{len(RULE_SURFACES['branch'])} canonical surface(s)")
 
 
 # The doctrine separates a clause from its qualifier with the EM-dash; the
@@ -875,6 +946,12 @@ def g_modernize() -> None:
 def g_evals() -> None:
     name = "evals"
     path = ROOT / "evals" / "suite.json"
+    runner = ROOT / "evals" / "run_suite.py"
+    if not runner.is_file():
+        _add("FAIL", f"{name}: evals/run_suite.py missing (a suite nobody "
+                     "runs cannot gate a merge)")
+        return
+    path = ROOT / "evals" / "suite.json"
     if not path.is_file():
         _add("FAIL", f"{name}: evals/suite.json missing (the harness "
                      "regression suite is a required artifact)")
@@ -919,8 +996,27 @@ def g_evals() -> None:
         _add("FAIL", f"{name}: " + "; ".join(errors[:10])
              + (" ..." if len(errors) > 10 else ""))
         return
+    if os.environ.get(DEPTH_ENV):
+        # A suite check calls `check.py evals`, which would call this runner,
+        # which would call the suite again. The nested gate verifies the
+        # suite's shape and stops there; the outer run reports the rate.
+        _add("PASS", f"{name}: {len(evals)} eval(s) well-formed "
+                     f"(id, prompt, mechanical checks); suite run nested")
+        return
+    try:
+        res = subprocess.run([sys.executable, str(runner)], cwd=ROOT,
+                             capture_output=True, text=True, timeout=600,
+                             env={**os.environ, DEPTH_ENV: "1"})
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        _add("FAIL", f"{name}: suite runner did not complete: {exc}")
+        return
+    if res.returncode != 0:
+        detail = "; ".join((res.stdout + res.stderr).strip().splitlines()[-6:])
+        _add("FAIL", f"{name}: suite is red: {detail}")
+        return
+    rate = res.stdout.strip().splitlines()[-1]
     _add("PASS", f"{name}: {len(evals)} eval(s) well-formed "
-                 f"(id, prompt, mechanical checks)")
+                 f"(id, prompt, mechanical checks); suite green: {rate}")
 
 
 SKILL_LINE_BUDGET = 500
@@ -1078,6 +1174,7 @@ STANDALONE_RULES = [
     "non-derivable", "exported symbol", "executable evidence",
     "optimize without measurement", "deterministic logic", "dirty checkout",
     "destructive", "proof chain", "identical arguments", "not read this session",
+    "edit or commit on the default branch",
 ]
 
 
@@ -1109,6 +1206,8 @@ GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
+         ("environment", g_environment), ("automation", g_automation),
+         ("branch", g_branch),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
          ("standalone", g_standalone)]
