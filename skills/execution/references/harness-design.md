@@ -61,6 +61,21 @@ Anything the system already knows — the date, the file path, the schema, the p
 
 Context the job needs often lives outside the repository — issue trackers, CI results, database schemas, API references, internal automation — and a protocol that exposes those systems as resources or tools (MCP being the common one) is how it arrives. Prefer the connected retrieval to a pasted excerpt: the boundary stays explicit, the retrieval is repeatable, and the trace shows what the agent actually read. This changes what the agent can do, so treat each connection as authority and exposure rather than free capability: scope it to the systems the job reads, keep write access narrower than read, and keep every result in the untrusted-input class the tool-surface rules above already bind — a fetched document or tool response is a claim to verify, never consent.
 
+## The execution environment defines what the agent can do
+
+Behavior is not the model's alone: the same agent produces different results under a different working directory, permission set, or command surface. Four categories decide what a run can do at all, and each is a design decision rather than a default to accept:
+
+- **Where the agent runs** — the project root it resolves paths against, and whether that root is the repository, a subproject, or a container. A wrong root produces a run that looks at the right files in the wrong place.
+- **What it may touch** — read and write permissions, the files it may modify, and the paths it must not. Narrow by default and widen deliberately; a permission widened "for this run" becomes the next run's inherited default.
+- **Which commands it may run** — the build, test, and lint surface. The check the agent must run is part of its environment: if the test command is not reachable, "run the tests" is an instruction the agent cannot obey.
+- **What it is connected to** — external tools and data sources (below). A connection is capability, exposure, and authority at once.
+
+Diagnose these before the model when a run behaves inconsistently: an agent that cannot locate the project directory, cannot read a file, or cannot run the test command is reporting the environment's limits, not its own.
+
+## The automation layer
+
+A skill says how a workflow runs; an automation says when it runs and how it keeps running. Automate only a workflow that has proven itself interactively, and keep the unattended run inside the same gates: pre-declared scope, the check that gates the stop, and a human holding the authority — an automated run ends local and emits `PENDING:` rather than acting outward on its own. The template and the failure modes: [automation](automation.md).
+
 ## Attribute the failure to its layer
 
 When a step fails, name the layer before patching: **reasoning** (the model decided wrongly), **tool interface** (it reached for the right action through a bad signature or description), **context** (the fact was absent, stale, or buried), or **control flow** (the graph routed wrongly, or a cap was too tight). The wrong-layer fix is a symptom patch — rewriting the prompt when the interface was ambiguous, or relaxing a check when the routing was wrong, leaves the cause in place. Diagnose per the verification standard, then patch the layer the evidence points to.

@@ -37,7 +37,8 @@ flowchart LR
 │   ├── execution/                     the execution-graph grammar: nodes, typed edges,
 │   │   └── references/                caps, anchors, shapes, cost; worked topologies;
 │   │                                  harness design: minimal-harness ladder, ACI,
-│   │                                  memory layers, external-system context
+│   │                                  memory layers, external-system context,
+│   │                                  the execution environment, automation
 │   ├── quality/                       craftsmanship, verification, evals, and
 │   │   └── references/                performance: the twelve commandments, evidence as
 │   │                                  anchors, the regression suite, measure-first;
@@ -71,6 +72,8 @@ flowchart LR
 ├── evals/                            the harness regression suite (CI-gated):
 │   ├── suite.json                    one realistic task per eval, objective checks
 │   ├── trigger.json                  labelled prompt set that measures descriptions
+│   ├── run_suite.py                  suite runner: executes the checks, reports the
+│   │                                pass rate, exits non-zero when a check is red
 │   └── run_triggers.py               trigger-rate runner (train/validation split)
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── .minimax-plugin/                   MiniMax Code plugin metadata
@@ -79,7 +82,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       nineteen deterministic gates (CI runs these)
+    ├── check.py                       twenty-two deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -160,11 +163,14 @@ python3 scripts/check.py --all
 | `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
 | `memory` | the memory rule (instruction memory separate from learning memory, written down rather than conversational) survives on both canonical surfaces (manifesto + execution) |
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
-| `evals` | the harness regression suite exists and is well-formed |
+| `environment` | the execution-environment clause survives on both installed surfaces (manifesto + standalone copy) |
+| `automation` | the automation-layer clause survives on both installed surfaces and on the execution skill |
+| `branch` | the task-branch rule survives on every surface that can reach a git repository (both doctrines, the execution skill, the lead and worker agents), so a run never edits or commits on the default branch |
+| `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all nineteen on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all twenty-two on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 ## Versioning
 
