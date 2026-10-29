@@ -38,7 +38,9 @@ flowchart LR
 │   │   └── references/                caps, anchors, shapes, cost; worked topologies;
 │   │                                  harness design: minimal-harness ladder, ACI,
 │   │                                  memory layers, external-system context,
-│   │                                  the execution environment, automation
+│   │                                  the execution environment, automation,
+│   │                                  runtime state (recording, attribution,
+│   │                                  recovery)
 │   ├── quality/                       craftsmanship, verification, evals, and
 │   │   └── references/                performance: the twelve commandments, evidence as
 │   │                                  anchors, the regression suite, measure-first;
@@ -82,7 +84,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       twenty-two deterministic gates (CI runs these)
+    ├── check.py                       twenty-three deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -165,12 +167,13 @@ python3 scripts/check.py --all
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `environment` | the execution-environment clause survives on both installed surfaces (manifesto + standalone copy) |
 | `automation` | the automation-layer clause survives on both installed surfaces and on the execution skill |
+| `state` | the runtime-state rule (proposed-validated-committed recording, evidence-tested attribution, named recovery boundary) survives on both doctrines and the execution skill |
 | `branch` | the task-branch rule survives on every surface that can reach a git repository (both doctrines, the execution skill, the lead and worker agents), so a run never edits or commits on the default branch |
 | `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all twenty-two on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all twenty-three on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 ## Versioning
 

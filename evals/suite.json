@@ -545,6 +545,22 @@
           "description": "the evals gate requires the runner to exist and the suite to be green"
         }
       ]
+    },
+    {
+      "id": "runtime-state-rule-survives-doctrine-edits",
+      "prompt": "Restructure the context/state doctrine or the execution skill. The rule that a run records state, localizes failures by evidence, and names a recovery boundary must survive.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py state",
+          "expect_exit": 0,
+          "description": "the runtime-state rule is present in both doctrines and on the execution skill"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the runtime-state reference is named from its SKILL.md, so progressive disclosure reaches it"
+        }
+      ]
     }
   ]
 }

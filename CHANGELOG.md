@@ -10,6 +10,40 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+Runtime state management, from the graph-engineering survey (arXiv:2608.21156):
+tasks and agents were structured, but what a run *recorded*, how a fault was
+*localized*, and where recovery *resumed* were left to memory and prose.
+
+- **State is recorded, not remembered.** `AGENTS.md` section 8 and the
+  standalone copy state that the state record carries evidence pointers and a
+  version, is proposed-validated-committed rather than asserted (a worker's
+  report stays a proposal until its check is re-run), is written by one owner
+  per file, and keeps append-only history with derived summaries so provenance
+  survives. The new `skills/execution/references/runtime-state.md`, named from
+  the skill's `## Runtime state` section, owns the record fields and the
+  visibility rule.
+- **Fault localization is evidence, not adjacency.** A recorded dependency
+  narrows the search and never proves a cause; the visible fault sits
+  downstream of where it started, so the cause is stated as a hypothesis and
+  tested outside the failing path, against the actor, transition, dependency,
+  and validation evidence each step left behind.
+- **Recovery names its boundary first.** Internal state replays; outward
+  effects — pushed, posted, deployed, deleted — compensate or wait for `AUTH:`,
+  and the boundary, corrective action, and resulting state are recorded.
+  Adaptation inside a run is not evolution: only a validated, versioned change
+  to the machinery is, and it is checked for generalization to the recorded
+  failures.
+- **Gated.** A new `state` gate pins the rule on both doctrines and the
+  execution skill (suite now 23 gates), the execution description's trigger
+  set gains three runtime-state prompts, and a new eval checks that the rule
+  and its reference survive a doctrine edit.
+
+Source: Feng et al., "Graph Engineering in the Era of LLM Agents: From
+Individual Intelligence to System Intelligence", arXiv:2608.21156v2, sections
+4.4 (runtime state), 4.5 (evolution), and 5.1 (evaluation confounds).
+
 
 ## [7.9.0-beta.1] - 2026-10-27
 

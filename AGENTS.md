@@ -95,6 +95,7 @@ Run the cheapest check earliest; prefer computational sensors. Completion has th
 ## 8. Context & State
 
 - **The repository is the system of record, not the conversation.** Execution state — current unit, done units with evidence pointers, pending gates, SCOPE — is checkpointed under `.agents/`, never narrative, so a fresh context resumes deterministically.
+- **Runtime state is recorded, localized, and recovered — never remembered.** The task and coordination graphs say what and who; a state record says what actually happened, with its evidence and its version, and it is **proposed, validated, then committed** — a worker's report is a proposal until the check is re-run. A visible fault surfaces steps downstream of its cause, so dependencies narrow the search but never prove it: state the cause as a hypothesis and test it against external evidence. Recovery names its **boundary** before repairing — internal state replays, outward effects (pushed, posted, deployed, deleted) do not and need compensation or human authority. Recovery is adaptation, not evolution; only a validated change to the machinery is GROW. The `execution` skill's Runtime State section owns the record fields, the attribution rules, and the recovery boundary.
 - **Keep the window small:** lazy-load skill bodies; add no compaction subsystem, retrieval store, or sub-agent fleet until a real failure demands it. A fresh window is the default, so a rule carried only in the conversation dies at compaction or session end: name what must survive (modified files, test commands) and write it to disk, because only disk reloads.
 - **One task per session**; open a new investigation fresh, not atop this history.
 - **Corrected twice on one issue** -> the window is polluted: reset and rewrite the prompt carrying what you learned, never correct a third time.
@@ -134,7 +135,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | --- | --- |
 | `AGENTS.md` | this manifesto |
 | `delivery` skill | lifecycle, artifact chain, grilling, wayfinder |
-| `execution` skill | graph grammar, multi-agent coordination, memory layers (+ bundled references: topologies, harness-design, memory) |
+| `execution` skill | graph grammar, multi-agent coordination, runtime state, memory layers (+ bundled references: topologies, harness-design, runtime-state, memory) |
 | `quality` skill | craftsmanship, gates, verification, evals, performance (+ bundled references: flowcharts, evolution, tactics) |
 | `architecture` skill | ASRs, SEI scenarios, patterns, ADRs, C4, domain language, maps |
 | `confluence` skill | Atlassian wikis (Rovo or mcp-atlassian) |
