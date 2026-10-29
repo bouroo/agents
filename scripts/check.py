@@ -325,6 +325,12 @@ RULE_SURFACES = {
         ("agents/common/lead.md", re.compile(r"Never work on the default branch")),
         ("agents/common/worker.md", re.compile(r"sits on the default branch")),
     ],
+    "state": [
+        ("AGENTS.md", re.compile(r"Runtime state is recorded, localized, and recovered")),
+        ("standalone/AGENTS.md",
+         re.compile(r"Runtime state is recorded, localized, and recovered")),
+        ("skills/execution/SKILL.md", re.compile(r"^## Runtime state$", re.MULTILINE)),
+    ],
 }
 
 
@@ -401,6 +407,19 @@ def g_automation() -> None:
     if _g_rule_surfaces("automation"):
         _add("PASS", "automation: rule present on "
                      f"{len(RULE_SURFACES['automation'])} canonical surface(s)")
+
+
+def g_state() -> None:
+    """The runtime-state rule survives on both doctrines and the skill.
+
+    A run's state record -- proposed, validated, committed, and localized by
+    evidence -- is what lets a fresh context resume and a fault be traced, so
+    the rule is stated where the doctrine is always loaded and where the graph
+    grammar lives.
+    """
+    if _g_rule_surfaces("state"):
+        _add("PASS", "state: rule present on "
+                     f"{len(RULE_SURFACES['state'])} canonical surface(s)")
 
 
 def g_branch() -> None:
@@ -1207,7 +1226,7 @@ GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
          ("environment", g_environment), ("automation", g_automation),
-         ("branch", g_branch),
+         ("state", g_state), ("branch", g_branch),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
          ("standalone", g_standalone)]

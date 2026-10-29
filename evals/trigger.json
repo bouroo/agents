@@ -83,7 +83,10 @@
         {"query": "what's the ADR template?", "should_trigger": false},
         {"query": "our project rules keep getting ignored between sessions — where are they supposed to live?", "should_trigger": true},
         {"query": "can the agent read our issue tracker and CI results directly instead of me pasting them?", "should_trigger": true},
-        {"query": "find all callers of this function", "should_trigger": false}
+        {"query": "find all callers of this function", "should_trigger": false},
+        {"query": "the run died halfway through the migration — how do I resume without redoing what already passed?", "should_trigger": true},
+        {"query": "the failing test is three steps downstream of where the bad value entered — how do I find the actual cause?", "should_trigger": true},
+        {"query": "should agents keep a ledger or just remember what they did in the conversation?", "should_trigger": true}
       ],
       "validation": [
         {"query": "how do I write a spawn brief a worker can actually act on?", "should_trigger": true},
