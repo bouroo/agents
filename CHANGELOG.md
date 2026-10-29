@@ -10,7 +10,7 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [7.9.0-beta.2] - 2026-10-29
 
 Runtime state management, from the graph-engineering survey (arXiv:2608.21156):
 tasks and agents were structured, but what a run *recorded*, how a fault was
