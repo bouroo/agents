@@ -24,10 +24,10 @@ Rovo write tools surface only when the OAuth grant carries write scopes and the 
 
 Prefer what is already reachable. When both remote options are available, **default to the hosted mcp-atlassian endpoint** (one URL, full CRUD, no per-client OAuth) and add Rovo only for the graph/read surface the task needs. Fall back to local stdio only when neither remote endpoint is reachable.
 
-**mcp-atlassian, hosted (default).** Register the streamable-HTTP endpoint and follow the instance's docs for its auth header (Cloud = Atlassian API token, Server/DC = PAT; e.g. <https://mcp-atlassian.soomiles.com/docs>):
+**mcp-atlassian, hosted (default).** Register the streamable-HTTP endpoint your own deployment exposes and follow its docs for the auth header (Cloud = Atlassian API token, Server/DC = PAT). A hosted example is the project's own <https://github.com/sooperset/mcp-atlassian>:
 
 ```json
-{ "mcpServers": { "mcp-atlassian": { "url": "https://mcp-atlassian.soomiles.com/mcp" } } }
+{ "mcpServers": { "mcp-atlassian": { "url": "https://<your-mcp-atlassian-host>/mcp" } } }
 ```
 
 **Rovo (add for reads/graph).** Register the endpoint as an HTTP MCP server in any MCP-compatible client; the hands-off path is Atlassian's self-setup prompt, verbatim:
@@ -83,9 +83,9 @@ Each server round-trips a different format:
 - **Rovo: `html` contentFormat** — round-trip safe and the only form the remote server accepts; legacy storage-format `<ac:structured-macro>` markup is rejected. Panels/status/expands/layouts use Confluence-HTML data-type nodes — follow the editor contract, never raw wiki markup.
 - **mcp-atlassian: `content_format: storage`** (raw XHTML) for macro-bearing pages; `wiki` for quick structural pages; `markdown` (default) only for simple content. On update pass the current `title` (a different title renames) and set `version_comment` — versions bump server-side. `confluence_update_page_section` (heading_text + new_content) rewrites one section's body without touching the rest — lowest-blast-radius path for large pages.
 
-Rules paid for by real breakage (both servers). Each trigger below names its failure mode; the symptom, cause, and defense live in
-[references/writing-failure-modes.md](references/writing-failure-modes.md), and the
-endpoint/spec page contract in [references/page-template.md](references/page-template.md):
+Rules paid for by real breakage (both servers). Each trigger below names its failure mode; when one fires, read
+[references/writing-failure-modes.md](references/writing-failure-modes.md) for the symptom, cause, and defense, and read
+[references/page-template.md](references/page-template.md) when authoring an endpoint or spec page for its fixed contract:
 
 - **Collapsed macro signatures are rendered form, never source** — a read returns
   `wide4000json{`, never the macro body; re-fence every sample you re-author.

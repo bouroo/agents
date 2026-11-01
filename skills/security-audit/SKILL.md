@@ -57,7 +57,7 @@ Any outward or irreversible step needs `AUTH:` (§3) — the user's own words au
 
 ## Hunting
 
-Coverage units are **entry surface × boundary × attack class**, never files. [`references/attack-classes.md`](references/attack-classes.md) lists the classes, each domain's rules for choosing them, and what is not a finding; every unit traces untrusted input from its entry point toward a dangerous sink.
+Coverage units are **entry surface × boundary × attack class**, never files. When choosing which classes to hunt, read [`references/attack-classes.md`](references/attack-classes.md) — it lists the classes, each domain's rules for choosing them, and what is not a finding; every unit traces untrusted input from its entry point toward a dangerous sink.
 
 Stay solo for a focused review. Fan out when coverage justifies it (§9, the `execution` skill's Teamwork section): one hunter per unit with no shared file, then an agent that did *not* find a candidate re-derives it before it reaches `confirmed` (the judge protocol in the `quality` skill's Verification section). A hunter's report is testimony; independent re-derivation is evidence.
 

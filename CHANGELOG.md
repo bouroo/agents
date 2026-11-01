@@ -10,6 +10,47 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+Skill-authoring conformance with the Agent-Skills best-practices guidance: the
+gates now hold the shape the guidance describes, and the places where the
+repository only appeared to follow it are fixed.
+
+- **Bundled references must state their load condition.** The `references` gate
+  already required every `references/` file to be named from its `SKILL.md`;
+  naming alone defers nothing, because an unconditioned "details:
+  references/x.md" is context the run either pays for every turn or never
+  finds. The gate now requires the link's paragraph to carry the condition that
+  sends the reader there, and 46 links across eight skills were rewritten to
+  say *when* (plus one already-correct link preserved). `AGENTS.md` section 8
+  and the `quality` skill's Evals section state the rule.
+- **Frontmatter accepts the whole spec.** The gate whitelisted only `name` and
+  `description`, so a spec-legal `compatibility`, `license`, or `metadata` key
+  would fail it; all six spec keys are now accepted, `compatibility` is
+  length-checked at 500, and the parser ignores indented map entries under
+  `metadata:` instead of reading them as top-level fields.
+- **Skills no longer repeat their description in the body.** `architecture`,
+  `modernize-coding`, and `problem-details` each carried a `**When to load:**`
+  paragraph restating the frontmatter the host already loaded; each is replaced
+  by a one-line scope boundary against the neighbouring skill.
+- **The installer stops publishing machine-local skills.** It linked the whole
+  `skills/` directory into every host, which carried the untracked
+  `skills/.system/` tree (a coding CLI's own runtime skills) into nine hosts'
+  skill directories. Placement is now per shipped skill, dot-directories are
+  skipped, a legacy whole-directory link is migrated, `uninstall` removes the
+  per-skill links and only then the emptied directory, and `status` reports
+  `skills=ok (9/9)` instead of a single link.
+- **The `confluence` skill no longer hardcodes a third-party MCP host** as the
+  default endpoint; it names the upstream project and takes the deployment's
+  own URL.
+- **A negated trigger no longer passes the `descriptions` gate.** "Do not use
+  when X" matched the trigger regex while saying the opposite, so a description
+  with no positive half read as valid; the gate now detects the negating words
+  immediately before the clause.
+- **New eval** `bundled-reference-states-its-load-condition` (suite: 31 evals,
+  23 gates), and the four gates missing from `check.py`'s own docstring and the
+  README table are documented.
+
 ## [7.9.0-beta.2] - 2026-10-29
 
 Runtime state management, from the graph-engineering survey (arXiv:2608.21156):

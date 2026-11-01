@@ -5,6 +5,13 @@ Static gates over docs/skills plus the distribution layer:
 
     budget          AGENTS.md stays within its line budget (the concision charter)
     frontmatter     every skill/command carries valid Agent-Skills-style metadata
+    descriptions    every description carries a trigger clause and a boundary
+    skillbudget     every skill body stays within 500 lines / 5000 tokens and
+                    every command within 120 lines, so a body loads whole
+    references      every bundled reference is named from its SKILL.md on a
+                    stated load condition, so progressive disclosure fires
+    triggers        the description-trigger set is present, labelled, split
+                    train/validation, and large enough to measure a description
     links           every relative Markdown link resolves to an existing file;
                     a '#' anchor fragment in any relative target fails
     agnostic        core doctrine is free of host-binding tokens
@@ -64,7 +71,12 @@ DEPTH_ENV = "AGENTS_EVAL_DEPTH"
 AGENTS_MD_BUDGET = 250
 
 KEBAB_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
-ALLOWED_KEYS = {"name", "description"}
+# The Agent Skills frontmatter contract, whole: the two required keys plus the
+# optional ones a host may read. Rejecting a spec-legal key would make compliant
+# metadata (an environment requirement, a license) unrepresentable.
+ALLOWED_KEYS = {"name", "description", "license", "compatibility", "metadata",
+                "allowed-tools"}
+COMPATIBILITY_MAX = 500
 
 # Host-binding tokens forbidden in core doctrine. A dotdir or host config
 # filename is an unambiguous signal of a host leak into an agnostic file.
@@ -118,6 +130,14 @@ HOST_SCAN_SKILLS = sorted(p for p in (ROOT / "skills").rglob("*.md")
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 
+# A bundled reference loads on demand, so its link must name the condition that
+# sends the reader there ("read this if the API returns non-200"). A conditional
+# word in the same paragraph is the shape test; whether the condition is the
+# right one stays a judgment call.
+LOAD_CUE_RE = re.compile(
+    r"\b(when|whenever|if|before|after|unless|once|whether|while|until|"
+    r"because|for|on)\b", re.IGNORECASE)
+
 _msgs: list[tuple[str, str]] = []
 
 
@@ -168,6 +188,10 @@ def _frontmatter(path: pathlib.Path) -> tuple[dict, list[str], bool]:
     lines = []
     fields: dict = {}
     for line in text[3:end].splitlines():
+        # An indented line belongs to the mapping under the previous key
+        # (`metadata:` takes a string map); it is not a top-level field.
+        if line[:1].isspace():
+            continue
         s = line.strip()
         if not s or s.startswith("#") or ":" not in s:
             continue
@@ -222,6 +246,10 @@ def g_frontmatter() -> None:
         unknown = set(fields) - ALLOWED_KEYS
         if unknown:
             problems.append(f"unknown keys {sorted(unknown)}")
+        compat = fields.get("compatibility")
+        if compat is not None and not 1 <= len(compat) <= COMPATIBILITY_MAX:
+            problems.append(f"compatibility length {len(compat)} not in "
+                            f"1..{COMPATIBILITY_MAX}")
         unsafe = [ln.split(":", 1)[0].strip() for ln in lines
                   if (raw := ln.split(":", 1)[1].strip())
                   and ": " in raw and raw[0] not in "\"'"]
@@ -1110,6 +1138,11 @@ TRIGGER_RE = re.compile(r"\b(use (when|for|before|to|it)|load (before|when)|reac
 BOUNDARY_RE = re.compile(r"\b(not for|never|only when|only on|except)\b", re.IGNORECASE)
 
 
+def negated(prefix: str) -> bool:
+    """True when the words immediately before a trigger clause negate it."""
+    return bool(re.search(r"\b(do not|don't|never|not)\s*$", prefix, re.IGNORECASE))
+
+
 def g_descriptions() -> None:
     """Every description carries a trigger clause and a boundary.
 
@@ -1139,8 +1172,13 @@ def g_descriptions() -> None:
         rel = path.relative_to(ROOT)
         desc = _frontmatter(path)[0].get("description", "")
         missing = []
-        if not TRIGGER_RE.search(desc):
+        trig = TRIGGER_RE.search(desc)
+        if not trig:
             missing.append("no trigger clause")
+        elif negated(desc[:trig.start()]):
+            # "Do not use when X" is a boundary wearing a trigger's words, so
+            # the positive half is missing even though the regex matched.
+            missing.append("trigger clause negated")
         if not BOUNDARY_RE.search(desc):
             missing.append("no boundary")
         if missing:
@@ -1153,16 +1191,23 @@ def g_descriptions() -> None:
 
 
 def g_references() -> None:
-    """Every bundled reference is reachable from its SKILL.md.
+    """Every bundled reference is reachable, and reached on a stated condition.
 
     A reference file no SKILL.md names is dead weight that still ships: the
     agent never learns it exists, so the material is invisible while the
     repository carries it. Naming by basename is the test, because that is what
     a loader instruction looks like ("read references/api-errors.md when ...").
+
+    Naming is only half. Progressive disclosure pays off when the agent loads a
+    file *at the moment it is needed*, so a link alone defers nothing: an
+    unconditional "details: references/x.md" either loads on every run or never
+    loads at all, depending on how the reader guesses. The paragraph carrying a
+    link must therefore also carry its load condition.
     """
     name = "references"
     checked = 0
     orphans: list[str] = []
+    unconditioned: list[str] = []
     for skill in sorted((ROOT / "skills").glob("*/SKILL.md")):
         if not _no_dotdir(skill):
             continue
@@ -1175,10 +1220,20 @@ def g_references() -> None:
             if bundled.name not in body:
                 orphans.append(f"{bundled.relative_to(ROOT)} not named in "
                                f"{skill.relative_to(ROOT)}")
-    if orphans:
-        _add("FAIL", f"{name}: " + "; ".join(orphans))
+        for para in re.split(r"\n\s*\n", body):
+            if LINK_RE.search(para) and "references/" in para \
+                    and not LOAD_CUE_RE.search(para):
+                lead = " ".join(para.split())[:60]
+                unconditioned.append(f"{skill.relative_to(ROOT)}: {lead}...")
+    problems = [f"{x}" for x in orphans]
+    if unconditioned:
+        problems.append(f"{len(unconditioned)} reference link(s) with no load "
+                        f"condition: " + "; ".join(unconditioned[:6]))
+    if problems:
+        _add("FAIL", f"{name}: " + "; ".join(problems))
         return
-    _add("PASS", f"{name}: {checked} bundled reference(s) named from their SKILL.md")
+    _add("PASS", f"{name}: {checked} bundled reference(s) named from their "
+                 f"SKILL.md on a stated load condition")
 
 
 # The standalone manifesto is a second full copy of the rules, installed alone

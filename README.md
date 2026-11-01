@@ -150,10 +150,10 @@ python3 scripts/check.py --all
 | Gate | Enforces |
 | --- | --- |
 | `budget` | `AGENTS.md` stays within its line budget (the concision charter) |
-| `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata |
+| `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata, the spec's required and optional keys accepted, `compatibility` length-bounded |
 | `descriptions` | every description carries an imperative trigger clause and a boundary naming what it is not for |
 | `skillbudget` | every skill body stays within 500 lines / 5000 tokens and every command within 120 lines |
-| `references` | every bundled reference is named from its skill, so progressive disclosure reaches it |
+| `references` | every bundled reference is named from its skill **and** its link states the condition that loads it, so progressive disclosure actually fires |
 | `links` | every relative Markdown link resolves |
 | `agnostic` | core doctrine is free of host-binding tokens |
 | `manifests` | marketplace manifests parse; version fields agree across files |
