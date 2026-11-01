@@ -51,7 +51,7 @@ Twelve commandments, plus the artifact gates every report owes.
 
 **Diagnosis.** Reason backward from the observed failure to its root cause before writing the next change; attribute the failure to its layer — reasoning, tool interface, context, or control flow — because the wrong-layer fix is a symptom patch by construction. Contradiction routes backward, never forward: a surprise at PROVE re-enters at THINK.
 
-**GROW.** A recurring failure is a **harness problem, not a prompt problem**: durable reliability updates the surrounding system, not the wording. The governed self-evolution cycle — instrument, propose, validate, commit — edits the machinery future runs execute; anchors stay read-only and the evidence standard may tighten only, never loosen. The full cycle, cadence, and failure modes: [evolution](references/evolution.md).
+**GROW.** A recurring failure is a **harness problem, not a prompt problem**: durable reliability updates the surrounding system, not the wording. The governed self-evolution cycle — instrument, propose, validate, commit — edits the machinery future runs execute; anchors stay read-only and the evidence standard may tighten only, never loosen. When running that cycle, read [evolution](references/evolution.md) for its cadence and failure modes.
 
 ## Verification Loop
 
@@ -79,10 +79,13 @@ The doctrine is configuration an agent executes, so it is regression-tested like
 - **A regression blocks the merge** until the change is fixed or the eval is deliberately retired with a reason. Never loosen a check so that a change passes — a metric edited by the party it measures. The author of a change never writes the check that judges it.
 - **Unattended:** the check gates the stop; the tool surface is pre-scoped; and authority still terminates in a human — a scheduled run ends local and emits `PENDING:`, with the `AUTH:` gate unrelaxed. Autonomy is a degree of attention, never a degree of authority.
 - **GROW's proof:** run the suite before and after an evolution. Pair it with the Kirby Effect — run the suite with a control removed on each model upgrade, and cut what it passes without.
+- **Separate the system's gain from the model's.** A pass-rate rise after adding agents, tools, retries, or context proves nothing on its own: a stronger model, a longer window, or more compute produces the same curve. Hold the budget fixed (same model, same token and retry ceiling), and when a structural change is the claim, ablate it — run the suite with the structure removed and require the delta to disappear. A gain that survives only at a larger budget is a purchase, not an improvement.
 
 **Descriptions are gated by measurement, not by prose.** A skill's `description` is the entire triggering decision — the host loads nothing else before deciding whether the skill applies — so it is the one field where wording is behavior. Two halves are mandatory: a **trigger clause** phrased as an instruction ("Use when …") naming the user intents and phrasings that apply, including asks that never name the domain; and a **boundary** ("Not for …") naming the near-miss another skill owns. Widen until the positives fire; sharpen until the near-misses stay quiet; both halves are asserted by the `descriptions` gate, and whether the wording actually works is measured, never argued.
 
 **Trigger evals hold a labelled query set with a held-out split.** `evals/trigger.json` carries, per skill, 8-10 should-trigger and 6-8 should-not-trigger prompts written the way a user writes them — file paths, casual phrasing, the need stated without the domain word, buried inside a larger ask — with near-misses as negatives, since an obviously irrelevant negative tests nothing. Run each 3 times and score a **trigger rate** (`evals/run_triggers.py`): positives pass above the threshold, negatives below. Edit from **train** failures only; **validation** is scored, never tuned on, and the best iteration is chosen by its validation rate — an earlier draft that generalizes beats a later one fitted to the queries.
+
+**Bundled references load on a stated condition.** A `SKILL.md` body loads whole, so a bundled file earns its place only when the link says *when* to open it ("read `references/api-errors.md` if the API returns non-200"); an unconditioned "details: references/x.md" is context the run either pays for every turn or never finds. Keep the condition in the link's paragraph — the `references` gate holds that shape.
 
 
 ## Performance
@@ -91,11 +94,11 @@ Optimize only after correctness holds, and only by measurement. Every optimizati
 
 **The measure-first cycle: Define, Benchmark, Diagnose, Improve, Compare.** Define one target metric (latency, throughput, memory, CPU) and its target value; benchmark one function at a time and capture the baseline to a numbered file; diagnose by ruling out external bottlenecks first, then route the signal; improve ONE change at a time; compare with a statistical comparator and paste the delta. The artifact is the evidence; the narrative is not.
 
-**Rule out external bottlenecks first.** When profiling says the time is not yours to move — a slow query, an upstream span, blocked workers — fix that component and re-profile; local tuning cannot move the number. Sensors and per-finding fixes: [measurement](references/measurement.md).
+**Rule out external bottlenecks first.** When profiling says the time is not yours to move — a slow query, an upstream span, blocked workers — fix that component and re-profile; local tuning cannot move the number. Read [measurement](references/measurement.md) when you need its sensors or a per-finding fix.
 
 **Route the signal.** Time goes to one of four places: allocation churn (pool, preallocate known sizes, reduce boxing/reflection), lock contention (bound concurrency, share immutably, atomics over locks), syscall count (buffer, batch, tune transports, cache repeated work), data copying (zero-copy views, stream, pass references). Cheap overrides first: wrong algorithm, repeated expensive work, slow upstream queries.
 
-**Exit.** The cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move — report that and stop. Never keep an optimization the evidence does not support. Benchmark hygiene and per-overhead-source countermeasures: [measurement](references/measurement.md), [tactics](references/tactics.md); the same doctrine as executable decision charts: [flowcharts](references/flowcharts.md).
+**Exit.** The cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move — report that and stop. Never keep an optimization the evidence does not support. When a benchmark needs hygiene, read [measurement](references/measurement.md) and [tactics](references/tactics.md) for the per-overhead-source countermeasures; the same doctrine as executable decision charts is in [flowcharts](references/flowcharts.md).
 
 ## Comments
 

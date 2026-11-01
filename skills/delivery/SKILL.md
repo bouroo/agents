@@ -35,16 +35,16 @@ Implementation is the agent's; approval is not. Human judgment concentrates at t
 
 An artifact an execution session must **resume from** needs a **deterministic shape**: same sections in the same order, same vocabulary for the same things. Plans only humans read may stay prose. Three durable shapes belong to Intent, Spec, and Plan — `intent.md`, `spec.md`, and `PLAN.md` + its sibling `STATUS.md` ledger; `<plans-root>/<feature-slug>/` (kebab-case) holds the chain, and the filename is invariant.
 
-The templates, the shared vocabulary (`WPn`, `DONE_WHEN`, `PENDING`, the §0 `INTENT` gate), the `STATUS.md` ledger rules, and the drift sweep for an existing plan live in [artifact-shapes](references/artifact-shapes.md). The failure modes all four faces prevent are tabulated in [common-mistakes](references/common-mistakes.md).
+The templates, the shared vocabulary (`WPn`, `DONE_WHEN`, `PENDING`, the §0 `INTENT` gate), the `STATUS.md` ledger rules, and the drift sweep for an existing plan live in [artifact-shapes](references/artifact-shapes.md) — read it when you are about to write or resume an `intent.md`, `spec.md`, `PLAN.md`, or `STATUS.md`. When a plan, spec, or handoff feels wrong but you cannot name why, the failure modes all four faces prevent are tabulated in [common-mistakes](references/common-mistakes.md).
 
 ## Grilling
 
 Interview the user until you reach shared understanding of a plan, decision, or idea — the technique behind the manifesto's plan-first intake route, ambiguity drained through conversation and never through guessing. Map the decision space as a **design tree** and work it in **rounds**: each round asks the whole **frontier** — every question whose prerequisites are settled — numbering each question and giving a recommended answer, then stops and waits. Facts are the agent's to look up; only decisions reach the user.
 
-The round template, the fact-versus-decision dispatch, and the completion rule: [grilling](references/grilling.md).
+Read [grilling](references/grilling.md) when a round needs its template, the fact-versus-decision dispatch, or the completion rule.
 
 ## Wayfinder
 
 A loose idea too big for one agent session becomes a **map** — one issue labelled **`wayfinder:map`** whose child **decision tickets** are questions resolved one per session until the route is clear.
 
-The map anatomy, ticket types (Research / Prototype / Grilling / Task, AFK / HITL), the fog-of-war rules, and the resolver and charting invocation halves: [wayfinder](references/wayfinder.md).
+Read [wayfinder](references/wayfinder.md) when an effort outgrows one session and needs the map anatomy, ticket types (Research / Prototype / Grilling / Task, AFK / HITL), the fog-of-war rules, and the resolver and charting invocation halves.

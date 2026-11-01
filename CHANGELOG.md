@@ -10,6 +10,81 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [7.9.0-beta.3] - 2026-11-01
+
+Skill-authoring conformance with the Agent-Skills best-practices guidance: the
+gates now hold the shape the guidance describes, and the places where the
+repository only appeared to follow it are fixed.
+
+- **Bundled references must state their load condition.** The `references` gate
+  already required every `references/` file to be named from its `SKILL.md`;
+  naming alone defers nothing, because an unconditioned "details:
+  references/x.md" is context the run either pays for every turn or never
+  finds. The gate now requires the link's paragraph to carry the condition that
+  sends the reader there, and 46 links across eight skills were rewritten to
+  say *when* (plus one already-correct link preserved). `AGENTS.md` section 8
+  and the `quality` skill's Evals section state the rule.
+- **Frontmatter accepts the whole spec.** The gate whitelisted only `name` and
+  `description`, so a spec-legal `compatibility`, `license`, or `metadata` key
+  would fail it; all six spec keys are now accepted, `compatibility` is
+  length-checked at 500, and the parser ignores indented map entries under
+  `metadata:` instead of reading them as top-level fields.
+- **Skills no longer repeat their description in the body.** `architecture`,
+  `modernize-coding`, and `problem-details` each carried a `**When to load:**`
+  paragraph restating the frontmatter the host already loaded; each is replaced
+  by a one-line scope boundary against the neighbouring skill.
+- **The installer stops publishing machine-local skills.** It linked the whole
+  `skills/` directory into every host, which carried the untracked
+  `skills/.system/` tree (a coding CLI's own runtime skills) into nine hosts'
+  skill directories. Placement is now per shipped skill, dot-directories are
+  skipped, a legacy whole-directory link is migrated, `uninstall` removes the
+  per-skill links and only then the emptied directory, and `status` reports
+  `skills=ok (9/9)` instead of a single link.
+- **The `confluence` skill no longer hardcodes a third-party MCP host** as the
+  default endpoint; it names the upstream project and takes the deployment's
+  own URL.
+- **A negated trigger no longer passes the `descriptions` gate.** "Do not use
+  when X" matched the trigger regex while saying the opposite, so a description
+  with no positive half read as valid; the gate now detects the negating words
+  immediately before the clause.
+- **New eval** `bundled-reference-states-its-load-condition` (suite: 31 evals,
+  23 gates), and the four gates missing from `check.py`'s own docstring and the
+  README table are documented.
+
+## [7.9.0-beta.2] - 2026-10-29
+
+Runtime state management, from the graph-engineering survey (arXiv:2608.21156):
+tasks and agents were structured, but what a run *recorded*, how a fault was
+*localized*, and where recovery *resumed* were left to memory and prose.
+
+- **State is recorded, not remembered.** `AGENTS.md` section 8 and the
+  standalone copy state that the state record carries evidence pointers and a
+  version, is proposed-validated-committed rather than asserted (a worker's
+  report stays a proposal until its check is re-run), is written by one owner
+  per file, and keeps append-only history with derived summaries so provenance
+  survives. The new `skills/execution/references/runtime-state.md`, named from
+  the skill's `## Runtime state` section, owns the record fields and the
+  visibility rule.
+- **Fault localization is evidence, not adjacency.** A recorded dependency
+  narrows the search and never proves a cause; the visible fault sits
+  downstream of where it started, so the cause is stated as a hypothesis and
+  tested outside the failing path, against the actor, transition, dependency,
+  and validation evidence each step left behind.
+- **Recovery names its boundary first.** Internal state replays; outward
+  effects — pushed, posted, deployed, deleted — compensate or wait for `AUTH:`,
+  and the boundary, corrective action, and resulting state are recorded.
+  Adaptation inside a run is not evolution: only a validated, versioned change
+  to the machinery is, and it is checked for generalization to the recorded
+  failures.
+- **Gated.** A new `state` gate pins the rule on both doctrines and the
+  execution skill (suite now 23 gates), the execution description's trigger
+  set gains three runtime-state prompts, and a new eval checks that the rule
+  and its reference survive a doctrine edit.
+
+Source: Feng et al., "Graph Engineering in the Era of LLM Agents: From
+Individual Intelligence to System Intelligence", arXiv:2608.21156v2, sections
+4.4 (runtime state), 4.5 (evolution), and 5.1 (evaluation confounds).
+
 
 ## [7.9.0-beta.1] - 2026-10-27
 

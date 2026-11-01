@@ -7,7 +7,9 @@
 #
 # Per host it installs:
 #   AGENTS.md -> <instruction file>   (the manifesto, renamed per host)
-#   skills/   -> skills/              (whole directory, when the host has one)
+#   skills/<name>/ -> skills/<name>/   (per skill; dot-directories skipped, since
+#                                       a CLI's own skills/.system/ is that
+#                                       tool's machine state, not our doctrine)
 #   commands/ -> <commands dir>       (when the host surfaces custom commands)
 #   agents/   -> agents/              (per-file agent definitions)
 #
@@ -208,6 +210,55 @@ place() {
   fi
 }
 
+# skill_dirs - the skill directories this repository actually ships.
+# A dot-directory under skills/ is machine-local runtime state (a coding CLI
+# drops its own skills into skills/.system/), never doctrine: linking the whole
+# directory would install another tool's private skill set into every host.
+skill_dirs() {
+  local d
+  for d in "$REPO_DIR/$SKILLS_DIR"/*/; do
+    [[ -d "$d" ]] || continue
+    [[ "$(basename "$d")" == .* ]] && continue
+    printf '%s\n' "${d%/}"
+  done
+}
+
+# place_skills <skills-dir> - install each shipped skill into the host's
+# skills directory. Per-skill placement, not one directory link: the host's
+# skills directory is shared territory, and a link of the whole repository
+# skills/ tree would both publish untracked dot-directories and take over any
+# skill the user already keeps there.
+place_skills() {
+  local dest_dir="$1" src
+  if [[ -L "$dest_dir" ]]; then
+    case "$(readlink "$dest_dir")" in
+      "$REPO_DIR"/*)
+        [[ "$DRY_RUN" == "1" ]] || { rm "$dest_dir"; mkdir -p "$dest_dir"; }
+        log "  ($SKILLS_DIR/) migrated legacy dir link $dest_dir -> per-skill placement"
+        ;;
+      *)
+        log "  ($SKILLS_DIR/) SKIP: $dest_dir symlink $(readlink "$dest_dir") (not ours) (migrate manually)"
+        return 0
+        ;;
+    esac
+  fi
+  while IFS= read -r src; do
+    place "$src" "$dest_dir/$(basename "$src")" "$SKILLS_DIR/$(basename "$src")"
+  done < <(skill_dirs)
+}
+
+# remove_skills <skills-dir> - remove this repository's per-skill links, then
+# the directory itself only when nothing else (a user's own skill) remains.
+remove_skills() {
+  local dest_dir="$1" src
+  while IFS= read -r src; do
+    remove_one "$dest_dir/$(basename "$src")" "$SKILLS_DIR/$(basename "$src")"
+  done < <(skill_dirs)
+  if [[ -d "$dest_dir" && ! -L "$dest_dir" ]]; then
+    [[ "$DRY_RUN" == "1" ]] || rmdir "$dest_dir" 2>/dev/null || true
+  fi
+}
+
 # remove_one <dest> <label>
 remove_one() {
   local dest="$1" label="$2"
@@ -267,7 +318,7 @@ for h in $(selected_hosts); do
       continue
     fi
     [[ "$has_instr" == "1" ]] && place "$REPO_DIR/$MANIFESTO" "$cdir/$instr" "$MANIFESTO->$instr"
-    [[ "$has_skills" == "1" ]] && place "$REPO_DIR/$SKILLS_DIR" "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
+    [[ "$has_skills" == "1" ]] && place_skills "$cdir/$SKILLS_DIR"
     [[ -n "$cmds_dir" ]] && place "$REPO_DIR/$COMMANDS_DIR" "$cdir/$cmds_dir" "$cmds_dir/"
     if [[ -n "$agents_dir" ]]; then
       for alt in agent agents; do
@@ -310,7 +361,7 @@ for h in $(selected_hosts); do
   uninstall)
     log "== $code =="
     [[ "$has_instr" == "1" ]] && remove_one "$cdir/$instr" "$instr"
-    remove_one "$cdir/$SKILLS_DIR" "$SKILLS_DIR/"
+    [[ "$has_skills" == "1" ]] && remove_skills "$cdir/$SKILLS_DIR"
     [[ -n "$cmds_dir" ]] && remove_one "$cdir/$cmds_dir" "$cmds_dir/"
     if [[ -n "$agents_dir" ]]; then
       for alt in agent agents; do
@@ -337,7 +388,7 @@ for h in $(selected_hosts); do
   status)
     if [[ ! -d "$cdir" ]]; then log "$code: absent (no $cdir)"; continue; fi
     out=""
-    entries=("$instr:$cdir/$instr" "$SKILLS_DIR:$cdir/$SKILLS_DIR")
+    entries=("$instr:$cdir/$instr")
     [[ -n "$cmds_dir" ]] && entries+=("$cmds_dir:$cdir/$cmds_dir")
     for entry in "${entries[@]}"; do
       name="${entry%%:*}"
@@ -349,6 +400,24 @@ for h in $(selected_hosts); do
       else s="-"; fi
       out+=" $name=$s"
     done
+    # Skills report as a set: a host whose skills dir predates per-skill
+    # placement still shows a legacy whole-directory link as ok or stale.
+    sk_dest="$cdir/$SKILLS_DIR"
+    if [[ -L "$sk_dest" ]]; then
+      if ours "$sk_dest"; then out+=" $SKILLS_DIR=legacy"
+      else out+=" $SKILLS_DIR=stale"; fi
+    elif [[ -d "$sk_dest" ]]; then
+      sk_total=0; sk_ok=0
+      while IFS= read -r src; do
+        sk_total=$((sk_total + 1))
+        ours "$sk_dest/$(basename "$src")" && sk_ok=$((sk_ok + 1))
+      done < <(skill_dirs)
+      if [[ "$sk_total" == "0" ]]; then out+=" $SKILLS_DIR=-"
+      elif [[ "$sk_ok" == "$sk_total" ]]; then out+=" $SKILLS_DIR=ok ($sk_ok/$sk_total)"
+      else out+=" $SKILLS_DIR=partial ($sk_ok/$sk_total)"; fi
+    else
+      out+=" $SKILLS_DIR=-"
+    fi
     as="-"  # agents: meaningful only when the host declares an agents surface
     if [[ -n "$agents_dir" ]]; then
       atotal=0; aours=1; alink=0; areal=0

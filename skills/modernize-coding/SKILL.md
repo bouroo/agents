@@ -7,7 +7,7 @@ description: "Bring an existing project's code to its own declared ceiling — d
 
 "Modern" is a property of **the project you are working in**, not of a language release: the same construct is current in one repository and out of place in another. The question is never *is this the newest syntax?* but **what does this project use, and is this code behind it?**
 
-**When to load:** modernizing a codebase, reviewing a diff for outdated patterns, or writing new code into an existing project. Not for correctness or performance work — that is the `quality` skill's Craft section / its Performance section.
+**Scope:** this skill judges style against the project's own ceiling; correctness and performance belong to the `quality` skill's Craft and Performance sections.
 
 ## 1. Detect the project's ceiling
 
@@ -44,25 +44,14 @@ Prefer the project's dependencies and standard library before adding a new one.
 
 The method above is language-agnostic. Load only the adapter for the project's language; each names the ecosystem's default fixer and the declared baseline the rewrites key to. Adding a language means adding a reference file, not changing this skill.
 
-**Go** — default `go fix` (Go >= 1.26; else the `modernize` analyzer); baseline `go.mod` `go` directive.
-- [Go guide](references/go/guide.md)
-- [Analyzer inventory](references/go/analyzers.md)
-- [gopls MCP](references/go/gopls-mcp.md)
+**Go** — default `go fix` (Go >= 1.26; else the `modernize` analyzer); baseline `go.mod` `go` directive. Read the [Go guide](references/go/guide.md) when a Go construct needs a version floor, the [analyzer inventory](references/go/analyzers.md) when choosing which fixer to run, and the [gopls MCP](references/go/gopls-mcp.md) when the editor surface must answer what a type is.
 
-**Java** — default OpenRewrite; baseline `pom.xml` / Gradle `release`.
-- [Java guide](references/java/guide.md)
-- [Java verify](references/java/verify.md)
+**Java** — default OpenRewrite; baseline `pom.xml` / Gradle `release`. Read the [Java guide](references/java/guide.md) when a Java rewrite needs its target release, and the [Java verify](references/java/verify.md) when a version claim must be checked against the JDK's own record.
 
-**Rust** — default `cargo fix --edition`; baseline `Cargo.toml` `edition` + `rust-version`.
-- [Rust guide](references/rust/guide.md)
-- [Rust verify](references/rust/verify.md)
+**Rust** — default `cargo fix --edition`; baseline `Cargo.toml` `edition` + `rust-version`. Read the [Rust guide](references/rust/guide.md) when an edition migration or MSRV floor is in play, and the [Rust verify](references/rust/verify.md) when a version claim needs checking.
 
-**Python** — default `ruff --fix` (UP rules); baseline `pyproject.toml` `requires-python`.
-- [Python guide](references/python/guide.md)
-- [Python verify](references/python/verify.md)
+**Python** — default `ruff --fix` (UP rules); baseline `pyproject.toml` `requires-python`. Read the [Python guide](references/python/guide.md) when a pyupgrade-family rewrite needs its floor, and the [Python verify](references/python/verify.md) when a version claim needs checking.
 
-**TypeScript / JS** — default `eslint --fix`; baseline `tsconfig.json` `target` + `package.json` `engines`.
-- [TypeScript / JS guide](references/typescript/guide.md)
-- [TypeScript / JS verify](references/typescript/verify.md)
+**TypeScript / JS** — default `eslint --fix`; baseline `tsconfig.json` `target` + `package.json` `engines`. Read the [TypeScript / JS guide](references/typescript/guide.md) when a syntax rewrite needs its target, and the [TypeScript / JS verify](references/typescript/verify.md) when a version claim needs checking.
 
 Where the ecosystem ships a local machine-readable record of when each feature landed (Go's `GOROOT/api`, Java's `src.zip` `@since` tags), the [modernize gate](../../scripts/check.py) cross-checks the adapter table against it; the Java verify reference gives the method.
