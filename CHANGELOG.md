@@ -10,7 +10,7 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [7.9.0-beta.3] - 2026-11-01
 
 Skill-authoring conformance with the Agent-Skills best-practices guidance: the
 gates now hold the shape the guidance describes, and the places where the
