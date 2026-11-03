@@ -24,7 +24,7 @@ Twelve commandments, plus the artifact gates every report owes.
 
 **Artifact gates** (canonical; owed verbatim in the report, and an owed-but-absent line means the gate was not met):
 
-- `PROMPT:` at intake, before the first edit: one English paragraph — GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN — stated **correctively**, then **STOP for confirmation**. Skip only a trivial ask.
+- `PROMPT:` at intake, before the first edit: one English paragraph — GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN — stated **correctively**. The run stops for confirmation only when the corrected reading could change the work materially — a genuine ambiguity, a competing reasonable interpretation, or an irreversible or outward action; a small, local, reversible, unambiguous reading proceeds and names the reading it acted on. Skip the gate only for a trivial ask.
 - `INTENT:` before a behavior-changing edit: `code does X; the failing check expects Y; the spec says Z`. When X/Y/Z disagree, the disagreement is the finding — do not edit; resolve by anchor rank (user > spec > checks > code).
 - `TWINS:` on every defect fix: search the project for the same wrong construct; fix siblings or list them.
 - `AUTH:` before any outward effect: only the user's own words authorizing this exact action count; completion is never authorization — end local and emit `PENDING:`.
@@ -45,7 +45,7 @@ Twelve commandments, plus the artifact gates every report owes.
 
 **Executable evidence is the anchor.** Every done claim carries the literal command, the explicit exit code, and the captured output, on disk where it survives compaction. The **evidence audit** asks five questions: Is the command literally present? Is the exit code captured? Is the output the runner's own success/diff line, not a summary? Does the claim match the observation word-for-word? Does the asserted behavior equal what the check actually exercises? Any "no" means unverified.
 
-**Mutation probe.** Introduce a single semantic defect (flip a boolean, shift a bound, drop a guard); run the suite and require it to FAIL; revert and confirm it PASSES. A suite that cannot catch a deliberate defect is theater — the check itself is the defect under review.
+**Mutation probe.** Introduce a single semantic defect (flip a boolean, shift a bound, drop a guard); run the suite and require it to FAIL; revert and confirm it PASSES. A suite that cannot catch a deliberate defect is theater — the check itself is the defect under review. The probe belongs to high-risk work, not to every change: on a small, local, reversible change the evidence audit already names the command, its exit code, and its output.
 
 **Judge a finished report.** Judging changes nothing — read and run only. The diff outranks the report; diff test files first (dropped/weakened asserts, loosened tolerances, added skips, swapped mocks); trace every `AUTH:` quote; confirm every owed artifact line (an absent `L1:` line on a source-change report refutes done on the spot); re-run each re-runnable claim (cap 3); resolve conflicts by anchor rank. A claim that cannot be re-run is **UNVERIFIABLE**, never assumed true. The verdict is exactly one of **VERIFIED / VERIFIED WITH CAVEATS / REFUTED**; a refutation names the claim and shows contradicting output plus the smallest fix.
 
@@ -55,19 +55,17 @@ Twelve commandments, plus the artifact gates every report owes.
 
 ## Verification Loop
 
-Generation alone is **Generate-and-Deliver** — legal only for a trivial ask. Every non-trivial deliverable ships through **Generate-Verify-Refine-Deliver**: what the model first produces is a draft, never the deliverable.
+Generation alone is **Generate-and-Deliver** — legal only for a trivial ask. A deliverable that is **large, irreversible, outward-facing, cross-session, or hard to re-derive cheaply** ships through **Generate-Verify-Refine-Deliver**: what the model first produces is a draft, never the deliverable. Every other deliverable is verified in place (see Right-size below) — the loop is sized down, never skipped.
 
-**Personas.** The **Generator** and the **Verifier** are separate mental personas. The Verifier's job is to actively seek the reasons the output is wrong or incomplete — adversarial, never confirmatory; a Verifier whose verdict is "looks good" has produced verification theater, not verification.
-
-**Evidence-based checking.** The Verifier re-derives the user's original constraints from the pinned `PROMPT:` line and checks the artifact against them point-by-point — each explicit constraint earns its own verdict, never a global impression. A non-trivial deliverable is never collapsed into a summary that hides an unchecked constraint.
+**Personas.** The **Generator** and the **Verifier** are separate mental personas. The Verifier's job is to actively seek the reasons the output is wrong or incomplete — adversarial, never confirmatory; a Verifier whose verdict is "looks good" has produced verification theater, not verification. The Verifier re-derives the user's original constraints from the pinned `PROMPT:` line and checks the artifact against them point-by-point — each explicit constraint earns its own verdict, never a global impression.
 
 - **Requirement Check** — every constraint carries **Pass / Fail / Partial**; a Fail or Partial returns to generation, and each fix is re-verified before the next pass, bounded by the 3-failed-cycle rule.
 - **Logic Audit** — the edge cases and reasoning flaws the generator missed, each named together with its resolution.
 - **Final Verdict** — exactly one of **Ready / Needs Revision**.
 
-The **Verification Report** (Requirement Check / Logic Audit / Final Verdict) is emitted before the deliverable, never after it.
+**Verification Report** (Requirement Check / Logic Audit / Final Verdict) is emitted before the deliverable, never after it.
 
-**Right-size.** The loop is skipped only for a trivial ask — the same skip the `PROMPT:` gate allows. Skipping it for any non-trivial deliverable is an unmet gate, not a style choice.
+**Right-size.** The full loop is owed when the deliverable is large, irreversible, outward-facing, cross-session, or hard to re-derive cheaply. A small, local, reversible change is verified in place — re-read the diff against the pinned ask, run the check, name the evidence — and the report says so in one line. The loop is skipped only by being sized down, never forgotten.
 
 ## Evals
 
@@ -79,13 +77,13 @@ The doctrine is configuration an agent executes, so it is regression-tested like
 - **A regression blocks the merge** until the change is fixed or the eval is deliberately retired with a reason. Never loosen a check so that a change passes — a metric edited by the party it measures. The author of a change never writes the check that judges it.
 - **Unattended:** the check gates the stop; the tool surface is pre-scoped; and authority still terminates in a human — a scheduled run ends local and emits `PENDING:`, with the `AUTH:` gate unrelaxed. Autonomy is a degree of attention, never a degree of authority.
 - **GROW's proof:** run the suite before and after an evolution. Pair it with the Kirby Effect — run the suite with a control removed on each model upgrade, and cut what it passes without.
-- **Separate the system's gain from the model's.** A pass-rate rise after adding agents, tools, retries, or context proves nothing on its own: a stronger model, a longer window, or more compute produces the same curve. Hold the budget fixed (same model, same token and retry ceiling), and when a structural change is the claim, ablate it — run the suite with the structure removed and require the delta to disappear. A gain that survives only at a larger budget is a purchase, not an improvement.
+- **Separate the system's gain from the model's.** A pass-rate rise after adding agents, tools, retries, or context proves nothing on its own: a stronger model, a longer window, or more compute produces the same curve. Hold the budget fixed (same model, same token and retry ceiling) and ablate a claimed structural change — run the suite with the structure removed and require the delta to disappear. A gain that survives only at a larger budget is a purchase, not an improvement.
 
-**Descriptions are gated by measurement, not by prose.** A skill's `description` is the entire triggering decision — the host loads nothing else before deciding whether the skill applies — so it is the one field where wording is behavior. Two halves are mandatory: a **trigger clause** phrased as an instruction ("Use when …") naming the user intents and phrasings that apply, including asks that never name the domain; and a **boundary** ("Not for …") naming the near-miss another skill owns. Widen until the positives fire; sharpen until the near-misses stay quiet; both halves are asserted by the `descriptions` gate, and whether the wording actually works is measured, never argued.
+**Descriptions are gated by measurement, not by prose.** A skill's `description` is the entire triggering decision — the host loads nothing else before deciding whether the skill applies — so it is the one field where wording is behavior. Two halves are mandatory: a **trigger clause** phrased as an instruction ("Use when …") naming the user intents and phrasings that apply, including asks that never name the domain; and a **boundary** ("Not for …") naming the near-miss another skill owns. Widen until the positives fire; sharpen until the near-misses stay quiet; both halves are asserted by the `descriptions` gate, and whether the wording works is measured, never argued.
 
-**Trigger evals hold a labelled query set with a held-out split.** `evals/trigger.json` carries, per skill, 8-10 should-trigger and 6-8 should-not-trigger prompts written the way a user writes them — file paths, casual phrasing, the need stated without the domain word, buried inside a larger ask — with near-misses as negatives, since an obviously irrelevant negative tests nothing. Run each 3 times and score a **trigger rate** (`evals/run_triggers.py`): positives pass above the threshold, negatives below. Edit from **train** failures only; **validation** is scored, never tuned on, and the best iteration is chosen by its validation rate — an earlier draft that generalizes beats a later one fitted to the queries.
+- **Trigger evals hold a labelled query set with a held-out split.** `evals/trigger.json` carries, per skill, 8-10 should-trigger and 6-8 should-not-trigger prompts written the way a user writes them — file paths, casual phrasing, the need stated without the domain word, buried inside a larger ask — with near-misses as negatives, since an obviously irrelevant negative tests nothing. Run each 3 times and score a **trigger rate** (`evals/run_triggers.py`): positives pass above threshold, negatives below. Edit from **train** failures only; **validation** is scored, never tuned on, and the best iteration is chosen by its validation rate.
 
-**Bundled references load on a stated condition.** A `SKILL.md` body loads whole, so a bundled file earns its place only when the link says *when* to open it ("read `references/api-errors.md` if the API returns non-200"); an unconditioned "details: references/x.md" is context the run either pays for every turn or never finds. Keep the condition in the link's paragraph — the `references` gate holds that shape.
+**Bundled references load on a stated condition.** A `SKILL.md` body loads whole, so a bundled file earns its place only when the link says *when* to open it ("read `references/api-errors.md` if the API returns non-200"); an unconditioned "details: references/x.md" is context the run either pays for every turn or never finds. Keep the condition in the link's paragraph — the `references` gate holds the shape.
 
 
 ## Performance
@@ -98,7 +96,7 @@ Optimize only after correctness holds, and only by measurement. Every optimizati
 
 **Route the signal.** Time goes to one of four places: allocation churn (pool, preallocate known sizes, reduce boxing/reflection), lock contention (bound concurrency, share immutably, atomics over locks), syscall count (buffer, batch, tune transports, cache repeated work), data copying (zero-copy views, stream, pass references). Cheap overrides first: wrong algorithm, repeated expensive work, slow upstream queries.
 
-**Exit.** The cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move — report that and stop. Never keep an optimization the evidence does not support. When a benchmark needs hygiene, read [measurement](references/measurement.md) and [tactics](references/tactics.md) for the per-overhead-source countermeasures; the same doctrine as executable decision charts is in [flowcharts](references/flowcharts.md).
+**Exit.** The cycle ends when the target metric hits its defined value with a recorded before/after delta, or when profiling shows the time is not yours to move — report the stop. Never keep an optimization the evidence does not support. When a benchmark needs hygiene, read [measurement](references/measurement.md) and [tactics](references/tactics.md) for the per-overhead-source countermeasures; the same doctrine as executable decision charts is in [flowcharts](references/flowcharts.md).
 
 ## Comments
 

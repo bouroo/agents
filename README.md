@@ -84,7 +84,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       twenty-three deterministic gates (CI runs these)
+    ├── check.py                       twenty-five deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -110,7 +110,7 @@ The full decision charts — the intake router, each node's internal loop, and t
 
 ## The doctrine in one line
 
-Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job through the delivery lifecycle, with its stages looping rather than waterfalling; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe, and a hard verify bound of 3 failed cycles; pass non-trivial deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
+Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job through the delivery lifecycle, sized to the job — the compact path (one THINK, one ACT, one PROVE, no artifact chain) is the default for a small, local, reversible change, and the seven-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe on high-risk work, and a hard verify bound of 3 failed cycles; pass large or hard-to-re-derive deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable — while every other deliverable is verified in place; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
 
 ## Using it
 
@@ -151,6 +151,7 @@ python3 scripts/check.py --all
 | --- | --- |
 | `budget` | `AGENTS.md` stays within its line budget (the concision charter) |
 | `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata, the spec's required and optional keys accepted, `compatibility` length-bounded |
+| `cost` | the always-on footprint stays within its token budget — the manifesto plus the skill descriptions the host loads, and the standalone copy on its own — so per-task cost does not grow with the setup |
 | `descriptions` | every description carries an imperative trigger clause and a boundary naming what it is not for |
 | `skillbudget` | every skill body stays within 500 lines / 5000 tokens and every command within 120 lines |
 | `references` | every bundled reference is named from its skill **and** its link states the condition that loads it, so progressive disclosure actually fires |
@@ -169,12 +170,12 @@ python3 scripts/check.py --all
 | `automation` | the automation-layer clause survives on both installed surfaces and on the execution skill |
 | `state` | the runtime-state rule (proposed-validated-committed recording, evidence-tested attribution, named recovery boundary) survives on both doctrines and the execution skill |
 | `branch` | the task-branch rule survives on every surface that can reach a git repository (both doctrines, the execution skill, the lead and worker agents), so a run never edits or commits on the default branch |
+| `sizing` | the three cost-sizing rules (the compact path, the proportional confirmation stop, the sized verification loop) survive on every surface that carries them — both doctrines, the delivery skill, and the quality skill |
 | `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all twenty-three on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all twenty-five on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
-## Versioning
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

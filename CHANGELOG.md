@@ -10,6 +10,53 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+Users consuming this repository as their agent configuration reported that
+time per task grew with the setup itself. The setup is the configuration: the
+doctrine's per-task cost *is* the product's cost, so the fix is to make that
+cost proportional to the job instead of fixed.
+
+- **The compact path is the default.** The seven-stage delivery lifecycle
+  demanded an `intent.md` / `spec.md` / `PLAN.md` chain, a state checkpoint,
+  and a separate verification report from every task, including a one-line
+  fix. `AGENTS.md` section 4 and the `delivery` skill now state a **compact
+  path**: a small, local, reversible change runs one THINK, one ACT, one
+  PROVE, held in the conversation, with no artifact chain and no checkpoint.
+  The full path is owed when the work is large, irreversible, outward-facing,
+  cross-session, or multi-agent, and taking the compact path *is* the recorded
+  reason for the stages it skips.
+- **The confirmation stop is proportional.** The `PROMPT:` gate stopped the
+  run for confirmation before the first edit, which spent a round trip on
+  every task including unambiguous ones. It now stops only when the
+  corrected reading could change the work materially — a genuine ambiguity, a
+  competing reasonable interpretation, or an irreversible or outward action;
+  a small, local, reversible, unambiguous reading proceeds and names the
+  reading it acted on. The gate itself is unchanged: the ask is still pinned
+  before the first edit.
+- **The verification loop is sized, not skipped.** The Generate-Verify-Refine-Deliver
+  loop stays owed on non-trivial work, and the mutation probe stays owed on
+  high-risk work; a small, local, reversible change is verified in place
+  (re-read the diff against the pinned ask, run the check, name the evidence)
+  and the report says so in one line. The loop is skipped only by being sized
+  down, never by being forgotten.
+- **The per-turn checkpoint is no longer per-turn.** `ACT` checkpoints state
+  under `.agents/` when the work spans turns or sessions, not on every turn
+  of a compact change.
+- **The always-on footprint is now measured.** A new `cost` gate holds the
+  context every task pays before any work starts — the manifesto plus the
+  skill descriptions the host loads to decide what applies — within a token
+  budget, so the setup's per-task cost cannot grow silently. The standalone
+  copy carries its own ceiling, since a host that installs it alone loads
+  neither the manifesto nor the skills. Measured: ~7,300 tokens for the
+  skills install, ~4,300 for the standalone one.
+- **Gated.** A new `sizing` gate pins all three sizing rules (the compact
+  path, the proportional confirmation stop, the sized verification loop) on
+  every surface that carries them — both doctrines, the delivery skill, and
+  the quality skill (suite now 25 gates), and two evals check that the
+  sizing rule and the always-on budget survive a doctrine edit (suite now
+  33 evals, 82 checks).
+
 ## [7.9.0-beta.3] - 2026-11-01
 
 Skill-authoring conformance with the Agent-Skills best-practices guidance: the
