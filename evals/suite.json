@@ -577,6 +577,38 @@
           "description": "the deferred detail stayed in references/ rather than also accumulating in the skill body"
         }
       ]
+    },
+    {
+      "id": "per-task-cost-sizing-survives-doctrine-edits",
+      "prompt": "Reword or reorganize the delivery lifecycle or the verification doctrine. The rule that a small, local, reversible change takes the compact path and is verified in place must survive on every surface that carries it.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py sizing",
+          "expect_exit": 0,
+          "description": "the sizing rule is present in both doctrines, the delivery skill, and the quality skill"
+        },
+        {
+          "cmd": "python3 scripts/check.py standalone",
+          "expect_exit": 0,
+          "description": "the standalone copy carries the sizing rule alongside every other hard constraint"
+        }
+      ]
+    },
+    {
+      "id": "always-on-context-stays-bounded",
+      "prompt": "Extend the manifesto or add a skill. The context every task pays before any work starts must stay within its budget.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py cost",
+          "expect_exit": 0,
+          "description": "the always-on footprint (the manifesto plus the skill descriptions the host loads) stays within its token budget"
+        },
+        {
+          "cmd": "python3 scripts/check.py budget",
+          "expect_exit": 0,
+          "description": "the manifesto stays within its line budget"
+        }
+      ]
     }
   ]
 }

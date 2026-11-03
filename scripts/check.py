@@ -4,13 +4,15 @@
 Static gates over docs/skills plus the distribution layer:
 
     budget          AGENTS.md stays within its line budget (the concision charter)
+    cost            the always-on footprint (the manifesto plus the skill
+                    descriptions the host loads) stays within its token budget,
+                    so per-task cost does not grow with the setup
     frontmatter     every skill/command carries valid Agent-Skills-style metadata
     descriptions    every description carries a trigger clause and a boundary
     skillbudget     every skill body stays within 500 lines / 5000 tokens and
                     every command within 120 lines, so a body loads whole
     references      every bundled reference is named from its SKILL.md on a
                     stated load condition, so progressive disclosure fires
-    triggers        the description-trigger set is present, labelled, split
                     train/validation, and large enough to measure a description
     links           every relative Markdown link resolves to an existing file;
                     a '#' anchor fragment in any relative target fails
@@ -38,6 +40,9 @@ Static gates over docs/skills plus the distribution layer:
                     surfaces and on the execution skill
     branch          work lands on a task branch, never on the default branch,
                     on every surface that can reach a git repository
+    sizing          the cost-sizing rule (a small, local, reversible change
+                    takes the compact path and is verified in place) survives
+                    on both doctrines, the delivery skill, and the quality skill
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -214,6 +219,72 @@ def g_budget() -> None:
     _add("PASS", f"{name}: AGENTS.md {n}/{AGENTS_MD_BUDGET} lines")
 
 
+# The always-on footprint: the manifesto an agent reads on every task, plus
+# the skill descriptions the host loads to decide what applies. A run that
+# pays this on every task pays it on the smallest task too, so the cost of
+# the setup scales with its usefulness only while these stay bounded. The
+# bodies and references are on-demand and are budgeted by `skillbudget`.
+ALWAYS_ON_TOKEN_BUDGET = 8000
+ALWAYS_ON_MANIFESTO_BUDGET = 6500
+ALWAYS_ON_STANDALONE_BUDGET = 5000
+
+
+def _tokens(text: str) -> int:
+    """Approximate token count the way `skillbudget` counts it."""
+    return len(text.encode()) // 4
+
+
+def g_cost() -> None:
+    """The always-loaded context stays within its budget.
+
+    Users of this setup as their agent config reported per-task time growing
+    with the setup itself, so the footprint every task pays is now a measured
+    number with a ceiling: the manifesto plus the skill descriptions the host
+    loads before deciding what applies. The standalone copy is a second
+    installed surface -- a host that installs it alone never loads the
+    manifesto or the skills -- so it carries its own ceiling. A skill body
+    stays in `skillbudget`.
+    """
+    name = "cost"
+    manifesto = ROOT / "AGENTS.md"
+    standalone = ROOT / "standalone" / "AGENTS.md"
+    if not manifesto.is_file():
+        _add("FAIL", f"{name}: AGENTS.md missing")
+        return
+    manifesto_tokens = _tokens(manifesto.read_text())
+    description_tokens = 0
+    for skill in sorted((ROOT / "skills").glob("*/SKILL.md")):
+        if not _no_dotdir(skill):
+            continue
+        desc = _frontmatter(skill)[0].get("description", "")
+        description_tokens += _tokens(desc)
+    total = manifesto_tokens + description_tokens
+    errors: list[str] = []
+    if manifesto_tokens > ALWAYS_ON_MANIFESTO_BUDGET:
+        errors.append(f"AGENTS.md ~{manifesto_tokens} tokens > "
+                      f"{ALWAYS_ON_MANIFESTO_BUDGET}")
+    if total > ALWAYS_ON_TOKEN_BUDGET:
+        errors.append(f"always-on context ~{total} tokens "
+                      f"(AGENTS.md ~{manifesto_tokens} + descriptions "
+                      f"~{description_tokens}) > {ALWAYS_ON_TOKEN_BUDGET}")
+    if standalone.is_file():
+        standalone_tokens = _tokens(standalone.read_text())
+        if standalone_tokens > ALWAYS_ON_STANDALONE_BUDGET:
+            errors.append(f"standalone/AGENTS.md ~{standalone_tokens} tokens > "
+                          f"{ALWAYS_ON_STANDALONE_BUDGET}")
+    else:
+        errors.append("standalone/AGENTS.md missing")
+    if errors:
+        _add("FAIL", f"{name}: " + "; ".join(errors))
+        return
+    standalone_tokens = _tokens(standalone.read_text())
+    _add("PASS", f"{name}: always-on context ~{total} tokens "
+                 f"(AGENTS.md ~{manifesto_tokens} + skill descriptions "
+                 f"~{description_tokens}) within {ALWAYS_ON_TOKEN_BUDGET}; "
+                 f"standalone copy ~{standalone_tokens} tokens within "
+                 f"{ALWAYS_ON_STANDALONE_BUDGET}")
+
+
 def g_frontmatter() -> None:
     name = "frontmatter"
     # (path, expected-name) pairs: a skill's name matches its directory,
@@ -359,6 +430,26 @@ RULE_SURFACES = {
          re.compile(r"Runtime state is recorded, localized, and recovered")),
         ("skills/execution/SKILL.md", re.compile(r"^## Runtime state$", re.MULTILINE)),
     ],
+    "sizing": [
+        # The compact path: a small, local, reversible change runs one THINK,
+        # one ACT, one PROVE, with no artifact chain.
+        ("AGENTS.md", re.compile(r"compact path", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"compact path", re.IGNORECASE)),
+        ("skills/delivery/SKILL.md", re.compile(r"compact path", re.IGNORECASE)),
+        # The proportional confirmation stop: the run stops only when the
+        # corrected reading could change the work materially.
+        ("AGENTS.md", re.compile(r"could change the work materially",
+                                 re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"could change the work materially",
+                                            re.IGNORECASE)),
+        ("skills/quality/SKILL.md", re.compile(r"could change the work materially",
+                                                re.IGNORECASE)),
+        # The sized verification loop: every other deliverable is verified
+        # in place.
+        ("AGENTS.md", re.compile(r"verified in place", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"verified in place", re.IGNORECASE)),
+        ("skills/quality/SKILL.md", re.compile(r"verified in place", re.IGNORECASE)),
+    ],
 }
 
 
@@ -448,6 +539,22 @@ def g_state() -> None:
     if _g_rule_surfaces("state"):
         _add("PASS", "state: rule present on "
                      f"{len(RULE_SURFACES['state'])} canonical surface(s)")
+
+
+def g_sizing() -> None:
+    """The cost-sizing rule survives on every surface that carries it.
+
+    The setup is consumed as an agent config, so what a task pays is the
+    doctrine's per-task cost. Two rules keep that cost proportional to the
+    job: the compact path (a small, local, reversible change runs one THINK,
+    one ACT, one PROVE, with no artifact chain) and the proportional
+    confirmation stop (the run stops only when the corrected reading could
+    change the work materially). Neither can be lost from one surface while
+    the others keep it.
+    """
+    if _g_rule_surfaces("sizing"):
+        _add("PASS", "sizing: rule present on "
+                     f"{len(RULE_SURFACES['sizing'])} canonical surface(s)")
 
 
 def g_branch() -> None:
@@ -1273,7 +1380,8 @@ def g_standalone() -> None:
                  f"both the manifesto and the standalone copy")
 
 
-GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
+GATES = [("budget", g_budget), ("cost", g_cost),
+         ("frontmatter", g_frontmatter),
          ("descriptions", g_descriptions), ("skillbudget", g_skillbudget),
          ("references", g_references), ("links", g_links),
          ("agnostic", g_agnostic), ("manifests", g_manifests),
@@ -1281,7 +1389,7 @@ GATES = [("budget", g_budget), ("frontmatter", g_frontmatter),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
          ("environment", g_environment), ("automation", g_automation),
-         ("state", g_state), ("branch", g_branch),
+         ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
          ("standalone", g_standalone)]
