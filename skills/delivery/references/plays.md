@@ -209,6 +209,15 @@ Back any skill whose policy has to hold without exception. A hook runs on each a
 
 A hook that asks a human for approval belongs with the gates in Deploy, because an approval prompt during the build puts a person back on the critical path of every session running in parallel.
 
+**Getting started.** One skill whose policy must hold without exception, and the file paths it protects. Infrastructure: a place to put the hook — the repository's shared settings file — so every session inherits it.
+
+**Steps.**
+
+1. Pick the policy that must always hold, and the action it governs: an edit to a generated or frozen path, a formatter that must run after every write, a credential that must never reach the diff.
+2. Write the hook as a fast, scoped check: it inspects the file that changed, not the whole tree, and it fails loudly rather than silently.
+3. Put it in the repository's shared settings file so every session inherits it, and confirm it fires by making the action it guards.
+4. Keep the heavier checks out of it. The full test suite belongs at the commit or the merge request; a hook that is slow gets bypassed or ignored.
+
 **Governance.** Controls fire where the work happens, so a control that must apply to every session lives in the repository rather than in one operator's setup. Repository-scoped hooks apply to all sessions, and what a session does is logged and attributed to the engineer who ran it.
 
 **Measure.** *Leading:* the number of build-phase hook invocations that blocked an action, and the share of sessions that hit a block, read from the session traces. *Lagging:* policy violations reaching the main branch after the hook was installed, from the incident tracker.
@@ -467,9 +476,21 @@ tiers:
 
 ### Incidents arriving from anywhere
 
-Incidents can arrive through channels other than a monitoring system — a ticket, a message on an incident channel, an external report. The agent can be a member of those channels under its own identity, so each new incident gets a first responder and the response itself becomes part of the loop and the memory for future incidents.
+**What changes.** Incidents can arrive through channels other than a monitoring system — a ticket, a message on an incident channel, an external report. The agent can be a member of those channels under its own identity, so each new incident gets a first responder and the response itself becomes part of the loop and the memory for future incidents.
 
-The conversation and institutional knowledge stay in the channel, with anyone in the channel able to guide and action the response. Any team member can test hypotheses, explore new options, and investigate in real time, with the channel history adding to the auditability. Through the tool integrations the agent verifies the metric is back at baseline and confirms it in the thread, writes the post-mortem to a version-controlled lessons file that future investigations can read, and triages work the same way: a small, well-bounded fix arrives as a pull request through the review gate, and anything larger is written up as `intent.md` for Plan, at which point the loop starts feeding itself.
+**Getting started.** A channel the agent can be reached on, and the incident categories it may answer without a human. Infrastructure: the same tool integrations the closing-the-loop play uses, so the agent can verify a metric is back at baseline.
+
+**Steps.**
+
+1. The agent answers under its own identity, so the request, the diagnosis, the human authorization, and the fix all stay where the incident was handled — the channel history is the audit trail.
+2. Anyone in the channel can guide and action the response: hypotheses are tested in real time, and the conversation keeps the institutional knowledge.
+3. The agent verifies through its tool integrations that the metric is back at baseline, and confirms it in the thread rather than asserting it.
+4. The post-mortem is written to a version-controlled lessons file that future investigations can read.
+5. Work is triaged the same way as any other: a small, well-bounded fix arrives as a pull request through the review gate, and anything larger is written up as `intent.md` for Plan, at which point the loop starts feeding itself.
+
+**Governance.** The channel is the audit trail: request, diagnosis, human authorization, and fix stay where the incident was handled. The agent acts under its own identity and never grants itself the authorization a human owns, and a fix reaches production through the review gate rather than from the channel. Every dismissal is recorded, so the same incident does not return as new.
+
+**Measure.** *Leading:* time from the first message to a diagnosed cause with a verified baseline, read from the channel history. *Lagging:* the share of channel-borne incidents that become merged fixes against the incident tracker, and repeat incidents of the same class, which should fall as the fixes add cases to the eval suite.
 
 ## Choosing where to start
 
