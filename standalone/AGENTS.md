@@ -47,17 +47,25 @@ Gates are literal lines owed at decision points and belong **verbatim** in the f
 
 **Surprise protocol:** contradictions route backward, never forward — a surprise at PROVE re-enters at THINK, a mechanical mistake at ACT. Never patch past a surprise.
 
-## 4. Delivery Lifecycle Is Control Flow
+## 4. The AI-native Delivery Loop
 
-The job is a **loop**: every stage commits a **readable artifact** the next begins from; that chain is the audit trail. A stage exits only on its check — the **escape hatch** that halts the loop rather than spinning — and deterministic logic owns what is specifiable in advance, the model only at judgment points.
+The job is a **loop**: every stage commits a **readable artifact** the next begins from; that chain of commits is the audit trail. A stage exits only on its check — the **escape hatch** that halts the loop rather than spinning — and deterministic logic owns what is specifiable in advance, the model only at judgment points.
 
-**Seven stages**, each exiting only on its check: **Intent** (problem, parties, outcome, constraints) -> **Spec** (requirements plus a decision record for hard-to-reverse choices) -> **Plan** (work packages plus a DONE_WHEN checklist of executable checks) -> **Build** (diff + tests) -> **Test** (L1/L2/L3 evidence) -> **Release** (record + `AUTH:`) -> **Operate** (incident -> new intent). `Test -> Build` is the review back-edge; `Operate -> Intent` reopens the loop; skipping a stage requires naming why in the next artifact.
+**Six stages**, each exiting only on its check: **Plan** (problem, parties, outcome, constraints, in `intent.md`) -> **Design** (requirements plus a decision record for hard-to-reverse choices) -> **Build** (work packages plus a DONE_WHEN checklist of executable checks) -> **Test** (L1/L2/L3 evidence) -> **Deploy** (the change under review, the release record + `AUTH:`) -> **Maintain** (incident -> new intent). `Test -> Build` is the review back-edge; `Maintain -> Plan` reopens the loop; skipping a stage requires naming why in the next artifact.
 
-**Size the path to the job — the compact path is the default.** The artifact chain is an audit trail for work big enough to need one, not a per-task tax. A small, local, reversible change runs the **compact path**: one THINK, one ACT, one PROVE, held in the conversation, with no `intent.md` / `spec.md` / `PLAN.md` chain, no separate verification report, and no state checkpoint. The full seven-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; taking the compact path *is* the recorded reason for the stages it skips.
+**Accepted artifacts fire the next gate.** A stage begins from the artifact the previous one committed, so the handoff is the commit itself and a person holds the gate rather than the handoff.
+
+**One source of truth per artifact.** Where a legacy system already holds the record, name it the source of truth and keep the committed artifact as a linked working copy; otherwise the committed artifact is the record. Two copies with no link are two truths.
+
+**Advisory controls make violations rare; deterministic controls make them close to impossible.** A policy written in prose shapes the work while it is written; a policy that must always hold needs a deterministic gate behind it — a hook that blocks, a check that fails, a branch rule that demands an approval.
+
+**Autonomy stops at the gate.** The agent may act up to the production gate and nothing past it, tiered per environment — free in development, prepared and authorized in production — so the human gate sits above the automation, never inside it. Detection stays deterministic: a script watches a control band, and the breach decides what the agent may do — log, diagnose read-only, or propose through the review gate.
+
+**Size the path to the job — the compact path is the default.** The artifact chain is an audit trail for work big enough to need one, not a per-task tax. A small, local, reversible change runs the **compact path**: one THINK, one ACT, one PROVE, held in the conversation, with no `intent.md` / `spec.md` / `PLAN.md` chain, no separate verification report, and no state checkpoint. The full six-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; taking the compact path *is* the recorded reason for the stages it skips.
 
 **Automation is the layer above a skill** — it decides when a workflow runs, not how. Automate only a workflow that has proven itself interactively: declare the unattended run's scope, let the check gate its stop, and keep the authority with a human — an automated run ends local and emits `PENDING:` rather than acting outward on its own.
 
-**Seats, not people:** Originator (files intent) · Steward (owns spec) · Architect (design review) · Implementer (executes plan) · Verifier (independent re-derivation) · Approver (human gate on outward, destructive, or release steps) · Operator (maintains, reopens loop). One actor may hold several; **the Implementer never approves its own work**, **the Verifier is independent of what it judges**.
+**Seats, not people:** Originator (files intent) · Steward (owns spec) · Architect (design review) · Implementer (executes plan) · Verifier (independent re-derivation) · Approver (human gate on outward, destructive, or deploy steps) · Operator (maintains, reopens loop). One actor may hold several; **the Implementer never approves its own work**, **the Verifier is independent of what it judges**.
 
 ### The execution graph
 

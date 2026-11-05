@@ -49,21 +49,29 @@ Gates are literal lines owed at decision points and belong **verbatim** in the f
 
 **Surprise protocol:** contradictions route backward, never forward — a surprise at PROVE re-enters at THINK, a mechanical mistake at ACT. Never patch past a surprise.
 
-## 4. Delivery Lifecycle Is Control Flow
+## 4. The AI-native Delivery Loop
 
-**Code is no longer the bottleneck.** Agents compress build time, leaving planning, review, release, and governance as the constraint. The job is a **loop**: every stage commits a **readable artifact** the next begins from; that chain is the audit trail (the `delivery` skill's Lifecycle section owns stages and handoffs; its Artifacts section defines the shapes).
+**Code is no longer the bottleneck.** Agents compress build time, so the constraint moved outward — to plan, review, and governance. The job is a **loop**, not a phase sequence: every stage commits a **readable artifact** the next begins from, and that chain of commits is the audit trail (the `delivery` skill's Lifecycle section owns stages and handoffs; its Artifacts section defines the shapes).
 
 Two rules: a stage exits only on its check — the **escape hatch** that halts the loop rather than spinning — and deterministic logic owns what is specifiable in advance, the model only at judgment points (§10).
 
-**Seven stages**, each exiting only on its check: **Intent** (`intent.md`) -> **Spec** (`spec.md` + ADRs) -> **Plan** (`PLAN.md` + `STATUS.md`) -> **Build** (diff + tests) -> **Test** (L1/L2/L3 evidence) -> **Release** (record + `AUTH:`) -> **Operate** (incident -> new intent). `Test -> Build` is the review back-edge; `Operate -> Intent` reopens the loop.
+**Six stages**, each exiting only on its check: **Plan** (`intent.md`) -> **Design** (`spec.md` + ADRs) -> **Build** (`PLAN.md` + `STATUS.md`, then the diff and its tests) -> **Test** (L1/L2/L3 evidence) -> **Deploy** (the PR with its review findings, the release record + `AUTH:`) -> **Maintain** (incident record -> new `intent.md`). `Test -> Build` is the review back-edge; `Maintain -> Plan` reopens the loop; skipping a stage requires naming why in the next artifact.
 
-**Size the path to the job — the compact path is the default.** A small, local, reversible change runs the **compact path**: one THINK, one ACT, one PROVE, held in the conversation, with no `intent.md` / `spec.md` / `PLAN.md` chain, no separate verification report, and no state checkpoint. The full seven-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; a stage is skipped by taking the compact path, and any other skip names why in the next artifact. The artifact chain is an audit trail for work big enough to need one, not a per-task tax.
+**Accepted artifacts fire the next gate.** A stage starts from the artifact the previous one committed, so a committed `intent.md` can trigger the design pass and a merged PR can trigger the pipeline with no person in the invocation path — the person holds the gate, not the handoff.
+
+**One source of truth per artifact.** Where a legacy system already holds the record — a tracker, a requirements tool, a wiki — name it the source of truth and keep the markdown artifact as a linked working copy; otherwise the committed artifact is the record. Two copies with no link are two truths.
+
+**Advisory controls make violations rare; deterministic controls make them close to impossible.** A policy written in prose — a skill, a project context file — shapes the work while it is written; a policy that must always hold needs a deterministic gate behind it: a hook that blocks, a check that fails, a branch rule that demands an approval.
+
+**Autonomy stops at the gate.** The agent may act up to the production gate and nothing past it, and autonomy is tiered per environment — free in development, prepared and authorized in production — so the human gate sits above the automation, never inside it. Detection stays deterministic: a script watches a control band, and the breach decides what the agent may do — log, diagnose read-only, or propose through the review gate.
+
+**Size the path to the job — the compact path is the default.** A small, local, reversible change runs the **compact path**: one THINK, one ACT, one PROVE, held in the conversation, with no `intent.md` / `spec.md` / `PLAN.md` chain, no separate verification report, and no state checkpoint. The full six-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; a stage is skipped by taking the compact path, and any other skip names why in the next artifact. The artifact chain is an audit trail for work big enough to need one, not a per-task tax.
 
 **Automation is the layer above a skill** — it decides when a workflow runs, not how. Automate only a workflow that has proven itself interactively: declare the unattended run's scope, let the check gate its stop, and keep the authority with a human — an automated run ends local and emits `PENDING:` rather than posting, publishing, merging, or deleting on its own. Template and failure modes: the `execution` skill's automation reference.
 
 ### 4.1 Seats, not people
 
-Seven seats: **Originator** (files intent) · **Steward** (owns spec, domain language) · **Architect** (design review) · **Implementer** (executes plan) · **Verifier** (independent re-derivation) · **Approver** (human gate on outward/destructive/release steps) · **Operator** (maintains, reopens loop). One actor may hold several; **the Implementer never approves its own work**, **the Verifier is independent of what it judges**. Approval is the human gate above the production stop, carried by the chain's `AUTH:`/`PENDING:` lines.
+Seven seats: **Originator** (files intent) · **Steward** (owns spec, domain language) · **Architect** (design review) · **Implementer** (executes plan) · **Verifier** (independent re-derivation) · **Approver** (human gate on outward/destructive/deploy steps) · **Operator** (maintains, reopens loop). One actor may hold several; **the Implementer never approves its own work**, **the Verifier is independent of what it judges**. Approval is the human gate above the production stop, carried by the chain's `AUTH:`/`PENDING:` lines.
 
 ### 4.2 The execution graph is the engine inside a stage
 
@@ -75,7 +83,6 @@ Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN**, and **hand the
 - **ACT** — one bounded change at a time, in scope; checkpoint execution state under `.agents/` when the work spans turns or sessions, not on every turn of a compact change.
 - **PROVE** — verify per §7; a mutation probe belongs to high-risk work, not to every change; the diff outranks the report; verdict **VERIFIED / VERIFIED WITH CAVEATS / REFUTED**; report outcome-first with honest caveats.
 - **GROW** — a recurring failure is a **harness problem, not a prompt problem**. GROW edits future-run machinery, governed, never autonomous, through a four-step cycle (instrument, propose, validate, commit) anchored by the `quality` skill's Evals suite; re-audit and **cut dead-weight controls** each upgrade.
-
 ## 5. Code Craft
 
 Load the `quality` skill when writing, reviewing, or refactoring; its Craft section owns the commandments and gate definitions. Design work touching domain terms, the glossary, or a decision record routes to the `architecture` skill's Domain Modeling section.
@@ -135,7 +142,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | Artifact | Role |
 | --- | --- |
 | `AGENTS.md` | this manifesto |
-| `delivery` skill | lifecycle, artifact chain, grilling, wayfinder |
+| `delivery` skill | the six-stage lifecycle, the plays, the artifact chain, controls, automation, grilling, wayfinder |
 | `execution` skill | graph grammar, multi-agent coordination, runtime state, memory layers (+ bundled references: topologies, harness-design, runtime-state, memory) |
 | `quality` skill | craftsmanship, gates, verification, evals, performance (+ bundled references: flowcharts, evolution, tactics) |
 | `architecture` skill | ASRs, SEI scenarios, patterns, ADRs, C4, domain language, maps |

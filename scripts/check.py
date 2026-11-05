@@ -43,6 +43,12 @@ Static gates over docs/skills plus the distribution layer:
     sizing          the cost-sizing rule (a small, local, reversible change
                     takes the compact path and is verified in place) survives
                     on both doctrines, the delivery skill, and the quality skill
+    stages          the six-stage spine and the artifact each stage commits
+                    survive on both doctrines and the delivery skill
+    playbook        the playbook's mechanics (the accepted artifact fires the
+                    next gate, one source of truth per artifact, advisory
+                    versus deterministic controls, autonomy stopping at the
+                    production gate) survive on every surface that carries them
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -435,6 +441,34 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"instruction memory", re.IGNORECASE)),
         ("skills/execution/SKILL.md", re.compile(r"^## Memory$", re.MULTILINE)),
     ],
+    # The six-stage spine: the stage names and the artifact each one commits
+    # are the setup's load-bearing vocabulary, so they are asserted on the
+    # surfaces that carry them rather than left to drift one edit at a time.
+    "stages": [
+        ("AGENTS.md", re.compile(r"\*\*Six stages\*\*")),
+        ("standalone/AGENTS.md", re.compile(r"\*\*Six stages\*\*")),
+        ("skills/delivery/SKILL.md", re.compile(r"\*\*Plan\*\* \| `intent\.md`")),
+        ("skills/delivery/SKILL.md", re.compile(r"\*\*Design\*\* \| `spec\.md`")),
+        ("skills/delivery/SKILL.md", re.compile(r"\*\*Maintain\*\* \| incident record")),
+    ],
+    # The playbook's own mechanics, on the surfaces that own them: the
+    # accepted artifact fires the next gate, one system is the source of truth
+    # per artifact, advisory versus deterministic controls, and autonomy
+    # stopping at the production gate.
+    "playbook": [
+        ("AGENTS.md", re.compile(r"Accepted artifacts fire the next gate")),
+        ("standalone/AGENTS.md", re.compile(r"Accepted artifacts fire the next gate")),
+        ("skills/delivery/SKILL.md", re.compile(r"Accepted artifacts fire the next gate")),
+        ("AGENTS.md", re.compile(r"One source of truth per artifact")),
+        ("standalone/AGENTS.md", re.compile(r"One source of truth per artifact")),
+        ("skills/delivery/SKILL.md", re.compile(r"One source of truth per artifact")),
+        ("AGENTS.md", re.compile(r"deterministic controls make them close to impossible")),
+        ("standalone/AGENTS.md", re.compile(r"deterministic controls make them close to impossible")),
+        ("skills/delivery/SKILL.md", re.compile(r"a skill makes violations rare")),
+        ("AGENTS.md", re.compile(r"Autonomy stops at the gate")),
+        ("standalone/AGENTS.md", re.compile(r"Autonomy stops at the gate")),
+        ("skills/delivery/SKILL.md", re.compile(r"Autonomy is tiered per environment")),
+    ],
     "environment": [
         ("AGENTS.md", re.compile(r"execution environment is a design decision",
                                  re.IGNORECASE)),
@@ -569,6 +603,34 @@ def g_state() -> None:
     if _g_rule_surfaces("state"):
         _add("PASS", "state: rule present on "
                      f"{len(RULE_SURFACES['state'])} canonical surface(s)")
+
+
+def g_stages() -> None:
+    """The six-stage spine survives on every surface that carries it.
+
+    The stage names and the artifact each one commits are the setup's
+    load-bearing vocabulary: an agent reading one doctrine and a skill reading
+    another would name different stages for the same work. The chain is
+    asserted where it is stated, so a rename cannot land in one surface only.
+    """
+    if _g_rule_surfaces("stages"):
+        _add("PASS", f"stages: the six-stage spine present on "
+                     f"{len(RULE_SURFACES['stages'])} canonical surface(s)")
+
+
+def g_playbook() -> None:
+    """The playbook's mechanics survive on every surface that carries them.
+
+    Four rules carry the AI-native lifecycle: the accepted artifact fires the
+    next gate, one system is the source of truth per artifact, a skill makes
+    violations rare while a hook makes them close to impossible, and autonomy
+    stops at the production gate. Each is stated in the always-loaded clause
+    of both doctrines and in the skill that owns the practices, so a rewrite
+    that dropped one leaves half the installs ungoverned.
+    """
+    if _g_rule_surfaces("playbook"):
+        _add("PASS", f"playbook: rule present on "
+                     f"{len(RULE_SURFACES['playbook'])} canonical surface(s)")
 
 
 def g_sizing() -> None:
@@ -1392,6 +1454,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("veriloop", g_veriloop), ("memory", g_memory),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
+         ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
          ("standalone", g_standalone)]

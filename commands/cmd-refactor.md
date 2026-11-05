@@ -3,7 +3,7 @@ name: cmd-refactor
 description: "Use to restructure correct-but-unclear, unsafe, or slow code without changing observable behavior: analyze, plan, baseline, execute in atomic commits, verify before/after, and sync the spec. Reach for it when behavior must stay frozen while the shape changes, or when a measured hot path needs work after correctness is proven. Not for new features or behavior-changing fixes, for trivial reformatting, or for reviewing someone else's diff (cmd-review)."
 ---
 
-# Refactor Phase
+# Refactor Pass
 
 Behavior-preserving restructuring in the **Build** stage (§4), its diff entering **Test**: measure before and after, keep only what the data supports, and do performance work only after correctness is proven. Not for new features, behavior-changing fixes, or trivial reformatting. **No options: fully autonomous** — target, scope, and thresholds resolve from the repo's own signals and the run proceeds without waiting on the user.
 

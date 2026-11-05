@@ -5,7 +5,7 @@ name: validate
 # verification surface, so CI runs it on a clean runner so a broken artifact
 # never lands on main or develop.
 #
-# Gates: `python3 scripts/check.py --all` runs all twenty-five. The
+# Gates: `python3 scripts/check.py --all` runs all twenty-seven. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.
@@ -33,6 +33,12 @@ name: validate
 #   branch       the task-branch rule survives on every surface that can reach
 #                a git repository
 #   sizing       the three cost-sizing rules survive on every carrying surface
+#   stages       the six-stage spine and each stage's artifact survive on both
+#                doctrines and the delivery skill
+#   playbook     the playbook's mechanics (accepted artifact fires the next
+#                gate, one source of truth per artifact, advisory versus
+#                deterministic controls, autonomy stopping at the gate)
+#                survive on every surface that carries them
 #   modernize    every modernize-coding adapter is present and version-pinned;
 #                Go and Java claims are cross-checked against GOROOT/api and
 #                the JDK's own src.zip @since tags
