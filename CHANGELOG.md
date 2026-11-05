@@ -50,10 +50,24 @@ integration with tiered autonomy, closing the loop from a control-band
 breach, and recurring codebase scans. Each play names what it changes, how
 to start, the steps, the governance, and a leading and a lagging indicator.
 
+Autonomy is also tiered by **guardrail maturity**, not only by environment: a
+session may run unattended once the context file, the skills encoding
+policy, the hooks blocking unsafe actions, and a runnable test suite have
+earned it — a tight spec, a small blast radius, and code the tests already
+cover. The ladder is earned rather than assumed, so a session that shows it
+is not ready gets the per-edit prompt back.
+
 Two gates join the set: `stages` holds the six-stage spine and each stage's
 artifact on both installed surfaces, and `playbook` holds the four rules
 above wherever they are stated. The gate count is twenty-seven, and the
 eval suite grows three evals over the new material (95 checks, all green).
+
+The always-on token budget moves from 8000 to 9000 (the manifesto from 6500
+to 7500, the standalone copy from 5000 to 5500). The rewrite added four
+always-loaded rules, so the footprint grew by design, and the old ceiling
+left 16 tokens of headroom — a ceiling that sits at 99% of the footprint
+turns the next legitimate rule into a red gate, which is how a budget stops
+bounding cost and starts blocking the work.
 
 ## [7.9.0-beta.5] - 2026-11-05
 
