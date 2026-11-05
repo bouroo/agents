@@ -63,11 +63,11 @@ Two rules: a stage exits only on its check — the **escape hatch** that halts t
 
 **Advisory controls make violations rare; deterministic controls make them close to impossible.** A policy written in prose — a skill, a project context file — shapes the work while it is written; a policy that must always hold needs a deterministic gate behind it: a hook that blocks, a check that fails, a branch rule that demands an approval.
 
-**Autonomy stops at the gate.** The agent may act up to the production gate and nothing past it, and autonomy is tiered per environment — free in development, prepared and authorized in production — so the human gate sits above the automation, never inside it. Detection stays deterministic: a script watches a control band, and the breach decides what the agent may do — log, diagnose read-only, or propose through the review gate.
+**Autonomy stops at the gate.** The agent may act up to the production gate and nothing past it, and autonomy is tiered per environment — free in development, prepared and authorized in production — so the human gate sits above the automation, never inside it. **It is tiered by guardrail maturity too:** a session may run unattended once the context file, skills, hooks, and tests around it have earned it.
 
 **Size the path to the job — the compact path is the default.** A small, local, reversible change runs the **compact path**: one THINK, one ACT, one PROVE, held in the conversation, with no `intent.md` / `spec.md` / `PLAN.md` chain, no separate verification report, and no state checkpoint. The full six-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; a stage is skipped by taking the compact path, and any other skip names why in the next artifact. The artifact chain is an audit trail for work big enough to need one, not a per-task tax.
 
-**Automation is the layer above a skill** — it decides when a workflow runs, not how. Automate only a workflow that has proven itself interactively: declare the unattended run's scope, let the check gate its stop, and keep the authority with a human — an automated run ends local and emits `PENDING:` rather than posting, publishing, merging, or deleting on its own. Template and failure modes: the `execution` skill's automation reference.
+**Automation is the layer above a skill** — it decides when a workflow runs, not how. Automate only a workflow that has proven itself interactively: declare the unattended run's scope, let the check gate its stop, and keep the authority with a human — an automated run ends local and emits `PENDING:` rather than posting, publishing, merging, or deleting on its own. Detection stays deterministic: a script watches a control band, and the breach decides what the agent may do — log, diagnose read-only, or propose through the review gate. Template and failure modes: the `execution` skill's automation reference.
 
 ### 4.1 Seats, not people
 
@@ -99,7 +99,7 @@ Run the cheapest check earliest; prefer computational sensors. Completion has th
 
 **Deliverables pass through Generate-Verify-Refine-Deliver** — an adversarial **Verifier** persona re-derives the pinned `PROMPT:` constraints point-by-point against the artifact, defects return to generation under the 3-cycle bound above, and a **Verification Report** (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable. Detail: the `quality` skill's Verification Loop section.
 
-**Size the loop to the job.** The full loop is owed when the deliverable is **large, irreversible, outward-facing, cross-session, or hard to re-derive cheaply**; every other deliverable is verified in place — re-read the diff against the pinned ask, run the check, name the evidence — and the report states that in one line instead of a separate verification pass. The loop is sized down, never forgotten.
+**Size the loop to the job.** The full loop is owed on the same triggers as the compact path above; every other deliverable is verified in place — re-read the diff against the pinned ask, run the check, name the evidence — and the report states that in one line instead of a separate verification pass. The loop is sized down, never forgotten.
 
 **Evals regression-test the harness itself.** The doctrine is configuration an agent executes: a suite of realistic tasks (prompt plus objective checks) runs on any change to the manifesto, a skill, a hook, or the model; one that lowers the pass rate blocks the merge — the `quality` skill's Evals suite.
 
@@ -124,8 +124,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 - Never write an en-dash in prose or tables — the em-dash is this doctrine's separator; the `dashes` gate enforces it.
 - Never put real-work identity (client/engagement names, space keys, page titles, shortlinks) into doctrine or releases — it lives in machine-local memory; the `privacy` gate enforces the tracked-file half.
 - Never build speculative features (YAGNI) or add an unearned layer, flag, wrapper, or dependency.
-- Never write a comment that restates the code, narrates the change, or describes a type the signature already carries.
-- A comment that restates code is default-banned; one is earned only by a non-derivable *why*.
+- Never write a comment that restates the code, narrates the change, or describes a type the signature already carries; a comment that restates code is default-banned, and one is earned only by a non-derivable *why*.
 - Doc comments on exported symbols follow the language's convention at minimum length.
 - Never declare done without executable evidence at L1/L2/L3.
 - Never optimize without measurement.

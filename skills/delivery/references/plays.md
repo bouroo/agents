@@ -247,6 +247,10 @@ nearest neighboring flows. Report what you ran, what you saw, and any
 behavior that does not match plan.md. Do not fix anything; report only.
 ```
 
+**Autonomy is tiered by guardrail maturity, not only by environment.** A session may run unattended once the guardrails around it have earned it: a tuned context file, skills that encode policy, hooks that block unsafe actions, and a test suite the session can run itself. A tight spec, a small blast radius, and code the tests already cover are the preconditions for letting edits through without a per-edit prompt. The shift is away from a person watching the agent make each edit and towards reviewing artifacts after a longer autonomous session — and those sessions are what make parallelism practical in the first place, since each runs in its own worktree.
+
+The ladder is earned, not assumed: start with the per-edit prompt, drop it as the guardrails above prove themselves, and add it back where a session shows it is not ready. A guardrail that never fires is untested; one that fires constantly is noise.
+
 **Governance.** More sessions means more output, so the controls have to come from configuration in the repository. Hooks and permission settings there apply to all sessions, and what a session does is logged and attributed to the engineer who ran it.
 
 **Measure.** *Leading:* concurrent sessions per engineer while review quality holds, counted from the session traces, and the share of the day spent steering rather than waiting. *Lagging:* changes merged per engineer per week, read alongside the rework rate from the PR history.

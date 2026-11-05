@@ -260,9 +260,16 @@ def g_budget() -> None:
 # pays this on every task pays it on the smallest task too, so the cost of
 # the setup scales with its usefulness only while these stay bounded. The
 # bodies and references are on-demand and are budgeted by `skillbudget`.
-ALWAYS_ON_TOKEN_BUDGET = 8000
-ALWAYS_ON_MANIFESTO_BUDGET = 6500
-ALWAYS_ON_STANDALONE_BUDGET = 5000
+# The rewrite added four always-loaded rules (the accepted artifact fires the
+# next gate, one source of truth per artifact, advisory versus deterministic
+# controls, autonomy stopping at the gate), so the always-on footprint grew by
+# design. The budgets rise with it, keeping roughly the headroom the setup had
+# before: a ceiling that sits at 99% of the footprint turns the next legitimate
+# rule into a red gate, which is how a budget stops bounding cost and starts
+# blocking the work.
+ALWAYS_ON_TOKEN_BUDGET = 9000
+ALWAYS_ON_MANIFESTO_BUDGET = 7500
+ALWAYS_ON_STANDALONE_BUDGET = 5500
 
 
 def _tokens(text: str) -> int:
