@@ -6,34 +6,47 @@
 
 A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, ten on-demand skills, four routine-task command workflows, and two role agents (lead, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
-## The foundation: the delivery lifecycle
+## The foundation: the AI-native delivery loop
 
-The doctrine's spine is the **AI-native delivery lifecycle**. Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moved outward — to intent, review, and governance. The job is therefore a **loop, not a phase sequence**: every stage commits a readable artifact the next stage begins from, and the artifact chain is the audit trail.
+The doctrine's spine is the **AI-native SDLC** — six stages that run as a loop, not a phase sequence. Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moves to the steps around it — plan, review, deploy — which still run at human speed. Every stage commits a readable artifact the next begins from, and that chain of commits is the audit trail. The old control objectives stay; only the enforcement changes.
 
 ```mermaid
 flowchart LR
-    I["Intent · Originator<br/>intent.md"] --> S["Spec · Steward<br/>spec.md + ADRs"]
-    S --> P["Plan · Steward<br/>PLAN.md + STATUS.md"]
-    P --> B["Build · Implementer<br/>diff + tests"]
+    P["Plan · Originator<br/>intent.md"] --> D["Design · Steward<br/>spec.md + ADRs"]
+    D --> B["Build · Implementer<br/>PLAN.md + STATUS.md<br/>then diff + tests"]
     B --> T["Test · Verifier<br/>L1/L2/L3 evidence"]
     T -->|"fails review"| B
-    T -->|"evidence passes"| R["Release · Approver<br/>record + AUTH:"]
-    R --> O["Operate · Operator<br/>incident → new Intent"]
-    O -.->|"reopens the lifecycle"| I
+    T -->|"evidence passes"| X["Deploy · Approver<br/>review findings + AUTH:"]
+    X --> M["Maintain · Operator<br/>incident → new intent.md"]
+    M -.->|"reopens the loop"| P
 ```
 
-`Test → Build` is the canonical review back-edge; `Operate → Intent` reopens the lifecycle. Seven **seats** own the stages — one agent may hold several at once, but the Implementer never approves its own work and the Verifier is always independent of what it judges. Within a stage, work is shaped by the **execution graph** (below): the lifecycle says *which stage and what it commits*; the graph says *how that work runs*.
+`Test → Build` is the canonical review back-edge; `Maintain → Plan` reopens the loop. Seven **seats** own the stages — one agent may hold several at once, but the Implementer never approves its own work and the Verifier is always independent of what it judges. Within a stage, work is shaped by the **execution graph** (below): the lifecycle says *which stage and what it commits*; the graph says *how that work runs*.
+
+Four rules carry the loop, and they are what turn a set of phases into a process that survives agents:
+
+- **The accepted artifact fires the next gate.** A committed `intent.md` triggers the design pass; an approved `spec.md` triggers planning; a merged change triggers the pipeline. The handoff is the commit, so a person holds the gate rather than the handoff.
+- **One source of truth per artifact.** Where a legacy system already holds the record, name it the source of truth and keep the committed artifact as a linked working copy. Two copies with no link are two truths.
+- **Advisory controls make violations rare; deterministic controls make them close to impossible.** A skill shapes the work while it is written; a policy that must always hold needs a hook or a check behind it.
+- **Autonomy stops at the gate.** The agent acts up to the production gate and nothing past it, tiered per environment, so the human gate sits above the automation rather than inside it.
+
+The `delivery` skill carries the plays for each stage — the steps, the governance, and the leading and lagging indicators that say whether each one worked.
 
 ## What's inside
 
 ```
 ├── AGENTS.md                          the manifesto: intake route, decision gates,
-│                                      the delivery lifecycle, the execution graph,
-│                                      verification dial, context/state, constraints
+│                                      the six-stage delivery loop, the execution
+│                                      graph, verification dial, context/state,
+│                                      constraints
 ├── skills/
-│   ├── delivery/                      the spine: seven stages and their exit checks,
-│   │                                  the artifact shapes, plan-first grilling, the
-│   │                                  wayfinder decision map
+│   ├── delivery/                      the spine: six stages and their exit checks,
+│   │                                  the plays, controls, and automation tiers;
+│   │                                  the artifact shapes, plan-first grilling,
+│   │                                  the wayfinder decision map
+│   │   └── references/                plays: per-stage steps, governance, and
+│   │                                  measurement; artifact shapes; grilling;
+│   │                                  wayfinder; common mistakes
 │   ├── execution/                     the execution-graph grammar: nodes, typed edges,
 │   │   └── references/                caps, anchors, shapes, cost; worked topologies;
 │   │                                  harness design: minimal-harness ladder, ACI,
@@ -87,7 +100,7 @@ flowchart LR
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       twenty-five deterministic gates (CI runs these)
+    ├── check.py                       twenty-eight deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -113,7 +126,7 @@ The full decision charts — the intake router, each node's internal loop, and t
 
 ## The doctrine in one line
 
-Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job through the delivery lifecycle, sized to the job — the compact path (one THINK, one ACT, one PROVE, no artifact chain) is the default for a small, local, reversible change, and the seven-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe on high-risk work, and a hard verify bound of 3 failed cycles; pass large or hard-to-re-derive deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable — while every other deliverable is verified in place; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
+Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job through the six-stage delivery loop, sized to the job — the compact path (one THINK, one ACT, one PROVE, no artifact chain) is the default for a small, local, reversible change, and the six-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe on high-risk work, and a hard verify bound of 3 failed cycles; pass large or hard-to-re-derive deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable — while every other deliverable is verified in place; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
 
 ## Using it
 
@@ -174,11 +187,14 @@ python3 scripts/check.py --all
 | `state` | the runtime-state rule (proposed-validated-committed recording, evidence-tested attribution, named recovery boundary) survives on both doctrines and the execution skill |
 | `branch` | the task-branch rule survives on every surface that can reach a git repository (both doctrines, the execution skill, the lead and worker agents), so a run never edits or commits on the default branch |
 | `sizing` | the three cost-sizing rules (the compact path, the proportional confirmation stop, the sized verification loop) survive on every surface that carries them — both doctrines, the delivery skill, and the quality skill |
+| `bottleneck` | the framing the loop rests on — code stopped being the bottleneck, and the old control objectives stay while the enforcement changes — survives on every surface that carries it |
+| `stages` | the six-stage spine and the artifact each stage commits survive on both doctrines and the delivery skill |
+| `playbook` | the playbook's mechanics (the accepted artifact fires the next gate, one source of truth per artifact, advisory versus deterministic controls, autonomy stopping at the production gate) survive on every surface that carries them |
 | `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all twenty-five on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all twenty-eight on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

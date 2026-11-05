@@ -4,7 +4,7 @@
 
 | Mistake | Fix |
 | --- | --- |
-| Running the stages as a waterfall | Re-enter on evidence; `Test -> Build` and `Operate -> Intent` are canonical back-edges |
+| Running the stages as a waterfall | Re-enter on evidence; `Test -> Build` and `Maintain -> Plan` are canonical back-edges |
 | Exiting a stage on "the agent finished" | Exit on the stage's check — the artifact plus its evidence |
 | The implementer approving its own work | Split the seats; approval is a different actor from authorship |
 | Verifying in the author's context | Re-derive in a fresh context; a report is testimony, not evidence |

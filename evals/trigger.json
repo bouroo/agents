@@ -55,6 +55,8 @@
         {"query": "grill me on this idea until the design is settled", "should_trigger": true},
         {"query": "we keep losing track across sessions — set up a wayfinder map", "should_trigger": true},
         {"query": "what goes in STATUS.md versus PLAN.md?", "should_trigger": true},
+        {"query": "who approves a release in this process?", "should_trigger": true},
+        {"query": "how do we hook the agent's approval into the deploy gate?", "should_trigger": true},
         {"query": "how many agents should I spawn for this refactor?", "should_trigger": false},
         {"query": "run the tests and tell me whether we're done", "should_trigger": false},
         {"query": "make a todo list for today", "should_trigger": false},
@@ -62,9 +64,9 @@
         {"query": "document the auth module in docs/", "should_trigger": false}
       ],
       "validation": [
-        {"query": "who approves a release in this process?", "should_trigger": true},
         {"query": "this effort is too big for one session, how do we split it?", "should_trigger": true},
         {"query": "write the intent.md for this feature", "should_trigger": true},
+        {"query": "the agent keeps skipping the approval step before deploy", "should_trigger": true},
         {"query": "why is this function slow?", "should_trigger": false},
         {"query": "review my diff", "should_trigger": false},
         {"query": "create a Confluence page for the plan", "should_trigger": false}

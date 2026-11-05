@@ -10,6 +10,75 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [8.0.0-beta.1] - 2026-11-05
+
+The spine is rewritten on the AI-native SDLC: a six-stage loop — **Plan,
+Design, Build, Test, Deploy, Maintain** — replacing the previous seven
+stages (Intent, Spec, Plan, Build, Test, Release, Operate). The stage
+sequence now mirrors the one teams actually run when agents write the code:
+intent is captured as `intent.md` in the Plan stage, requirements and design
+compress into one session in the Design stage, the plan and the diff are the
+Build stage's output, review and governance land in Deploy, and the loop
+closes in Maintain when a breached control band is written back as a new
+`intent.md`.
+
+Four rules were added because the loop needs them to work, and each one is
+now asserted by a gate:
+
+- **The accepted artifact fires the next gate.** A committed `intent.md`
+  triggers the design pass, an approved `spec.md` triggers planning, and a
+  merged change triggers the pipeline. The handoff is the commit, so a
+  person holds the gate rather than the handoff.
+- **One source of truth per artifact.** Where a legacy system already holds
+  the record — a tracker, a requirements tool, a wiki — name it the source of
+  truth and keep the committed artifact as a linked working copy. Two copies
+  with no link are two truths.
+- **Advisory controls make violations rare; deterministic controls make them
+  close to impossible.** A skill shapes the work while it is written; a
+  policy that must always hold needs a hook or a check behind it.
+- **Autonomy stops at the gate.** The agent acts up to the production gate
+  and nothing past it, tiered per environment, so the human gate sits above
+  the automation rather than inside it.
+
+The `delivery` skill grows a **Plays** section and a
+`references/plays.md` that carries the per-stage practices: capture as
+`intent.md`, requirements and design in one session, plan-then-implement, the
+project context file, skills as institutional knowledge, hooks as build-time
+guardrails, parallel sessions and subagents, the feedback loop, continuous
+evals, agentic review in both directions, hooks as approval gates, CI/CD
+integration with tiered autonomy, closing the loop from a control-band
+breach, and recurring codebase scans. Each play names what it changes, how
+to start, the steps, the governance, and a leading and a lagging indicator.
+
+Autonomy is also tiered by **guardrail maturity**, not only by environment: a
+session may run unattended once the context file, the skills encoding
+policy, the hooks blocking unsafe actions, and a runnable test suite have
+earned it — a tight spec, a small blast radius, and code the tests already
+cover. The ladder is earned rather than assumed, so a session that shows it
+is not ready gets the per-edit prompt back.
+
+The framing the loop rests on is now stated in full: code stopped being the
+bottleneck, so the constraint moved to the steps around the build — plan,
+review, deploy — which still run at human speed; controls sized for human
+output stop matching reality, and governance costs rise because exceptions
+still route through committees. The old control objectives stay — the phased
+process existed for accountability, control, and audit — and only the
+enforcement changes: AI is embedded at every point, and the handover between
+stages is automated rather than negotiated.
+
+Three gates join the set: `stages` holds the six-stage spine and each
+stage's artifact on both installed surfaces, `playbook` holds the four rules
+above wherever they are stated, and `bottleneck` holds the framing the loop
+rests on. The gate count is twenty-eight, and the eval suite grows four
+evals over the new material (96 checks, all green).
+
+The always-on token budget moves from 8000 to 9000 (the manifesto from 6500
+to 7500, the standalone copy from 5000 to 5500). The rewrite added four
+always-loaded rules, so the footprint grew by design, and the old ceiling
+left 16 tokens of headroom — a ceiling that sits at 99% of the footprint
+turns the next legitimate rule into a red gate, which is how a budget stops
+bounding cost and starts blocking the work.
+
 ## [7.9.0-beta.5] - 2026-11-05
 
 A tenth on-demand skill: `unslop`, which removes AI residue from the
