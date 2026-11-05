@@ -5,9 +5,16 @@ name: validate
 # verification surface, so CI runs it on a clean runner so a broken artifact
 # never lands on main or develop.
 #
-# Gates (`python3 scripts/check.py --help` for the authoritative list):
+# Gates: `python3 scripts/check.py --all` runs all twenty-five. The
+# authoritative list is `python3 scripts/check.py --help`; the summary below is
+# a reading aid, not the registry, so a gate added there without a line here
+# still runs. The file that enforces a gate is scripts/check.py.
 #   budget       AGENTS.md line budget (the concision charter)
+#   cost         the always-on footprint stays within its token budget
 #   frontmatter  valid, colon-safe Agent-Skills metadata on every skill/command
+#   descriptions every description carries a trigger clause and a boundary
+#   skillbudget  every skill body stays loadable whole
+#   references   every bundled reference names its load condition
 #   links        every relative Markdown link resolves
 #   agnostic     core doctrine free of host-binding tokens
 #   manifests    marketplace manifests parse; version fields agree
@@ -17,10 +24,22 @@ name: validate
 #   dashes       the em-dash convention survives on both canonical surfaces,
 #                and the doctrine corpus carries no en-dash (digit-to-digit
 #                ranges are exempt as typographic data)
+#   l1           the owed L1: done-report line survives on both surfaces
+#   veriloop     the verification loop survives on both canonical surfaces
+#   memory       the memory rule survives on both canonical surfaces
+#   environment  the execution-environment clause survives on both surfaces
+#   automation   the automation-layer clause survives on both surfaces
+#   state        the runtime-state rule survives on both doctrines and execution
+#   branch       the task-branch rule survives on every surface that can reach
+#                a git repository
+#   sizing       the three cost-sizing rules survive on every carrying surface
 #   modernize    every modernize-coding adapter is present and version-pinned;
 #                Go and Java claims are cross-checked against GOROOT/api and
 #                the JDK's own src.zip @since tags
 #   evals        the harness regression suite exists and is well-formed
+#   triggers     the description-trigger set is present and large enough to
+#                measure a description
+#   standalone   every hard constraint is present in the standalone copy too
 
 on:
   push:

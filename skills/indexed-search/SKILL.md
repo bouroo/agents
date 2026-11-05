@@ -5,7 +5,7 @@ description: "Search a large repository fast and repeatedly: probe the host for 
 
 # Indexed search
 
-A trigram index turns O(total bytes) scans into candidate-file lookups — up to an order of magnitude faster on large repos — but only if its lifecycle is managed. Probe first, degrade gracefully, never install: the doctrine ships dependency-free, and a skill that requires a build step is broken on the next host.
+A trigram index turns O(total bytes) scans into candidate-file lookups — up to an order of magnitude faster on large repos — but only if its lifecycle is managed. Probe first, fall back when the tool is absent, never install: the doctrine ships dependency-free, and a skill that requires a build step is broken on the next host.
 
 ## 1. Probe the host
 
