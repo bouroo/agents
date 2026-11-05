@@ -75,6 +75,12 @@ DEPTH_ENV = "AGENTS_EVAL_DEPTH"
 
 AGENTS_MD_BUDGET = 250
 
+# Timeouts, in seconds, with the reason each differs. The suite runs every
+# eval's checks, so it gets the long one; the trigger runner only parses a
+# query set, so it gets the short one.
+SUITE_TIMEOUT_SECONDS = 600
+TRIGGER_TIMEOUT_SECONDS = 120
+
 KEBAB_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 # The Agent Skills frontmatter contract, whole: the two required keys plus the
 # optional ones a host may read. Rejecting a spec-legal key would make compliant
@@ -133,6 +139,8 @@ HOST_SCAN_SKILLS = sorted(p for p in (ROOT / "skills").rglob("*.md")
 # `mode:` frontmatter, while the .plain variants stay agnostic. Scanning it would
 # force that frontmatter to be hedged everywhere to satisfy a gate.
 
+
+
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 
 # A bundled reference loads on demand, so its link must name the condition that
@@ -148,6 +156,28 @@ _msgs: list[tuple[str, str]] = []
 
 def _add(level: str, msg: str) -> None:
     _msgs.append((level, msg))
+
+
+def _scan_lines(files: list[pathlib.Path], pattern: re.Pattern,
+                limit: int = 10) -> list[tuple[str, int, str]]:
+    """Every line in `files` matching `pattern`, as (file, line, match) hits.
+
+    The gates that scan doctrine for a forbidden token differ only in the
+    pattern and in how they word the hit, so the scan lives here once. The
+    limit stops a badly broken repository from printing thousands of hits.
+    """
+    hits: list[tuple[str, int, str]] = []
+    for f in files:
+        if not f.is_file():
+            continue
+        rel = str(f.relative_to(ROOT))
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            m = pattern.search(line)
+            if m:
+                hits.append((rel, i, m.group(0)))
+                if len(hits) >= limit:
+                    return hits
+    return hits
 
 
 def _toml_meta(path: pathlib.Path) -> dict:
@@ -592,18 +622,8 @@ def g_dashes() -> None:
         for suffix in ("*.md", "*.toml"):
             files += sorted(p for p in (ROOT / sub).rglob(suffix)
                             if _no_dotdir(p))
-    hits: list[str] = []
-    for f in files:
-        if not f.is_file():
-            continue
-        rel = str(f.relative_to(ROOT))
-        for i, line in enumerate(f.read_text().splitlines(), 1):
-            if EN_PROSE_DASH_RE.search(line):
-                hits.append(f"{rel}:{i} en-dash")
-                if len(hits) >= 10:
-                    break
-        if len(hits) >= 10:
-            break
+    hits = [f"{rel}:{i} en-dash" for rel, i, _ in
+             _scan_lines(files, EN_PROSE_DASH_RE)]
     if hits:
         _add("FAIL", f"{name}: spaced en-dash in doctrine prose "
                      f"(use an em-dash): " + "; ".join(hits))
@@ -678,17 +698,8 @@ def g_manifests() -> None:
 def g_agnostic() -> None:
     name = "agnostic"
     files = [f for f in HOST_SCAN_FILES + HOST_SCAN_SKILLS if f.is_file()]
-    hits: list[str] = []
-    for f in files:
-        rel = f.relative_to(ROOT)
-        for i, line in enumerate(f.read_text().splitlines(), 1):
-            m = HOST_TOKEN_RE.search(line)
-            if m:
-                hits.append(f"{rel}:{i} '{m.group(0)}'")
-                if len(hits) >= 10:
-                    break
-        if len(hits) >= 10:
-            break
+    hits = [f"{rel}:{i} '{m}'" for rel, i, m in
+             _scan_lines(files, HOST_TOKEN_RE)]
     if hits:
         _add("FAIL", f"{name}: host token in core: " + "; ".join(hits))
         return
@@ -702,17 +713,8 @@ def g_privacy() -> None:
         + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p)) \
         + sorted(p for p in (ROOT / "agents").rglob("*.md") if _no_dotdir(p))
     files = [f for f in scanned if f.is_file()]
-    hits: list[str] = []
-    for f in files:
-        rel = f.relative_to(ROOT)
-        for i, line in enumerate(f.read_text().splitlines(), 1):
-            m = PRIVACY_TOKEN_RE.search(line)
-            if m:
-                hits.append(f"{rel}:{i} '{m.group(0)}'")
-                if len(hits) >= 10:
-                    break
-        if len(hits) >= 10:
-            break
+    hits = [f"{rel}:{i} '{m}'" for rel, i, m in
+             _scan_lines(files, PRIVACY_TOKEN_RE)]
     if hits:
         _add("FAIL", f"{name}: real-work identifier in doctrine: " + "; ".join(hits))
         return
@@ -1159,7 +1161,7 @@ def g_evals() -> None:
         return
     try:
         res = subprocess.run([sys.executable, str(runner)], cwd=ROOT,
-                             capture_output=True, text=True, timeout=600,
+                             capture_output=True, text=True, timeout=SUITE_TIMEOUT_SECONDS,
                              env={**os.environ, DEPTH_ENV: "1"})
     except (OSError, subprocess.TimeoutExpired) as exc:
         _add("FAIL", f"{name}: suite runner did not complete: {exc}")
@@ -1230,7 +1232,7 @@ def g_triggers() -> None:
         return
     try:
         res = subprocess.run([sys.executable, str(runner)], cwd=ROOT,
-                             capture_output=True, text=True, timeout=120)
+                             capture_output=True, text=True, timeout=TRIGGER_TIMEOUT_SECONDS)
     except (OSError, subprocess.TimeoutExpired) as exc:
         _add("FAIL", f"{name}: runner did not complete: {exc}")
         return

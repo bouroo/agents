@@ -14,7 +14,7 @@ Load the `quality` skill's Craft section for the artifact gates and its Verifica
 Loading this skill authorizes neither a full audit nor any file creation.
 
 - **Guidance (default)** — a security question, a focused review, triage of a reported finding, or methodology. Use only the parts you need, answer in the conversation, write nothing.
-- **Full audit** — only when the user explicitly asks to audit or pen-test, asks for a full, comprehensive, or end-to-end review, or requests a report artifact. Then run the workflow and write `REPORT.md`.
+- **Full audit** — only when the user explicitly asks to audit or pen-test, asks for a full or end-to-end review, or requests a report artifact. Then run the workflow and write `REPORT.md`.
 
 If the request could be either, ask one question before creating files.
 

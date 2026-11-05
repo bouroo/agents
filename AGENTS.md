@@ -144,6 +144,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | `modernize-coding` skill | bring code to current patterns (Go, Java, Rust, Python, TS/JS) |
 | `indexed-search` skill | large-tree search: tgrep, index/serve, rg -> Grep |
 | `problem-details` skill | RFC 9457 error responses: five-member contract, adoption paths (+ bundled references: blueprints) |
+| `unslop` skill | AI residue in prose, code, and UI: rule lists per surface, scanner, stable rule ids |
 | [commands/](commands/) | workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | [agents/](agents/lead.md) | role agents for §9: [lead](agents/lead.md) decomposes and verifies, [worker](agents/worker.md) executes one unit; per-host variants under `common/` |
 | [standalone/](standalone/AGENTS.md) | the compact single-file doctrine, for `install.sh --standalone` |
