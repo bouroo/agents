@@ -105,11 +105,17 @@ def duplicate_queries(suite: dict) -> list[str]:
     return dupes
 
 
+# Each query shells out to a host command that may load a model, so the
+# budget is generous: a run is three times per query.
+QUERY_TIMEOUT_SECONDS = 600
+
+
 def triggered(cmd: str, prompt: str, marker: re.Pattern) -> bool:
     try:
         res = subprocess.run(
             cmd.replace("{}", shlex.quote(prompt)),
-            shell=True, capture_output=True, text=True, timeout=600,
+            shell=True, capture_output=True, text=True,
+            timeout=QUERY_TIMEOUT_SECONDS,
         )
     except subprocess.TimeoutExpired:
         return False

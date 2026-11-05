@@ -10,6 +10,57 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+A tenth on-demand skill: `unslop`, which removes AI residue from the
+artifacts a SWE task delivers. Two upstream skills feed it — the
+`unslop` prose rules from [cursor/plugins](https://github.com/cursor/plugins)
+(MIT) and the interface passes from
+[heydamir/unslop](https://github.com/heydamir/unslop) (CC BY 4.0) — and the
+gap between them is closed for back-end work: prose rules cover commit
+messages, PR descriptions, docs, error strings and log lines; code rules
+cover placeholder bodies, swallowed errors, over-generated abstractions,
+vague names and claims without a referent; interface rules cover spacing,
+colour, icons, copy, type, layout, details, visuals and motion.
+
+The skill's discriminator is one test: swap this project for a different
+one, and any line that still reads as true carries no information about
+this project, so it is residue. A second rule keeps it honest: a prose
+claim that exceeds the implementation is *missing work*, which goes to the
+build queue, never to the rewrite queue. Rewriting a sentence to agree with
+a defect is the one move the skill forbids.
+
+Rule ids are stable (`P3`, `C11`, `U2`), so a report cites them and a later
+pass compares against them. `scripts/scan.py` flags the machine-detectable
+residue in a path and carries a self-test; the scanner finds candidates,
+not verdicts. Bundled references load one surface at a time: prose, code,
+interface.
+
+A forward-test on a slop artifact found five contradictions in the first
+draft, all now closed: a string inside a source file belongs to the code
+surface, so the docstring rule lost its duplicate id; "do not add" is
+reconciled with the fix for a swallowed error, which is a repair the claim
+already promised; the sample-data rule now names its three outcomes
+(read the real source, replace with plausible data, or report missing work)
+instead of leaving no middle path; the vague-name rule no longer fires on a
+job-named class that the naming rule asks for; and the report format is
+stated, with `PENDING:` carrying what was not rewritten. The scanner gained
+the missing hype vocabulary, stopped double-reporting a swallowed `pass` as
+a placeholder body, and takes several paths at once.
+
+Applying the skill to this repository found residue the scanner could not see,
+and two claims that no longer matched the code. The `quality` skill stated the
+trigger set as "8-10 should-trigger and 6-8 should-not-trigger" per skill, but
+the gate enforces a minimum and two skills carry more; the claim now states the
+minimum and says why a broad scope carries more. The CI workflow headed its
+gate list "the authoritative list" while listing 11 of 25 gates; it now lists
+all 25 and names `scripts/check.py` as the registry. Three magic timeouts became
+named constants with their reason, the three near-identical doctrine scan
+loops in `check.py` became one helper, and the scanner learned that a
+`-> str | None` return is a declared sentinel and that a comment block's
+continuation line is not narration. The rule list now states the scanner's
+remaining blind spots, so a manual pass still owes them attention.
+
 ## [7.9.0-beta.4] - 2026-11-03
 
 Users consuming this repository as their agent configuration reported that

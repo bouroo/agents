@@ -609,6 +609,42 @@
           "description": "the manifesto stays within its line budget"
         }
       ]
+    },
+    {
+      "id": "unslop-anchor-rules-survive",
+      "prompt": "Reorganize and condense skills/unslop/SKILL.md and its references. Its load-bearing rules must survive the edit and the skill must keep its shape.",
+      "checks": [
+        {
+          "cmd": "tail -n +5 skills/unslop/SKILL.md | grep -qE 'Swap this project for a different one'",
+          "expect_exit": 0,
+          "description": "the swap-the-project test, the skill's core discriminator, survives a reorganize or condense"
+        },
+        {
+          "cmd": "tail -n +5 skills/unslop/SKILL.md | grep -qE 'missing work'",
+          "expect_exit": 0,
+          "description": "the split between residue and missing work survives, so a false claim is never answered with a rewrite"
+        },
+        {
+          "cmd": "tail -n +5 skills/unslop/SKILL.md | grep -qE 'references/prose.md'",
+          "expect_exit": 0,
+          "description": "the prose rule list stays linked from the skill body"
+        },
+        {
+          "cmd": "tail -n +5 skills/unslop/SKILL.md | grep -qE 'references/code.md'",
+          "expect_exit": 0,
+          "description": "the code rule list stays linked from the skill body"
+        },
+        {
+          "cmd": "tail -n +5 skills/unslop/SKILL.md | grep -qE 'references/ui.md'",
+          "expect_exit": 0,
+          "description": "the interface rule list stays linked from the skill body"
+        },
+        {
+          "cmd": "python3 skills/unslop/scripts/scan.py --self-test",
+          "expect_exit": 0,
+          "description": "the scanner still finds what it claims and stays quiet on clean source"
+        }
+      ]
     }
   ]
 }
