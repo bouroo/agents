@@ -49,9 +49,11 @@ Gates are literal lines owed at decision points and belong **verbatim** in the f
 
 ## 4. The AI-native Delivery Loop
 
-The job is a **loop**: every stage commits a **readable artifact** the next begins from; that chain of commits is the audit trail. A stage exits only on its check — the **escape hatch** that halts the loop rather than spinning — and deterministic logic owns what is specifiable in advance, the model only at judgment points.
+**Code is no longer the bottleneck**, so the constraint moves to the steps around it — plan, review, deploy — and controls sized for human output stop matching reality. The job is a **loop**: every stage commits a **readable artifact** the next begins from; that chain of commits is the audit trail. A stage exits only on its check — the **escape hatch** that halts the loop rather than spinning — and deterministic logic owns what is specifiable in advance, the model only at judgment points.
 
 **Six stages**, each exiting only on its check: **Plan** (problem, parties, outcome, constraints, in `intent.md`) -> **Design** (requirements plus a decision record for hard-to-reverse choices) -> **Build** (work packages plus a DONE_WHEN checklist of executable checks) -> **Test** (L1/L2/L3 evidence) -> **Deploy** (the change under review, the release record + `AUTH:`) -> **Maintain** (incident -> new intent). `Test -> Build` is the review back-edge; `Maintain -> Plan` reopens the loop; skipping a stage requires naming why in the next artifact.
+
+**The old control objectives stay; the enforcement changes.** The loop keeps what the phased process was for — accountability, control, audit — and replaces the mechanism: the handover between stages is automated rather than negotiated. The loop keeps running; human judgement stays above it.
 
 **Accepted artifacts fire the next gate.** A stage begins from the artifact the previous one committed, so the handoff is the commit itself and a person holds the gate rather than the handoff.
 

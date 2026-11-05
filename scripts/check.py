@@ -34,6 +34,9 @@ Static gates over docs/skills plus the distribution layer:
     evals           the harness regression suite is present, every eval is
                     well-formed (id, prompt, mechanical checks), and the suite
                     runs green
+    bottleneck      the framing the loop rests on -- code stopped being the
+                    bottleneck, and the old control objectives stay while the
+                    enforcement changes -- survives on every surface carrying it
     environment     the execution-environment clause survives on both installed
                     surfaces (manifesto + standalone copy)
     automation      the automation-layer clause survives on both installed
@@ -476,6 +479,18 @@ RULE_SURFACES = {
         ("standalone/AGENTS.md", re.compile(r"Autonomy stops at the gate")),
         ("skills/delivery/SKILL.md", re.compile(r"Autonomy is tiered per environment")),
     ],
+    # The framing the whole setup rests on: code stopped being the bottleneck,
+    # the constraint moved to the steps around the build, and the loop keeps
+    # the old control objectives while replacing the enforcement. Without it
+    # the stages read as a phase sequence with agents in them.
+    "bottleneck": [
+        ("AGENTS.md", re.compile(r"Code is no longer the bottleneck")),
+        ("standalone/AGENTS.md", re.compile(r"Code is no longer the bottleneck")),
+        ("skills/delivery/SKILL.md", re.compile(r"Code stopped being the bottleneck")),
+        ("AGENTS.md", re.compile(r"old control objectives stay", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"old control objectives stay", re.IGNORECASE)),
+        ("skills/delivery/SKILL.md", re.compile(r"old control objectives stay", re.IGNORECASE)),
+    ],
     "environment": [
         ("AGENTS.md", re.compile(r"execution environment is a design decision",
                                  re.IGNORECASE)),
@@ -572,6 +587,20 @@ def g_memory() -> None:
     if _g_rule_surfaces("memory"):
         _add("PASS", "memory: rule present on "
                      f"{len(RULE_SURFACES['memory'])} canonical surface(s)")
+
+
+def g_bottleneck() -> None:
+    """The framing the loop rests on survives on every surface that carries it.
+
+    The stages are not a phase sequence with agents in them: code stopped
+    being the bottleneck, so the constraint moved to the steps around the
+    build, and the loop keeps the old control objectives while replacing the
+    enforcement. A rewrite that dropped the framing would leave the stage
+    names intact and the reasoning gone.
+    """
+    if _g_rule_surfaces("bottleneck"):
+        _add("PASS", f"bottleneck: rule present on "
+                     f"{len(RULE_SURFACES['bottleneck'])} canonical surface(s)")
 
 
 def g_environment() -> None:
@@ -1459,6 +1488,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
+         ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
          ("stages", g_stages), ("playbook", g_playbook),

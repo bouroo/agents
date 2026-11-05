@@ -51,11 +51,13 @@ Gates are literal lines owed at decision points and belong **verbatim** in the f
 
 ## 4. The AI-native Delivery Loop
 
-**Code is no longer the bottleneck.** Agents compress build time, so the constraint moved outward — to plan, review, and governance. The job is a **loop**, not a phase sequence: every stage commits a **readable artifact** the next begins from, and that chain of commits is the audit trail (the `delivery` skill's Lifecycle section owns stages and handoffs; its Artifacts section defines the shapes).
+**Code is no longer the bottleneck.** Agents compress build time, so the constraint moves to the steps around it — plan, review, deploy — which still run at human speed. Two consequences follow: controls sized for human output stop matching reality, and governance costs rise because exceptions still route through committees. The job is a **loop**, not a phase sequence: every stage commits a **readable artifact** the next begins from, and that chain of commits is the audit trail (the `delivery` skill's Lifecycle section owns stages and handoffs; its Artifacts section defines the shapes).
 
 Two rules: a stage exits only on its check — the **escape hatch** that halts the loop rather than spinning — and deterministic logic owns what is specifiable in advance, the model only at judgment points (§10).
 
 **Six stages**, each exiting only on its check: **Plan** (`intent.md`) -> **Design** (`spec.md` + ADRs) -> **Build** (`PLAN.md` + `STATUS.md`, then the diff and its tests) -> **Test** (L1/L2/L3 evidence) -> **Deploy** (the PR with its review findings, the release record + `AUTH:`) -> **Maintain** (incident record -> new `intent.md`). `Test -> Build` is the review back-edge; `Maintain -> Plan` reopens the loop; skipping a stage requires naming why in the next artifact.
+
+**The old control objectives stay; the enforcement changes.** The AI-native loop keeps what the phased process was for — accountability, control, audit — and replaces the mechanism: AI is embedded at every point, and the handover between stages is automated rather than negotiated. The loop keeps running; human judgement stays above it.
 
 **Accepted artifacts fire the next gate.** A stage starts from the artifact the previous one committed, so a committed `intent.md` can trigger the design pass and a merged PR can trigger the pipeline with no person in the invocation path — the person holds the gate, not the handoff.
 

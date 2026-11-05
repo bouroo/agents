@@ -57,10 +57,20 @@ earned it — a tight spec, a small blast radius, and code the tests already
 cover. The ladder is earned rather than assumed, so a session that shows it
 is not ready gets the per-edit prompt back.
 
-Two gates join the set: `stages` holds the six-stage spine and each stage's
-artifact on both installed surfaces, and `playbook` holds the four rules
-above wherever they are stated. The gate count is twenty-seven, and the
-eval suite grows three evals over the new material (95 checks, all green).
+The framing the loop rests on is now stated in full: code stopped being the
+bottleneck, so the constraint moved to the steps around the build — plan,
+review, deploy — which still run at human speed; controls sized for human
+output stop matching reality, and governance costs rise because exceptions
+still route through committees. The old control objectives stay — the phased
+process existed for accountability, control, and audit — and only the
+enforcement changes: AI is embedded at every point, and the handover between
+stages is automated rather than negotiated.
+
+Three gates join the set: `stages` holds the six-stage spine and each
+stage's artifact on both installed surfaces, `playbook` holds the four rules
+above wherever they are stated, and `bottleneck` holds the framing the loop
+rests on. The gate count is twenty-eight, and the eval suite grows four
+evals over the new material (96 checks, all green).
 
 The always-on token budget moves from 8000 to 9000 (the manifesto from 6500
 to 7500, the standalone copy from 5000 to 5500). The rewrite added four

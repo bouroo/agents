@@ -8,7 +8,7 @@ A shared setup for autonomous coding agents that is **agnostic of programming la
 
 ## The foundation: the AI-native delivery loop
 
-The doctrine's spine is the **AI-native SDLC** — six stages that run as a loop, not a phase sequence. Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moved outward — to plan, review, and governance. Every stage commits a readable artifact the next begins from, and that chain of commits is the audit trail.
+The doctrine's spine is the **AI-native SDLC** — six stages that run as a loop, not a phase sequence. Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moves to the steps around it — plan, review, deploy — which still run at human speed. Every stage commits a readable artifact the next begins from, and that chain of commits is the audit trail. The old control objectives stay; only the enforcement changes.
 
 ```mermaid
 flowchart LR
@@ -100,7 +100,7 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       twenty-seven deterministic gates (CI runs these)
+    ├── check.py                       twenty-eight deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -187,13 +187,14 @@ python3 scripts/check.py --all
 | `state` | the runtime-state rule (proposed-validated-committed recording, evidence-tested attribution, named recovery boundary) survives on both doctrines and the execution skill |
 | `branch` | the task-branch rule survives on every surface that can reach a git repository (both doctrines, the execution skill, the lead and worker agents), so a run never edits or commits on the default branch |
 | `sizing` | the three cost-sizing rules (the compact path, the proportional confirmation stop, the sized verification loop) survive on every surface that carries them — both doctrines, the delivery skill, and the quality skill |
+| `bottleneck` | the framing the loop rests on — code stopped being the bottleneck, and the old control objectives stay while the enforcement changes — survives on every surface that carries it |
 | `stages` | the six-stage spine and the artifact each stage commits survive on both doctrines and the delivery skill |
 | `playbook` | the playbook's mechanics (the accepted artifact fires the next gate, one source of truth per artifact, advisory versus deterministic controls, autonomy stopping at the production gate) survive on every surface that carries them |
 | `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all twenty-seven on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all twenty-eight on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

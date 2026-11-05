@@ -11,7 +11,9 @@ One doctrine for plan-shaped agent work, merged because it is one loop, not a li
 
 ## Lifecycle
 
-Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moved outward — to plan, review, governance. The job is a **loop**, not a phase sequence: each stage commits a readable artifact the next begins from, and that artifact chain *is* the audit trail; six stages, and `Maintain` reopens `Plan`.
+Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moves to the steps around it — plan, review, deploy — which still run at human speed. Controls sized for human output stop matching reality, and governance costs rise because exceptions still route through committees.
+
+The job is a **loop**, not a phase sequence: each stage commits a readable artifact the next begins from, and that artifact chain *is* the audit trail; six stages, and `Maintain` reopens `Plan`. The old control objectives stay — accountability, control, audit — and only the enforcement changes: AI is embedded at every point, and the handover between stages is automated rather than negotiated. The loop keeps running; human judgement stays above it.
 
 | Stage | Commits | Seat | Exit check |
 | --- | --- | --- | --- |

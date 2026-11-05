@@ -698,6 +698,17 @@
           "description": "the growth stayed in references/ rather than flooding the skill body"
         }
       ]
+    },
+    {
+      "id": "bottleneck-framing-survives-doctrine-edits",
+      "prompt": "Rewrite the lifecycle section of AGENTS.md or the delivery skill. The framing the loop rests on \u2014 code stopped being the bottleneck, so the constraint moved to the steps around the build, and the old control objectives stay while only the enforcement changes \u2014 must survive on every surface that carries it.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py bottleneck",
+          "expect_exit": 0,
+          "description": "the bottleneck framing and the control-objectives clause survive on both doctrines and the delivery skill"
+        }
+      ]
     }
   ]
 }
