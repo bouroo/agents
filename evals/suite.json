@@ -182,9 +182,9 @@
       "prompt": "Reorganize and condense skills/delivery/SKILL.md. Its load-bearing rules must survive the edit and the skill must keep its shape.",
       "checks": [
         {
-          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'seven stages'",
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'six stages'",
           "expect_exit": 0,
-          "description": "the load-bearing phrase 'seven stages' survives a reorganize or condense of the skill"
+          "description": "the load-bearing phrase 'six stages' survives a reorganize or condense of the skill"
         },
         {
           "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'canonical back-edges'",
@@ -220,6 +220,16 @@
           "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'fog'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'fog' survives a reorganize or condense of the skill"
+        },
+        {
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'source of truth'",
+          "expect_exit": 0,
+          "description": "the load-bearing phrase 'source of truth' survives a reorganize or condense of the skill"
+        },
+        {
+          "cmd": "tail -n +5 skills/delivery/SKILL.md | grep -qE 'deterministic control'",
+          "expect_exit": 0,
+          "description": "the load-bearing phrase 'deterministic control' survives a reorganize or condense of the skill"
         }
       ]
     },
@@ -643,6 +653,60 @@
           "cmd": "python3 skills/unslop/scripts/scan.py --self-test",
           "expect_exit": 0,
           "description": "the scanner still finds what it claims and stays quiet on clean source"
+        }
+      ]
+    },
+    {
+      "id": "six-stage-spine-survives-doctrine-edits",
+      "prompt": "Reorganize the delivery lifecycle in AGENTS.md or in the delivery skill. The six stages and the artifact each one commits must survive, and the two installed doctrines must keep agreeing on them.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py stages",
+          "expect_exit": 0,
+          "description": "the six-stage spine and each stage's artifact survive on both doctrines and the delivery skill"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "every relative link still resolves after the reorganization"
+        }
+      ]
+    },
+    {
+      "id": "playbook-mechanics-survive-doctrine-edits",
+      "prompt": "Tighten or reorganize the lifecycle doctrine. The rules that make the loop work \u2014 the accepted artifact firing the next gate, one source of truth per artifact, advisory versus deterministic controls, and autonomy stopping at the production gate \u2014 must survive on every surface that carries them.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py playbook",
+          "expect_exit": 0,
+          "description": "the playbook's mechanics survive on both doctrines and the delivery skill"
+        }
+      ]
+    },
+    {
+      "id": "plays-reference-stays-loadable",
+      "prompt": "Add or extend the per-stage practices under skills/delivery/references/.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the plays reference is named from its SKILL.md on a stated load condition, so progressive disclosure reaches it"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the growth stayed in references/ rather than flooding the skill body"
+        }
+      ]
+    },
+    {
+      "id": "bottleneck-framing-survives-doctrine-edits",
+      "prompt": "Rewrite the lifecycle section of AGENTS.md or the delivery skill. The framing the loop rests on \u2014 code stopped being the bottleneck, so the constraint moved to the steps around the build, and the old control objectives stay while only the enforcement changes \u2014 must survive on every surface that carries it.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py bottleneck",
+          "expect_exit": 0,
+          "description": "the bottleneck framing and the control-objectives clause survive on both doctrines and the delivery skill"
         }
       ]
     }

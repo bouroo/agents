@@ -5,7 +5,7 @@ description: "Use to bootstrap or sync a repo's docs/ tree — systems, flows, A
 
 # Document - Sync docs/ With Code
 
-Docs and code must agree; a stale doc is a bug. Documentation is a **Spec**-stage artifact (§4) that tracks the code through Build and Test — bootstrap a `docs/` tree where none exists, sync an existing one, and run it as an execution graph inside that stage (§4.2). One well-written doc beats many shallow ones. **No options: fully autonomous** — target, type, and scope resolve from the repo's own signals; assumptions are stated in one line, gaps are marked, and nothing waits on a question.
+Docs and code must agree; a stale doc is a bug. Documentation is a **Design**-stage artifact (§4) that tracks the code through Build and Test — bootstrap a `docs/` tree where none exists, sync an existing one, and run it as an execution graph inside that stage (§4.2). One well-written doc beats many shallow ones. **No options: fully autonomous** — target, type, and scope resolve from the repo's own signals; assumptions are stated in one line, gaps are marked, and nothing waits on a question.
 
 ## Target
 

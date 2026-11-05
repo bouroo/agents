@@ -34,6 +34,9 @@ Static gates over docs/skills plus the distribution layer:
     evals           the harness regression suite is present, every eval is
                     well-formed (id, prompt, mechanical checks), and the suite
                     runs green
+    bottleneck      the framing the loop rests on -- code stopped being the
+                    bottleneck, and the old control objectives stay while the
+                    enforcement changes -- survives on every surface carrying it
     environment     the execution-environment clause survives on both installed
                     surfaces (manifesto + standalone copy)
     automation      the automation-layer clause survives on both installed
@@ -43,6 +46,12 @@ Static gates over docs/skills plus the distribution layer:
     sizing          the cost-sizing rule (a small, local, reversible change
                     takes the compact path and is verified in place) survives
                     on both doctrines, the delivery skill, and the quality skill
+    stages          the six-stage spine and the artifact each stage commits
+                    survive on both doctrines and the delivery skill
+    playbook        the playbook's mechanics (the accepted artifact fires the
+                    next gate, one source of truth per artifact, advisory
+                    versus deterministic controls, autonomy stopping at the
+                    production gate) survive on every surface that carries them
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -254,9 +263,16 @@ def g_budget() -> None:
 # pays this on every task pays it on the smallest task too, so the cost of
 # the setup scales with its usefulness only while these stay bounded. The
 # bodies and references are on-demand and are budgeted by `skillbudget`.
-ALWAYS_ON_TOKEN_BUDGET = 8000
-ALWAYS_ON_MANIFESTO_BUDGET = 6500
-ALWAYS_ON_STANDALONE_BUDGET = 5000
+# The rewrite added four always-loaded rules (the accepted artifact fires the
+# next gate, one source of truth per artifact, advisory versus deterministic
+# controls, autonomy stopping at the gate), so the always-on footprint grew by
+# design. The budgets rise with it, keeping roughly the headroom the setup had
+# before: a ceiling that sits at 99% of the footprint turns the next legitimate
+# rule into a red gate, which is how a budget stops bounding cost and starts
+# blocking the work.
+ALWAYS_ON_TOKEN_BUDGET = 9000
+ALWAYS_ON_MANIFESTO_BUDGET = 7500
+ALWAYS_ON_STANDALONE_BUDGET = 5500
 
 
 def _tokens(text: str) -> int:
@@ -435,6 +451,46 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"instruction memory", re.IGNORECASE)),
         ("skills/execution/SKILL.md", re.compile(r"^## Memory$", re.MULTILINE)),
     ],
+    # The six-stage spine: the stage names and the artifact each one commits
+    # are the setup's load-bearing vocabulary, so they are asserted on the
+    # surfaces that carry them rather than left to drift one edit at a time.
+    "stages": [
+        ("AGENTS.md", re.compile(r"\*\*Six stages\*\*")),
+        ("standalone/AGENTS.md", re.compile(r"\*\*Six stages\*\*")),
+        ("skills/delivery/SKILL.md", re.compile(r"\*\*Plan\*\* \| `intent\.md`")),
+        ("skills/delivery/SKILL.md", re.compile(r"\*\*Design\*\* \| `spec\.md`")),
+        ("skills/delivery/SKILL.md", re.compile(r"\*\*Maintain\*\* \| incident record")),
+    ],
+    # The playbook's own mechanics, on the surfaces that own them: the
+    # accepted artifact fires the next gate, one system is the source of truth
+    # per artifact, advisory versus deterministic controls, and autonomy
+    # stopping at the production gate.
+    "playbook": [
+        ("AGENTS.md", re.compile(r"Accepted artifacts fire the next gate")),
+        ("standalone/AGENTS.md", re.compile(r"Accepted artifacts fire the next gate")),
+        ("skills/delivery/SKILL.md", re.compile(r"Accepted artifacts fire the next gate")),
+        ("AGENTS.md", re.compile(r"One source of truth per artifact")),
+        ("standalone/AGENTS.md", re.compile(r"One source of truth per artifact")),
+        ("skills/delivery/SKILL.md", re.compile(r"One source of truth per artifact")),
+        ("AGENTS.md", re.compile(r"deterministic controls make them close to impossible")),
+        ("standalone/AGENTS.md", re.compile(r"deterministic controls make them close to impossible")),
+        ("skills/delivery/SKILL.md", re.compile(r"a skill makes violations rare")),
+        ("AGENTS.md", re.compile(r"Autonomy stops at the gate")),
+        ("standalone/AGENTS.md", re.compile(r"Autonomy stops at the gate")),
+        ("skills/delivery/SKILL.md", re.compile(r"Autonomy is tiered per environment")),
+    ],
+    # The framing the whole setup rests on: code stopped being the bottleneck,
+    # the constraint moved to the steps around the build, and the loop keeps
+    # the old control objectives while replacing the enforcement. Without it
+    # the stages read as a phase sequence with agents in them.
+    "bottleneck": [
+        ("AGENTS.md", re.compile(r"Code is no longer the bottleneck")),
+        ("standalone/AGENTS.md", re.compile(r"Code is no longer the bottleneck")),
+        ("skills/delivery/SKILL.md", re.compile(r"Code stopped being the bottleneck")),
+        ("AGENTS.md", re.compile(r"old control objectives stay", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"old control objectives stay", re.IGNORECASE)),
+        ("skills/delivery/SKILL.md", re.compile(r"old control objectives stay", re.IGNORECASE)),
+    ],
     "environment": [
         ("AGENTS.md", re.compile(r"execution environment is a design decision",
                                  re.IGNORECASE)),
@@ -533,6 +589,20 @@ def g_memory() -> None:
                      f"{len(RULE_SURFACES['memory'])} canonical surface(s)")
 
 
+def g_bottleneck() -> None:
+    """The framing the loop rests on survives on every surface that carries it.
+
+    The stages are not a phase sequence with agents in them: code stopped
+    being the bottleneck, so the constraint moved to the steps around the
+    build, and the loop keeps the old control objectives while replacing the
+    enforcement. A rewrite that dropped the framing would leave the stage
+    names intact and the reasoning gone.
+    """
+    if _g_rule_surfaces("bottleneck"):
+        _add("PASS", f"bottleneck: rule present on "
+                     f"{len(RULE_SURFACES['bottleneck'])} canonical surface(s)")
+
+
 def g_environment() -> None:
     """The execution-environment clause survives on both installed surfaces.
 
@@ -569,6 +639,34 @@ def g_state() -> None:
     if _g_rule_surfaces("state"):
         _add("PASS", "state: rule present on "
                      f"{len(RULE_SURFACES['state'])} canonical surface(s)")
+
+
+def g_stages() -> None:
+    """The six-stage spine survives on every surface that carries it.
+
+    The stage names and the artifact each one commits are the setup's
+    load-bearing vocabulary: an agent reading one doctrine and a skill reading
+    another would name different stages for the same work. The chain is
+    asserted where it is stated, so a rename cannot land in one surface only.
+    """
+    if _g_rule_surfaces("stages"):
+        _add("PASS", f"stages: the six-stage spine present on "
+                     f"{len(RULE_SURFACES['stages'])} canonical surface(s)")
+
+
+def g_playbook() -> None:
+    """The playbook's mechanics survive on every surface that carries them.
+
+    Four rules carry the AI-native lifecycle: the accepted artifact fires the
+    next gate, one system is the source of truth per artifact, a skill makes
+    violations rare while a hook makes them close to impossible, and autonomy
+    stops at the production gate. Each is stated in the always-loaded clause
+    of both doctrines and in the skill that owns the practices, so a rewrite
+    that dropped one leaves half the installs ungoverned.
+    """
+    if _g_rule_surfaces("playbook"):
+        _add("PASS", f"playbook: rule present on "
+                     f"{len(RULE_SURFACES['playbook'])} canonical surface(s)")
 
 
 def g_sizing() -> None:
@@ -1390,8 +1488,10 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
+         ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
+         ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
          ("standalone", g_standalone)]
