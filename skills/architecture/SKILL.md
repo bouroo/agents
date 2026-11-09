@@ -1,6 +1,7 @@
 ---
 name: architecture
 description: "Design or review a system's architecture: distil architecturally significant requirements, pin quality attributes as measurable SEI scenarios, choose a pattern by context and tradeoff, record decisions as ADRs, model in C4 views, keep the CONTEXT.md glossary opinionated, screen GoF patterns through the no-pattern gate, and render the result as one self-contained interactive HTML map gated by a bundled validator. Use when writing an ADR, HLD, or proposal, arguing non-functional requirements, shaping domain terms or bounded contexts, deciding whether a pattern is warranted or how to make code extensible, or visualizing architecture, workflows, sequences, pipelines, or state machines — even when the request is only 'draw me a diagram' or 'how should we structure this'. Not for code-level craft, measured hot paths, or proving a build: that is quality."
+license: Apache-2.0
 ---
 
 # Architecture
