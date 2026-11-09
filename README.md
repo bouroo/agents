@@ -107,7 +107,7 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       twenty-nine deterministic gates (CI runs these)
+    ├── check.py                       thirty deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -181,6 +181,7 @@ python3 scripts/check.py --all
 | `links` | every relative Markdown link resolves |
 | `agnostic` | core doctrine is free of host-binding tokens |
 | `portable` | core doctrine is free of language, framework, and stack-specific tokens, so a rule names the role and not one vendor's product |
+| `shared` | the shared-meaning rule (one term per concept, held in the project's shared vocabulary) survives on every surface that introduces the three views |
 | `manifests` | marketplace manifests parse; version fields agree across files |
 | `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
@@ -202,7 +203,7 @@ python3 scripts/check.py --all
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all twenty-nine on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all thirty on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

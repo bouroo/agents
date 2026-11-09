@@ -82,7 +82,7 @@ When a step fails, name the layer before patching: **reasoning** (the model deci
 
 ## Do not surrender design to a framework
 
-A framework, a connected-tool server, or an orchestration library is an **implementation mechanism**, not a substitute for deciding what the agent needs. The design decisions — rungs, shapes, tool surface, what is injected — are yours and are made before any framework is chosen; a framework that hides the prompts, the raw responses, and the execution flow also hides the evidence you debug with. Use the abstraction when it carries a decision you have already made, and understand what lies beneath it well enough to read the trace when it fails.
+A framework, a connected-tool server, or an orchestration library is an **implementation mechanism**, not a substitute for deciding what the agent needs. The design decisions — rungs, shapes, tool surface, what is injected — are yours and are made before any framework is chosen; a framework that hides the prompts, the raw responses, and the execution flow also hides the evidence you debug with, so keep prompts, raw responses, and the trace readable. Use the abstraction when it carries a decision you have already made, and understand what lies beneath it well enough to read the trace when it fails.
 
 ## Cross-references
 

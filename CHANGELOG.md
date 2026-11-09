@@ -10,6 +10,37 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+Three gaps in the graph structure close, and the vocabulary converges.
+
+- **Structured is not engineered.** Naming the units and drawing the edges is
+  the easy half. A structure earns the name only when its edges are typed,
+  the graph is observed rather than assumed, it can change under evidence,
+  and the change persists and transfers to the next job. A graph frozen
+  before the run is a diagram, and the run that succeeds on it will not
+  repeat the success.
+- **An explicit graph does not make its words mean one thing.** Two workers
+  can hold the same edge and still read "done" differently, and the graph
+  then records a disagreement as an agreement. So: one term per concept, a
+  definition held in the project's shared vocabulary rather than in one
+  worker's reading, definitions that expire like facts, and an owner who
+  arbitrates a term two teams use differently. The rule is asserted on every
+  surface that introduces the three views, by a new `shared` gate.
+- **Dynamic evolution is an attack surface.** A structure that adapts
+  mid-run takes its next shape from an intermediate result, and an
+  intermediate result can be written by a fetched document, a tool response,
+  or a peer agent's summary. The signals that reshape the structure are
+  untrusted input until they match the project's own record, and a structural
+  change driven by one carries its source in the provenance.
+- **One source of truth per artifact** now names its three configurations:
+  the committed artifact is the record, the legacy system is the record, or
+  linkage as the minimum bar — and the third is a migration, not a
+  destination.
+- **Isolation vocabulary converges.** The role agents and the delivery
+  plays now say "checkout" and "working copy" rather than naming one
+  version-control system's feature, so the rule reads the same on any host.
+
 ## [8.0.0-beta.2] - 2026-11-09
 
 The doctrine is rewritten to be agnostic of programming language, agent

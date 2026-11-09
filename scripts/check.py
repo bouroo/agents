@@ -569,6 +569,19 @@ RULE_SURFACES = {
         ("standalone/AGENTS.md", re.compile(r"verified in place", re.IGNORECASE)),
         ("skills/quality/SKILL.md", re.compile(r"verified in place", re.IGNORECASE)),
     ],
+    "shared": [
+        # The three views plus the shared-meaning rule: an explicit graph
+        # whose terms mean different things to different workers records a
+        # disagreement as an agreement, so the rule belongs beside the views
+        # on every surface that introduces them.
+        ("AGENTS.md", re.compile(r"Structured is not engineered")),
+        ("standalone/AGENTS.md", re.compile(r"Structured is not engineered")),
+        ("skills/execution/SKILL.md", re.compile(r"Structured is not engineered")),
+        ("skills/execution/references/graphs.md",
+         re.compile(r"Structured is not engineered")),
+        ("AGENTS.md", re.compile(r"shared vocabulary")),
+        ("standalone/AGENTS.md", re.compile(r"shared vocabulary")),
+    ],
 }
 
 
@@ -659,6 +672,21 @@ def g_automation() -> None:
     if _g_rule_surfaces("automation"):
         _add("PASS", "automation: rule present on "
                      f"{len(RULE_SURFACES['automation'])} canonical surface(s)")
+
+
+def g_shared() -> None:
+    """The shared-meaning rule survives on every surface that carries it.
+
+    An explicit graph does not make its words mean one thing: two workers can
+    hold the same edge and still read "done" differently, and the graph then
+    records a disagreement as an agreement. The rule that fixes it -- one
+    term per concept, held in the project's shared vocabulary -- is
+    load-bearing wherever the three views are introduced, so it is asserted
+    on the surfaces that introduce them rather than left to drift.
+    """
+    if _g_rule_surfaces("shared"):
+        _add("PASS", f"shared: rule present on "
+                     f"{len(RULE_SURFACES['shared'])} canonical surface(s)")
 
 
 def g_state() -> None:
@@ -1543,6 +1571,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
+         ("shared", g_shared),
          ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),

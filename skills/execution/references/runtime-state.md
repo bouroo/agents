@@ -62,6 +62,8 @@ Adapting inside a run — retry, reroute, re-split a unit — changes one trajec
 
 Structural changes to one graph move the others: reshaping the task graph changes the capabilities the units need, which changes the team topology, which changes what the ledger must record. A structural change therefore **names the other views it touches**, and the coupled change is validated together — a change that invalidates another graph without updating it is worse than no change. Validate the coupled change and check that it generalizes to the recorded failures.
 
+**Dynamic evolution is an attack surface.** A structure that adapts mid-run takes its next shape from an intermediate result, and an intermediate result is not always the run's own. A manipulated planning signal can steer the replanning and the dependency formation toward an execution path nobody reviewed, so a structural revision must be grounded in trustworthy execution feedback. Concretely: the signals that reshape the structure are untrusted input until they match the project's own record, and a structural change driven by one carries its source in the provenance — the same rule the memory layers apply to an arriving instruction, applied to an arriving *shape*. A structure that changes on unverified signals is not adapting; it is being steered.
+
 ## Cross-references
 
 - [execution](../SKILL.md) the grammar and the three coupled views this state graph completes.

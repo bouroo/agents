@@ -261,6 +261,11 @@
           "cmd": "tail -n +5 skills/execution/SKILL.md | grep -qE 'Spawn briefs'",
           "expect_exit": 0,
           "description": "the load-bearing phrase 'Spawn briefs' survives a reorganize or condense of the skill"
+        },
+        {
+          "cmd": "python3 scripts/check.py shared",
+          "expect_exit": 0,
+          "description": "the shared-meaning rule survives on every surface that introduces the three views"
         }
       ]
     },

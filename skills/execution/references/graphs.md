@@ -55,6 +55,30 @@ What actually happened, recorded rather than remembered. Its four properties —
 
 State is the join point of the other two graphs: the task graph says what should have happened, the coordination graph says who should have done it, and the state graph says what did. A gap between the three is the finding — a unit closed without its check, a worker committed a result no capability covered, an exchange happened that no unit recorded.
 
+## Structured is not engineered
+
+Naming the units and drawing the edges is the easy half of the work. A structure earns the name only when four things hold, and a diagram failing any of them is a diagram:
+
+1. **The edges are typed.** An untyped edge ("goes next") is a missing decision, and a structure of untyped edges records a sequence, not a plan.
+2. **The graph is observed, not assumed.** The structure that ran is the structure that was recorded; a graph describing what should have happened, written after the fact, is a story.
+3. **The structure can change under evidence.** A decomposition the first result contradicts must be revisable mid-run, or the structure is a straitjacket the run cannot escape.
+4. **The change persists and transfers.** A structure that helped once and was thrown away is a coincidence; the value of engineering a structure is that the next job starts from the improved one.
+
+The failure is quiet: a graph selected by hand and fixed before the run looks like a live one until the run needs to change it, and then it cannot. The scoring dimensions below are what make the difference visible.
+
+## Shared meaning, or the graph records a disagreement as an agreement
+
+An explicit graph does not make the words on it mean one thing. Two workers can hold the same edge and still read "done", "verified", "approved", or "blocked" differently — and then the graph records two incompatible claims under one name, and the disagreement surfaces much later as a fault nobody can localize.
+
+So the entities the graphs name need one definition each, shared across the views:
+
+- **One term per concept.** The same concept wears one name across the task graph, the coordination graph, and the state graph. A second name for the same thing is a second thing, and every edge between them is an ambiguity.
+- **The definition is external to any one worker.** The meaning lives in the project's shared vocabulary — a glossary the team maintains — not in one worker's reading of it. A definition one worker holds is a definition that worker can change.
+- **Definitions carry their provenance.** Record when a definition was last confirmed and who confirmed it, and version it so a change to it is a change to the structure — a definition that silently drifts is a definition two halves of the system no longer share.
+- **The domain language has an owner.** One seat owns the vocabulary and arbitrates a term that two teams use differently, or the vocabulary forks silently and the graph records the fork as agreement.
+
+Where the project already keeps a glossary, that file is the owner — the `architecture` skill's Domain Modeling section defines the format and the habits. Where it does not, the first disagreement over a term is the signal to create one — the disagreement is the evidence that the term was ambiguous, not an incident to close.
+
 ## Scoring a run
 
 End-task success is one dimension, not a verdict. Report six:
