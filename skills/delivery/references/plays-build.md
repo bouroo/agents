@@ -14,9 +14,11 @@
 
 1. Start a session in a read-only planning phase, hand it the approved `spec.md`, and let it interview the engineer, iterating on the plan until the engineer is happy with it. The agent can read the codebase without changing anything, so changing course is still a matter of editing a document.
 2. Write the plan down before dispatching anything: the files that change, the order of work, the risks, and the proof.
-3. Commit the approved plan as `PLAN.md`. It joins the audit trail, and the review pass in Deploy checks the eventual diff against it.
-4. Accept the plan and implement. With a solid plan, the implementation is often a single pass.
-5. When implementation departs from the plan, update `PLAN.md` in the same commit. A pre-action check can enforce the synchronization.
+3. Interrogate the plan before accepting it — ask what the change could break, which step is most risky, and what other options were considered and rejected. A plan that has not been questioned has not been tested, and the answers belong in the plan's own risks section, not only in the conversation.
+4. Iterate until someone who has never seen the conversation could implement the change from the plan alone. That is the completeness test: a plan needing a thread of context to be understood is a document, not a plan.
+5. Commit the approved plan as `PLAN.md`. It joins the audit trail, and the review pass in Deploy checks the eventual diff against it.
+6. Accept the plan and implement. With a solid plan, the implementation is often a single pass.
+7. When implementation departs from the plan, update `PLAN.md` in the same commit. A pre-action check can enforce the synchronization.
 
 ```markdown
 # Plan: claims status self-service (from intent.md 2026-06-02)

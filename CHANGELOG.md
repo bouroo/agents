@@ -65,6 +65,33 @@ claims the sources make about goals, grounding, and recovery gain a home.
   repair turns into a second incident, and a global recomputation discards
   valid work the run had already earned.
 
+- **A plan is interrogated before it is accepted.** Ask what the change
+  could break, which step is most risky, and what other options were
+  considered and rejected; the answers belong in the plan's own **Rejected
+  options** section, not only in the conversation. And the completeness
+  test: iterate until someone who has never seen the conversation could
+  implement the change from the plan alone — a plan needing a thread of
+  context to be understood is a document, not a plan.
+- **An exchange carries a result, and a result can be wrong.** Communication
+  does not only transfer results; it detects and corrects them, so an
+  intermediate result does not travel downstream on trust. The edge that
+  carries it is either gated by a check or marked tentative, because the
+  structure of the communication graph decides how correct and incorrect
+  information propagates.
+- **A shared state multiplies the risk of one secret.** Several agents,
+  several tools, several memories, and a persistent state graph hold
+  several copies of a fact, and a fact that should not spread is
+  replicated, carried across tasks, or inferred from in combination — none
+  of it visible in one agent's view. So a value is scoped before it is
+  written: name the unit and role that may read it, and keep it out of the
+  shared ledger unless the ledger needs it.
+- **The evaluation suite must include structural disturbances.** Incomplete
+  objectives, concurrent workloads, distributed information, component
+  failures, and environmental changes — a suite of well-formed tasks
+  measures nothing a single agent could not also pass. The nine
+  system-level properties behind the six reporting dimensions are named, so
+  a report that cannot answer one of them reads as a missing measurement.
+
 ## [8.0.0-beta.2] - 2026-11-09
 
 The doctrine is rewritten to be agnostic of programming language, agent

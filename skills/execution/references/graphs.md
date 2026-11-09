@@ -47,6 +47,7 @@ Runtime information flow, kept separate from the stable team structure — the t
 
 - **Exchange point** — where in the execution an exchange happens: at a handoff, at a fan-out join, at a gate, at a clarification stop. An exchange with no point in the execution has no consequence and is cost without information.
 - **What the exchange changes** — the recipient's permission to act afterwards, the edge it opens or closes, the claim it licenses. If the answer is "nothing", the relation carries no decision and gets removed. More connections do not improve collaboration by default; a graph that connects everyone to everyone buys context cost and no coordination.
+- **An exchange carries a result, and a result can be wrong.** Communication does not only transfer results; it detects and corrects them — a reviewer returns the problem to the stage that produced it, and the exchange is a loop (generate, evaluate, revise) rather than a one-way flow. So an intermediate result must not travel downstream on trust: the edge that carries it is either gated by a check or marked tentative, because the structure of the communication graph decides how correct and incorrect information propagates, and an unchecked result spreads faster than a checked one.
 - **Humans as participants** — a human appears in the view with explicit edges: **clarification** (an answer that unblocks a unit), **feedback** (a correction that redirects the work), **approval** (a sign-off that closes a gate), **escalation** (a blocked unit handed up). The human is a participant in the flow, not only the final evaluator standing outside it.
 
 ## The state graph (how)
@@ -94,7 +95,10 @@ End-task success is one dimension, not a verdict. Report six:
 | Operational correctness | were the graph operations executed as intended — typed edges, named caps, exclusive ownership, evidence gates? |
 | Evolution governance | are structural changes traceable and controllable — credit assignment, validation, commit or rollback? |
 
+
 The last two are what separate a working system from a lucky one. A run that succeeded with a coarse task graph, an unrouted fan-out, and a claim closed on testimony has high effectiveness and low structural fidelity and operational correctness — the next run will not repeat the success.
+
+Each dimension is measured against the nine system-level properties it stands for: **goal formation**, **semantic consistency**, **parallel execution efficiency**, **heterogeneous capability allocation**, **collective decision quality**, **state consistency**, **failure recovery**, **transfer across tasks**, and **runtime overhead**. A row that cannot be answered against the property behind it is a missing measurement, not a point made — the `quality` skill's evaluation reference carries the full mapping and the task types the suite needs to exercise each one.
 
 ## Ablation: separating the structure from the model
 
