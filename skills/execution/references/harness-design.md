@@ -49,6 +49,10 @@ Tool definitions are as load-bearing as the prompt: they are the interface the m
 - **Boundary against neighbours.** Say how this tool differs from the similar one, or the model will pick the wrong sibling by name resemblance.
 - **Iterate on observed misuse.** When traces show a tool used wrongly, fix the interface first — tighten the description, the signature, the return — before adding a prompt instruction. The prompt compensates for a bad surface; the surface removes the failure class.
 
+## Check the action against the state, not against the plan
+
+A proposed action is a **structured intent**: what it would do, on what, and under which conditions — checkable rather than assertable. Before it runs, it is checked against the **true system state** and the **policy**, not against the plan that produced it, because the plan is the agent's own account of the world and the state is the world. The difference matters: an action legitimate when it was proposed can be illegitimate by the time it executes, because the state moved under it — the file changed, the permission was revoked, the release already shipped. Checking against the plan re-validates the agent's reasoning; checking against the state and the policy re-validates the action. So the check reads the state as it is now, and an action whose precondition no longer holds is refused rather than run.
+
 ## Scope the tool surface
 
 Give the agent only the tools its job needs: a narrower surface means less confusion, fewer misuses, and less exposure to injected instructions arriving through tool output. Breadth is not capability — it is surface area. A worker's spawn brief scopes its tools to its task for the same reason ([teamwork](../SKILL.md)); the node contract names what the worker may touch, not just what it owes.

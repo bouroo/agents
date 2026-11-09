@@ -85,6 +85,25 @@ claims the sources make about goals, grounding, and recovery gain a home.
   of it visible in one agent's view. So a value is scoped before it is
   written: name the unit and role that may read it, and keep it out of the
   shared ledger unless the ledger needs it.
+- **The team band is a judgement, not a number.** The doctrine carried
+  "3-5 workers, 5-6 tasks each"; neither source supports that figure, and
+  the playbook's own guidance is that the ceiling is how many streams one
+  person can review properly. The band now reads as what it is: start with
+  the fewest workers the work needs, and add one only while the steering
+  person can review every stream.
+- **Distributed decisions make blame harder to assign.** A biased input, a
+  faulty inference, or an adversarial signal is not consumed once when the
+  decision is spread across components — it is amplified, because each
+  component treats the previous one's output as evidence. What was one
+  mistake becomes a wrong conclusion several places agree on, and no single
+  participant can be pointed at. So the record carries the amplification:
+  who saw the input, what they concluded, what they did with it.
+- **Check the action against the state, not against the plan.** A proposed
+  action is a structured intent, checked before it runs against the true
+  system state and the policy. An action legitimate when it was proposed can
+  be illegitimate by the time it executes, because the state moved under it.
+  Checking the plan re-validates the agent's reasoning; checking the state
+  re-validates the action.
 - **The evaluation suite must include structural disturbances.** Incomplete
   objectives, concurrent workloads, distributed information, component
   failures, and environmental changes — a suite of well-formed tasks
