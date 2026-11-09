@@ -34,7 +34,7 @@ Before optimizing code, verify the bottleneck is in your process. If 90% of late
 - **Capture to a file.** Baseline and each iteration land in a numbered report so the audit trail survives session compaction.
 - **Control the environment.** Noise from background load, thermal throttling, and power management swamps small gains. Run on a quiet machine; disable CPU frequency scaling if the platform allows; warm up before measuring.
 - **Use a statistical comparator.** Single runs lie. Compare distributions, not point estimates; report variance and confidence, not just means.
-- **Beware micro-benchmark traps.** Dead-code elimination, constant folding, and escape analysis can make a benchmark "prove" a speedup the real code never gets. Inspect generated assembly or IR when a result looks too good.
+- **Beware micro-benchmark traps.** Dead-code elimination, constant folding, and escape analysis can make a benchmark "prove" a speedup the real code never gets. Inspect the generated code when a result looks too good.
 - **Re-baseline after structural change.** If the surrounding code or inputs change, the old baseline no longer compares.
 
 See [tactics](tactics.md) for the countermeasures each diagnosis routes to, and [quality](../SKILL.md) for the executable-evidence standard applied to a performance claim.

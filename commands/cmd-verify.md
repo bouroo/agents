@@ -1,6 +1,6 @@
 ---
 name: cmd-verify
-description: "Use to bring a working tree to green before handing work over: format, lint, type-check, scan, test, and hook gates in one batched pass, each narrowing to a root-cause fix and re-running, with a stage/command/exit report and a CLEAN or BLOCKED verdict. Reach for it after any change that must pass the repo's own gates. Not for judging whether the change is the right one (cmd-review) or for restructuring without behavior change (cmd-refactor)."
+description: "Use to bring a working tree to green before handing work over: format, lint, type-check, scan, test, and pre-action gates in one batched pass, each narrowing to a root-cause fix and re-running, with a stage/command/exit report and a CLEAN or BLOCKED verdict. Reach for it after any change that must pass the repo's own gates. Not for judging whether the change is the right one (cmd-review) or for restructuring without behavior change (cmd-refactor)."
 ---
 
 # Verify Quality-Gate Pipeline
@@ -16,15 +16,15 @@ Default: the whole working tree. An argument narrows the target (`src/module`, a
 Run each stage in order; on a finding apply the narrowest safe auto-fix at the **root cause** (never a band-aid) and re-run that stage. Cap: **three fix/re-verify iterations on one issue**, then escalate it — never re-run past the cap; a still-failing issue is reported BLOCKED. That cap is the hard verify bound in the `quality` skill's Verification section.
 
 1. **Format** — project formatter; fail if files would change after auto-fix.
-2. **Lint** — the project's own linter(s), discovered from its manifests and scripts (package scripts, `Makefile`, `pyproject`/`tox`, pre-commit config, CI); absence is noted only after checking those; run warnings-as-errors; auto-fix where supported; include the doc-convention linter if configured, else note its absence.
+2. **Lint** — the project's own linter(s), discovered from its declared manifests, task runners, and pipeline configuration; absence is noted only after checking those; run warnings-as-errors; auto-fix where supported; include the doc-convention linter if configured, else note its absence.
 3. **Type-check** — strict; no auto-fix (issues go to review).
 4. **Scan** — secrets / SAST / vulnerabilities above threshold fail; **never auto-fix a security finding** — report and escalate. A scanner hit is a lead, not a finding: confirming or dismissing it is the `security-audit` skill's judgment, not a gate stage.
 5. **Test** — the full suite; a green suite is a signal, not proof, so grade high-stakes changes with a **mutation probe** (the `quality` skill's Verification section).
-6. **Hook gate** — the repo's own verify script(s) (pre-commit/pre-push hooks, `scripts/verify.*`, package-script equivalents) must exit 0; note the absence if none exists.
+6. **Pre-action gate** — the project's own verify script(s) (its committed pre-commit or pre-push checks, its declared verify task, and their equivalents) must exit 0; note the absence if none exists.
 
 ## Done = CLEAN
 
-All six stages pass with command + exit code + actual output captured (a narrated pass is not evidence), hooks exit 0, and only intended changes remain in the tree. Otherwise report per-stage pass/fail (command, exit code, files changed, outstanding findings) and the final verdict.
+All six stages pass with command + exit code + actual output captured (a narrated pass is not evidence), the pre-action gate exits 0, and only intended changes remain in the tree. Otherwise report per-stage pass/fail (command, exit code, files changed, outstanding findings) and the final verdict.
 
 Report every run in this fixed, machine-scannable shape — one pipeline-ordered line per stage, then the outstanding findings and the verdict:
 ```

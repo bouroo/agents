@@ -9,7 +9,7 @@ Docs and code must agree; a stale doc is a bug. Documentation is a **Design**-st
 
 ## Target
 
-The area to document (`auth`, `email-verification flow`, `sessions-vs-tokens ADR`). **Empty -> detect from `git diff` / `git diff --cached`** and document what changed. `--type=<system|flow|adr|api|glossary>` pins the doc type; without it, infer from the target, state the inference in one line, and proceed — ambiguity resolves toward the best-evidenced choice rather than a question.
+The area to document (`auth`, `email-verification flow`, `sessions-vs-tokens ADR`). **Empty -> detect the uncommitted changes from the version-control system's diff** and document what changed. `--type=<system|flow|adr|api|glossary>` pins the doc type; without it, infer from the target, state the inference in one line, and proceed — ambiguity resolves toward the best-evidenced choice rather than a question.
 
 ## Doc types
 

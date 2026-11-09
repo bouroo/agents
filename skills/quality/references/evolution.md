@@ -13,7 +13,7 @@ Self-evolution done wrong is the loop validating itself: an agent notices a fail
 | **Instrument** | catalog the failure in `.agents/plans/{slug}/retro.md` — the trigger, the wrong behavior, the rule violated (cited by rule, never rottable path), the recurrence count | the failing evidence itself |
 | **Propose** | convert the finding into a deterministic gate or rule change as a reviewed diff to the harness (a check, a flowchart node, a table row) | the diff; one line of rationale per change |
 | **Validate** | run the new gate against the recorded failures — it must fail on the old evidence and pass on good runs; adversarial judging per [quality](../SKILL.md) | command + exit code + output on both sides |
-| **Commit** | land versioned (git history is the rollback), noted in the changelog, retro closed with the gate's location | a green gates run on the whole repo |
+| **Commit** | land versioned (the version-control history is the rollback), noted in the changelog, retro closed with the gate's location | a green gates run on the whole repo |
 
 An uncommitted proposal is a pending item, not an improvement; a committed one without validate-step evidence is fraud by the evidence audit.
 

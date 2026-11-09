@@ -1,6 +1,6 @@
 # The Loop as Decision Flowcharts
 
-> Load on demand. The prose lives in `AGENTS.md` (§2 intake, §4 execution graph, §7 verification) and [quality](../SKILL.md); this file renders the same doctrine as executable decision charts. **Follow the arrows literally**: at every diamond, read the condition against the actual situation, take exactly one outgoing edge, and do not skip a gate. A chart node with no outgoing arrow you satisfy is a stop, not a suggestion.
+> Load on demand. The prose lives in the project context file (§2 intake, §4 execution graph, §7 verification) and [quality](../SKILL.md); this file renders the same doctrine as executable decision charts. **Follow the arrows literally**: at every diamond, read the condition against the actual situation, take exactly one outgoing edge, and do not skip a gate. A chart node with no outgoing arrow you satisfy is a stop, not a suggestion.
 
 ## Contents
 
