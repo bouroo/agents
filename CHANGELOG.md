@@ -10,7 +10,7 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [8.0.0-beta.3] - 2026-11-09
 
 Three gaps in the graph structure close, the vocabulary converges, and three
 claims the sources make about goals, grounding, and recovery gain a home.
