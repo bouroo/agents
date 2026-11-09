@@ -10,7 +10,7 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [8.0.0-beta.2] - 2026-11-09
 
 The doctrine is rewritten to be agnostic of programming language, agent
 framework, and agent harness, and to carry the structure an AI-native
