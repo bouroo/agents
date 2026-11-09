@@ -19,8 +19,7 @@ a pattern in its classic form is wrong wherever the language already dissolves i
 Intent: assemble a complex object step by step, away from its constructor.
 Use when: constructors take 4+ params with many optional/identical-typed ones, or the
 same assembly steps must yield different representations.
-Skip when: named/optional args (Python kwargs, TS object literals, C# initializer
-syntax) already read like a builder.
+Skip when: named or optional arguments already read like a builder.
 Shape: builder type with chainable step methods and one `Build()` that validates.
 
 ### Abstract Factory

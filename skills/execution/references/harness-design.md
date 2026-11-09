@@ -1,6 +1,6 @@
 # Harness Design
 
-> Load on demand from [execution](../SKILL.md): the minimal-harness ladder, the pattern catalogue mapped onto the graph grammar, and tool-surface design. Distilled from Anthropic's *Building effective agents* and Hugo Bowne-Anderson's *Stop overengineering your agent harness* — adopted as method, numbers re-derived locally.
+> Load on demand from [execution](../SKILL.md): the minimal-harness ladder, the pattern catalogue mapped onto the graph grammar, and tool-surface design. Distilled from published agent-pattern guidance — adopted as method, numbers re-derived locally.
 
 ## The minimal-harness ladder
 
@@ -59,7 +59,7 @@ Anything the system already knows — the date, the file path, the schema, the p
 
 ## External systems extend the context boundary
 
-Context the job needs often lives outside the repository — issue trackers, CI results, database schemas, API references, internal automation — and a protocol that exposes those systems as resources or tools (MCP being the common one) is how it arrives. Prefer the connected retrieval to a pasted excerpt: the boundary stays explicit, the retrieval is repeatable, and the trace shows what the agent actually read. This changes what the agent can do, so treat each connection as authority and exposure rather than free capability: scope it to the systems the job reads, keep write access narrower than read, and keep every result in the untrusted-input class the tool-surface rules above already bind — a fetched document or tool response is a claim to verify, never consent.
+Context the job needs often lives outside the repository — issue trackers, pipeline results, database schemas, interface references, internal automation — and a **connected-tool protocol** that exposes those systems as resources or tools is how it arrives. Prefer the connected retrieval to a pasted excerpt: the boundary stays explicit, the retrieval is repeatable, and the trace shows what the agent actually read. This changes what the agent can do, so treat each connection as authority and exposure rather than free capability: scope it to the systems the job reads, keep write access narrower than read, and keep every result in the untrusted-input class the tool-surface rules above already bind — a fetched document or tool response is a claim to verify, never consent.
 
 ## The execution environment defines what the agent can do
 
@@ -82,7 +82,7 @@ When a step fails, name the layer before patching: **reasoning** (the model deci
 
 ## Do not surrender design to a framework
 
-An SDK, an MCP server, or an orchestration library is an **implementation mechanism**, not a substitute for deciding what the agent needs. The design decisions — rungs, shapes, tool surface, what is injected — are yours and are made before any framework is chosen; a framework that hides the prompts, the raw responses, and the execution flow also hides the evidence you debug with. Use the abstraction when it carries a decision you have already made, and understand what lies beneath it well enough to read the trace when it fails.
+A framework, a connected-tool server, or an orchestration library is an **implementation mechanism**, not a substitute for deciding what the agent needs. The design decisions — rungs, shapes, tool surface, what is injected — are yours and are made before any framework is chosen; a framework that hides the prompts, the raw responses, and the execution flow also hides the evidence you debug with. Use the abstraction when it carries a decision you have already made, and understand what lies beneath it well enough to read the trace when it fails.
 
 ## Cross-references
 

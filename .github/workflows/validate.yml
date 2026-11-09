@@ -5,7 +5,7 @@ name: validate
 # verification surface, so CI runs it on a clean runner so a broken artifact
 # never lands on main or develop.
 #
-# Gates: `python3 scripts/check.py --all` runs all twenty-eight. The
+# Gates: `python3 scripts/check.py --all` runs all twenty-nine. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.
@@ -17,6 +17,7 @@ name: validate
 #   references   every bundled reference names its load condition
 #   links        every relative Markdown link resolves
 #   agnostic     core doctrine free of host-binding tokens
+#   portable     core doctrine free of language, framework, stack-specific tokens
 #   manifests    marketplace manifests parse; version fields agree
 #   privacy      doctrine free of real-work identifiers
 #   comments     the comment rule survives on both canonical surfaces

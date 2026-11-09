@@ -26,9 +26,9 @@
 
 - **Buffering** — wrap unbuffered streams in 4-64 KB buffers to coalesce system calls; a syscall per byte is a classic throughput killer.
 - **Batching** — accumulate work to a size or time threshold; design for partial success so one failed batch does not lose the unfailed items.
-- **Tune transports.** Default HTTP clients and DB drivers ship low idle-connection limits sized down for safety; set them to expected concurrency or they cap throughput silently. Choose by workload: raw TCP/framing for latency, HTTP/2 or /3 for multiplexed request-response, IDL-based RPC for cross-language contracts.
-- **Connection reuse** — keep-alive, address reuse, pooling; short-lived connections end in TIME_WAIT storms.
-- **DNS/TLS** — cache resolutions and pre-resolve known hosts behind an async resolver; enable session resumption and ALPN; handshake spans dominate connection-heavy loads.
+- **Tune transports.** Default client libraries ship low idle-connection limits sized down for safety; set them to expected concurrency or they cap throughput silently. Choose by workload: a raw framed transport for latency, a multiplexed request-response protocol for many calls on one connection, a schema-defined remote call for cross-service contracts.
+- **Connection reuse** — keep-alive, address reuse, pooling; short-lived connections end in connection-teardown storms.
+- **Name resolution and handshake** — cache resolutions and pre-resolve known hosts behind an async resolver; enable session resumption and protocol negotiation; the handshake spans dominate connection-heavy loads.
 - **Cache repeated work:** memoize pure computations keyed by inputs; single-flight concurrent identical requests into one call; order checks so the cheap discriminating test runs first.
 - **Resilience under load:** circuit breakers open after consecutive failures or latency breach until a probe succeeds; shed load at the edge on measured thresholds; return partial/cached/stale when capacity is exhausted if the domain allows; bounded queues provide the backpressure all of this relies on.
 
@@ -39,9 +39,9 @@
 
 ## Compute & runtime
 
-- **Auto-vectorization first**: keep data contiguous, branch-free, loop-independent; reach for explicit SIMD/intrinsics only when measurement proves auto-vectorization failed on a hot loop. Prefer SoA layout and vector-aligned data.
+- **Auto-vectorization first**: keep data contiguous, branch-free, loop-independent; reach for explicit vector primitives only when measurement proves auto-vectorization failed on a hot loop. Prefer a struct-of-arrays layout and vector-aligned data.
 - **Branch elimination** — conditional moves/bitwise masks where measurement supports it; a mispredicted branch costs more than the arithmetic it replaces.
-- **Release builds are evidence**; debug builds prove nothing. Container runtimes need memory/GC limits at 80-90% of the limit — no limit eventually means OOM.
+- **Release builds are evidence**; debug builds prove nothing. Container runtimes need memory and collector limits at 80-90% of the limit — no limit eventually means exhaustion.
 - **Unsafe tricks** — justified only when profiling shows >10% improvement in a verified hot path; otherwise safety and portability outweigh them.
 - **Document why** — non-obvious optimizations carry a comment citing benchmark evidence, so cleanup does not silently regress them.
 
@@ -50,12 +50,10 @@
 | Mistake | Fix |
 |---|---|
 | Optimizing without profiling | Profile first; intuition is wrong ~80% of the time |
-| Untuned default HTTP/DB clients | Defaults cap connections low; size to concurrency |
 | Logging in hot loops | Guard evaluation behind an enabled-check or lazy attributes |
-| Exceptions as control flow in hot path | Stack unwinding allocates; use explicit error returns |
+| Untuned default network and database clients | Defaults cap connections low; size to concurrency |
 | Reflection / deep equality in production paths | 50-200x slower than typed comparison |
-| No container memory limit | Runtime allocation/GC limit at 80-90% of container memory |
-| Unsafe tricks without benchmark proof | Only with >10% measured improvement |
+| No container memory limit | Runtime allocation and collector limit at 80-90% of container memory |
 | Speculative preallocation | Capacity known via executable evidence only |
 | One big benchmark touching everything | Isolate functions; contaminated results mislead |
 

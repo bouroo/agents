@@ -10,6 +10,61 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+The doctrine is rewritten to be agnostic of programming language, agent
+framework, and agent harness, and to carry the structure an AI-native
+delivery loop needs.
+
+- **Rules name roles, not stacks.** A project context file, a skill, a
+  pre-action check script, a change request, a pipeline, a version-control
+  branch — a rule that only makes sense with one vendor's product on the
+  shelf is a portability bug, not a policy. The manifesto, the standalone
+  copy, the three skills that carried concrete stacks, the commands, and the
+  role agents now all name the role.
+- **A new `portable` gate** fails the build when core doctrine names a
+  language, framework, or agent framework (Java, Spring, a multi-agent
+  framework, a forge). Matching is case-sensitive on purpose: "react" and
+  "express" are English words, and a capitalized product name is the signal.
+  The three skills that exist to name stacks are exempt by construction.
+- **The three coupled views organize any job past trivial** — the task
+  graph says what runs and in what order, the coordination graph says who
+  runs it and with what capability, the state graph says what actually
+  happened. A job with more workers but no three views is a crowd: adding
+  agents buys nothing until the views exist. The execution skill carries the
+  capability view (skills, tools, resources, permissions, reliability as
+  explicit relations, so routing runs by capability and a unit stays
+  reassignable when a worker loses a resource) and the communication view
+  (runtime information flow separate from the stable team structure, humans
+  as explicit participants).
+- **Runtime state is governed, not remembered.** A transition is proposed,
+  then validated (schema, permission, invariant, conflict), then committed,
+  and every committed transition carries its provenance. A tentative write is
+  not a committed belief. Fault localization treats the cause as a hypothesis
+  tested against externally observable evidence; recovery names its boundary
+  before repairing; adaptation is not evolution, and evolution is a governed
+  structural change with credit assignment, validation, and commit or
+  rollback.
+- **Multi-agent work is judged on six dimensions**, not on end-task success:
+  effectiveness, efficiency, robustness, structural fidelity, operational
+  correctness, and evolution and governance. To separate a system's gain
+  from a stronger model's, hold the budget fixed and ablate the claimed
+  structural change — a gain that survives only at a larger budget is a
+  purchase, not an improvement.
+- **Controls come in three tiers** (the delivery skill's Controls section):
+  advisory (prose policy, project context file, skill), project-level
+  deterministic (a pre-action check script that can allow, ask, or block; a
+  check that exits non-zero; a branch rule demanding a named approval; a
+  sandbox whose refusal to initialize is a gate), and organization-managed
+  (owned centrally, where no individual, project file, or command-line flag
+  can widen or switch off the rules). Each tier closes a gap the one below
+  leaves, and a control an individual can switch off is not a control.
+- **The delivery plays are split per stage** (`references/plays-plan-design.md`,
+  `plays-build.md`, `plays-test.md`, `plays-deploy.md`,
+  `plays-maintain.md`) so one stage's practices load without the other
+  five; every play still names what it changes, how to start, the steps, the
+  governance, and a leading and a lagging indicator read together.
+
 ## [8.0.0-beta.1] - 2026-11-05
 
 The spine is rewritten on the AI-native SDLC: a six-stage loop — **Plan,
