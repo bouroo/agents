@@ -978,7 +978,7 @@ GO_CLAIMS = [
 # tag is taken from the text BEFORE the matched declaration: a file's last
 # @since belongs to some later member, not the type (HttpClient.java's last tag
 # is 21 while the type is 11).
-JAVA_SRC = "skills/modernize-coding/references/java/guide.md"
+JAVA_SRC = "skills/modernize-coding/references/java-guide.md"
 JAVA_CLAIMS = [
     ("List.of(", "java.base/java/util/List.java", r"static\s+<E>\s+List<E>\s+of\(", "9"),
     ("Set.of(", "java.base/java/util/Set.java", r"static\s+<E>\s+Set<E>\s+of\(", "9"),
@@ -1012,9 +1012,9 @@ JAVA_CLAIMS = [
 # version is still a gate failure. Each was doc-verified when written; see the
 # adapter's verify.md for how to re-derive them.
 UNANCHORED_ADAPTERS = {
-    "rust": "skills/modernize-coding/references/rust/guide.md",
-    "python": "skills/modernize-coding/references/python/guide.md",
-    "typescript": "skills/modernize-coding/references/typescript/guide.md",
+    "rust": "skills/modernize-coding/references/rust-guide.md",
+    "python": "skills/modernize-coding/references/python-guide.md",
+    "typescript": "skills/modernize-coding/references/typescript-guide.md",
 }
 
 # (adapter, row token, claimed version) for the unanchored adapters. Versions
@@ -1169,8 +1169,8 @@ def g_modernize() -> None:
 
     # --- Go: anchored to GOROOT/api ---
     texts = {}
-    for label, rel in (("guide.md", "skills/modernize-coding/references/go/guide.md"),
-                       ("analyzers.md", "skills/modernize-coding/references/go/analyzers.md")):
+    for label, rel in (("guide.md", "skills/modernize-coding/references/go-guide.md"),
+                       ("analyzers.md", "skills/modernize-coding/references/go-analyzers.md")):
         t = _json_doc_present(rel, MODERNIZE_DOC, problems)
         if t is not None:
             texts[label] = t

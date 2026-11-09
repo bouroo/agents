@@ -2,7 +2,7 @@
 
 Rust's baseline is two independent numbers, and both matter: the **edition** (`Cargo.toml` `edition`, an opt-in language dialect) and the **MSRV** (`Cargo.toml` `rust-version`, the oldest compiler the crate supports). A crate on edition 2021 with `rust-version = "1.70"` may not use a 2024-edition feature *or* a 1.75 stdlib API.
 
-Implements [modernize-coding](../../SKILL.md) for Rust.
+Implements [modernize-coding](../SKILL.md) for Rust.
 
 ## 1. Detect the baseline
 

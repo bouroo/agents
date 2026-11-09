@@ -2,7 +2,7 @@
 
 Java's baseline is declared by the build, not by the JDK you happen to run: `maven.compiler.release` / `--release` (Gradle: `java.toolchain` / `options.release`). That value is the ceiling — a construct above it will not compile where the project actually runs.
 
-Implements [modernize-coding](../../SKILL.md) for Java.
+Implements [modernize-coding](../SKILL.md) for Java.
 
 ## 1. Detect the baseline
 
