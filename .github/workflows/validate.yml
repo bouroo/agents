@@ -5,7 +5,7 @@ name: validate
 # verification surface, so CI runs it on a clean runner so a broken artifact
 # never lands on main or develop.
 #
-# Gates: `python3 scripts/check.py --all` runs all thirty. The
+# Gates: `python3 scripts/check.py --all` runs all thirty-one. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.

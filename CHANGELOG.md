@@ -12,7 +12,8 @@ v6.8.0:CHANGELOG.md` for the retired detail).
 
 ## [Unreleased]
 
-Three gaps in the graph structure close, and the vocabulary converges.
+Three gaps in the graph structure close, the vocabulary converges, and three
+claims the sources make about goals, grounding, and recovery gain a home.
 
 - **Structured is not engineered.** Naming the units and drawing the edges is
   the easy half. A structure earns the name only when its edges are typed,
@@ -41,6 +42,28 @@ Three gaps in the graph structure close, and the vocabulary converges.
 - **Isolation vocabulary converges.** The role agents and the delivery
   plays now say "checkout" and "working copy" rather than naming one
   version-control system's feature, so the rule reads the same on any host.
+- **A goal is an object, not a sentence.** Named explicitly — its completion
+  criteria, its constraints, its authorization scope, its priority, its
+  provenance — three failures become visible that a prose goal hides: a
+  **goal conflict**, found before the work rather than after it; an
+  **unauthorized modification**, detectable because the scope was written
+  down; and a **completion criterion no check can produce**, which makes
+  the goal uncompletable however hard anyone tries. The delivery skill's
+  Lifecycle section owns the rule; the manifesto and the standalone copy
+  state it where a task is framed, and a new `goal` gate asserts it.
+- **Semantic consistency is not factual correctness.** A shared vocabulary
+  makes two workers say the same thing; it does not make what they say
+  true. The definitions must be connected to tool outputs, environmental
+  observations, timestamps, and validation results, or the graph is
+  consistent and wrong — harder to see than a disagreement, because nothing
+  disagrees. Grounding a definition means naming the observation or the
+  check that established it, not citing the document that mentioned the term.
+- **Recovery takes one of four operations.** Retract the invalid state,
+  replay the work that can be re-executed, compensate the effect that
+  cannot be undone, or branch into an alternative path and keep the
+  abandoned one recorded rather than deleted. Picking the wrong one is how a
+  repair turns into a second incident, and a global recomputation discards
+  valid work the run had already earned.
 
 ## [8.0.0-beta.2] - 2026-11-09
 

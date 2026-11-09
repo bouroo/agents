@@ -266,6 +266,11 @@
           "cmd": "python3 scripts/check.py shared",
           "expect_exit": 0,
           "description": "the shared-meaning rule survives on every surface that introduces the three views"
+        },
+        {
+          "cmd": "python3 scripts/check.py goal",
+          "expect_exit": 0,
+          "description": "the goal-object rule survives on the doctrine and the delivery skill"
         }
       ]
     },

@@ -582,6 +582,20 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"shared vocabulary")),
         ("standalone/AGENTS.md", re.compile(r"shared vocabulary")),
     ],
+    "goal": [
+        # A goal is an object, not a sentence: the completion criteria, the
+        # constraints, the authorization scope, the priority, and the
+        # provenance. Named explicitly, a goal conflict, an unauthorized
+        # modification, and a criterion no check can produce are visible
+        # before the work; left as prose, none of them are.
+        ("AGENTS.md", re.compile(r"goal is an object, not a sentence")),
+        ("standalone/AGENTS.md",
+         re.compile(r"goal is an object, not a sentence")),
+        ("skills/delivery/SKILL.md",
+         re.compile(r"goal is an object, not a sentence")),
+        ("skills/delivery/SKILL.md", re.compile(r"goal conflict")),
+        ("skills/delivery/SKILL.md", re.compile(r"authorization scope")),
+    ],
 }
 
 
@@ -687,6 +701,21 @@ def g_shared() -> None:
     if _g_rule_surfaces("shared"):
         _add("PASS", f"shared: rule present on "
                      f"{len(RULE_SURFACES['shared'])} canonical surface(s)")
+
+def g_goal() -> None:
+    """The goal-object rule survives on the doctrine and the delivery skill.
+
+    A goal stated as a sentence cannot be checked for a conflict with
+    another goal, cannot be checked for work that drifted past its
+    authorization scope, and cannot be checked for a completion criterion
+    no evidence can produce. Naming the completion criteria, the
+    constraints, the authorization scope, the priority, and the provenance
+    makes all three failures visible before the work rather than after it,
+    so the rule is asserted on the surfaces that frame a task.
+    """
+    if _g_rule_surfaces("goal"):
+        _add("PASS", f"goal: rule present on "
+                     f"{len(RULE_SURFACES['goal'])} canonical surface(s)")
 
 
 def g_state() -> None:
@@ -1571,7 +1600,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
-         ("shared", g_shared),
+         ("shared", g_shared), ("goal", g_goal),
          ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),

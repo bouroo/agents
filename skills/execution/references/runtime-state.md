@@ -49,6 +49,8 @@ Name the recovery boundary before repairing — the last state whose evidence st
 
 Record the boundary, the corrective action, and the resulting state. A recovery with no boundary written down is an untracked restart wearing the word "fix".
 
+Recovery takes one of four operations, and picking the wrong one is how a repair turns into a second incident: **retract** the invalid state and continue from the last valid one; **replay** the work that can be re-executed; **compensate** an effect that cannot be undone, which is a separate outward action with its own `AUTH:`; or **branch** into an alternative path and keep the abandoned one recorded rather than deleted. Repair only the region the fault touched — a global recomputation discards valid work the run had already earned.
+
 ## Adaptation is not evolution
 
 Adapting inside a run — retry, reroute, re-split a unit — changes one trajectory. It costs nothing and leaves nothing behind, so it is the right response to a one-off.

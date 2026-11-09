@@ -79,6 +79,8 @@ So the entities the graphs name need one definition each, shared across the view
 
 Where the project already keeps a glossary, that file is the owner — the `architecture` skill's Domain Modeling section defines the format and the habits. Where it does not, the first disagreement over a term is the signal to create one — the disagreement is the evidence that the term was ambiguous, not an incident to close.
 
+**Semantic consistency is not factual correctness.** A shared vocabulary makes two workers say the same thing; it does not make what they say true. The definitions must be connected to tool outputs, environmental observations, timestamps, and validation results, or the graph is consistent and wrong — which is harder to see than a disagreement, because nothing disagrees. Grounding a definition means naming the observation or the check that established it, not citing the document that mentioned the term.
+
 ## Scoring a run
 
 End-task success is one dimension, not a verdict. Report six:
