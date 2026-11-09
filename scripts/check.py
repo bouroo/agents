@@ -702,6 +702,7 @@ def g_shared() -> None:
         _add("PASS", f"shared: rule present on "
                      f"{len(RULE_SURFACES['shared'])} canonical surface(s)")
 
+
 def g_goal() -> None:
     """The goal-object rule survives on the doctrine and the delivery skill.
 
