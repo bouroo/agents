@@ -9,7 +9,7 @@ A thorough, language-agnostic review of the current changes, reported by severit
 
 ## Target
 
-Default: the uncommitted changes (`git diff` / `git diff --cached`). `--against=<ref>` diffs against a ref; `--focus=<security|performance|correctness|tests>` reviews one dimension only. **Clean tree with no `--against`: report that there is nothing to review and stop** — never fabricate a diff.
+Default: the uncommitted changes (the version-control system's working-tree and staged diffs). `--against=<ref>` diffs against a ref; `--focus=<security|performance|correctness|tests>` reviews one dimension only. **Clean tree with no `--against`: report that there is nothing to review and stop** — never fabricate a diff.
 
 ## Rubric
 

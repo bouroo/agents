@@ -108,6 +108,39 @@ HOST_TOKEN_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Portability tokens forbidden in core doctrine. The agnostic gate above
+# catches agent HOSTS; this one catches the language, framework, and agent-
+# framework vocabulary that would make a doctrine rule true only on one stack.
+# A doctrine that names a web framework or a multi-agent framework teaches a
+# rule a reader on another stack cannot apply, so the rule names the role.
+#
+# Matching is CASE-SENSITIVE on purpose: "react", "express", and "rust" are
+# ordinary English words, and a case-insensitive scan flags prose saying "react
+# to an incident". A product name is capitalized, an English word is not, so
+# the capital is the signal.
+#
+# Three skills are exempt by construction: `modernize-coding` exists to name
+# languages and their fixers, `problem-details` ships framework-specific
+# blueprints, and `confluence` names the wiki product its whole subject is.
+PORTABILITY_EXEMPT = (
+    "skills/modernize-coding",
+    "skills/problem-details",
+    "skills/confluence",
+)
+
+PORTABILITY_TOKEN_RE = re.compile(
+    r"\b(Java|Kotlin|Scala|Groovy|Python|Ruby|PHP|Rust|Golang|Perl|C#|Swift|"
+    r"Dart|Elixir|Erlang|OCaml|Clojure|TypeScript|JavaScript)\b"
+    r"|\b(Maven|Gradle|Cargo|Npm|Pnpm|Yarn|Pytest|Tox|Poetry|Pipenv|"
+    r"Makefile|CMake|Bazel)\b"
+    r"|\b(Spring|Django|Flask|FastAPI|Express|Rails|Laravel|React|Vue|Angular|"
+    r"Svelte|Remix)\b"
+    r"|\b(LangChain|LangGraph|CrewAI|AutoGen|SemanticKernel|LlamaIndex|"
+    r"Mastra)\b"
+    r"|\b(GitHub|GitLab|Bitbucket)\b"
+    r"|\b(package\.json|pyproject\.toml|Cargo\.toml|go\.mod)\b",
+)
+
 # Real-work identity is forbidden in the shared doctrine: page titles,
 # space keys, tiny-link codes, numeric page ids, and private hosts name a
 # specific engagement and must live in machine-local memory only. The scan
@@ -803,6 +836,24 @@ def g_agnostic() -> None:
         return
     _add("PASS", f"{name}: {len(files)} core file(s) free of host-binding tokens")
 
+def g_portable() -> None:
+    name = "portable"
+    files = [f for f in HOST_SCAN_FILES + HOST_SCAN_SKILLS if f.is_file()]
+    scanned = []
+    for f in files:
+        rel = str(f.relative_to(ROOT))
+        if any(rel.startswith(ex) for ex in PORTABILITY_EXEMPT):
+            continue
+        scanned.append(f)
+    hits = [f"{rel}:{i} '{m}'" for rel, i, m in
+             _scan_lines(scanned, PORTABILITY_TOKEN_RE)]
+    if hits:
+        _add("FAIL", f"{name}: stack-specific token in doctrine: "
+                      + "; ".join(hits))
+        return
+    _add("PASS", f"{name}: {len(scanned)} core file(s) free of "
+                 f"language, framework, and stack-specific tokens")
+
 
 def g_privacy() -> None:
     name = "privacy"
@@ -1484,7 +1535,8 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("frontmatter", g_frontmatter),
          ("descriptions", g_descriptions), ("skillbudget", g_skillbudget),
          ("references", g_references), ("links", g_links),
-         ("agnostic", g_agnostic), ("manifests", g_manifests),
+         ("agnostic", g_agnostic), ("portable", g_portable),
+         ("manifests", g_manifests),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),

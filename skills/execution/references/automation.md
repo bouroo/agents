@@ -31,7 +31,7 @@ An automated run has no conversation, so the gates that depend on attention beco
 
 The trigger is the least interesting part of the design and the easiest to get wrong; the workflow it calls is the work. Three shapes cover nearly every case, and none is preferred by default:
 
-- **Event** — a release is published, a CI run completes, a review is requested. Fires once per event; the state that decides whether to fire lives outside the run.
+- **Event** — a release is published, a pipeline run completes, a review is requested. Fires once per event; the state that decides whether to fire lives outside the run.
 - **Condition** — a threshold crossed, a check failed, an anomaly detected. Fires on something the agent can observe.
 - **Schedule** — daily, weekly, hourly. The simplest to write and the one that needs a rule for overlap: what happens when the previous run is still going.
 
@@ -70,6 +70,6 @@ Reuse this shape for a new automation; fill the bracketed parts and delete the r
 - **Unbounded retries** — a failing run that retries forever hides the failure. Bound the retries; a deterministic failure is terminal.
 - **Overlapping runs** — two instances of the same run writing the same state. Make the run idempotent or serialize it with a lock.
 - **Silent scope growth** — the automation was allowed one repository and now touches three. Scope creep is a design change, made deliberately, not a side effect.
-- **Authority creep** — the first version read CI logs, the second merged the fix. Every authority increase is a separate, explicit decision.
+- **Authority creep** — the first version read pipeline logs, the second merged the fix. Every authority increase is a separate, explicit decision.
 - **No owner** — nobody watches the reports, so a run can fail for months unnoticed. Name the owner and the review cadence.
 - **The trigger became the job** — the workflow is now written around one schedule and no longer usable by hand. If a person cannot run it on demand, it is not a workflow with an automation; it is a script.

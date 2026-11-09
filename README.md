@@ -4,7 +4,7 @@
 
 # bouroo/agents
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, ten on-demand skills, four routine-task command workflows, and two role agents (lead, worker). Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, ten on-demand skills, four routine-task command workflows, and two role agents (lead, worker). The rules name roles — a project context file, a skill, a pre-action check, a change request, a pipeline — never a vendor product, so a rule stays applicable on any stack. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
 
 ## The foundation: the AI-native delivery loop
 
@@ -27,7 +27,7 @@ Four rules carry the loop, and they are what turn a set of phases into a process
 
 - **The accepted artifact fires the next gate.** A committed `intent.md` triggers the design pass; an approved `spec.md` triggers planning; a merged change triggers the pipeline. The handoff is the commit, so a person holds the gate rather than the handoff.
 - **One source of truth per artifact.** Where a legacy system already holds the record, name it the source of truth and keep the committed artifact as a linked working copy. Two copies with no link are two truths.
-- **Advisory controls make violations rare; deterministic controls make them close to impossible.** A skill shapes the work while it is written; a policy that must always hold needs a hook or a check behind it.
+- **Advisory controls make violations rare; deterministic controls make them close to impossible.** A skill shapes the work while it is written; a policy that must always hold needs a deterministic check behind it. A control an individual can switch off is not a control: the project tier lives in shared configuration, and what the organization declares non-negotiable sits above it, centrally owned.
 - **Autonomy stops at the gate.** The agent acts up to the production gate and nothing past it, tiered per environment, so the human gate sits above the automation rather than inside it.
 
 The `delivery` skill carries the plays for each stage — the steps, the governance, and the leading and lagging indicators that say whether each one worked.
@@ -48,12 +48,19 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   │                                  measurement; artifact shapes; grilling;
 │   │                                  wayfinder; common mistakes
 │   ├── execution/                     the execution-graph grammar: nodes, typed edges,
-│   │   └── references/                caps, anchors, shapes, cost; worked topologies;
-│   │                                  harness design: minimal-harness ladder, ACI,
-│   │                                  memory layers, external-system context,
-│   │                                  the execution environment, automation,
-│   │                                  runtime state (recording, attribution,
-│   │                                  recovery)
+│   │                                  caps, anchors, shapes, cost; the three coupled
+│   │                                  views (task, coordination, state) and their
+│   │                                  scorecard; worked topologies; harness design:
+│   │                                  minimal-harness ladder, ACI, memory layers,
+│   │                                  external-system context, the execution
+│   │                                  environment, automation, runtime state
+│   │                                  (governed transitions, fault localization,
+│   │                                  recovery boundary, adaptation vs evolution)
+│   ├── quality/                       craftsmanship, verification, evals, and
+│   │   └── references/                performance: the twelve commandments, evidence as
+│   │                                  anchors, the regression suite, measure-first;
+│   │                                  structural evaluation, flowcharts, evolution,
+│   │                                  measurement, tactics
 │   ├── quality/                       craftsmanship, verification, evals, and
 │   │   └── references/                performance: the twelve commandments, evidence as
 │   │                                  anchors, the regression suite, measure-first;
@@ -100,13 +107,13 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       twenty-eight deterministic gates (CI runs these)
+    ├── check.py                       twenty-nine deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
 ## The execution graph
 
-Inside a lifecycle stage, every job runs as an **execution graph**: THINK → ACT → PROVE → GROW are the role-nodes most jobs need, edges are typed and conditional, and every cycle is capped — the forbidden shape is a node re-entering itself with no new evidence. Three graph structures organize anything above trivial: the **task graph** (what: units, dependencies, DONE_WHEN), the **coordination graph** (who: solo → delegation → team), and the **state graph** (how it operates: the repository as system of record). Every proof chain terminates in an **anchor** — a fixed external node like a spec clause, the user's words, or captured command output that the machinery may read but never rewrite; the authority rank (user statement > spec > checks > code) is the anchor ordering. The grammar lives in [graph-engineering](./skills/execution/SKILL.md); entering at the least agency that closes on evidence — a prompt before a workflow, a workflow before an agent loop — is the [minimal-harness ladder](./skills/execution/references/harness-design.md).
+Inside a lifecycle stage, every job runs as an **execution graph**: THINK → ACT → PROVE → GROW are the role-nodes most jobs need, edges are typed and conditional, and every cycle is capped — the forbidden shape is a node re-entering itself with no new evidence. Three coupled views organize anything above trivial: the **task graph** (what: units, dependencies, DONE_WHEN), the **coordination graph** (who: the capability, team, and communication views — solo → delegation → team), and the **state graph** (how it operates: the repository as system of record). A job with more workers but no three views is a crowd — adding agents buys nothing until the views exist. Every proof chain terminates in an **anchor** — a fixed external node like a spec clause, the user's words, or captured command output that the machinery may read but never rewrite; the authority rank (user statement > spec > checks > code) is the anchor ordering. The grammar lives in [graph-engineering](./skills/execution/SKILL.md), the three views worked out in [the views](./skills/execution/references/graphs.md); entering at the least agency that closes on evidence — a prompt before a workflow, a workflow before an agent loop — is the [minimal-harness ladder](./skills/execution/references/harness-design.md).
 
 The loop as a chart — the role-nodes, the surprise back-edges, the hard cap, and GROW's knowledge edge back into the machinery:
 
@@ -173,6 +180,7 @@ python3 scripts/check.py --all
 | `references` | every bundled reference is named from its skill **and** its link states the condition that loads it, so progressive disclosure actually fires |
 | `links` | every relative Markdown link resolves |
 | `agnostic` | core doctrine is free of host-binding tokens |
+| `portable` | core doctrine is free of language, framework, and stack-specific tokens, so a rule names the role and not one vendor's product |
 | `manifests` | marketplace manifests parse; version fields agree across files |
 | `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
@@ -194,7 +202,7 @@ python3 scripts/check.py --all
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all twenty-eight on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all twenty-nine on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

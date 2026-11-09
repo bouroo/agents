@@ -11,7 +11,7 @@ Write the graph down before dispatching: unit list, owned files, edges, DONE che
 
 Give each unit explicit file ownership — two units never edit the same file — and an executable DONE check: a command whose exit code or output proves the unit is done.
 
-When two or more implementation units run in parallel in a git repository, isolate each in its own worktree on its own branch: `git worktree add <path> -b <branch>` per unit, with the path and branch named in the brief — parallel agents never share a checkout. Exclusive file ownership still holds inside worktrees; it keeps the later merges near conflict-free. Sequential units and read-only units stay in the main checkout. Not a git repository, or your host cannot spawn a subagent into another working directory: run in the shared checkout under file ownership alone.
+When two or more implementation units run in parallel in a version-controlled repository, isolate each in its own working copy on its own branch — one branch and one checkout per unit, with the path and branch named in the brief — parallel agents never share a checkout. Exclusive file ownership still holds inside worktrees; it keeps the later merges near conflict-free. Sequential units and read-only units stay in the main checkout. Not a git repository, or your host cannot spawn a subagent into another working directory: run in the shared checkout under file ownership alone.
 
 Never work on the default branch. Before the first edit, create the task branch from it (`feat/<slug>`, `fix/<slug>`, `docs/<slug>`) and cut every unit worktree from that branch; the checkout stays on it for sequential and read-only units, and the merge lands there, never on the trunk — the task branch is what the user opens as a merge request or pull request.
 

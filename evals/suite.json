@@ -37,6 +37,11 @@
           "cmd": "python3 scripts/check.py agnostic",
           "expect_exit": 0,
           "description": "core doctrine is free of host-binding tokens (.claude, .cursor, CLAUDE.md, codex, qwen, ...)"
+        },
+        {
+          "cmd": "python3 scripts/check.py portable",
+          "expect_exit": 0,
+          "description": "core doctrine is free of language, framework, and stack-specific tokens (Java, Spring, GitHub, ...), so a rule names the role"
         }
       ]
     },
