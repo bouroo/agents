@@ -1,6 +1,7 @@
 ---
 name: confluence
 description: "Create, read, search, move, or delete Confluence content through a connected Atlassian MCP server — the official Rovo remote server (OAuth; read and graph surface) or mcp-atlassian (full page CRUD): detect which server is live, resolve sites and shortlinks, find pages, author bodies whose code blocks and diagrams actually render, and update without clobbering. Use before any Confluence read or write, when a page must be authored or corrected, or when a wiki link must be resolved — even if the user only says 'put this on the wiki'. Not for Jira issue operations, or for wiki products other than Atlassian."
+license: Apache-2.0
 ---
 
 # Confluence via MCP: Rovo and mcp-atlassian

@@ -1,6 +1,7 @@
 ---
 name: indexed-search
 description: "Search a large repository fast and repeatedly: probe the host for a trigram-indexed tool (tgrep), drive its index and serve lifecycle when present, and fall back to ripgrep then the built-in Grep without installing anything. Use when a search is slow or repeated, when a tree has tens of thousands of files, when a miss must be trusted as absence, or when the user names tgrep — even if they only complain that grep keeps timing out. Not for a single known-string lookup in a small tree, and not for making an application query faster (quality owns performance)."
+license: Apache-2.0
 ---
 
 # Indexed search

@@ -1,6 +1,7 @@
 ---
 name: quality
 description: "Use when writing, reviewing, refactoring, or judging code, and when deciding whether work is actually done: the twelve commandments, the artifact gates (PROMPT:, INTENT:, TWINS:, AUTH:, PENDING:, L1:), L1/L2/L3 evidence, the evidence audit and mutation probe, the Generate-Verify-Refine-Deliver loop, the harness eval suite with its blocking pass rate, the six evaluation dimensions for split work, and measurement-first performance. Reach for it before declaring a change complete, when a done report needs judging, when tests pass but you do not believe them, or when a hot path must get faster. Not for architecture-level decisions (architecture), wiki operations (confluence), or repository-wide search (indexed-search)."
+license: Apache-2.0
 ---
 
 The doctrine governing produced work: code craft, the proof it is done, the regression suite that keeps the harness honest, and the measurement that keeps it fast. Where a rule serves more than one concern it is stated once here.
@@ -69,7 +70,7 @@ Generation alone is **Generate-and-Deliver** — legal only for a trivial ask. A
 
 **Verification Report** (Requirement Check / Logic Audit / Final Verdict) is emitted before the deliverable, never after it.
 
-**Right-size.** The full loop is owed when the deliverable is large, irreversible, outward-facing, cross-session, or hard to re-derive cheaply. A small, local, reversible change is verified in place — re-read the diff against the pinned ask, run the check, name the evidence — and the report says so in one line. The loop is sized down, never forgotten.
+**Right-size.** The full loop is owed on the triggers named above. A small, local, reversible change is verified in place — re-read the diff against the pinned ask, run the check, name the evidence — and the report says so in one line. The loop is sized down, never forgotten.
 
 ## Evals
 

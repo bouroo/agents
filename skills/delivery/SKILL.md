@@ -1,6 +1,7 @@
 ---
 name: delivery
 description: "Use when deciding where a piece of agent work belongs and what artifact it owes: the six-stage AI-native delivery loop (plan, design, build, test, deploy, maintain), the per-stage plays, the artifact chain whose accepted artifact fires the next gate, the three control tiers (advisory, project-level deterministic, organization-managed), autonomy tiers, and closing the loop from a breached control band back to a new intent.md. Also the intent.md / spec.md / PLAN.md / STATUS.md shapes with WPn work packages and a DONE_WHEN checklist, grilling a decision in numbered frontier rounds, and a wayfinder map of decision tickets for an effort too large for one session. Reach for it when a task needs a plan before code, when work spans sessions or agents, when a decision must be interviewed out of the user, or when someone asks which stage or document a change needs. Not for the mechanics of running a stage (execution) or for proving output correct (quality)."
+license: Apache-2.0
 ---
 
 # Delivery

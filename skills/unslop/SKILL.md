@@ -1,6 +1,7 @@
 ---
 name: unslop
 description: "Detect and remove AI residue from the artifacts a SWE task delivers: prose that says nothing about this project (commit messages, PR descriptions, docs, error and log strings), code that shows model residue (placeholder bodies, stubs, erased types, near-duplicate blocks, swallowed errors, speculative seams), and screens carrying the usual generated-UI tells. Use when output looks AI-generated, when polishing or reviewing a change before it ships, or when a message, comment, or document reads generic - even if nobody says 'unslop'. Not for general code quality, test coverage, or design taste (quality owns those), and not for adding features or restructuring working code."
+license: Apache-2.0
 ---
 
 # Unslop
