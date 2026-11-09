@@ -24,15 +24,16 @@ Three gaps in the graph structure close, and the vocabulary converges.
   can hold the same edge and still read "done" differently, and the graph
   then records a disagreement as an agreement. So: one term per concept, a
   definition held in the project's shared vocabulary rather than in one
-  worker's reading, definitions that expire like facts, and an owner who
+  worker's reading, definitions that carry their provenance, and an owner who
   arbitrates a term two teams use differently. The rule is asserted on every
   surface that introduces the three views, by a new `shared` gate.
 - **Dynamic evolution is an attack surface.** A structure that adapts
   mid-run takes its next shape from an intermediate result, and an
-  intermediate result can be written by a fetched document, a tool response,
-  or a peer agent's summary. The signals that reshape the structure are
-  untrusted input until they match the project's own record, and a structural
-  change driven by one carries its source in the provenance.
+  intermediate result is not always the run's own: a fetched document, a
+  tool response, or a peer agent's summary can carry it. The signals that
+  reshape the structure are untrusted input until they match the project's
+  own record, and a structural change driven by one carries its source in
+  the provenance.
 - **One source of truth per artifact** now names its three configurations:
   the committed artifact is the record, the legacy system is the record, or
   linkage as the minimum bar — and the third is a migration, not a
