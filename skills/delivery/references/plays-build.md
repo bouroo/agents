@@ -35,6 +35,10 @@ claims-service/tests/status
 ## Risks
 The claims service rate-limits; the panel must cache.
 
+## Rejected options
+Serving the status inline in the portal: rejected because the contact
+center needs the same status, and one source avoids two answers.
+
 ## Proof
 The status test covers the four claim states; the screenshot matches the
 approved mock.

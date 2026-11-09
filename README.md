@@ -182,6 +182,7 @@ python3 scripts/check.py --all
 | `agnostic` | core doctrine is free of host-binding tokens |
 | `portable` | core doctrine is free of language, framework, and stack-specific tokens, so a rule names the role and not one vendor's product |
 | `shared` | the shared-meaning rule (one term per concept, held in the project's shared vocabulary) survives on every surface that introduces the three views |
+| `goal` | the goal-object rule (a goal names its completion criteria, constraints, authorization scope, priority, and provenance) survives on the doctrine and the delivery skill |
 | `manifests` | marketplace manifests parse; version fields agree across files |
 | `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
