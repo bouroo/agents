@@ -80,6 +80,8 @@ So the entities the graphs name need one definition each, shared across the view
 
 Where the project already keeps a glossary, that file is the owner — the `architecture` skill's Domain Modeling section defines the format and the habits. Where it does not, the first disagreement over a term is the signal to create one — the disagreement is the evidence that the term was ambiguous, not an incident to close.
 
+**A definition change is governed like a structural change.** A term is proposed, explained, and then checked before it is accepted — consistency against the definitions already in force, an impact check on what uses the term, and the owner's approval — and the vocabulary is versioned so a change can be migrated and rolled back. Proposing a term is the model's job; deciding that it is accepted is a check plus a human, because a term accepted on a model's say-so is a definition the whole system has quietly changed its mind about. And a vocabulary that cannot be rolled back is a vocabulary nobody dares change.
+
 **Semantic consistency is not factual correctness.** A shared vocabulary makes two workers say the same thing; it does not make what they say true. The definitions must be connected to tool outputs, environmental observations, timestamps, and validation results, or the graph is consistent and wrong — which is harder to see than a disagreement, because nothing disagrees. Grounding a definition means naming the observation or the check that established it, not citing the document that mentioned the term.
 
 ## Scoring a run

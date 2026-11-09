@@ -91,6 +91,12 @@ claims the sources make about goals, grounding, and recovery gain a home.
   person can review properly. The band now reads as what it is: start with
   the fewest workers the work needs, and add one only while the steering
   person can review every stream.
+- **A definition change is governed like a structural change.** A term is
+  proposed and explained, then checked before it is accepted — consistency
+  against the definitions already in force, an impact check on what uses
+  the term, and the owner's approval — and the vocabulary is versioned so a
+  change can be migrated and rolled back. Proposing a term is the model's
+  job; deciding it is accepted is a check plus a human.
 - **Distributed decisions make blame harder to assign.** A biased input, a
   faulty inference, or an adversarial signal is not consumed once when the
   decision is spread across components — it is amplified, because each
