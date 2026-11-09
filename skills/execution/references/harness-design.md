@@ -49,6 +49,10 @@ Tool definitions are as load-bearing as the prompt: they are the interface the m
 - **Boundary against neighbours.** Say how this tool differs from the similar one, or the model will pick the wrong sibling by name resemblance.
 - **Iterate on observed misuse.** When traces show a tool used wrongly, fix the interface first — tighten the description, the signature, the return — before adding a prompt instruction. The prompt compensates for a bad surface; the surface removes the failure class.
 
+## Check the action against the state, not against the plan
+
+A proposed action is a **structured intent**: what it would do, on what, and under which conditions — checkable rather than assertable. Before it runs, it is checked against the **true system state** and the **policy**, not against the plan that produced it, because the plan is the agent's own account of the world and the state is the world. The difference matters: an action legitimate when it was proposed can be illegitimate by the time it executes, because the state moved under it — the file changed, the permission was revoked, the release already shipped. Checking against the plan re-validates the agent's reasoning; checking against the state and the policy re-validates the action. So the check reads the state as it is now, and an action whose precondition no longer holds is refused rather than run.
+
 ## Scope the tool surface
 
 Give the agent only the tools its job needs: a narrower surface means less confusion, fewer misuses, and less exposure to injected instructions arriving through tool output. Breadth is not capability — it is surface area. A worker's spawn brief scopes its tools to its task for the same reason ([teamwork](../SKILL.md)); the node contract names what the worker may touch, not just what it owes.
@@ -82,7 +86,9 @@ When a step fails, name the layer before patching: **reasoning** (the model deci
 
 ## Do not surrender design to a framework
 
-A framework, a connected-tool server, or an orchestration library is an **implementation mechanism**, not a substitute for deciding what the agent needs. The design decisions — rungs, shapes, tool surface, what is injected — are yours and are made before any framework is chosen; a framework that hides the prompts, the raw responses, and the execution flow also hides the evidence you debug with. Use the abstraction when it carries a decision you have already made, and understand what lies beneath it well enough to read the trace when it fails.
+A framework, a connected-tool server, or an orchestration library is an **implementation mechanism**, not a substitute for deciding what the agent needs. The design decisions — rungs, shapes, tool surface, what is injected — are yours and are made before any framework is chosen; a framework that hides the prompts, the raw responses, and the execution flow also hides the evidence you debug with, so keep prompts, raw responses, and the trace readable. Use the abstraction when it carries a decision you have already made, and understand what lies beneath it well enough to read the trace when it fails.
+
+**The graphs can outlive the runtime that hosts them.** Each framework tends to reimplement the same machinery — scheduling, capability discovery, persistent state, communication, and recovery — and each does it in its own way, so the structure is lost when the framework is replaced. The three views can instead be first-class objects the runtime holds: the task graph, the coordination graph, and the state graph as typed, versioned records, with the runtime providing scheduling, discovery, state storage, event and provenance logging, structural transactions, permission enforcement, checkpointing, replay, rollback, and observability over the graph itself. Then replacing the runtime replaces the mechanism and not the structure — the graph is the record, and the runtime is one reader of it.
 
 ## Cross-references
 

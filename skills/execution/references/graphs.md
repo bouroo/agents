@@ -47,6 +47,7 @@ Runtime information flow, kept separate from the stable team structure — the t
 
 - **Exchange point** — where in the execution an exchange happens: at a handoff, at a fan-out join, at a gate, at a clarification stop. An exchange with no point in the execution has no consequence and is cost without information.
 - **What the exchange changes** — the recipient's permission to act afterwards, the edge it opens or closes, the claim it licenses. If the answer is "nothing", the relation carries no decision and gets removed. More connections do not improve collaboration by default; a graph that connects everyone to everyone buys context cost and no coordination.
+- **An exchange carries a result, and a result can be wrong.** Communication does not only transfer results; it detects and corrects them — a reviewer returns the problem to the stage that produced it, and the exchange is a loop (generate, evaluate, revise) rather than a one-way flow. So an intermediate result must not travel downstream on trust: the edge that carries it is either gated by a check or marked tentative, because the structure of the communication graph decides how correct and incorrect information propagates, and an unchecked result spreads faster than a checked one.
 - **Humans as participants** — a human appears in the view with explicit edges: **clarification** (an answer that unblocks a unit), **feedback** (a correction that redirects the work), **approval** (a sign-off that closes a gate), **escalation** (a blocked unit handed up). The human is a participant in the flow, not only the final evaluator standing outside it.
 
 ## The state graph (how)
@@ -54,6 +55,34 @@ Runtime information flow, kept separate from the stable team structure — the t
 What actually happened, recorded rather than remembered. Its four properties — structured representation, governed updation, scoped visibility, consistency management — and the transition cycle (propose, validate, commit) are owned by [runtime-state](runtime-state.md); this file states why the three views close together.
 
 State is the join point of the other two graphs: the task graph says what should have happened, the coordination graph says who should have done it, and the state graph says what did. A gap between the three is the finding — a unit closed without its check, a worker committed a result no capability covered, an exchange happened that no unit recorded.
+
+## Structured is not engineered
+
+Naming the units and drawing the edges is the easy half of the work. A structure earns the name only when four things hold, and a diagram failing any of them is a diagram:
+
+1. **The edges are typed.** An untyped edge ("goes next") is a missing decision, and a structure of untyped edges records a sequence, not a plan.
+2. **The graph is observed, not assumed.** The structure that ran is the structure that was recorded; a graph describing what should have happened, written after the fact, is a story.
+3. **The structure can change under evidence.** A decomposition the first result contradicts must be revisable mid-run, or the structure is a straitjacket the run cannot escape.
+4. **The change persists and transfers.** A structure that helped once and was thrown away is a coincidence; the value of engineering a structure is that the next job starts from the improved one.
+
+The failure is quiet: a graph selected by hand and fixed before the run looks like a live one until the run needs to change it, and then it cannot. The scoring dimensions below are what make the difference visible.
+
+## Shared meaning, or the graph records a disagreement as an agreement
+
+An explicit graph does not make the words on it mean one thing. Two workers can hold the same edge and still read "done", "verified", "approved", or "blocked" differently — and then the graph records two incompatible claims under one name, and the disagreement surfaces much later as a fault nobody can localize.
+
+So the entities the graphs name need one definition each, shared across the views:
+
+- **One term per concept.** The same concept wears one name across the task graph, the coordination graph, and the state graph. A second name for the same thing is a second thing, and every edge between them is an ambiguity.
+- **The definition is external to any one worker.** The meaning lives in the project's shared vocabulary — a glossary the team maintains — not in one worker's reading of it. A definition one worker holds is a definition that worker can change.
+- **Definitions carry their provenance.** Record when a definition was last confirmed and who confirmed it, and version it so a change to it is a change to the structure — a definition that silently drifts is a definition two halves of the system no longer share.
+- **The domain language has an owner.** One seat owns the vocabulary and arbitrates a term that two teams use differently, or the vocabulary forks silently and the graph records the fork as agreement.
+
+Where the project already keeps a glossary, that file is the owner — the `architecture` skill's Domain Modeling section defines the format and the habits. Where it does not, the first disagreement over a term is the signal to create one — the disagreement is the evidence that the term was ambiguous, not an incident to close.
+
+**A definition change is governed like a structural change.** A term is proposed, explained, and then checked before it is accepted — consistency against the definitions already in force, an impact check on what uses the term, and the owner's approval — and the vocabulary is versioned so a change can be migrated and rolled back. Proposing a term is the model's job; deciding that it is accepted is a check plus a human, because a term accepted on a model's say-so is a definition the whole system has quietly changed its mind about. And a vocabulary that cannot be rolled back is a vocabulary nobody dares change.
+
+**Semantic consistency is not factual correctness.** A shared vocabulary makes two workers say the same thing; it does not make what they say true. The definitions must be connected to tool outputs, environmental observations, timestamps, and validation results, or the graph is consistent and wrong — which is harder to see than a disagreement, because nothing disagrees. Grounding a definition means naming the observation or the check that established it, not citing the document that mentioned the term.
 
 ## Scoring a run
 
@@ -68,7 +97,10 @@ End-task success is one dimension, not a verdict. Report six:
 | Operational correctness | were the graph operations executed as intended — typed edges, named caps, exclusive ownership, evidence gates? |
 | Evolution governance | are structural changes traceable and controllable — credit assignment, validation, commit or rollback? |
 
+
 The last two are what separate a working system from a lucky one. A run that succeeded with a coarse task graph, an unrouted fan-out, and a claim closed on testimony has high effectiveness and low structural fidelity and operational correctness — the next run will not repeat the success.
+
+Each dimension is measured against the nine system-level properties it stands for: **goal formation**, **semantic consistency**, **parallel execution efficiency**, **heterogeneous capability allocation**, **collective decision quality**, **state consistency**, **failure recovery**, **transfer across tasks**, and **runtime overhead**. A row that cannot be answered against the property behind it is a missing measurement, not a point made — the `quality` skill's evaluation reference carries the full mapping and the task types the suite needs to exercise each one.
 
 ## Ablation: separating the structure from the model
 

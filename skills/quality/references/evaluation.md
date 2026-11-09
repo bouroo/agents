@@ -19,6 +19,10 @@ So work whose correctness depends on a structure is judged on six dimensions, ea
 
 A structure that improves only one of these is not better; it is differently expensive.
 
+**The suite must include structural disturbances, not only the happy path.** A suite of well-formed tasks measures nothing a single agent could not also pass. So the task set deliberately includes: an **incomplete objective** (the ask is partial or ambiguous, and the run must proceed without inventing the missing half); **concurrent workloads** (several jobs in flight, and the structure must not serialize behind one context); **distributed information** (the facts needed live in different places and no one participant holds them all); **component failures** (a unit, a tool, or a worker fails mid-run); and **environmental changes** (the ground moves under a plan that was sound when it was made). Coherent behavior under those five is what separates a structured system from a lucky one, and a suite with none of them cannot tell the two apart.
+
+**The nine lenses behind the six dimensions.** The six dimensions above are the reporting surface; the system-level properties they measure are nine: **goal formation** (is the objective well formed, and are its criteria satisfiable), **semantic consistency** (does one term mean one thing across the participants), **parallel execution efficiency** (does concurrency actually pay, net of coordination), **heterogeneous capability allocation** (is each unit held by a worker that holds the capability), **collective decision quality** (is the merged decision better than its parts), **state consistency** (does the state graph agree with what happened), **failure recovery** (does a fault resume rather than restart), **transfer across tasks** (does the next job start from the improved structure), and **runtime overhead** (what does the structure itself cost). A six-dimension report that cannot answer one of these is missing a measurement, not making a point.
+
 ## The budget-fixed discipline
 
 The rule the Evals section owns: **hold the budget fixed and ablate the claimed structural change.** The mechanics:

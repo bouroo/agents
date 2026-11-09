@@ -10,6 +10,119 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [8.0.0-beta.3] - 2026-11-09
+
+Three gaps in the graph structure close, the vocabulary converges, and three
+claims the sources make about goals, grounding, and recovery gain a home.
+
+- **Structured is not engineered.** Naming the units and drawing the edges is
+  the easy half. A structure earns the name only when its edges are typed,
+  the graph is observed rather than assumed, it can change under evidence,
+  and the change persists and transfers to the next job. A graph frozen
+  before the run is a diagram, and the run that succeeds on it will not
+  repeat the success.
+- **An explicit graph does not make its words mean one thing.** Two workers
+  can hold the same edge and still read "done" differently, and the graph
+  then records a disagreement as an agreement. So: one term per concept, a
+  definition held in the project's shared vocabulary rather than in one
+  worker's reading, definitions that carry their provenance, and an owner who
+  arbitrates a term two teams use differently. The rule is asserted on every
+  surface that introduces the three views, by a new `shared` gate.
+- **Dynamic evolution is an attack surface.** A structure that adapts
+  mid-run takes its next shape from an intermediate result, and an
+  intermediate result is not always the run's own: a fetched document, a
+  tool response, or a peer agent's summary can carry it. The signals that
+  reshape the structure are untrusted input until they match the project's
+  own record, and a structural change driven by one carries its source in
+  the provenance.
+- **One source of truth per artifact** now names its three configurations:
+  the committed artifact is the record, the legacy system is the record, or
+  linkage as the minimum bar — and the third is a migration, not a
+  destination.
+- **Isolation vocabulary converges.** The role agents and the delivery
+  plays now say "checkout" and "working copy" rather than naming one
+  version-control system's feature, so the rule reads the same on any host.
+- **A goal is an object, not a sentence.** Named explicitly — its completion
+  criteria, its constraints, its authorization scope, its priority, its
+  provenance — three failures become visible that a prose goal hides: a
+  **goal conflict**, found before the work rather than after it; an
+  **unauthorized modification**, detectable because the scope was written
+  down; and a **completion criterion no check can produce**, which makes
+  the goal uncompletable however hard anyone tries. The delivery skill's
+  Lifecycle section owns the rule; the manifesto and the standalone copy
+  state it where a task is framed, and a new `goal` gate asserts it.
+- **Semantic consistency is not factual correctness.** A shared vocabulary
+  makes two workers say the same thing; it does not make what they say
+  true. The definitions must be connected to tool outputs, environmental
+  observations, timestamps, and validation results, or the graph is
+  consistent and wrong — harder to see than a disagreement, because nothing
+  disagrees. Grounding a definition means naming the observation or the
+  check that established it, not citing the document that mentioned the term.
+- **Recovery takes one of four operations.** Retract the invalid state,
+  replay the work that can be re-executed, compensate the effect that
+  cannot be undone, or branch into an alternative path and keep the
+  abandoned one recorded rather than deleted. Picking the wrong one is how a
+  repair turns into a second incident, and a global recomputation discards
+  valid work the run had already earned.
+
+- **A plan is interrogated before it is accepted.** Ask what the change
+  could break, which step is most risky, and what other options were
+  considered and rejected; the answers belong in the plan's own **Rejected
+  options** section, not only in the conversation. And the completeness
+  test: iterate until someone who has never seen the conversation could
+  implement the change from the plan alone — a plan needing a thread of
+  context to be understood is a document, not a plan.
+- **An exchange carries a result, and a result can be wrong.** Communication
+  does not only transfer results; it detects and corrects them, so an
+  intermediate result does not travel downstream on trust. The edge that
+  carries it is either gated by a check or marked tentative, because the
+  structure of the communication graph decides how correct and incorrect
+  information propagates.
+- **A shared state multiplies the risk of one secret.** Several agents,
+  several tools, several memories, and a persistent state graph hold
+  several copies of a fact, and a fact that should not spread is
+  replicated, carried across tasks, or inferred from in combination — none
+  of it visible in one agent's view. So a value is scoped before it is
+  written: name the unit and role that may read it, and keep it out of the
+  shared ledger unless the ledger needs it.
+- **The team band is a judgement, not a number.** The doctrine carried
+  "3-5 workers, 5-6 tasks each"; neither source supports that figure, and
+  the playbook's own guidance is that the ceiling is how many streams one
+  person can review properly. The band now reads as what it is: start with
+  the fewest workers the work needs, and add one only while the steering
+  person can review every stream.
+- **The graphs can outlive the runtime that hosts them.** Each framework
+  tends to reimplement scheduling, capability discovery, persistent state,
+  communication, and recovery its own way, so the structure is lost when the
+  framework is replaced. The three views can instead be first-class objects
+  the runtime holds — typed, versioned records — so replacing the runtime
+  replaces the mechanism and not the structure.
+- **A definition change is governed like a structural change.** A term is
+  proposed and explained, then checked before it is accepted — consistency
+  against the definitions already in force, an impact check on what uses
+  the term, and the owner's approval — and the vocabulary is versioned so a
+  change can be migrated and rolled back. Proposing a term is the model's
+  job; deciding it is accepted is a check plus a human.
+- **Distributed decisions make blame harder to assign.** A biased input, a
+  faulty inference, or an adversarial signal is not consumed once when the
+  decision is spread across components — it is amplified, because each
+  component treats the previous one's output as evidence. What was one
+  mistake becomes a wrong conclusion several places agree on, and no single
+  participant can be pointed at. So the record carries the amplification:
+  who saw the input, what they concluded, what they did with it.
+- **Check the action against the state, not against the plan.** A proposed
+  action is a structured intent, checked before it runs against the true
+  system state and the policy. An action legitimate when it was proposed can
+  be illegitimate by the time it executes, because the state moved under it.
+  Checking the plan re-validates the agent's reasoning; checking the state
+  re-validates the action.
+- **The evaluation suite must include structural disturbances.** Incomplete
+  objectives, concurrent workloads, distributed information, component
+  failures, and environmental changes — a suite of well-formed tasks
+  measures nothing a single agent could not also pass. The nine
+  system-level properties behind the six reporting dimensions are named, so
+  a report that cannot answer one of them reads as a missing measurement.
+
 ## [8.0.0-beta.2] - 2026-11-09
 
 The doctrine is rewritten to be agnostic of programming language, agent

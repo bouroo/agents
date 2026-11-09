@@ -14,9 +14,11 @@
 
 1. Start a session in a read-only planning phase, hand it the approved `spec.md`, and let it interview the engineer, iterating on the plan until the engineer is happy with it. The agent can read the codebase without changing anything, so changing course is still a matter of editing a document.
 2. Write the plan down before dispatching anything: the files that change, the order of work, the risks, and the proof.
-3. Commit the approved plan as `PLAN.md`. It joins the audit trail, and the review pass in Deploy checks the eventual diff against it.
-4. Accept the plan and implement. With a solid plan, the implementation is often a single pass.
-5. When implementation departs from the plan, update `PLAN.md` in the same commit. A pre-action check can enforce the synchronization.
+3. Interrogate the plan before accepting it — ask what the change could break, which step is most risky, and what other options were considered and rejected. A plan that has not been questioned has not been tested, and the answers belong in the plan's own **Rejected options** section, not only in the conversation.
+4. Iterate until someone who has never seen the conversation could implement the change from the plan alone. That is the completeness test: a plan needing a thread of context to be understood is a document, not a plan.
+5. Commit the approved plan as `PLAN.md`. It joins the audit trail, and the review pass in Deploy checks the eventual diff against it.
+6. Accept the plan and implement. With a solid plan, the implementation is often a single pass.
+7. When implementation departs from the plan, update `PLAN.md` in the same commit. A pre-action check can enforce the synchronization.
 
 ```markdown
 # Plan: claims status self-service (from intent.md 2026-06-02)
@@ -32,6 +34,10 @@ claims-service/tests/status
 
 ## Risks
 The claims service rate-limits; the panel must cache.
+
+## Rejected options
+Serving the status inline in the portal: rejected because the contact
+center needs the same status, and one source avoids two answers.
 
 ## Proof
 The status test covers the four claim states; the screenshot matches the
@@ -168,14 +174,14 @@ The three verdicts are the whole contract: `allow` lets the action proceed, `ask
 
 ### Parallel sessions and subagents
 
-**What changes.** One engineer can drive several streams of work at once. A parallel session is another full session working a separate task in its own worktree; each independent session knows nothing about the others, and the engineer steering them is the only thing they share. A subagent runs inside a single session as a scoped helper with its own context window and tool limits, and suits jobs that recur in multiple tasks.
+**What changes.** One engineer can drive several streams of work at once. A parallel session is another full session working a separate task in its own checkout; each independent session knows nothing about the others, and the engineer steering them is the only thing they share. A subagent runs inside a single session as a scoped helper with its own context window and tool limits, and suits jobs that recur in multiple tasks.
 
-**Getting started.** The project context file, since all sessions read it. The feedback loop (Stage 4) also helps, because less supervision is needed when a session can verify its own work. Infrastructure: a version-controlled repository, since isolation comes from worktrees and permission settings tuned so sessions are not waiting on approval prompts for commands the organization considers safe.
+**Getting started.** The project context file, since all sessions read it. The feedback loop (Stage 4) also helps, because less supervision from the engineer is needed when a session can verify its own work. Infrastructure: a version-controlled repository, since isolation comes from a separate checkout per session and permission settings tuned so sessions are not waiting on approval prompts for commands the organization considers safe.
 
 **Steps.**
 
 1. Split the work into tasks that touch different files, using the plan to see where the work is independent. Tasks that share files run in a single session, one after another.
-2. Give each parallel task its own worktree and branch. A worktree is a separate checkout, which stops sessions colliding on files.
+2. Give each parallel task its own checkout and branch. A separate checkout stops sessions colliding on files.
 3. Two or three sessions is a sensible starting point. The practical ceiling is how many streams one person can review properly, so add sessions only while review keeps up.
 4. Turn repeated jobs into subagents, each defined in a markdown file with a name, a description of when to use it, and the tools it may touch: a simplifier that strips needless complexity after the main work finishes, a verifier that runs the application and checks behavior, a researcher that explores the codebase and reports back without flooding the main context. Check the definitions into version control so the whole team shares them.
 
@@ -191,7 +197,7 @@ Report what you ran, what you saw, and any behavior that does not match the
 plan. Do not fix anything; report only.
 ```
 
-**Autonomy is tiered by guardrail maturity, not only by environment.** A session may run unattended once the guardrails around it have earned it: a tuned context file, skills that encode policy, pre-action checks that block unsafe actions, and a test suite the session can run itself. A tight spec, a small blast radius, and code the tests already cover are the preconditions for letting edits through without a per-edit prompt. The shift is away from a person watching the agent make each edit and towards reviewing artifacts after a longer autonomous session — and those sessions are what make parallelism practical in the first place, since each runs in its own worktree.
+**Autonomy is tiered by guardrail maturity, not only by environment.** A session may run unattended once the guardrails around it have earned it: a tuned context file, skills that encode policy, pre-action checks that block unsafe actions, and a test suite the session can run itself. A tight spec, a small blast radius, and code the tests already cover are the preconditions for letting edits through without a per-edit prompt. The shift is away from a person watching the agent make each edit and towards reviewing artifacts after a longer autonomous session — and those sessions are what make parallelism practical in the first place, since each runs in its own checkout.
 
 The ladder is earned, not assumed: start with the per-edit prompt, drop it as the guardrails above prove themselves, and add it back where a session shows it is not ready. A guardrail that never fires is untested; one that fires constantly is noise.
 

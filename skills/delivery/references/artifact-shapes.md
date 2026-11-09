@@ -53,11 +53,13 @@ Date: YYYY-MM-DD · Status: DRAFT | APPROVED | IN PROGRESS | DONE · Scope: <rep
 ## Design
 ## Work packages
 ## Risks
+## Rejected options
+## DONE_WHEN (executable evidence)
 ## DONE_WHEN (executable evidence)
 ## PENDING (prescribed but untaken)
 ```
 
-**One vocabulary, everywhere**: work packages are **`WPn`** (WP0 allowed as baseline/migration), never "phase", "step", or bare `Pn`. Section by section: **INTENT** is the §0 gate as prose — what the code will do and its driver; if code, check, and spec disagree, the disagreement is the finding, resolved by anchor rank before any work package. **Current state** is the repository as observed, every claim anchored (file:line, command output). **Decisions** are numbered, dated, naming who confirmed them. **Design** leads with one structure diagram grounded in facts already recorded. **Work packages** run in execution order, `### WPn — <repo/slice>: <deliverable>`, each naming files to touch, mechanics, and its own verify command; one WP is one reviewable unit. **Risks** include accepted risks and why. **DONE_WHEN** is the anchor every execution session cites — one checkbox per terminal check, naming command plus expected observable; a check that cannot name its command does not belong. **PENDING** lists follow-ups deliberately not taken (write "None recorded." if empty); an unlisted pending action reads as fraud.
+**One vocabulary, everywhere**: work packages are **`WPn`** (WP0 allowed baseline/migration), never "phase", "step", or bare `Pn`. Section by section: **INTENT** is the §0 gate as prose — what the code will do and its driver; if code, check, and spec disagree, the disagreement is the finding, resolved by anchor rank before any work package. **Current state** is the repository as observed, every claim anchored (file:line, command output). **Decisions** are numbered, dated, naming who confirmed them. **Design** leads with one structure diagram grounded in facts already recorded. **Work packages** run in execution order, `### WPn — <repo/slice>: <deliverable>`, each naming files to touch, mechanics, and its own verify command; one WP is one reviewable unit. **Risks** include accepted risks and why. **Rejected options** records the alternatives the plan considered and why each lost — the section that answers "what else did you consider?", and the evidence that the plan was interrogated rather than written in one pass; an empty section means the plan was not questioned. **DONE_WHEN** is the anchor every execution session cites — one checkbox per terminal check, naming command plus expected observable; a check that cannot name its command does not belong. **PENDING** lists follow-ups deliberately not taken (write "None recorded." if empty); an unlisted pending action reads as fraud.
 
 ## STATUS.md
 
