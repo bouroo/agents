@@ -2,7 +2,7 @@
 
 Python's baseline is declared in packaging metadata, not by whichever interpreter happens to be on PATH — a `python3` of 3.14 tells you nothing about what the project supports.
 
-Implements [modernize-coding](../../SKILL.md) for Python.
+Implements [modernize-coding](../SKILL.md) for Python.
 
 ## 1. Detect the baseline
 
