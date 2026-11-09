@@ -88,6 +88,8 @@ When a step fails, name the layer before patching: **reasoning** (the model deci
 
 A framework, a connected-tool server, or an orchestration library is an **implementation mechanism**, not a substitute for deciding what the agent needs. The design decisions — rungs, shapes, tool surface, what is injected — are yours and are made before any framework is chosen; a framework that hides the prompts, the raw responses, and the execution flow also hides the evidence you debug with, so keep prompts, raw responses, and the trace readable. Use the abstraction when it carries a decision you have already made, and understand what lies beneath it well enough to read the trace when it fails.
 
+**The graphs can outlive the runtime that hosts them.** Each framework tends to reimplement the same machinery — scheduling, capability discovery, persistent state, communication, and recovery — and each does it in its own way, so the structure is lost when the framework is replaced. The three views can instead be first-class objects the runtime holds: the task graph, the coordination graph, and the state graph as typed, versioned records, with the runtime providing scheduling, discovery, state storage, event and provenance logging, structural transactions, permission enforcement, checkpointing, replay, rollback, and observability over the graph itself. Then replacing the runtime replaces the mechanism and not the structure — the graph is the record, and the runtime is one reader of it.
+
 ## Cross-references
 
 - [execution](../SKILL.md) the grammar these rules configure; the shape ladder and this agency ladder are the same entry discipline.

@@ -91,6 +91,12 @@ claims the sources make about goals, grounding, and recovery gain a home.
   person can review properly. The band now reads as what it is: start with
   the fewest workers the work needs, and add one only while the steering
   person can review every stream.
+- **The graphs can outlive the runtime that hosts them.** Each framework
+  tends to reimplement scheduling, capability discovery, persistent state,
+  communication, and recovery its own way, so the structure is lost when the
+  framework is replaced. The three views can instead be first-class objects
+  the runtime holds — typed, versioned records — so replacing the runtime
+  replaces the mechanism and not the structure.
 - **A definition change is governed like a structural change.** A term is
   proposed and explained, then checked before it is accepted — consistency
   against the definitions already in force, an impact check on what uses
