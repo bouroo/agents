@@ -96,6 +96,15 @@ def problems(suite: dict) -> list[str]:
             if sp == 0 or sn == 0:
                 out.append(f"{name}/{split}: holds only one class "
                            f"({sp} should-trigger, {sn} should-not-trigger)")
+    # A skill with no rows at all is the failure a new skill makes: every other
+    # check above loops over rows that do not exist, so the set stays green
+    # while the description goes unmeasured forever.
+    base = ROOT / "skills"
+    for d in sorted(base.iterdir()) if base.is_dir() else []:
+        if (d.is_dir() and not d.is_symlink() and not d.name.startswith(".")
+                and d.name not in skills):
+            out.append(f"{d.name}: skills/{d.name} has no queries in "
+                       f"{SET.relative_to(ROOT)}")
     return out
 
 
