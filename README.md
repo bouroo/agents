@@ -107,7 +107,7 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       thirty-four deterministic gates (CI runs these)
+    ├── check.py                       thirty-five deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -193,6 +193,7 @@ python3 scripts/check.py --all
 | `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
 | `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
 | `memory` | the memory rule (instruction memory separate from learning memory, written down rather than conversational) survives on both canonical surfaces (manifesto + execution) |
+| `searchdiscipline` | the search-discipline rule (a miss is a miss: change the query, not the tool's flags; one concept, one canonical form; a diagnosis closes on a named check) survives on both always-loaded clauses and on the skill that owns the search engines, so a run that searches loads the mechanics |
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `environment` | the execution-environment clause survives on both installed surfaces (manifesto + standalone copy) |
 | `automation` | the automation-layer clause survives on both installed surfaces and on the execution skill |
@@ -207,7 +208,7 @@ python3 scripts/check.py --all
 | `thirdparty` | a symlinked skill is an untracked, documented pointer, so third-party content stays outside every gate and out of the repository |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all thirty-four on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all thirty-five on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).
