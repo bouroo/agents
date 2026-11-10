@@ -10,6 +10,25 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [8.0.0-beta.6] - 2026-11-10
+
+The trigger instrument stops waiting for one row at a time.
+
+- **A measurement run no longer costs the sum of every row's latency.** The
+  harness invoked the model once per query and waited for it before the next
+  query started, so the wall clock was the sum of every row's latency even
+  though the rows of a split are independent. `evals/run_triggers.py` now
+  measures them through a thread pool (`--workers`, default 8), and
+  `Executor.map` yields results in submission order, so the printed rows and
+  the per-split rates come out exactly as before.
+- **The parallel path carries a check, and CI runs it.** A thread pool that
+  reorders rows, attributes a rate to the wrong query, or counts the tally
+  twice would report wrong numbers rather than crash. The new
+  `evals/test_run_triggers.py` asserts the parallel run matches the serial run
+  line for line, makes no model call and costs nothing, and CI runs it on the
+  same clean runner as the gates: a check a reader trusts that only runs by
+  hand is not a check.
+
 ## [8.0.0-beta.5] - 2026-11-10
 
 A measured production run shows where the doctrine stopped the work, and the

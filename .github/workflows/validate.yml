@@ -2,8 +2,9 @@ name: validate
 
 # Runs the repository's deterministic gates on every push and pull request.
 # This repository ships docs and skills only; scripts/check.py is the single
-# verification surface, so CI runs it on a clean runner so a broken artifact
-# never lands on main or develop.
+# verification surface for artifacts, so CI runs it on a clean runner so a
+# broken artifact never lands on main or develop. The measurement harness
+# under evals/ is code, so it carries a check of its own.
 #
 # Gates: `python3 scripts/check.py --all` runs all thirty-five. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
@@ -84,3 +85,6 @@ jobs:
 
       - name: Run check.py (deterministic gates)
         run: python3 scripts/check.py --all
+
+      - name: Run the measurement-harness check (parallel measure)
+        run: python3 evals/test_run_triggers.py
