@@ -15,8 +15,8 @@ mcp-atlassian storage format — the `[storage-form]` snippets apply there.
 - Canonical document order (Overview table → Change logs → TOC → Sequence diagram →
   Request → Response → Field to Field Mapping)
 - Fixed table column sets
-- Change logs + round markers (`#changeN`)
-- Instance variant: BFF families
+- Change logs + round markers (`#changeN`) — see [page-updates](page-updates.md)
+- Instance variant: BFF families — see [page-family-variants](page-family-variants.md)
 - Publish checklist
 
 ## Content-quality rules (mandatory on every endpoint page)
@@ -69,7 +69,8 @@ the **template anchor**: fetch it in stored form before drafting, record its ske
 shape — do not substitute the canonical order unless the anchor uses it or the user asks
 for normalization. If the anchor is only the target page (not a proven-rendering
 sibling), name a sibling and compare both stored bodies before choosing the stronger
-template. A decoded anchor graduates into an instance-variant record below. Real-work
+template. A decoded anchor graduates into an instance-variant record in
+[page-family-variants](page-family-variants.md). Real-work
 identity (page titles, spaces, shortlinks) never enters this doctrine — it lives in
 machine-local memory; the `privacy` gate (`scripts/check.py`) enforces it.
 
@@ -259,143 +260,9 @@ Confluence-HTML node or mirror the sibling's markup.
 no `Input/Output` column and no separate output table.
 
 These sets bind pages that follow the canonical order. A page family with its own
-recorded skeleton (the BFF variant below) keeps **its** column set instead: matching a
+recorded skeleton (the BFF variant, in [page-family-variants](page-family-variants.md)) keeps **its** column set instead: matching a
 live sibling outranks imposing this table, and a page that mixes the two is worse than
 either. Decide by the anchor you decoded, never by preference.
-
-## Change logs + round markers (page updates)
-[changelog]
-
-An update must let a reader see the delta without opening version history: a baseline
-diff, then in-place `#changeN` markers, with one Change logs table per page.
-
-### Baseline diff first
-
-`confluence_get_page_history(page_id, version=N, convert_to_markdown=false)` returns
-the full stored body of any prior version (the tool defaults `convert_to_markdown=true`
-- always pass `false` for storage work; its `space` field returns "Unknown", a tool
-quirk, ignore it). `confluence_get_page_diff(from_version, to_version)` answers "what
-did this field look like at v5" directly — prefer it over fetching and parsing a whole
-version. Walk backwards until the version's timestamp precedes the current effort's
-start date; that version is the pre-change baseline.
-
-### N is the round, not the field
-
-- The page numbers its change rounds 1, 2, 3 … and keeps counting across publishes. A
-  page with 13 recorded rounds publishes its 14th as `#change14`, and **every** marker
-  that round adds in the body says `14`. Writing `#change1` on a later round is the
-  defect the round-number check rejects.
-- Count the earlier round rows in Change logs first: a `Continued from …` row and an
-  `Initiate specification` row are not rounds. Use that count + 1.
-- Put the marker in the **Field Name** cell of every row the round adds or edits, and
-  at the start of any note it adds. Never mark a row the round left untouched.
-- **Delete the previous round's markers** as part of the sync: a marker records that
-  *this* round touched the row, not that the field is special.
-- Write the marker **outside** any code span — `#change14` then the field, never
-  `` `#change14` ``: markdown escapes the highlight span and the page shows raw
-  `<span>` markup. The build step colours each marker per N; write plain `#change14`.
-- A new version shows **current state only**: delete every struck-through row or word
-  (a removed field is removed, not struck through) and every old marker.
-
-### Change logs table (`## Change logs`, page top)
-
-Columns exactly `Date | Update By | Description | Status`:
-
-| **Date** | **Update By** | **Description** | **Status** |
-| --- | --- | --- | --- |
-| YYYY-MM-DD | @Full Name | **#change14 — <short title>**<br>what changed | |
-
-- `Date` = the edit date; `Update By` = `@Full Name`, which needs that name's
-  `accountId` in the spec's `people` map to render as a mention (a name without one
-  stays plain text — omit rather than invent an id).
-- New API: one row, `Initiate specification`. New version of an existing page: row 1 is
-  `Continued from [<old page title>](<old page url>) — earlier changes are recorded on
-  that page`, then one `**#changeN — <short title>**` row per round, `<br>` for line
-  breaks.
-- Revising a draft that is not yet published: add a row and bump every marker to it.
-
-### Integrity gate (add to the publish proof)
-
-Every `#changeN` used in the body needs a row in Change logs, and every marker a
-Change logs row declares must appear in the body. A dangling ref either direction is a
-publish blocker, same tier as a failed `GATE OK`.
-
-## Instance variant: "BFF API Specification" page families
-
-These spaces follow a **different but self-consistent layout** — match the siblings
-instead of the canonical order. Two surface records; where they diverge, match the
-surface you publish through.
-
-**Rovo (Confluence-HTML) surface:**
-
-- **H2 section headings** (not H1): `Change logs`, `Sequence diagram`, `Logic`,
-  `API Details`, `Status Code`, `Field to Field Mapping`, each preceded by `<hr>`.
-- Opens with an info panel (`<div data-type="panel-info">`) titled "**BFF API
-  Specification:** \<service\> — \<METHOD\> \<path\>" plus a one-paragraph summary.
-- Metadata table: fixed width, label cells shaded (`data-background="#f4f5f7"`),
-  `Dependency overview` using `rowspan` over nested Inbound/Outbound label rows.
-- Change logs row: date `DD-MM-YYYY`, a user mention span (omit rather than invent an
-  id), description, and a status span
-  (`<span data-type="status" data-color="green" data-status-style="bold">DONE</span>`).
-- Sequence diagram: PlantUML extension macro renders server-side SVG; the
-  `<details data-breakout="wide">` expand carries the raw source (`language-abap` is
-  this family's lexer convention). The expand source must equal what the macro renders
-  from; the plain-code-block form forces republishes.
-- **Logic**: bulleted list of validation/injection/relay/error rules.
-- **API Details**: `### Request parameters` field table, then sample request / response
-  each wrapped in a 1-col table around a json code block. M/O values: mandatory
-  red-styled `M` (`style="color: #de350b"`), optional `O`, conditional `C`.
-- **Status Code** table: HTTP Code · Custom Status Code · Status Description ·
-  Scenario, including a passthrough row (`- | — | passthrough | …`) for inherited
-  downstream errors.
-- **Field to Field Mapping**: one `###` table per downstream call (`Input / Output |
-  Target | Source | Mapping Logic | Remark`; I/O cell is `I` or `O`), plus a final
-  `### Response mapping` table.
-- Transport note: ~25 KB html bodies published fine on Rovo (create + update, no
-  split); retry-with-pause before falling back to create-minimal-then-update.
-
-### Storage-form record (mcp-atlassian surface)
-
-The storage-format rendering of this family (identity held in machine-local memory,
-never in this doctrine). Same skeleton as the Rovo record, with these load-bearing
-divergences:
-
-- **H2/H3 ladder, no H1, no panel, no TOC.** Opens directly with the metadata table.
-  Sections: `Change logs`, `Sequence diagram`, `Logic`, `API Details` (H3: `Request
-  parameters`, `Sample request (full)`, `Response parameters`, `Sample response
-  (full)`), `Status Code`, `Field to Field Mapping` (numbered H3 per downstream call,
-  then `4. Response mapping`). Separators are `<hr data-layout="wide"
-  data-width="760"/>` before every H2 **except** `Change logs` (page top) and
-  `API Details`.
-- **Editor-v2 table attributes:** every table carries `ac:local-id`, `data-layout`,
-  `data-table-width` (1761; change-logs 1746); header cells are
-  `<th><p><strong>...</strong></p></th>`; label cells shade with
-  `data-highlight-colour="#f4f5f7"` (not `data-background`); metadata labels are
-  `<td ac:local-id="…" colspan="2" data-highlight-colour="#f4f5f7">` (attribute order
-  matters; `local-id` values are server-generated). Metadata rows: Overview · Layer ·
-  Microservice · Authentication Level · Dependency overview (`rowspan="2"` over Inbound
-  component / Outbound component) · Expose to Mobile · Access token required · Language
-  (no JIRA row on this instance).
-- **Change logs:** columns `Date | Update By | Description | Status`; the mention is
-  plain `@Full Name` text; the Status cell is a status **macro** `[storage-form]`:
-  `<ac:structured-macro ac:name="status">` with
-  `<ac:parameter ac:name="title">DONE</ac:parameter>` +
-  `<ac:parameter ac:name="colour">Green</ac:parameter>`.
-- **Sequence diagram:** `plantumlcloud` macro (`filename` = `<slug>-sequence.svg`,
-  `data` = gated-encoder payload, `compressed` = `true`), then an `expand` **macro**
-  (`title` + `breakoutWidth=1800`, `data-layout="wide"`) wrapping a `code` macro
-  (`language=abap`, body in `<ac:plain-text-body><![CDATA[...]]></ac:plain-text-body>`).
-- **Schema tables:** `Field | Type | M/O | Description | Remark`; mandatory `M` is
-  `<span style="color: rgb(222,53,11);">M</span>` (no space after the comma); optional
-  `O` is plain text. Cells changed in the current revision shade
-  `data-highlight-colour="#fffae6"` (old/new naming pairs).
-- **Sample wrappers:** a 1-col table around each `code` (`language=json`) macro; the
-  caption header row is `<strong>Body</strong>` for the request and `<strong>HTTP 200 -
-  Success</strong>` for the response.
-- **Status Code:** `HTTP Code | Custom Status Code | Status Description | Scenario` -
-  same set as the Rovo record. **Field to Field Mapping:** `Input / Output | Target |
-  Source | Mapping Logic | Remark` with `I`/`O` in the first cell — one table per
-  numbered H3.
 
 ## Publish checklist
 

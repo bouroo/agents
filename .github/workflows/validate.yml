@@ -6,7 +6,7 @@ name: validate
 # broken artifact never lands on main or develop. The measurement harness
 # under evals/ is code, so it carries a check of its own.
 #
-# Gates: `python3 scripts/check.py --all` runs all thirty-eight. The
+# Gates: `python3 scripts/check.py --all` runs all forty. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.
