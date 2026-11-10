@@ -1,0 +1,3 @@
+[submodule "vendor/ai-skill"]
+	path = vendor/ai-skill
+	url = https://github.com/bouroo/ai-skill.git

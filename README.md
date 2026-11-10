@@ -107,7 +107,7 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       thirty-one deterministic gates (CI runs these)
+    ├── check.py                       thirty-four deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -176,6 +176,8 @@ python3 scripts/check.py --all
 | `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata, the spec's required and optional keys accepted, `compatibility` length-bounded |
 | `cost` | the always-on footprint stays within its token budget — the manifesto plus the skill descriptions the host loads, and the standalone copy on its own — so per-task cost does not grow with the setup |
 | `descriptions` | every description carries an imperative trigger clause and a boundary naming what it is not for |
+| `skillvoice` | every skill description instructs the agent and names the contexts it applies to even when the domain is not named, so it fires on the ask that never says the word |
+| `layout` | every skill directory holds the required `SKILL.md` and its references stay one level deep |
 | `skillbudget` | every skill body stays within 500 lines / 5000 tokens and every command within 120 lines |
 | `references` | every bundled reference is named from its skill **and** its link states the condition that loads it, so progressive disclosure actually fires |
 | `links` | every relative Markdown link resolves |
@@ -202,9 +204,10 @@ python3 scripts/check.py --all
 | `playbook` | the playbook's mechanics (the accepted artifact fires the next gate, one source of truth per artifact, advisory versus deterministic controls, autonomy stopping at the production gate) survive on every surface that carries them |
 | `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
+| `thirdparty` | a symlinked skill is an untracked, documented pointer, so third-party content stays outside every gate and out of the repository |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all thirty-one on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all thirty-four on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

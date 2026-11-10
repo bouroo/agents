@@ -2,7 +2,7 @@
 
 Two baselines, answering different questions. `tsconfig.json` `target`/`lib` governs what the *type system and emitter* allow; `package.json` `engines.node` governs what the *runtime* actually has. A project can happily compile `Array.prototype.toSorted` and still crash on Node 18.
 
-Implements [modernize-coding](../../SKILL.md) for TypeScript and JavaScript.
+Implements [modernize-coding](../SKILL.md) for TypeScript and JavaScript.
 
 ## 1. Detect the baseline
 

@@ -41,7 +41,7 @@ SET = ROOT / "evals" / "trigger.json"
 DEFAULT_MARKER = r'skill://{skill}\b|skills/{skill}/SKILL\.md\b|"skill"\s*:\s*"{skill}"'
 
 MIN_POSITIVES = 8
-MIN_NEGATIVES = 6
+MIN_NEGATIVES = 8
 
 
 def load(path: pathlib.Path) -> dict:
@@ -56,7 +56,14 @@ def problems(suite: dict) -> list[str]:
     if not isinstance(skills, dict) or not skills:
         return ["no non-empty 'skills' map"]
     for name, splits in sorted(skills.items()):
-        if not (ROOT / "skills" / name / "SKILL.md").is_file():
+        skill_dir = ROOT / "skills" / name
+        if skill_dir.is_symlink():
+            # A symlinked skill is third-party content that stays outside every
+            # gate; measuring it would score content this repo does not own.
+            out.append(f"{name}: skills/{name} is a symlinked third-party "
+                       "skill, which this runner does not measure")
+            continue
+        if not (skill_dir / "SKILL.md").is_file():
             out.append(f"{name}: no skills/{name}/SKILL.md")
         pos = neg = 0
         for split in ("train", "validation"):
@@ -78,6 +85,17 @@ def problems(suite: dict) -> list[str]:
             out.append(f"{name}: {pos} should-trigger queries, need >= {MIN_POSITIVES}")
         if neg < MIN_NEGATIVES:
             out.append(f"{name}: {neg} should-not-trigger queries, need >= {MIN_NEGATIVES}")
+        # A split that holds one class only cannot score generalization: a
+        # description tuned on train positives and validated on train
+        # negatives never sees the held-out shape it must generalize to.
+        for split, rows in splits.items():
+            if not isinstance(rows, list) or not rows:
+                continue
+            sp = sum(1 for r in rows if r.get("should_trigger"))
+            sn = len(rows) - sp
+            if sp == 0 or sn == 0:
+                out.append(f"{name}/{split}: holds only one class "
+                           f"({sp} should-trigger, {sn} should-not-trigger)")
     return out
 
 

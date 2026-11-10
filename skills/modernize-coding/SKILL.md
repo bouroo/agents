@@ -1,6 +1,7 @@
 ---
 name: modernize-coding
-description: "Bring an existing project's code to its own declared ceiling — detect what the project uses from manifests, toolchain config, and prevailing conventions, then modernize toward that baseline rather than toward the newest language release. Per-language adapters name the ecosystem's default fixer and the version the rewrites key to (Go, Java, Rust, Python, TypeScript/JS). Use when modernizing, reviewing, or writing code inside an existing repository, when new code must match house style, or when asked whether a construct is idiomatic here — even if nobody says 'modernize'. Not for a greenfield project with no conventions yet, for dependency upgrades, or for correctness and performance work (quality)."
+description: "Use when modernizing, reviewing, or writing code inside an existing repository, when new code must match the house style, or when someone asks whether a construct is idiomatic here — even if nobody says 'modernize'. Brings code to the project's own declared ceiling, detected from manifests, toolchain config, and prevailing conventions, rather than to the newest language release; per-language adapters name the default fixer and the version the rewrites key to. Not for a greenfield project with no conventions yet, for dependency upgrades, or for correctness and performance work (quality)."
+license: Apache-2.0
 ---
 
 # Modernize Coding
@@ -44,14 +45,14 @@ Prefer the project's dependencies and standard library before adding a new one.
 
 The method above is language-agnostic. Load only the adapter for the project's language; each names the ecosystem's default fixer and the declared baseline the rewrites key to. Adding a language means adding a reference file, not changing this skill.
 
-**Go** — default `go fix` (Go >= 1.26; else the `modernize` analyzer); baseline `go.mod` `go` directive. Read the [Go guide](references/go/guide.md) when a Go construct needs a version floor, the [analyzer inventory](references/go/analyzers.md) when choosing which fixer to run, and the [gopls MCP](references/go/gopls-mcp.md) when the editor surface must answer what a type is.
+**Go** — default `go fix` (Go >= 1.26; else the `modernize` analyzer); baseline `go.mod` `go` directive. Read the [Go guide](references/go-guide.md) when a Go construct needs a version floor, the [analyzer inventory](references/go-analyzers.md) when choosing which fixer to run, and the [gopls MCP](references/go-gopls-mcp.md) when the editor surface must answer what a type is.
 
-**Java** — default OpenRewrite; baseline `pom.xml` / Gradle `release`. Read the [Java guide](references/java/guide.md) when a Java rewrite needs its target release, and the [Java verify](references/java/verify.md) when a version claim must be checked against the JDK's own record.
+**Java** — default OpenRewrite; baseline `pom.xml` / Gradle `release`. Read the [Java guide](references/java-guide.md) when a Java rewrite needs its target release, and the [Java verify](references/java-verify.md) when a version claim must be checked against the JDK's own record.
 
-**Rust** — default `cargo fix --edition`; baseline `Cargo.toml` `edition` + `rust-version`. Read the [Rust guide](references/rust/guide.md) when an edition migration or MSRV floor is in play, and the [Rust verify](references/rust/verify.md) when a version claim needs checking.
+**Rust** — default `cargo fix --edition`; baseline `Cargo.toml` `edition` + `rust-version`. Read the [Rust guide](references/rust-guide.md) when an edition migration or MSRV floor is in play, and the [Rust verify](references/rust-verify.md) when a version claim needs checking.
 
-**Python** — default `ruff --fix` (UP rules); baseline `pyproject.toml` `requires-python`. Read the [Python guide](references/python/guide.md) when a pyupgrade-family rewrite needs its floor, and the [Python verify](references/python/verify.md) when a version claim needs checking.
+**Python** — default `ruff --fix` (UP rules); baseline `pyproject.toml` `requires-python`. Read the [Python guide](references/python-guide.md) when a pyupgrade-family rewrite needs its floor, and the [Python verify](references/python-verify.md) when a version claim needs checking.
 
-**TypeScript / JS** — default `eslint --fix`; baseline `tsconfig.json` `target` + `package.json` `engines`. Read the [TypeScript / JS guide](references/typescript/guide.md) when a syntax rewrite needs its target, and the [TypeScript / JS verify](references/typescript/verify.md) when a version claim needs checking.
+**TypeScript / JS** — default `eslint --fix`; baseline `tsconfig.json` `target` + `package.json` `engines`. Read the [TypeScript / JS guide](references/typescript-guide.md) when a syntax rewrite needs its target, and the [TypeScript / JS verify](references/typescript-verify.md) when a version claim needs checking.
 
 Where the ecosystem ships a local machine-readable record of when each feature landed (Go's `GOROOT/api`, Java's `src.zip` `@since` tags), the [modernize gate](../../scripts/check.py) cross-checks the adapter table against it; the Java verify reference gives the method.

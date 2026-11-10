@@ -1,6 +1,7 @@
 ---
 name: unslop
-description: "Detect and remove AI residue from the artifacts a SWE task delivers: prose that says nothing about this project (commit messages, PR descriptions, docs, error and log strings), code that shows model residue (placeholder bodies, stubs, erased types, near-duplicate blocks, swallowed errors, speculative seams), and screens carrying the usual generated-UI tells. Use when output looks AI-generated, when polishing or reviewing a change before it ships, or when a message, comment, or document reads generic - even if nobody says 'unslop'. Not for general code quality, test coverage, or design taste (quality owns those), and not for adding features or restructuring working code."
+description: "Use when output looks AI-generated, when polishing or reviewing a change before it ships, or when a message, comment, document, error string, or screen reads generic — even if nobody says 'unslop'. Detects and removes AI residue from what a task delivers: prose that says nothing about this project, code with placeholder bodies, stubs, erased types, or swallowed errors, and screens carrying the usual generated-UI tells. Not for general code quality, test coverage, or design taste (quality owns those), and not for adding features or restructuring working code."
+license: Apache-2.0
 ---
 
 # Unslop
@@ -23,7 +24,14 @@ description: "Detect and remove AI residue from the artifacts a SWE task deliver
 
 Read the matching reference when the task touches that surface, and load one surface at a time: three lists in one window is three times the cost for one fix. A task can touch several surfaces, and each surface keeps its own rule list. A string inside a source file (a docstring, an error message, a log line) belongs to the **code** surface and is judged by the code rules; the prose surface owns prose that ships as prose (a README, a commit message, an issue).
 
-**The report format.** Every finding carries `file:line`, the rule id, the quote, and one of two labels: `residue` (rewritten here) or `missing work` (not rewritten here, carried into the build queue). Work left undone is listed as `PENDING:` with the file, the rule id, and what it would take — a claim with no referent is never quietly dropped.
+**The report format.** Every finding is one line:
+
+```text
+file:line  RULE  "quote"  residue | missing work
+PENDING: file:line  RULE  what it would take
+```
+
+`residue` is rewritten here; `missing work` is not, and carries the `PENDING:` line into the build queue. A claim with no referent is never quietly dropped.
 
 ## 2. Run it
 
