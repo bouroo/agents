@@ -1,6 +1,6 @@
 ---
 name: quality
-description: "Use when writing, reviewing, refactoring, or judging code, and when deciding whether work is actually done: the twelve commandments, the artifact gates (PROMPT:, INTENT:, TWINS:, AUTH:, PENDING:, L1:), L1/L2/L3 evidence, the evidence audit and mutation probe, the Generate-Verify-Refine-Deliver loop, the harness eval suite with its blocking pass rate, the six evaluation dimensions for split work, and measurement-first performance. Reach for it before declaring a change complete, when a done report needs judging, when tests pass but you do not believe them, or when a hot path must get faster. Not for architecture-level decisions (architecture), wiki operations (confluence), or repository-wide search (indexed-search)."
+description: "Use when writing, reviewing, refactoring, or judging code, and when deciding whether work is actually done — especially when a done report needs judging, tests pass but you do not believe them, or a hot path must get faster. Covers the twelve commandments, the artifact gates (PROMPT:, INTENT:, TWINS:, AUTH:, PENDING:, L1:), L1/L2/L3 evidence, the evidence audit and mutation probe, the Generate-Verify-Refine-Deliver loop, the blocking eval suite, and measurement-first performance — even if the ask never says 'quality' or 'verify'. Not for architecture-level decisions (architecture), wiki operations (confluence), or repository-wide search (indexed-search)."
 license: Apache-2.0
 ---
 
