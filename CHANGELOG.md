@@ -10,7 +10,7 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [8.0.0-beta.7] - 2026-11-10
 
 The loop gains a controller: it declares when to stop, and a failure gets a
 route chosen from the evidence rather than a default of retry.
