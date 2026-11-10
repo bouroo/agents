@@ -10,9 +10,10 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [8.0.0-beta.5] - 2026-11-10
 
-### Added
+A measured production run shows where the doctrine stopped the work, and the
+gaps that let it happen close into gates.
 
 - **The search discipline is stated where a search will load it.** A measured
   production run spent half its 270 shell calls on search waste: one concept
@@ -28,6 +29,19 @@ v6.8.0:CHANGELOG.md` for the retired detail).
   and on uncertainty about which flag to pass — the conditions the measured run
   met and the old trigger did not name. The new `searchdiscipline` gate
   asserts the rule survives on all three surfaces.
+- **The trigger instrument measures the conditions the description claims.**
+  The widened search-skill description names three conditions no query
+  covered, so the instrument could not see the change it was meant to measure.
+  Five queries now cover them, two of them near-miss negatives that hold the
+  boundary: a single known-string lookup in a small tree stays quiet, and a
+  search box in a UI is not a code search. Scored on the same 21 queries, the
+  old description to the new one, train holds at 0.54 and the held-out
+  validation split rises from 0.62 to 0.75 — the split that counts, because a
+  description tuned on train positives and validated on train negatives never
+  sees the shape it must generalize to.
+- **The gate count stops drifting from the gates.** The README and the CI
+  workflow both said thirty-four while `check.py` ran thirty-five. The new gate
+  is listed in both, so the table stays a faithful reading aid of what CI runs.
 
 ## [8.0.0-beta.4] - 2026-11-10
 
