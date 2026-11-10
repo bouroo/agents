@@ -5,7 +5,7 @@ name: validate
 # verification surface, so CI runs it on a clean runner so a broken artifact
 # never lands on main or develop.
 #
-# Gates: `python3 scripts/check.py --all` runs all thirty-four. The
+# Gates: `python3 scripts/check.py --all` runs all thirty-five. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.
@@ -33,6 +33,8 @@ name: validate
 #   l1           the owed L1: done-report line survives on both surfaces
 #   veriloop     the verification loop survives on both canonical surfaces
 #   memory       the memory rule survives on both canonical surfaces
+#   searchdiscipline the search-discipline rule survives on both doctrine
+#                surfaces and on the skill that owns the search engines
 #   environment  the execution-environment clause survives on both surfaces
 #   automation   the automation-layer clause survives on both surfaces
 #   state        the runtime-state rule survives on both doctrines and execution
