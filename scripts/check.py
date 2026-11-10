@@ -8,7 +8,13 @@ Static gates over docs/skills plus the distribution layer:
                     descriptions the host loads) stays within its token budget,
                     so per-task cost does not grow with the setup
     frontmatter     every skill/command carries valid Agent-Skills-style metadata
+    layout          every skill directory holds SKILL.md and keeps its
+                    references one level deep, so no skill enters unenumerated
+    thirdparty      a symlinked skill is an untracked, documented pointer, so
+                    third-party content stays outside every gate
     descriptions    every description carries a trigger clause and a boundary
+    skillvoice      every skill description instructs and names its
+                    unstated-domain scope
     skillbudget     every skill body stays within 500 lines / 5000 tokens and
                     every command within 120 lines, so a body loads whole
     references      every bundled reference is named from its SKILL.md on a
@@ -168,14 +174,42 @@ def _no_dotdir(p: pathlib.Path) -> bool:
     return not any(part.startswith(".") for part in p.relative_to(ROOT).parts)
 
 
+def _skill_dirs() -> list[pathlib.Path]:
+    """The skill directories every gate enumerates, symlinks excluded.
+
+    A symlinked skill is a third-party pointer: the content lives in another
+    checkout and is not this repository's artifact. Enumerating through the
+    symlink would gate upstream files against this repository's doctrine --
+    including its privacy rule, which those files were never written for -- and
+    would fail on content the repository does not own. `g_thirdparty` covers
+    the pointer itself, so the exclusion is not a blind spot.
+    """
+    base = ROOT / "skills"
+    if not base.is_dir():
+        return []
+    return sorted(p for p in base.iterdir()
+                  if p.is_dir() and not p.is_symlink()
+                  and not p.name.startswith("."))
+
+
+def _skill_files() -> list[pathlib.Path]:
+    """Every real skill's SKILL.md, in directory order."""
+    return [p for p in (d / "SKILL.md" for d in _skill_dirs()) if p.is_file()]
+
+
+def _skill_tree(pattern: str) -> list[pathlib.Path]:
+    """Files matching `pattern` under a real skill directory."""
+    return sorted(p for d in _skill_dirs() for p in d.rglob(pattern)
+                  if _no_dotdir(p))
+
+
 # Files scanned for host tokens: everything an assistant consumes as doctrine
 # (AGENTS.md, skills, commands). README.md and CHANGELOG.md sit outside the scan
 # set rather than being allowlisted within it: they document the distribution
 # layer for humans, so naming concrete hosts, marketplaces, and removed machinery
 # is their job, not a leak.
 HOST_SCAN_FILES = [ROOT / "AGENTS.md"]
-HOST_SCAN_SKILLS = sorted(p for p in (ROOT / "skills").rglob("*.md")
-                          if _no_dotdir(p)) \
+HOST_SCAN_SKILLS = _skill_tree("*.md") \
     + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p))
 # agents/ is deliberately outside this scan: its codex TOML carries host-specific
 # `mode:` frontmatter, while the .plain variants stay agnostic. Scanning it would
@@ -332,9 +366,7 @@ def g_cost() -> None:
         return
     manifesto_tokens = _tokens(manifesto.read_text())
     description_tokens = 0
-    for skill in sorted((ROOT / "skills").glob("*/SKILL.md")):
-        if not _no_dotdir(skill):
-            continue
+    for skill in _skill_files():
         desc = _frontmatter(skill)[0].get("description", "")
         description_tokens += _tokens(desc)
     total = manifesto_tokens + description_tokens
@@ -368,9 +400,7 @@ def g_frontmatter() -> None:
     name = "frontmatter"
     # (path, expected-name) pairs: a skill's name matches its directory,
     # a command's name matches its file stem.
-    subjects = [(p, p.parent.name)
-                for p in sorted((ROOT / "skills").glob("*/SKILL.md"))
-                if _no_dotdir(p)]
+    subjects = [(p, p.parent.name) for p in _skill_files()]
     subjects += [(p, p.stem)
                  for p in sorted((ROOT / "commands").glob("*.md"))]
     if not subjects:
@@ -412,11 +442,130 @@ def g_frontmatter() -> None:
         _add("PASS", f"{name}: {len(subjects)} SKILL.md/command frontmatter valid")
 
 
+def g_layout() -> None:
+    """Every skill directory is actually a skill; references stay one level deep.
+
+    The specification requires exactly one file, `SKILL.md` ("Required:
+    metadata + instructions"), so a directory under skills/ without it is
+    invisible to every other gate: it is not enumerated, and it cannot load.
+    The same spec says a skill directory "may contain any files and directories
+    beyond the required SKILL.md", so this gate does NOT impose an allowlist of
+    optional directories -- forbidding a spec-legal directory would gate a
+    house convention as a conformance rule.
+
+    The one layout constraint the spec does state is depth: "Keep file
+    references one level deep from SKILL.md. Avoid deeply nested reference
+    chains." A flattened reference and a basename lookup both assume a
+    reference's basename is unique inside its skill, which a nested file
+    breaks. A symlinked SKILL.md or references/ is also rejected: it would make
+    upstream content enumerate as this repository's own artifact.
+    """
+    name = "layout"
+    base = ROOT / "skills"
+    if not base.is_dir():
+        _add("FAIL", f"{name}: skills/ directory missing")
+        return
+    skills = _skill_dirs()
+    bad: list[str] = []
+    for d in skills:
+        rel = d.relative_to(ROOT)
+        skill = d / "SKILL.md"
+        if not skill.is_file():
+            bad.append(f"{rel}: no SKILL.md (the one required file)")
+        elif skill.is_symlink():
+            bad.append(f"{rel}: SKILL.md is a symlink, not a repository file")
+        refs = d / "references"
+        if refs.is_symlink():
+            bad.append(f"{rel}: references/ is a symlink, not repository content")
+        elif refs.is_dir():
+            nested = sorted(p.relative_to(d) for p in refs.rglob("*")
+                            if p.is_file() and p.parent != refs)
+            if nested:
+                bad.append(f"{rel}: references nested deeper than one level: "
+                           + ", ".join(str(p) for p in nested[:5]))
+    if bad:
+        _add("FAIL", f"{name}: " + "; ".join(bad))
+        return
+    _add("PASS", f"{name}: {len(skills)} skill directory(s) hold SKILL.md; "
+                 f"references stay one level deep")
+
+
+def _git_tracked(rel: str) -> tuple[bool | None, str]:
+    """Whether `rel` is tracked, or None when git cannot answer."""
+    try:
+        res = subprocess.run(["git", "-C", str(ROOT), "ls-files", "--", rel],
+                             capture_output=True, text=True)
+    except OSError as exc:
+        return None, str(exc)
+    if res.returncode != 0:
+        return None, (res.stderr or res.stdout).strip()
+    return bool(res.stdout.strip()), ""
+
+
+def _pointer_docs() -> list[pathlib.Path]:
+    """The surfaces a third-party pointer is documented on: the READMEs."""
+    docs = [p for p in (ROOT / "README.md", ROOT / "vendor" / "README.md")
+            if p.is_file()]
+    vendor = ROOT / "vendor"
+    if vendor.is_dir():
+        docs += sorted(p for p in vendor.rglob("*.md") if p.is_file())
+    return docs
+
+
+def g_thirdparty() -> None:
+    """A symlinked skill is an untracked, documented pointer, never content.
+
+    Third-party skills are consumed by reference: the repository stores a
+    symlink and the upstream files stay in their own checkout. (A gitlink under
+    skills/ is already rejected by `layout`, which sees no SKILL.md on a clean
+    clone, so the symlink is the pointer form this gate verifies.) That is also
+    why `_skill_dirs` skips symlinks -- this gate is the coverage the skip
+    would otherwise lose.
+
+    Two failures matter. A TRACKED symlink ships someone else's content under
+    this repository's name, including any real-work identity its privacy rule
+    would reject. An UNDOCUMENTED pointer is unreproducible: a reader cannot
+    fetch what the symlink points at, so the skill silently disappears on a
+    clean clone. Both are checked here; when no symlinked skill exists the gate
+    passes, because there is no pointer to verify.
+    """
+    name = "thirdparty"
+    base = ROOT / "skills"
+    if not base.is_dir():
+        _add("PASS", f"{name}: no skills/ directory; nothing to point at")
+        return
+    pointers = sorted(p for p in base.iterdir() if p.is_symlink())
+    if not pointers:
+        _add("PASS", f"{name}: no symlinked skill directory; third-party "
+                     f"content stays outside every gate")
+        return
+    docs = _pointer_docs()
+    documented = "\n".join(p.read_text() for p in docs)
+    bad: list[str] = []
+    for p in pointers:
+        rel = p.relative_to(ROOT)
+        tracked, why = _git_tracked(str(rel))
+        if tracked is None:
+            bad.append(f"{rel}: cannot verify the pointer is untracked: {why}")
+        elif tracked:
+            bad.append(f"{rel}: pointer is tracked (third-party content must "
+                       f"stay out of the repository)")
+        if not p.exists():
+            bad.append(f"{rel}: dangling pointer")
+        elif p.name not in documented or not re.search(r"https?://", documented):
+            bad.append(f"{rel}: pointer not documented with a URL on "
+                       f"{', '.join(str(d.relative_to(ROOT)) for d in docs) or 'no README'}")
+    if bad:
+        _add("FAIL", f"{name}: " + "; ".join(bad))
+        return
+    _add("PASS", f"{name}: {len(pointers)} symlinked skill pointer(s) untracked "
+                 f"and documented; content stays outside every gate")
+
+
 def g_links() -> None:
     name = "links"
     targets = [ROOT / f for f in ("AGENTS.md", "README.md", "CHANGELOG.md")]
-    targets += sorted(p for p in (ROOT / "skills").rglob("*.md")
-                      if _no_dotdir(p))
+    targets += _skill_tree("*.md")
     targets += sorted(p for p in (ROOT / "commands").rglob("*.md")
                       if _no_dotdir(p))
     dead: list[str] = []
@@ -807,7 +956,8 @@ def g_dashes() -> None:
     if not _g_rule_surfaces(name):
         return
     files = [ROOT / "AGENTS.md"]
-    for sub in ("skills", "commands", "agents", "standalone"):
+    files += _skill_tree("*.md")
+    for sub in ("commands", "agents", "standalone"):
         for suffix in ("*.md", "*.toml"):
             files += sorted(p for p in (ROOT / sub).rglob(suffix)
                             if _no_dotdir(p))
@@ -916,7 +1066,7 @@ def g_portable() -> None:
 def g_privacy() -> None:
     name = "privacy"
     scanned = PRIVACY_SCAN_FILES \
-        + sorted(p for p in (ROOT / "skills").rglob("*.md") if _no_dotdir(p)) \
+        + _skill_tree("*.md") \
         + sorted(p for p in (ROOT / "commands").rglob("*.md") if _no_dotdir(p)) \
         + sorted(p for p in (ROOT / "agents").rglob("*.md") if _no_dotdir(p))
     files = [f for f in scanned if f.is_file()]
@@ -1397,8 +1547,7 @@ def g_skillbudget() -> None:
     Scoped to every skill, so a new one cannot enter ungated.
     """
     name = "skillbudget"
-    skills = sorted(p for p in (ROOT / "skills").glob("*/SKILL.md")
-                    if _no_dotdir(p))
+    skills = _skill_files()
     commands = sorted(p for p in (ROOT / "commands").glob("*.md")
                       if _no_dotdir(p))
     if not skills:
@@ -1453,10 +1602,42 @@ TRIGGER_RE = re.compile(r"\b(use (when|for|before|to|it)|load (before|when)|reac
                         re.IGNORECASE)
 BOUNDARY_RE = re.compile(r"\b(not for|never|only when|only on|except)\b", re.IGNORECASE)
 
+# The description guide asks for an instruction, not a self-description:
+# "Frame the description as an instruction to the agent: 'Use this skill
+# when...' rather than 'This skill does...'". A full part-of-speech check is not
+# deterministic, so the gate rejects the documented anti-pattern (third-person
+# self-reference in the opening) and requires an imperative trigger clause;
+# naming one specific opening verb would gate prose style, not the rule.
+THIRD_PERSON_SELF_RE = re.compile(
+    r"^\s*(?:this skill|the skill|this \w+ skill|it)\b", re.IGNORECASE)
+
+# "Err on the side of being pushy. Explicitly list contexts where the skill
+# applies, including cases where the user doesn't name the domain directly."
+# The observable shape is a clause that keeps the skill in scope when the
+# domain is not named; the gate accepts any of those forms rather than one
+# literal phrase.
+SCOPE_CUE_RE = re.compile(
+    r"\b(?:even (?:if|when)|whether or not|regardless of|"
+    r"including (?:when|if|where)|"
+    r"without (?:them |the user )?(?:naming|mentioning|asking))\b",
+    re.IGNORECASE)
+
 
 def negated(prefix: str) -> bool:
     """True when the words immediately before a trigger clause negate it."""
     return bool(re.search(r"\b(do not|don't|never|not)\s*$", prefix, re.IGNORECASE))
+
+
+def _imperative_problem(desc: str) -> str | None:
+    """The missing imperative clause, or None when the description has one."""
+    trig = TRIGGER_RE.search(desc)
+    if not trig:
+        return "no trigger clause"
+    if negated(desc[:trig.start()]):
+        # "Do not use when X" is a boundary wearing a trigger's words, so
+        # the positive half is missing even though the regex matched.
+        return "trigger clause negated"
+    return None
 
 
 def g_descriptions() -> None:
@@ -1476,8 +1657,7 @@ def g_descriptions() -> None:
     definitions drift back to prose that never fires.
     """
     name = "descriptions"
-    subjects = [(p, p.parent.name) for p in sorted((ROOT / "skills").glob("*/SKILL.md"))
-                if _no_dotdir(p)]
+    subjects = [(p, p.parent.name) for p in _skill_files()]
     subjects += [(p, p.stem) for p in sorted((ROOT / "commands").glob("*.md"))
                  if _no_dotdir(p)]
     subjects += [(p, p.stem.replace(".plain", ""))
@@ -1488,13 +1668,9 @@ def g_descriptions() -> None:
         rel = path.relative_to(ROOT)
         desc = _frontmatter(path)[0].get("description", "")
         missing = []
-        trig = TRIGGER_RE.search(desc)
-        if not trig:
-            missing.append("no trigger clause")
-        elif negated(desc[:trig.start()]):
-            # "Do not use when X" is a boundary wearing a trigger's words, so
-            # the positive half is missing even though the regex matched.
-            missing.append("trigger clause negated")
+        clause = _imperative_problem(desc)
+        if clause:
+            missing.append(clause)
         if not BOUNDARY_RE.search(desc):
             missing.append("no boundary")
         if missing:
@@ -1504,6 +1680,48 @@ def g_descriptions() -> None:
         return
     _add("PASS", f"{name}: {len(subjects)} description(s) carry a trigger clause "
                  f"and a boundary")
+
+
+def g_skillvoice() -> None:
+    """Every skill description instructs the agent and stays pushy about scope.
+
+    The description guide's two writing rules beyond the trigger and boundary
+    halves: "Use imperative phrasing ... Frame the description as an instruction
+    to the agent" and "Err on the side of being pushy. Explicitly list contexts
+    where the skill applies, including cases where the user doesn't name the
+    domain directly."
+
+    Scoped to skills, because it is the skill description guide; commands and
+    role agents keep the trigger-and-boundary contract in `descriptions`. The
+    pushy half is a shape test: a clause that keeps the skill in scope when the
+    domain is unnamed (even if ..., whether or not ..., regardless of ...,
+    including when ...). A description that passes can still be badly targeted;
+    the trigger set in evals/trigger.json measures that. This gate guarantees
+    the scope clause is attempted, so a skill cannot arrive with only a bare
+    "does X" sentence.
+    """
+    name = "skillvoice"
+    bad: list[str] = []
+    skills = _skill_files()
+    for path in skills:
+        rel = path.relative_to(ROOT)
+        desc = _frontmatter(path)[0].get("description", "")
+        missing: list[str] = []
+        clause = _imperative_problem(desc)
+        if clause:
+            missing.append(f"imperative instruction ({clause})")
+        if THIRD_PERSON_SELF_RE.match(desc):
+            missing.append("third-person self-description opening")
+        if not SCOPE_CUE_RE.search(desc):
+            missing.append("no pushy scope clause (name contexts it applies to "
+                           "even when the domain is not named)")
+        if missing:
+            bad.append(f"{rel}: {', '.join(missing)}")
+    if bad:
+        _add("FAIL", f"{name}: " + "; ".join(bad))
+        return
+    _add("PASS", f"{name}: {len(skills)} skill description(s) instruct the agent "
+                 f"and name their unstated-domain scope")
 
 
 def g_references() -> None:
@@ -1524,9 +1742,7 @@ def g_references() -> None:
     checked = 0
     orphans: list[str] = []
     unconditioned: list[str] = []
-    for skill in sorted((ROOT / "skills").glob("*/SKILL.md")):
-        if not _no_dotdir(skill):
-            continue
+    for skill in _skill_files():
         body = skill.read_text()
         refs = skill.parent / "references"
         if not refs.is_dir():
@@ -1590,8 +1806,10 @@ def g_standalone() -> None:
 
 
 GATES = [("budget", g_budget), ("cost", g_cost),
-         ("frontmatter", g_frontmatter),
-         ("descriptions", g_descriptions), ("skillbudget", g_skillbudget),
+         ("frontmatter", g_frontmatter), ("layout", g_layout),
+         ("thirdparty", g_thirdparty),
+         ("descriptions", g_descriptions), ("skillvoice", g_skillvoice),
+         ("skillbudget", g_skillbudget),
          ("references", g_references), ("links", g_links),
          ("agnostic", g_agnostic), ("portable", g_portable),
          ("manifests", g_manifests),
