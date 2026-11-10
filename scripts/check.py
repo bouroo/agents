@@ -732,6 +732,21 @@ RULE_SURFACES = {
         ("standalone/AGENTS.md", re.compile(r"verified in place", re.IGNORECASE)),
         ("skills/quality/SKILL.md", re.compile(r"verified in place", re.IGNORECASE)),
     ],
+    # The two axes size the harness. They are named on every always-loaded
+    # surface because a surface that says "size each job" without saying on
+    # what leaves the sizing to taste -- the failure the axes exist to remove.
+    "harnessaxes": [
+        ("AGENTS.md", re.compile(r"action complexity", re.IGNORECASE)),
+        ("AGENTS.md", re.compile(r"context complexity", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"action complexity", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"context complexity", re.IGNORECASE)),
+        ("skills/execution/SKILL.md", re.compile(r"action complexity", re.IGNORECASE)),
+        ("skills/execution/SKILL.md", re.compile(r"context complexity", re.IGNORECASE)),
+        ("skills/execution/references/harness-design.md",
+         re.compile(r"Action complexity")),
+        ("skills/execution/references/harness-design.md",
+         re.compile(r"Context complexity")),
+    ],
     "shared": [
         # The three views plus the shared-meaning rule: an explicit graph
         # whose terms mean different things to different workers records a
@@ -758,6 +773,20 @@ RULE_SURFACES = {
          re.compile(r"goal is an object, not a sentence")),
         ("skills/delivery/SKILL.md", re.compile(r"goal conflict")),
         ("skills/delivery/SKILL.md", re.compile(r"authorization scope")),
+    ],
+    "loop": [
+        # A loop that cannot name its stop condition runs on hope, and a
+        # failure with no route other than retry is a disguised spin. The
+        # rule is asserted on the surfaces that state it, so one surface
+        # cannot silently lose it.
+        ("AGENTS.md", re.compile(r"terminal conditions")),
+        ("standalone/AGENTS.md", re.compile(r"terminal conditions")),
+        ("skills/execution/SKILL.md", re.compile(r"terminal conditions")),
+        ("skills/execution/references/loop-control.md",
+         re.compile(r"terminal conditions")),
+        ("AGENTS.md", re.compile(r"not a retry instruction")),
+        ("standalone/AGENTS.md", re.compile(r"not a retry instruction")),
+        ("skills/execution/SKILL.md", re.compile(r"not a retry instruction")),
     ],
 }
 
@@ -896,6 +925,21 @@ def g_goal() -> None:
     if _g_rule_surfaces("goal"):
         _add("PASS", f"goal: rule present on "
                      f"{len(RULE_SURFACES['goal'])} canonical surface(s)")
+
+
+def g_loop() -> None:
+    """The loop-control rule survives on the doctrine and the execution skill.
+
+    A run that cannot name its terminal conditions continues on hope, and a
+    failure with no route other than retry is a spin wearing a progress
+    report. Declaring the goal, the acceptance criteria, the stop states,
+    and the requirements still owed -- then choosing the route from the
+    evidence rather than defaulting to retry -- is what keeps a long run
+    bounded, so the rule is asserted on the surfaces that state it.
+    """
+    if _g_rule_surfaces("loop"):
+        _add("PASS", f"loop: rule present on "
+                     f"{len(RULE_SURFACES['loop'])} canonical surface(s)")
 
 
 def g_state() -> None:
@@ -1562,6 +1606,63 @@ def g_evals() -> None:
                  f"(id, prompt, mechanical checks); suite green: {rate}")
 
 
+PROPERTY_NAMES = [
+    "goal-formation", "semantic-consistency", "parallel-execution-efficiency",
+    "heterogeneous-capability-allocation", "collective-decision-quality",
+    "state-consistency", "failure-recovery", "transfer-across-tasks",
+    "runtime-overhead",
+]
+
+
+def g_properties() -> None:
+    """The nine system-level properties are measured, not asserted.
+
+    Two traces that disagree on every property, and one instrument that
+    scores them. The gate requires the organized trace to meet all nine
+    thresholds and the degraded trace to miss all nine -- a measurement that
+    passes both directions measures nothing, and a property that cannot fail
+    is not a property.
+    """
+    name = "properties"
+    instrument = ROOT / "evals" / "properties.py"
+    fixtures = {
+        "organized": ROOT / "evals" / "fixtures" / "organized-run.json",
+        "degraded": ROOT / "evals" / "fixtures" / "degraded-run.json",
+    }
+    if not instrument.is_file():
+        _add("FAIL", f"{name}: evals/properties.py missing (a property "
+                     "claimed without an instrument is a narrative)")
+        return
+    for label, path in fixtures.items():
+        if not path.is_file():
+            _add("FAIL", f"{name}: fixture {label} missing at "
+                         f"{path.relative_to(ROOT)}")
+            return
+
+    def run(trace: pathlib.Path, prop: str) -> tuple[int, str]:
+        res = subprocess.run(
+            [sys.executable, str(instrument), "--trace", str(trace),
+             "--property", prop],
+            cwd=ROOT, capture_output=True, text=True, timeout=60)
+        return res.returncode, (res.stdout + res.stderr).strip()
+
+    errors: list[str] = []
+    for prop in PROPERTY_NAMES:
+        code, detail = run(fixtures["organized"], prop)
+        if code != 0:
+            errors.append(f"organized trace misses {prop}: {detail}")
+        code, detail = run(fixtures["degraded"], prop)
+        if code == 0:
+            errors.append(f"degraded trace passes {prop}: the measurement "
+                          "cannot fail")
+    if errors:
+        _add("FAIL", f"{name}: " + "; ".join(errors[:6])
+             + (" ..." if len(errors) > 6 else ""))
+        return
+    _add("PASS", f"{name}: {len(PROPERTY_NAMES)} system-level propert(ies) "
+                 "measured; the instrument discriminates on both directions")
+
+
 SKILL_LINE_BUDGET = 500
 SKILL_TOKEN_BUDGET = 5000
 COMMAND_LINE_BUDGET = 120
@@ -1603,6 +1704,19 @@ def g_skillbudget() -> None:
     _add("PASS", f"{name}: {len(skills)} skill body(s) within "
                  f"{SKILL_LINE_BUDGET} lines / {SKILL_TOKEN_BUDGET} tokens, "
                  f"{len(commands)} command(s) within {COMMAND_LINE_BUDGET} lines")
+
+
+def g_harnessaxes() -> None:
+    """The two axes that size the harness survive on every carrying surface.
+
+    Sizing a job needs a stated measure. A surface that says "size each
+    job" without naming action complexity and context complexity leaves the
+    sizing to taste, which is the failure the axes exist to remove. The
+    always-loaded surfaces and the skill that owns the derivation carry them.
+    """
+    if _g_rule_surfaces("harnessaxes"):
+        _add("PASS", f"harnessaxes: rule present on "
+                     f"{len(RULE_SURFACES['harnessaxes'])} canonical surface(s)")
 
 
 def g_triggers() -> None:
@@ -1850,10 +1964,11 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
-         ("shared", g_shared), ("goal", g_goal),
+         ("shared", g_shared), ("goal", g_goal), ("loop", g_loop),
          ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
+         ("properties", g_properties), ("harnessaxes", g_harnessaxes),
          ("standalone", g_standalone)]
 
 

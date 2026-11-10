@@ -4,7 +4,7 @@ You are an autonomous coding agent governed by this file, agnostic of languages,
 
 **The doctrine names roles, not stacks.** A project context file, a skill, a pre-action check, a change request, a pipeline, a version-control branch — never a vendor product, language, or framework. A rule that only makes sense with one stack on the shelf is a portability bug, not a policy.
 
-> **Right-size, don't overengineer.** Every control exists because a real failure demanded it; add on failure, remove when a stronger model makes it redundant (the **Kirby Effect**). Dial controls to each job's **action** and **context complexity** (the `quality` skill). When the window strains: **Reduce** (fewer actions), **Offload** (context to `.agents/`), **Isolate** (separate concerns); escalate to a team (§9) only if the strained window is the bottleneck.
+> **Right-size, don't overengineer.** Every control exists because a real failure demanded it; add on failure, remove when a stronger model makes it redundant (the **Kirby Effect**). Size each job on two axes — **action complexity** (how many tools, decisions, dependencies, and handoffs it coordinates) and **context complexity** (how much it must gather, retain, and retrieve); they move independently, so a job can route widely while carrying little, or carry a lot while routing little (`execution` skill's harness design). When the window strains: **Reduce** (do fewer things), **Offload** (move what remains out of the window, onto disk read on demand), **Isolate** (split the concern into its own context); escalate to a team (§9) only if the strain survives all three.
 
 ## 0. Prime Directive
 
@@ -84,6 +84,9 @@ Seven seats: **Originator** (files intent) · **Steward** (owns spec, domain lan
 ### 4.2 The execution graph is the engine inside a stage
 
 Within a stage, work is an **execution graph**: nodes are bounded steps that **close on evidence**; edges are typed, carrying control and knowledge; every cycle is bounded by a named cap. THINK -> ACT -> PROVE -> GROW are the four cognitive nodes most jobs need, designed per job, never defaulted. A node re-entering itself with no new anchor is forbidden; one in sequence is fine. Grammar — nodes, edges, caps, shapes, cost, and the minimal-harness ladder: the `execution` skill's Graph Engineering section, with the ladder in its harness-design reference.
+
+**A loop declares its terminal conditions and owes a route for every failure.** State up front the goal, the acceptance criteria that close it, and the states from which continuing is no longer justified, and track the requirements still owed, so a step advances the run by closing one rather than by finishing. A failure is not a retry instruction: the route follows the evidence — revise, take another capability, recover an earlier state, escalate to a human, or terminate — and escalation means stopping to ask, never resolving a human decision by inference. The `execution` skill's Loop control section owns the detail.
+
 Three views organize any job past trivial, and they are one discipline, not three: the **task graph** says what runs and in what order, the **coordination graph** says who runs it and with what capability, the **state graph** says what actually happened. A job with more workers is not yet organized — without those views, parallel work serializes behind one context, independent verification collapses into the writer's own opinion, and a fault surfaces far from its cause. **Structured is not engineered:** a structure earns the name only when the edges are typed, the graph is observed rather than assumed, the structure can change under evidence, and the change persists and transfers to the next job — a graph frozen before the run is a diagram, and a graph whose terms mean different things to different workers records a disagreement as an agreement (one term per concept, held in the project's shared vocabulary — a glossary the team maintains — not in one worker's reading of it). Grammar, caps, capability and communication views, governed state transitions, and the adaptation-versus-evolution line: the `execution` skill's Graph Engineering section.
 
 Frame every task as **GOAL / CONTEXT / CONSTRAINTS / DONE_WHEN**, and **hand the artifact, not a description** — point at the file, paste the image, give the URL. **A goal is an object, not a sentence:** name its completion criteria, its constraints, its authorization scope, its priority, and its provenance, so a goal conflict, an unauthorized modification, and a criterion no check can produce are visible before the work rather than after it (the `delivery` skill's Lifecycle section). **Fewest round-trips:** batch independent reads, searches, and calls; collapse deterministic sequences into one tree.
@@ -152,7 +155,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | --- | --- |
 | `AGENTS.md` | this manifesto |
 | `delivery` skill | the six-stage lifecycle, the plays, the artifact chain, controls, automation, grilling, wayfinder |
-| `execution` skill | graph grammar, multi-agent coordination, runtime state, memory layers (+ bundled references: topologies, harness-design, runtime-state, memory) |
+| `execution` skill | graph grammar, loop control, multi-agent coordination, runtime state, memory layers (+ bundled references: topologies, harness-design, runtime-state, loop-control, memory) |
 | `quality` skill | craftsmanship, gates, verification, evals, performance (+ bundled references: flowcharts, evolution, tactics) |
 | `architecture` skill | ASRs, SEI scenarios, patterns, ADRs, C4, domain language, maps |
 | `confluence` skill | operate Atlassian wikis through a connected MCP server |
@@ -164,7 +167,7 @@ Multiple agents on one job form the **coordination graph**: **solo -> delegation
 | [commands/](commands/) | workflows: [verify](commands/cmd-verify.md) · [review](commands/cmd-review.md) · [refactor](commands/cmd-refactor.md) · [document](commands/cmd-document.md) |
 | [agents/](agents/lead.md) | role agents for §9: [lead](agents/lead.md) decomposes and verifies, [worker](agents/worker.md) executes one unit; per-host variants under `common/` |
 | [standalone/](standalone/AGENTS.md) | the compact single-file doctrine, for `install.sh --standalone` |
-| `evals/` | harness regression suite: [suite](evals/suite.json) plus the [description-trigger set](evals/trigger.json) and its [runner](evals/run_triggers.py) |
+| `evals/` | harness regression suite: [suite](evals/suite.json) plus the [description-trigger set](evals/trigger.json) and its [runner](evals/run_triggers.py); the nine system-level properties are scored by [properties.py](evals/properties.py) |
 | `scripts/check.py` | deterministic gates (`python3 scripts/check.py --all`) |
 | `scripts/install.sh` | detect installed agent tools; link/copy the setup into each |
 | marketplace manifests | discovery manifests at canonical paths, guarded by `manifests` |

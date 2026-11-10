@@ -1,0 +1,98 @@
+{
+  "_comment": "An organized run: every property is exercised and met. Used as the positive fixture for the nine property measurements.",
+  "goal": {
+    "objective": "Split the reporting surface into independent units and merge the result.",
+    "criteria": [
+      "every unit closes its acceptance criterion",
+      "the merged report names one source per figure"
+    ],
+    "terminal_conditions": [
+      "every criterion is closed",
+      "the merge is verified by a role that did not write it"
+    ]
+  },
+  "participants": [
+    {
+      "id": "alpha",
+      "capabilities": ["extraction", "parsing"],
+      "terms": {"done": "the unit's acceptance criterion is closed and checked"}
+    },
+    {
+      "id": "beta",
+      "capabilities": ["extraction", "validation"],
+      "terms": {"done": "the unit's acceptance criterion is closed and checked"}
+    },
+    {
+      "id": "gamma",
+      "capabilities": ["verification"],
+      "terms": {"done": "the unit's acceptance criterion is closed and checked"}
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "worker": "alpha",
+      "requires_capability": "extraction",
+      "status": "done",
+      "closure": "every unit closes its acceptance criterion",
+      "attempts": 1,
+      "resumed_after_failure": false
+    },
+    {
+      "id": "t2",
+      "worker": "beta",
+      "requires_capability": "validation",
+      "status": "done",
+      "closure": "the merged report names one source per figure",
+      "attempts": 1,
+      "resumed_after_failure": false
+    },
+    {
+      "id": "t3",
+      "worker": "gamma",
+      "requires_capability": "verification",
+      "status": "done",
+      "closure": "every unit closes its acceptance criterion",
+      "attempts": 1,
+      "resumed_after_failure": false
+    },
+    {
+      "id": "t4",
+      "worker": "alpha",
+      "requires_capability": "extraction",
+      "status": "failed",
+      "closure": null,
+      "attempts": 2,
+      "resumed_after_failure": true
+    }
+  ],
+  "events": [
+    {"type": "action", "worker": "alpha", "task": "t1", "start": 0, "end": 100, "tokens": 400},
+    {"type": "action", "worker": "beta", "task": "t2", "start": 0, "end": 100, "tokens": 400},
+    {"type": "action", "worker": "gamma", "task": "t3", "start": 0, "end": 100, "tokens": 400},
+    {"type": "action", "worker": "alpha", "task": "t4", "start": 100, "end": 180, "tokens": 300},
+    {"type": "decision", "worker": "gamma", "task": null, "start": 180, "end": 200, "tokens": 100}
+  ],
+  "decisions": [
+    {
+      "task": "t2",
+      "parts": [
+        {"worker": "alpha", "score": 0.60},
+        {"worker": "beta", "score": 0.70}
+      ],
+      "merged_score": 0.85
+    }
+  ],
+  "snapshots": [
+    {"task": "t1", "status": "done", "closure": "every unit closes its acceptance criterion"},
+    {"task": "t2", "status": "done", "closure": "the merged report names one source per figure"},
+    {"task": "t3", "status": "done", "closure": "every unit closes its acceptance criterion"},
+    {"task": "t4", "status": "failed", "closure": null}
+  ],
+  "next_run": {
+    "tasks": [
+      {"id": "n1", "reused_structure_from": "t1"},
+      {"id": "n2", "reused_structure_from": "t2"}
+    ]
+  }
+}
