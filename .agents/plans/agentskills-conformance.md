@@ -38,30 +38,51 @@ body, 3140 bytes).
 | 2 | new gate enforces the spec's content rules | met | `layout`, `skillvoice`, `thirdparty` added; 31 -> 34 |
 | 3 | every description follows the description rules | met | `descriptions` + `skillvoice` pass; 10/10 open with `Use`, longest 662 chars (limit 1024), always-on ~8159 of 9000 |
 | 4 | trigger set matches the spec's query shape | met | 8/8 to 10/10 per skill, train and validation both mixed; `triggers` gate passes |
-| 5 | per-skill train rate reported, edits guided by train | **partly met** | the table below has all ten rows, but nine predate `4b292fc`; see its provenance note |
+| 5 | per-skill train rate reported, edits guided by train | **partly met** | `architecture` re-measured on the shipped description (train 0.70, validation 0.67); the other nine numbers predate `4b292fc` |
 | 6 | vendored skill conformant, gates reach it | met, pointer sense | description is one quoted line, 760 chars, with a boundary; gates reach the pointer via `thirdparty`, not the content |
 | 7 | beta release | met | PR #105 and #106 merged, annotated tag, prerelease published |
 
-### Measured trigger rate (train split, `--model haiku`, 3 runs/query)
+### Measured trigger rate, architecture (shipped descriptions)
+
+| split | rate | note |
+|---|---|---|
+| train | 7/10 = 0.70 | 3 of 10 rows below threshold; the other 7 trigger |
+| validation | 4/6 = 0.67 | held out, never used to tune the description |
+
+Command: `~/.local/bin/claude -p <q> --model haiku --output-format stream-json
+--verbose --strict-mcp-config --tools Skill,Bash,Read,Edit,Write,Glob,Grep,Task`,
+3 runs per query, 48 runs, `$7.85`, raw rows in
+`/tmp/architecture-post-rewrite.jsonl`. Threshold 0.5 on a three-run sample.
+
+Train matches the pre-rewrite 7/10 exactly, so the rewrite did not move this
+skill's trigger rate. The three train misses are the ones that never fired
+before either: a glossary clean-up, a "highly available" requirements ask, and
+a diagram request. Validation fails two of six: "strategy pattern or switch
+statement", which belongs to `architecture` less than to `quality`, and a
+mermaid-to-design-doc conversion. One retry pass was needed: 23 of the first
+48 runs hit a 240 s cap on a loaded host, and a killed run counts as a miss, so
+the cap is now 900 s at 3 workers.
+
+### Measured trigger rate, the other nine (pre-rewrite descriptions, `--model haiku`, 3 runs/query)
 
 | skill | train | skill | train |
 |---|---|---|---|
-| architecture | 7/10 = 0.70 | modernize-coding | 6/10 = 0.60 |
+| architecture | superseded above | modernize-coding | 6/10 = 0.60 |
 | confluence | 6/10 = 0.60 | problem-details | 7/10 = 0.70 |
 | delivery | 8/12 = 0.67 | quality | 5/10 = 0.50 |
 | execution | 6/13 = 0.46 | security-audit | 7/10 = 0.70 |
 | indexed-search | 6/10 = 0.60 | unslop | 6/13 = 0.46 |
 
-Source: `/tmp/kilo/probe/meas-<skill>.log`, 07:22-08:05 on 2026-11-10, i.e.
-**before** the final description commit `4b292fc` (10:23). Only `architecture`
-was re-measured after it (`/tmp/kilo/measure/architecture.train.log`, 11:38,
-7/10 unchanged). Nine of the ten rows therefore score the description as it
-stood before the last body-and-description pass: the numbers satisfy DONE_WHEN
-5 as a measurement, not as evidence about the shipped descriptions, and a
-re-measure is owed before any such claim. Every `should-not-trigger` row scored
-0.00 except one (`problem-details`, which over-triggers a single negative), so
-the shortfall sits on the trigger side: a description that names the user's
-situation rather than the skill.
+These nine predate the descriptions that shipped. Source:
+`/tmp/kilo/probe/meas-<skill>.log`, 07:22-08:05 on 2026-11-10, i.e. **before**
+the final description commit `4b292fc` (10:23). They score the description as it
+stood before the last body-and-description pass, so they satisfy DONE_WHEN 5 as
+a measurement, not as evidence about the shipped text; a re-measure per skill
+is owed before any such claim, and the architecture one above is the template.
+Every `should-not-trigger` row in these nine scored 0.00 except one
+(`problem-details`, which over-triggers a single negative), so the shortfall
+sits on the trigger side: a description that names the user's situation rather
+than the skill.
 
 These are three-run samples on a host whose router is `combo-free`, so they
 read as direction, not precision.
