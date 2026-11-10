@@ -86,7 +86,10 @@ Each server round-trips a different format:
 
 Rules paid for by real breakage (both servers). Each trigger below names its failure mode; when one fires, read
 [references/writing-failure-modes.md](references/writing-failure-modes.md) for the symptom, cause, and defense, and read
-[references/page-template.md](references/page-template.md) when authoring an endpoint or spec page for its fixed contract:
+[references/page-template.md](references/page-template.md) when authoring an endpoint or spec page for its fixed contract,
+[references/page-updates.md](references/page-updates.md) when updating a published endpoint page for a new round, and
+[references/page-family-variants.md](references/page-family-variants.md) when the target page belongs to a family with its own
+recorded skeleton (the BFF families), so the siblings are matched instead of the canonical order:
 
 - **Collapsed macro signatures are rendered form, never source** — a read returns
   `wide4000json{`, never the macro body; re-fence every sample you re-author.

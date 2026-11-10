@@ -788,6 +788,27 @@ RULE_SURFACES = {
         ("standalone/AGENTS.md", re.compile(r"not a retry instruction")),
         ("skills/execution/SKILL.md", re.compile(r"not a retry instruction")),
     ],
+    # Context is an attention budget, not a container: recall degrades as the
+    # window grows, so "keep the window small" is an accuracy rule rather than
+    # a cost rule. The altitude rule and the compaction policy come with it,
+    # because a window that is merely affordable can still be wrong.
+    "context": [
+        ("AGENTS.md", re.compile(r"attention budget, not a container")),
+        ("standalone/AGENTS.md", re.compile(r"attention budget, not a container")),
+        ("skills/execution/SKILL.md", re.compile(r"attention budget, not a container")),
+        ("skills/execution/references/context-engineering.md",
+         re.compile(r"attention budget, not a container")),
+        ("AGENTS.md", re.compile(r"instruction altitude")),
+        ("standalone/AGENTS.md", re.compile(r"instruction altitude")),
+        ("skills/execution/SKILL.md", re.compile(r"instruction altitude")),
+        ("skills/execution/references/context-engineering.md",
+         re.compile(r"Instruction altitude")),
+        ("AGENTS.md", re.compile(r"compaction is lossy", re.IGNORECASE)),
+        ("standalone/AGENTS.md", re.compile(r"compaction is lossy", re.IGNORECASE)),
+        ("skills/execution/SKILL.md", re.compile(r"compaction is lossy", re.IGNORECASE)),
+        ("skills/execution/references/context-engineering.md",
+         re.compile(r"Compaction is a first lever, and it is lossy")),
+    ],
 }
 
 
@@ -1666,6 +1687,15 @@ def g_properties() -> None:
 SKILL_LINE_BUDGET = 500
 SKILL_TOKEN_BUDGET = 5000
 COMMAND_LINE_BUDGET = 120
+REFERENCE_LINE_BUDGET = 500
+REFERENCE_TOKEN_BUDGET = 5000
+# The changelog is read by humans and by the release body, and it grows one
+# release at a time. The closed lines are retired to one line each -- the
+# shape v7.8.1 gave the 6.x line -- so the file stays readable without
+# deleting a version from it. A ceiling turns that discipline into a check
+# rather than a habit.
+CHANGELOG_LINE_BUDGET = 400
+CHANGELOG_TOKEN_BUDGET = 8000
 
 
 def g_skillbudget() -> None:
@@ -1675,7 +1705,10 @@ def g_skillbudget() -> None:
     that activating it floods the window the doctrine exists to protect. Detail
     belongs in references/, loaded on demand; 500 lines / 5000 tokens is the
     skill specification's own shape, so a body over it is a structural defect.
-    Scoped to every skill, so a new one cannot enter ungated.
+    A reference is read whole when it is read, so it carries the same ceiling:
+    one deferred file larger than a loadable skill cannot be loaded whole, and
+    the run either truncates it or spends more context on it than on the skill
+    that points at it. Scoped to every skill, so a new one cannot enter ungated.
     """
     name = "skillbudget"
     skills = _skill_files()
@@ -1687,6 +1720,14 @@ def g_skillbudget() -> None:
     bad: list[str] = []
     subjects = [(p, SKILL_LINE_BUDGET, SKILL_TOKEN_BUDGET) for p in skills]
     subjects += [(p, COMMAND_LINE_BUDGET, None) for p in commands]
+    references: list[pathlib.Path] = []
+    for skill in skills:
+        refs = skill.parent / "references"
+        if refs.is_dir():
+            references += [p for p in sorted(refs.rglob("*"))
+                           if p.is_file() and _no_dotdir(p)]
+    subjects += [(p, REFERENCE_LINE_BUDGET, REFERENCE_TOKEN_BUDGET)
+                 for p in references]
     for path, lines_cap, tokens_cap in subjects:
         rel = path.relative_to(ROOT)
         text = path.read_text()
@@ -1703,7 +1744,9 @@ def g_skillbudget() -> None:
         return
     _add("PASS", f"{name}: {len(skills)} skill body(s) within "
                  f"{SKILL_LINE_BUDGET} lines / {SKILL_TOKEN_BUDGET} tokens, "
-                 f"{len(commands)} command(s) within {COMMAND_LINE_BUDGET} lines")
+                 f"{len(commands)} command(s) within {COMMAND_LINE_BUDGET} lines, "
+                 f"{len(references)} bundled reference(s) within "
+                 f"{REFERENCE_LINE_BUDGET} lines / {REFERENCE_TOKEN_BUDGET} tokens")
 
 
 def g_harnessaxes() -> None:
@@ -1717,6 +1760,56 @@ def g_harnessaxes() -> None:
     if _g_rule_surfaces("harnessaxes"):
         _add("PASS", f"harnessaxes: rule present on "
                      f"{len(RULE_SURFACES['harnessaxes'])} canonical surface(s)")
+
+
+def g_context() -> None:
+    """The context rules survive on every surface that carries them.
+
+    Context is an attention budget rather than a container, so the rule that
+    governs it is an accuracy rule, not a cost rule. It states three things
+    the setup previously left implicit: the budget, the altitude an
+    instruction must sit at, and what a compaction must preserve. Each is
+    asserted where it is stated, so one surface cannot silently lose it.
+    """
+    if _g_rule_surfaces("context"):
+        _add("PASS", f"context: rule present on "
+                     f"{len(RULE_SURFACES['context'])} canonical surface(s)")
+
+
+def g_changelog() -> None:
+    """The changelog stays a readable map rather than an archive.
+
+    The file grew to roughly 17,800 tokens because every release kept its
+    full text forever, so the recent releases -- the ones a reader actually
+    wants -- were buried. The repo already solved this for the 6.x line in
+    v7.8.1: a closed line retires to one line each, with the full text
+    reachable in git history. This gate holds that shape, so the next
+    release cannot quietly restore the archive.
+
+    It checks size, not content: the release contract already requires a
+    section per released version (`scripts/release_notes.py`), and the
+    privacy gate already scans the file for real-work identifiers.
+    """
+    name = "changelog"
+    path = ROOT / "CHANGELOG.md"
+    if not path.is_file():
+        _add("FAIL", f"{name}: CHANGELOG.md missing")
+        return
+    text = path.read_text()
+    lines = len(text.splitlines())
+    tokens = len(text.encode()) // 4
+    errors = []
+    if lines > CHANGELOG_LINE_BUDGET:
+        errors.append(f"{lines} lines > {CHANGELOG_LINE_BUDGET}")
+    if tokens > CHANGELOG_TOKEN_BUDGET:
+        errors.append(f"~{tokens} tokens > {CHANGELOG_TOKEN_BUDGET}")
+    if errors:
+        _add("FAIL", f"{name}: " + "; ".join(errors)
+             + " -- retire the closed lines to one line each (the shape "
+               "v7.8.1 gave the 6.x line), keeping the full text in git history")
+        return
+    _add("PASS", f"{name}: CHANGELOG.md {lines}/{CHANGELOG_LINE_BUDGET} lines, "
+                 f"~{tokens}/{CHANGELOG_TOKEN_BUDGET} tokens")
 
 
 def g_triggers() -> None:
@@ -1969,6 +2062,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("modernize", g_modernize),
          ("evals", g_evals), ("triggers", g_triggers),
          ("properties", g_properties), ("harnessaxes", g_harnessaxes),
+         ("context", g_context), ("changelog", g_changelog),
          ("standalone", g_standalone)]
 
 

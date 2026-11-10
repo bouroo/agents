@@ -171,14 +171,14 @@
           "description": "the Change logs column set matching the spec-page contract survives a reorganize or condense"
         },
         {
-          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF 'Continued from'",
+          "cmd": "tail -n +5 skills/confluence/references/page-updates.md | grep -qF 'Continued from'",
           "expect_exit": 0,
-          "description": "the new-version change-log row rule survives a reorganize or condense"
+          "description": "the new-version change-log row rule survives a reorganize or condense (the change-log material now lives in its own reference, named from the skill on a stated load condition)"
         },
         {
-          "cmd": "tail -n +5 skills/confluence/references/page-template.md | grep -qF '#change14'",
+          "cmd": "tail -n +5 skills/confluence/references/page-updates.md | grep -qF '#change14'",
           "expect_exit": 0,
-          "description": "the round-numbering rule (N continues the page count, never restarts at 1) survives a reorganize or condense"
+          "description": "the round-numbering rule (N continues the page count, never restarts at 1) survives a reorganize or condense (the change-log material now lives in its own reference, named from the skill on a stated load condition)"
         }
       ]
     },
@@ -972,6 +972,74 @@
           "cmd": "python3 scripts/check.py references",
           "expect_exit": 0,
           "description": "the harness-design reference stays named from its skill on a stated load condition"
+        }
+      ]
+    },
+    {
+      "id": "context-rules-survive-doctrine-edits",
+      "prompt": "Reorganize the context-and-state section of the doctrine, or condense the execution skill. The rules that context is an attention budget rather than a container, that an instruction states what must be true rather than the steps that produce it, and that a compaction preserves decisions, open requirements, position, and anchors -- must survive on every surface that carries them.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py context",
+          "expect_exit": 0,
+          "description": "the attention budget, the instruction altitude, and the compaction policy survive on the manifesto, the standalone copy, the execution skill, and the reference that owns them"
+        },
+        {
+          "cmd": "python3 scripts/check.py cost",
+          "expect_exit": 0,
+          "description": "the always-on context stays within its budget after the context rules were added to both installed surfaces"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the execution skill body still loads whole after the Context section was added"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the context-engineering reference stays named from its skill on a stated load condition"
+        }
+      ]
+    },
+    {
+      "id": "bundled-references-stay-loadable-whole",
+      "prompt": "Move a long chunk of reference material into a bundled reference file under skills/. The file is read whole when it is read, so it must be loadable into a window like a skill body is.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "every bundled reference stays within the loadable-whole ceiling, so a deferred file can never be larger than the skill that points at it"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "a split reference is still named from its skill on a stated load condition, so the split does not orphan the material"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "the cross-links between split references still resolve"
+        }
+      ]
+    },
+    {
+      "id": "changelog-stays-a-readable-map",
+      "prompt": "Cut a release. The changelog must stay a readable map of what changed rather than an archive of every release in full, and the closed lines must be retired to one line each with the full text still reachable in git history.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py changelog",
+          "expect_exit": 0,
+          "description": "the changelog stays within its line and token ceiling, so the release a reader wants is not buried under the archive"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "the retired-list pointers into git history still resolve as text the release contract reads"
+        },
+        {
+          "cmd": "python3 scripts/release_notes.py --tag v8.0.0-beta.7",
+          "expect_exit": 0,
+          "description": "the published release body still reads verbatim from the changelog section"
         }
       ]
     }
