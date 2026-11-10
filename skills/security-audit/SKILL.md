@@ -1,6 +1,7 @@
 ---
 name: security-audit
-description: "Vulnerability review of a codebase, API, service, CLI, or library: pass suspected issues through the candidate gate that separates a real boundary violation from a best-practice deviation, calibrate severity to demonstrated impact, hold unproven claims at needs_validation, cover entry surface by boundary by attack class, and report in the fixed shape. Use for a security question, a focused review, triage of a scanner hit or pen-test finding, threat modeling a design, or a full audit when explicitly requested — even when the ask is phrased as 'is this safe?'. Not for fixing the defect (that is ordinary code work under quality), and never a substitute for the AUTH: gate before any live probe."
+description: "Use for any security question, a focused review, triage of a scanner hit or pen-test finding, threat modeling a design, or a full audit when explicitly requested — even when the ask is only 'is this safe?'. Reviews a codebase, API, service, CLI, or library by the candidate gate that separates a real boundary violation from a best-practice deviation, calibrates severity to demonstrated impact, holds unproven claims at needs_validation, and covers entry surface by boundary by attack class. Not for fixing the defect (that is ordinary code work under quality), and never a substitute for the AUTH: gate before any live probe."
+license: Apache-2.0
 ---
 
 # Security Audit

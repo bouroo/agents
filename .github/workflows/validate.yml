@@ -5,14 +5,17 @@ name: validate
 # verification surface, so CI runs it on a clean runner so a broken artifact
 # never lands on main or develop.
 #
-# Gates: `python3 scripts/check.py --all` runs all thirty-one. The
+# Gates: `python3 scripts/check.py --all` runs all thirty-four. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.
 #   budget       AGENTS.md line budget (the concision charter)
 #   cost         the always-on footprint stays within its token budget
 #   frontmatter  valid, colon-safe Agent-Skills metadata on every skill/command
+#   layout       every skill directory holds SKILL.md; references one level deep
+#   thirdparty   a symlinked skill is an untracked, documented pointer
 #   descriptions every description carries a trigger clause and a boundary
+#   skillvoice   every skill description instructs and names its scope
 #   skillbudget  every skill body stays loadable whole
 #   references   every bundled reference names its load condition
 #   links        every relative Markdown link resolves

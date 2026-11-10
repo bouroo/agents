@@ -2,7 +2,7 @@
 
 Go's ceiling is declared in `go.mod` and is unusually explicit: everything here is keyed to the `go` directive (the same gate `go fix` uses). The installed toolchain version means nothing for what language features the module may use — a modern toolchain happily compiles an old module.
 
-Implements [modernize-coding](../../SKILL.md) for Go.
+Implements [modernize-coding](../SKILL.md) for Go.
 
 ## 1. Detect the baseline
 

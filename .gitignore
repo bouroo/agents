@@ -8,3 +8,6 @@ __pycache__/
 .system/
 # Trigram-index search state (indexed-search skill) — tool-managed, never tracked.
 .tgrep/
+# Third-party skill pointers are local setup, never tracked: the repo stores a
+# gitlink plus a URL, never the content. See vendor/README.md.
+skills/drawio-hla-architect

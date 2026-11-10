@@ -10,6 +10,57 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [8.0.0-beta.4] - 2026-11-10
+
+The skills align with the Agent Skills specification and the two skill-authoring
+guides, and the rules that keep them aligned become gates instead of habit.
+
+- **Descriptions say what the user wants, not what the skill is made of.**
+  Every description now opens imperatively, leads with the intent the user
+  arrives with, and names the contexts it applies to even when the domain is
+  never spoken: "even if they only complain that grep keeps timing out". A
+  description is the whole triggering decision — the host loads nothing else
+  before choosing — so a description that reads as documentation
+  under-triggers, and one without a boundary over-triggers on a neighbour's
+  vocabulary. The new `skillvoice` gate requires the imperative half and the
+  unnamed-domain scope clause; the existing `descriptions` gate keeps
+  requiring the trigger clause and the boundary.
+- **The always-on footprint shrank while the descriptions got clearer.**
+  Rewriting prose that described the skill's internals into prose that
+  describes the user's situation costs fewer tokens than it gains in
+  precision: the always-on context (the manifesto plus every skill
+  description) drops from ~8590 to ~8159 tokens against a 9000 ceiling.
+- **The spec's layout rules are gated.** A skill directory holds the required
+  `SKILL.md`, and reference files stay one level deep — the shape the
+  progressive-disclosure machinery assumes. The new `layout` gate enforces
+  both, so a skill cannot arrive with a nested reference chain the loader
+  would never reach.
+- **Third-party content stays a pointer.** The vendored draw.io skill now
+  declares a single-line description (its folded YAML scalar read as empty
+  to every line-based parser, and an unquoted scalar containing `: ` is not
+  valid YAML at all), fits the 5000-token budget with the detail in
+  `references/`, and keeps its real-work identity off the activation surface
+  and inside the submodule. The parent repository stores the gitlink and the
+  upstream URL only. The new `thirdparty` gate asserts that a symlinked skill
+  is untracked and documented, and every skill gate now skips it — a claim
+  `vendor/README.md` made before it was true.
+- **The trigger query set matches the guide's shape.** About twenty queries
+  per skill, eight to ten of each class, split train/validation with both
+  classes in both splits. The floor for should-not-trigger queries rises
+  from six to eight, and a split holding one class only is now a defect: a
+  description tuned on train positives and validated on train negatives never
+  sees the held-out shape it must generalize to.
+- **Two body patterns earned their place.** A single source-of-truth default
+  for delivery (a default with alternatives named briefly, not a menu of
+  equals) and a finding-report template for unslop (agents pattern-match
+  against concrete structures).
+- **Structural conformance, landed earlier in this line.** Every skill
+  declares `license: Apache-2.0`, the architecture validator and template
+  move to `scripts/` and `assets/`, and the `modernize-coding` references
+  flatten to one level.
+
+Gates: 31 -> 34.
+
 ## [8.0.0-beta.3] - 2026-11-09
 
 Three gaps in the graph structure close, the vocabulary converges, and three
