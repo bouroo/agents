@@ -38,14 +38,22 @@ claim: `meas-<skill>.txt` is the pre-rewrite run per skill (07:22-08:05), and
 `architecture-post-rewrite.jsonl` is one row per attempt with its cost. To
 re-measure any skill:
 
-    python3 evals/run_triggers.py --skill <name> \
+    cd "$(mktemp -d)" && python3 "$REPO/evals/run_triggers.py" --skill <name> \
       --invoke '~/.local/bin/claude -p {} --model haiku \
                 --output-format stream-json --verbose --strict-mcp-config \
                 --tools Skill,Bash,Read,Edit,Write,Glob,Grep,Task'
 
-Run it against the checkout `~/.claude/skills` resolves to, give a run more than
-four minutes before calling it a miss, and re-run the cells that timed out
-rather than scoring the timeout.
+Three things make a run unusable rather than merely noisy, and each one bit
+this ledger before it was fixed:
+
+- **Run in a scratch directory.** The queries ask for artefacts ("write an ADR",
+  "clean up CONTEXT.md"), and the model obliges wherever it is started. Run from
+  the repository root and it writes them into the repository. Only the `Skill`
+  call is being measured.
+- **Give a run minutes, not seconds.** A run killed at the cap scores as a miss.
+  At 240 s, 23 of 48 runs looked like failures that were really timeouts.
+- **Measure the checkout the host loads.** `~/.claude/skills` is a symlink, so an
+  edit in a worktree changes nothing about what triggers.
 
 ### DONE_WHEN status
 
