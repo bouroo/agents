@@ -14,12 +14,14 @@ body, 3140 bytes).
   merged branch, on a fresh CI-style clone, and on a fresh recursive clone
   with the submodule materialized.
 - The vendored draw.io skill: 6701 -> 1646 tokens, 279 -> 67 lines, valid
-  single-line quoted description, identity off the activation surface. Token
-  counts are the repo's own counter, `len(text.encode()) // 4`. The repo's
-  gates reach it through `thirdparty` (pointer untracked, resolvable,
-  documented); with the symlink present all 34 pass and the content stays
-  outside the other gates by design, which is the boundary DONE_WHEN 6 asks
-  for.
+  single-line quoted description, identity off the *activation surface* only:
+  the description is clean, but `agents/hla_architect_agent.md` still names
+  KTB/Infinitas/Arise and `references/style-strings.md` carries a numeric
+  artefact id. Token counts are the repo's own counter,
+  `len(text.encode()) // 4`. The repo's gates reach it through `thirdparty`
+  (pointer untracked, resolvable, documented); with the symlink present all 34
+  pass and the content stays outside the other gates by design, which is the
+  boundary DONE_WHEN 6 asks for.
 - The submodule pin (`fec9567`) was published to `bouroo/ai-skill` as
   `improve/conformance`; without it a fresh `--recursive` clone failed to
   resolve the pin.
