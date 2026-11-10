@@ -1,0 +1,11 @@
+FAIL security-audit/train want=trigger rate=0.00 is this upload handler safe?
+FAIL security-audit/train want=trigger rate=0.00 triage these Snyk findings — which are real?
+PASS security-audit/train want=trigger rate=1.00 threat model the new file-sharing feature before we build it
+FAIL security-audit/train want=trigger rate=0.00 a pen-test report says we have an IDOR on /invoices — verify it
+PASS security-audit/train want=trigger rate=1.00 do a security review of the auth middleware
+PASS security-audit/train want=skip rate=0.00 fix the XSS we found yesterday
+PASS security-audit/train want=skip rate=0.00 add rate limiting to the login endpoint
+PASS security-audit/train want=skip rate=0.00 rotate the leaked API key
+PASS security-audit/train want=skip rate=0.00 set up Dependabot on the repo
+PASS security-audit/train want=skip rate=0.00 review this PR for readability
+RATE train: 7/10 = 0.70

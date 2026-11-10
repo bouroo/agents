@@ -1,0 +1,11 @@
+PASS indexed-search/train want=trigger rate=1.00 grep keeps timing out on this monorepo — can you find all uses of pars
+FAIL indexed-search/train want=trigger rate=0.00 search the whole tree for TODO markers mentioning billing
+FAIL indexed-search/train want=trigger rate=0.00 I need to run about twenty searches across this repo today
+FAIL indexed-search/train want=trigger rate=0.00 does anything in this 40k-file tree reference the legacy endpoint?
+FAIL indexed-search/train want=trigger rate=0.00 prove that no file imports the deprecated package
+PASS indexed-search/train want=skip rate=0.00 make our API's search endpoint faster
+PASS indexed-search/train want=skip rate=0.00 find the definition of parse_config
+PASS indexed-search/train want=skip rate=0.00 list the files in src/
+PASS indexed-search/train want=skip rate=0.00 look up the tgrep docs on the web
+PASS indexed-search/train want=skip rate=0.00 our Postgres full-text search is slow
+RATE train: 6/10 = 0.60

@@ -1,0 +1,11 @@
+PASS architecture/train want=trigger rate=1.00 we're starting a payments service and I need to decide between a modul
+PASS architecture/train want=trigger rate=1.00 write an ADR for choosing Postgres over DynamoDB, including what we re
+FAIL architecture/train want=trigger rate=0.00 our glossary has 'account', 'customer' and 'client' used interchangeab
+FAIL architecture/train want=trigger rate=0.00 the CTO keeps saying the system must be 'highly available' — help me t
+FAIL architecture/train want=trigger rate=0.00 draw me a diagram of how the order pipeline flows from checkout to ful
+PASS architecture/train want=skip rate=0.00 our CI pipeline takes 40 minutes, can you find why it's slow?
+PASS architecture/train want=skip rate=0.00 refactor this 300-line function into smaller ones
+PASS architecture/train want=skip rate=0.00 write a Confluence page documenting the payments architecture
+PASS architecture/train want=skip rate=0.00 upgrade our Spring Boot dependencies to the latest
+PASS architecture/train want=skip rate=0.00 our REST errors return a different shape on every endpoint
+RATE train: 7/10 = 0.70

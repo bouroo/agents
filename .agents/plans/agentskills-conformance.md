@@ -30,6 +30,23 @@ body, 3140 bytes).
   still carries the folded `description: >-` and the layout work; read the
   quoted description from the pin, not from `improve/layout-quality`.
 
+### Evidence
+
+`evidence/` holds the raw rows each number in this ledger comes from, because a
+`/tmp` path is not evidence after a reboot and an un-reproducible number is a
+claim: `meas-<skill>.txt` is the pre-rewrite run per skill (07:22-08:05), and
+`architecture-post-rewrite.jsonl` is one row per attempt with its cost. To
+re-measure any skill:
+
+    python3 evals/run_triggers.py --skill <name> \
+      --invoke '~/.local/bin/claude -p {} --model haiku \
+                --output-format stream-json --verbose --strict-mcp-config \
+                --tools Skill,Bash,Read,Edit,Write,Glob,Grep,Task'
+
+Run it against the checkout `~/.claude/skills` resolves to, give a run more than
+four minutes before calling it a miss, and re-run the cells that timed out
+rather than scoring the timeout.
+
 ### DONE_WHEN status
 
 | # | criterion | status | evidence |
@@ -52,7 +69,8 @@ body, 3140 bytes).
 Command: `~/.local/bin/claude -p <q> --model haiku --output-format stream-json
 --verbose --strict-mcp-config --tools Skill,Bash,Read,Edit,Write,Glob,Grep,Task`,
 3 runs per query, 48 runs, `$7.85`, raw rows in
-`/tmp/architecture-post-rewrite.jsonl`. Threshold 0.5 on a three-run sample.
+`evidence/architecture-post-rewrite.jsonl`. Threshold 0.5 on a three-run
+sample.
 
 Train matches the pre-rewrite 7/10 exactly, so the rewrite did not move this
 skill's trigger rate. The three train misses are the ones that never fired
@@ -74,7 +92,7 @@ the cap is now 900 s at 3 workers.
 | indexed-search | 6/10 = 0.60 | unslop | 6/13 = 0.46 |
 
 These nine predate the descriptions that shipped. Source:
-`/tmp/kilo/probe/meas-<skill>.log`, 07:22-08:05 on 2026-11-10, i.e. **before**
+`evidence/meas-<skill>.txt`, 07:22-08:05 on 2026-11-10, i.e. **before**
 the final description commit `4b292fc` (10:23). They score the description as it
 stood before the last body-and-description pass, so they satisfy DONE_WHEN 5 as
 a measurement, not as evidence about the shipped text; a re-measure per skill
