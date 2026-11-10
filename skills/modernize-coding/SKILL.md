@@ -1,6 +1,6 @@
 ---
 name: modernize-coding
-description: "Bring an existing project's code to its own declared ceiling — detect what the project uses from manifests, toolchain config, and prevailing conventions, then modernize toward that baseline rather than toward the newest language release. Per-language adapters name the ecosystem's default fixer and the version the rewrites key to (Go, Java, Rust, Python, TypeScript/JS). Use when modernizing, reviewing, or writing code inside an existing repository, when new code must match house style, or when asked whether a construct is idiomatic here — even if nobody says 'modernize'. Not for a greenfield project with no conventions yet, for dependency upgrades, or for correctness and performance work (quality)."
+description: "Use when modernizing, reviewing, or writing code inside an existing repository, when new code must match the house style, or when someone asks whether a construct is idiomatic here — even if nobody says 'modernize'. Brings code to the project's own declared ceiling, detected from manifests, toolchain config, and prevailing conventions, rather than to the newest language release; per-language adapters name the default fixer and the version the rewrites key to. Not for a greenfield project with no conventions yet, for dependency upgrades, or for correctness and performance work (quality)."
 license: Apache-2.0
 ---
 

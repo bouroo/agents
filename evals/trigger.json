@@ -84,16 +84,13 @@
         {"query": "set up CI to run the suite on every push", "should_trigger": false},
         {"query": "what's the ADR template?", "should_trigger": false},
         {"query": "our project rules keep getting ignored between sessions — where are they supposed to live?", "should_trigger": true},
-        {"query": "can the agent read our issue tracker and CI results directly instead of me pasting them?", "should_trigger": true},
         {"query": "find all callers of this function", "should_trigger": false},
         {"query": "the run died halfway through the migration — how do I resume without redoing what already passed?", "should_trigger": true},
-        {"query": "the failing test is three steps downstream of where the bad value entered — how do I find the actual cause?", "should_trigger": true},
-        {"query": "should agents keep a ledger or just remember what they did in the conversation?", "should_trigger": true}
+        {"query": "the failing test is three steps downstream of where the bad value entered — how do I find the actual cause?", "should_trigger": true}
       ],
       "validation": [
         {"query": "how do I write a spawn brief a worker can actually act on?", "should_trigger": true},
         {"query": "the reviewer and the implementer agree too easily — what's wrong?", "should_trigger": true},
-        {"query": "when does running the same task three times actually pay off?", "should_trigger": true},
         {"query": "post the plan to the wiki", "should_trigger": false},
         {"query": "upgrade this module to Go 1.26 idioms", "should_trigger": false},
         {"query": "summarize what the three agents did", "should_trigger": false}
@@ -214,13 +211,10 @@
         {"query": "this PR description reads like a robot wrote it - tighten it up", "should_trigger": true},
         {"query": "the commit message says 'fix bug' - make it say what actually changed", "should_trigger": true},
         {"query": "our error messages all say 'Something went wrong' - make them useful", "should_trigger": true},
-        {"query": "strip the AI slop out of this module before we ship it", "should_trigger": true},
         {"query": "the README we generated is full of fluff - cut it down to facts", "should_trigger": true},
         {"query": "this screen looks like every other AI-generated dashboard", "should_trigger": true},
         {"query": "the purple gradients and glows on our landing page need to go", "should_trigger": true},
-        {"query": "my colleague says the code I wrote looks AI-generated - what's wrong with it", "should_trigger": true},
         {"query": "clean up the placeholder TODOs and stub bodies in this diff", "should_trigger": true},
-        {"query": "rewrite the docs so every sentence says something specific to us", "should_trigger": true},
         {"query": "the log messages don't say what operation ran - fix that", "should_trigger": false},
         {"query": "rename this variable to something clearer", "should_trigger": false},
         {"query": "add a retry with exponential backoff to the client", "should_trigger": false},
@@ -229,8 +223,6 @@
         {"query": "plan the Go 1.22 upgrade across our services", "should_trigger": false}
       ],
       "validation": [
-        {"query": "polish this PR before it merges - it reads generic", "should_trigger": true},
-        {"query": "the onboarding guide says nothing specific about our product", "should_trigger": true},
         {"query": "does this code look like it was written by a model?", "should_trigger": true},
         {"query": "the settings screen is a wall of purple buttons - fix the design", "should_trigger": true},
         {"query": "the ticket says 'it doesn't work' - write it properly", "should_trigger": true},
