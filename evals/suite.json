@@ -762,6 +762,22 @@
           "description": "a symlinked skill directory is untracked and documented with a URL, and its content stays outside every enumeration gate"
         }
       ]
+    },
+    {
+      "id": "search-discipline-rule-survives",
+      "prompt": "A search returned nothing and the agent is about to retry it under a different flag. The doctrine must still carry the search-discipline rule on every surface that states it, and the search skill that owns the engine mechanics must still be there.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py searchdiscipline",
+          "expect_exit": 0,
+          "description": "the search-discipline rule is present on the always-loaded clauses and on the skill that owns the search engines, so a run that searches loads the mechanics"
+        },
+        {
+          "cmd": "python3 scripts/check.py descriptions",
+          "expect_exit": 0,
+          "description": "the widened search-skill trigger still carries an imperative trigger clause and a boundary, so it fires on a miss and stays quiet on a single known-string lookup"
+        }
+      ]
     }
   ]
 }

@@ -36,6 +36,10 @@ You are an autonomous coding agent governed by this file, agnostic of languages,
 
 **Bounded evidence.** ORIENT from files first; fire independent lookups together; **stop when more evidence cannot change the next action.** Two fruitless lookups on one source -> ask one pointed question. A hash or ref instead of content is **deterministic**: cap refetching at two identical retries, then vary one variable or switch source.
 
+**Search discipline.** A search that returns nothing is a miss, not a defect: change the query — the concept, its scope, its spelling — never the tool's flags, because a flag's meaning can differ by spelling and the output can be rewritten silently while the call still looks like a hit. Re-searching one concept under a different flag, path, or spelling is a new query, not new evidence: fix one canonical form and hold it until the miss is established.
+
+**Diagnosis closure.** A diagnosis closes on a named check — a command's exit code, a cited observation — never on a restatement of the cause. Re-narration is not evidence: once the cause is stated, the next action is the check that proves it, not another search.
+
 **Tool routing (by capability, not name):** known path -> read; known string -> search (large tree -> the `indexed-search` skill); unfamiliar concept -> semantic then string search; external fact -> web. **Prefer built-ins to shell** for line numbers, clickability, and tracked state; shell only for test, build, and version-control commands. For a service, use an installed CLI over hand-rolling an API call.
 
 ## 3. Decision-point gates

@@ -633,6 +633,20 @@ RULE_SURFACES = {
         ("AGENTS.md", re.compile(r"instruction memory", re.IGNORECASE)),
         ("skills/execution/SKILL.md", re.compile(r"^## Memory$", re.MULTILINE)),
     ],
+    # Search discipline lives on two surfaces for a reason: the always-loaded
+    # clause says what a miss is, and the skill that owns the search engines
+    # says how to avoid the measured failure -- re-searching one concept under
+    # different flags, and passing a value-taking flag in a positional slot so
+    # the pattern is consumed and the output silently rewritten. The doctrine
+    # stays capability-level; the mechanics need a surface that only loads
+    # when a search is actually being run, and a run that never loads the
+    # skill never sees them.
+    "searchdiscipline": [
+        ("AGENTS.md", re.compile(r"\*\*Search discipline\.\*\*")),
+        ("standalone/AGENTS.md", re.compile(r"\*\*Search discipline\.\*\*")),
+        ("skills/indexed-search/SKILL.md", re.compile(r"^## 2\. Search discipline$",
+                                                     re.MULTILINE)),
+    ],
     # The six-stage spine: the stage names and the artifact each one commits
     # are the setup's load-bearing vocabulary, so they are asserted on the
     # surfaces that carry them rather than left to drift one edit at a time.
@@ -796,6 +810,22 @@ def g_memory() -> None:
     if _g_rule_surfaces("memory"):
         _add("PASS", "memory: rule present on "
                      f"{len(RULE_SURFACES['memory'])} canonical surface(s)")
+
+
+def g_searchdiscipline() -> None:
+    """The search-discipline rule survives on every surface that carries it.
+
+    A measured run lost half its tool calls to search waste: one concept
+    re-searched under different flags, and a value-taking flag passed in a
+    positional slot so the pattern was consumed and the output silently
+    rewritten while the call still looked like a hit. Prose cannot be linted
+    for meaning, so this asserts PRESENCE on the always-loaded clauses and on
+    the skill that owns the search engines -- a surface that loads exactly when
+    a search is about to be run.
+    """
+    if _g_rule_surfaces("searchdiscipline"):
+        _add("PASS", "searchdiscipline: rule present on "
+                     f"{len(RULE_SURFACES['searchdiscipline'])} canonical surface(s)")
 
 
 def g_bottleneck() -> None:
@@ -1816,6 +1846,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
+         ("searchdiscipline", g_searchdiscipline),
          ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
