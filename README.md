@@ -51,11 +51,14 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   │                                  caps, anchors, shapes, cost; the three coupled
 │   │                                  views (task, coordination, state) and their
 │   │                                  scorecard; worked topologies; harness design:
-│   │                                  minimal-harness ladder, ACI, memory layers,
+│   │                                  minimal-harness ladder, the two sizing axes
+│   │                                  (action complexity, context complexity), ACI,
 │   │                                  external-system context, the execution
 │   │                                  environment, automation, runtime state
 │   │                                  (governed transitions, fault localization,
-│   │                                  recovery boundary, adaptation vs evolution)
+│   │                                  recovery boundary, adaptation vs evolution),
+│   │                                  loop control (terminal conditions, failure
+│   │                                  routes, continuity, capability record)
 │   ├── quality/                       craftsmanship, verification, evals, and
 │   │   └── references/                performance: the twelve commandments, evidence as
 │   │                                  anchors, the regression suite, measure-first;
@@ -99,7 +102,9 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── trigger.json                  labelled prompt set that measures descriptions
 │   ├── run_suite.py                  suite runner: executes the checks, reports the
 │   │                                pass rate, exits non-zero when a check is red
-│   └── run_triggers.py               trigger-rate runner (train/validation split)
+│   ├── run_triggers.py               trigger-rate runner (train/validation split)
+│   ├── properties.py                 scores the nine system-level properties from a run trace
+│   └── fixtures/                     two run traces that disagree on every property
 ├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
 ├── .minimax-plugin/                   MiniMax Code plugin metadata
 ├── gemini-extension.json              extension discovery metadata
@@ -107,13 +112,13 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       thirty-five deterministic gates (CI runs these)
+    ├── check.py                       thirty-eight deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
 ## The execution graph
 
-Inside a lifecycle stage, every job runs as an **execution graph**: THINK → ACT → PROVE → GROW are the role-nodes most jobs need, edges are typed and conditional, and every cycle is capped — the forbidden shape is a node re-entering itself with no new evidence. Three coupled views organize anything above trivial: the **task graph** (what: units, dependencies, DONE_WHEN), the **coordination graph** (who: the capability, team, and communication views — solo → delegation → team), and the **state graph** (how it operates: the repository as system of record). A job with more workers but no three views is a crowd — adding agents buys nothing until the views exist. Every proof chain terminates in an **anchor** — a fixed external node like a spec clause, the user's words, or captured command output that the machinery may read but never rewrite; the authority rank (user statement > spec > checks > code) is the anchor ordering. The grammar lives in [graph-engineering](./skills/execution/SKILL.md), the three views worked out in [the views](./skills/execution/references/graphs.md); entering at the least agency that closes on evidence — a prompt before a workflow, a workflow before an agent loop — is the [minimal-harness ladder](./skills/execution/references/harness-design.md).
+Inside a lifecycle stage, every job runs as an **execution graph**: THINK → ACT → PROVE → GROW are the role-nodes most jobs need, edges are typed and conditional, and every cycle is capped — the forbidden shape is a node re-entering itself with no new evidence. Three coupled views organize anything above trivial: the **task graph** (what: units, dependencies, DONE_WHEN), the **coordination graph** (who: the capability, team, and communication views — solo → delegation → team), and the **state graph** (how it operates: the repository as system of record). A job with more workers but no three views is a crowd — adding agents buys nothing until the views exist. Every proof chain terminates in an **anchor** — a fixed external node like a spec clause, the user's words, or captured command output that the machinery may read but never rewrite; the authority rank (user statement > spec > checks > code) is the anchor ordering. A run also needs a **controller**: it declares its terminal conditions up front, tracks the requirements still owed, and picks a failure's route from the evidence — revise, take another capability, recover, escalate to a human, or terminate — rather than defaulting to retry. The grammar lives in [graph-engineering](./skills/execution/SKILL.md), the three views worked out in [the views](./skills/execution/references/graphs.md), the controller in [loop control](./skills/execution/references/loop-control.md); entering at the least agency that closes on evidence — a prompt before a workflow, a workflow before an agent loop — is the [minimal-harness ladder](./skills/execution/references/harness-design.md).
 
 The loop as a chart — the role-nodes, the surprise back-edges, the hard cap, and GROW's knowledge edge back into the machinery:
 
@@ -133,7 +138,7 @@ The full decision charts — the intake router, each node's internal loop, and t
 
 ## The doctrine in one line
 
-Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); run every job through the six-stage delivery loop, sized to the job — the compact path (one THINK, one ACT, one PROVE, no artifact chain) is the default for a small, local, reversible change, and the six-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe on high-risk work, and a hard verify bound of 3 failed cycles; pass large or hard-to-re-derive deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable — while every other deliverable is verified in place; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
+Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); size each job on two axes — action complexity (tools, decisions, dependencies, handoffs coordinated) and context complexity (information gathered, retained, retrieved) — and keep the harness to what those two demand, adding machinery only on an observed failure and cutting it when a stronger model makes it redundant; run every job through the six-stage delivery loop, sized to the job — the compact path (one THINK, one ACT, one PROVE, no artifact chain) is the default for a small, local, reversible change, and the six-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe on high-risk work, and a hard verify bound of 3 failed cycles; pass large or hard-to-derive deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable — while every other deliverable is verified in place; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
 
 ## Using it
 
@@ -185,6 +190,7 @@ python3 scripts/check.py --all
 | `portable` | core doctrine is free of language, framework, and stack-specific tokens, so a rule names the role and not one vendor's product |
 | `shared` | the shared-meaning rule (one term per concept, held in the project's shared vocabulary) survives on every surface that introduces the three views |
 | `goal` | the goal-object rule (a goal names its completion criteria, constraints, authorization scope, priority, and provenance) survives on the doctrine and the delivery skill |
+| `loop` | the loop-control rule (terminal conditions declared up front, the requirements still owed, and a route chosen from the evidence rather than defaulting to retry) survives on the doctrine and the execution skill |
 | `manifests` | marketplace manifests parse; version fields agree across files |
 | `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
@@ -205,10 +211,12 @@ python3 scripts/check.py --all
 | `playbook` | the playbook's mechanics (the accepted artifact fires the next gate, one source of truth per artifact, advisory versus deterministic controls, autonomy stopping at the production gate) survive on every surface that carries them |
 | `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
 | `triggers` | the description-trigger set is present, labelled, split train/validation, large enough to measure a description, and covers every skill directory, so a new skill cannot ship unmeasured |
+| `properties` | the nine system-level properties are measured from a run trace by an instrument that passes an organized run and fails a degraded one, so a property that cannot fail is not a property |
+| `harnessaxes` | the two axes that size the harness — action complexity and context complexity — survive on both installed surfaces, the execution skill, and the reference that owns the derivation, so sizing is never left to taste |
 | `thirdparty` | a symlinked skill is an untracked, documented pointer, so third-party content stays outside every gate and out of the repository |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all thirty-five on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all thirty-eight on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

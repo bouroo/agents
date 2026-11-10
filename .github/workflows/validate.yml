@@ -6,7 +6,7 @@ name: validate
 # broken artifact never lands on main or develop. The measurement harness
 # under evals/ is code, so it carries a check of its own.
 #
-# Gates: `python3 scripts/check.py --all` runs all thirty-five. The
+# Gates: `python3 scripts/check.py --all` runs all thirty-eight. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.
@@ -24,6 +24,8 @@ name: validate
 #   portable     core doctrine free of language, framework, stack-specific tokens
 #   shared       the shared-meaning rule survives on every surface that carries it
 #   goal         the goal-object rule survives on the doctrine and the delivery skill
+#   loop         the loop-control rule (terminal conditions, failure routes)
+#                survives on the doctrine and the execution skill
 #   manifests    marketplace manifests parse; version fields agree
 #   privacy      doctrine free of real-work identifiers
 #   comments     the comment rule survives on both canonical surfaces
@@ -57,6 +59,10 @@ name: validate
 #   evals        the harness regression suite exists and is well-formed
 #   triggers     the description-trigger set is present and large enough to
 #                measure a description
+#   properties   the nine system-level properties are measured from a run
+#                trace, and the instrument fails a degraded run
+#   harnessaxes  the two axes that size the harness (action complexity,
+#                context complexity) survive on every carrying surface
 #   standalone   every hard constraint is present in the standalone copy too
 
 on:
@@ -88,3 +94,11 @@ jobs:
 
       - name: Run the measurement-harness check (parallel measure)
         run: python3 evals/test_run_triggers.py
+
+      - name: Validate skills against the Agent Skills reference library
+        run: |
+          python3 -m pip install --quiet skills-ref
+          for skill in skills/*/; do
+            case "$skill" in */.system/) continue ;; esac
+            agentskills validate "$skill"
+          done

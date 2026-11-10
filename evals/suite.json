@@ -778,6 +778,202 @@
           "description": "the widened search-skill trigger still carries an imperative trigger clause and a boundary, so it fires on a miss and stays quiet on a single known-string lookup"
         }
       ]
+    },
+    {
+      "id": "loop-rule-survives-doctrine-edits",
+      "prompt": "Reword or reorganize the execution doctrine, or extend the loop-control section. The rule that a loop declares its terminal conditions and chooses a failure route from the evidence rather than defaulting to retry must survive.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py loop",
+          "expect_exit": 0,
+          "description": "the loop-control rule survives on the doctrine and the execution skill"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the loop-control reference stays named from its skill on a stated load condition"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "the loop-control reference is still reachable through a resolving relative link"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the skill body still loads whole after the loop-control section was added"
+        }
+      ]
+    },
+    {
+      "id": "property-goal-formation-is-measured",
+      "prompt": "Claim the structure delivers the objective's criteria are satisfiable and the stop states are declared. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property goal-formation",
+          "expect_exit": 0,
+          "description": "the instrument scores goal-formation on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property goal-formation",
+          "expect_exit": 1,
+          "description": "the instrument fails goal-formation on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-semantic-consistency-is-measured",
+      "prompt": "Claim the structure delivers one term means one thing across the participants. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property semantic-consistency",
+          "expect_exit": 0,
+          "description": "the instrument scores semantic-consistency on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property semantic-consistency",
+          "expect_exit": 1,
+          "description": "the instrument fails semantic-consistency on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-parallel-execution-efficiency-is-measured",
+      "prompt": "Claim the structure delivers concurrency pays, net of coordination. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property parallel-execution-efficiency",
+          "expect_exit": 0,
+          "description": "the instrument scores parallel-execution-efficiency on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property parallel-execution-efficiency",
+          "expect_exit": 1,
+          "description": "the instrument fails parallel-execution-efficiency on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-heterogeneous-capability-allocation-is-measured",
+      "prompt": "Claim the structure delivers each unit is held by a worker holding the capability it needs. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property heterogeneous-capability-allocation",
+          "expect_exit": 0,
+          "description": "the instrument scores heterogeneous-capability-allocation on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property heterogeneous-capability-allocation",
+          "expect_exit": 1,
+          "description": "the instrument fails heterogeneous-capability-allocation on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-collective-decision-quality-is-measured",
+      "prompt": "Claim the structure delivers the merged decision is better than its parts. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property collective-decision-quality",
+          "expect_exit": 0,
+          "description": "the instrument scores collective-decision-quality on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property collective-decision-quality",
+          "expect_exit": 1,
+          "description": "the instrument fails collective-decision-quality on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-state-consistency-is-measured",
+      "prompt": "Claim the structure delivers the recorded state agrees with what the tasks say happened. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property state-consistency",
+          "expect_exit": 0,
+          "description": "the instrument scores state-consistency on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property state-consistency",
+          "expect_exit": 1,
+          "description": "the instrument fails state-consistency on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-failure-recovery-is-measured",
+      "prompt": "Claim the structure delivers a fault resumes rather than restarts. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property failure-recovery",
+          "expect_exit": 0,
+          "description": "the instrument scores failure-recovery on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property failure-recovery",
+          "expect_exit": 1,
+          "description": "the instrument fails failure-recovery on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-transfer-across-tasks-is-measured",
+      "prompt": "Claim the structure delivers the next job starts from the improved structure. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property transfer-across-tasks",
+          "expect_exit": 0,
+          "description": "the instrument scores transfer-across-tasks on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property transfer-across-tasks",
+          "expect_exit": 1,
+          "description": "the instrument fails transfer-across-tasks on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "property-runtime-overhead-is-measured",
+      "prompt": "Claim the structure delivers the structure's own cost is bounded. The claim must be measured from a run trace, not asserted: a measurement that passes a degraded run too measures nothing.",
+      "checks": [
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/organized-run.json --property runtime-overhead",
+          "expect_exit": 0,
+          "description": "the instrument scores runtime-overhead on an organized run"
+        },
+        {
+          "cmd": "python3 evals/properties.py --trace evals/fixtures/degraded-run.json --property runtime-overhead",
+          "expect_exit": 1,
+          "description": "the instrument fails runtime-overhead on a degraded run, so the property can fail"
+        }
+      ]
+    },
+    {
+      "id": "harness-sizing-axes-survive",
+      "prompt": "Reorganize the execution doctrine or condense the always-on clauses. The rule that a job is sized on two named axes -- action complexity and context complexity -- must survive, on both installed surfaces and in the skill that owns the derivation.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py harnessaxes",
+          "expect_exit": 0,
+          "description": "the two axes survive on the manifesto, the standalone copy, the execution skill, and the reference that owns the derivation"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the execution skill body still loads whole after the axes were added"
+        },
+        {
+          "cmd": "python3 scripts/check.py cost",
+          "expect_exit": 0,
+          "description": "the always-on context stays within its budget after the axes were added to both installed surfaces"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the harness-design reference stays named from its skill on a stated load condition"
+        }
+      ]
     }
   ]
 }

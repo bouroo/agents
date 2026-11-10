@@ -10,6 +10,91 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+The loop gains a controller: it declares when to stop, and a failure gets a
+route chosen from the evidence rather than a default of retry.
+
+- **A loop declares its terminal conditions and owes a route for every
+  failure.** A run that cannot name the states from which continuing is no
+  longer justified continues on hope, and a failure with no route other than
+  retry is a spin wearing a progress report. The new rule states the goal,
+  the acceptance criteria that close it, and the stop states up front; tracks
+  the requirements still owed, so a step advances the run by closing one
+  rather than by finishing; and picks the route from the evidence — revise,
+  take another capability, recover an earlier state, escalate to a human, or
+  terminate — with escalation meaning the run stops and asks, never resolving
+  a human decision by inference.
+- **The working detail lives in a new reference.** `execution/references/
+  loop-control.md` carries the terminal conditions, the five routes and what
+  each costs, the continuity that binds one iteration to the next through the
+  recorded state, the fact that feedback is intermediate rather than only
+  terminal, and the capability record — the relations that say what each
+  worker can do, kept as a versioned record so the next assignment is a
+  lookup rather than a guess, and so a worker that loses a resource leaves
+  its units reassignable rather than stuck.
+- **The rule is a gate, not a habit.** The new `loop` gate asserts the rule
+  survives on the manifesto, the standalone copy, the execution skill, and
+  the reference that owns the detail, so one surface cannot silently lose it.
+  The harness regression suite gains an eval that exercises the same four
+  checks.
+- **The always-on footprint is unchanged in kind.** The rule is one
+  paragraph on each installed surface; the standalone copy stays inside its
+  token ceiling, and the execution skill's body was condensed to make room
+  for the new section rather than exceeding its loadable-whole budget.
+- **The skills are validated against the published specification.** The
+  validation pipeline now runs the Agent Skills reference library's own
+  validator over every shipped skill, so conformance with the specification
+  is checked by the specification's tool rather than by a local reading of
+  it. The reference library's command is stable enough to name; a rename
+  upstream breaks this step loudly, which is the correct failure mode for a
+  gate that claims conformance.
+- **The nine system-level properties are measured, not asserted.** The
+  doctrine claimed nine properties of a multi-agent structure — goal
+  formation, semantic consistency, parallel execution efficiency,
+  heterogeneous capability allocation, collective decision quality, state
+  consistency, failure recovery, transfer across tasks, runtime overhead —
+  and said a claim with no measurement is a narrative. That left the claim
+  itself as the narrative. The new instrument reads a run trace and scores
+  each property against a stated threshold, so a report can now answer
+  whether a structure delivered what it claimed.
+- **The measurement can fail.** Two traces under `evals/fixtures/` disagree
+  on every property, and the `properties` gate requires the instrument to
+  pass the organized one and fail the degraded one. A property that cannot
+  fail is not a property, and a measurement that passes both directions
+  measures nothing. The suite gains nine evals, one per property, each
+  checking both directions.
+- **An unexercised property does not score as a pass.** A run with no
+  failures has nothing to recover and a team with no decisions has nothing
+  to merge; the instrument scores those 0.0 rather than 1.0, so a structure
+  cannot earn a property by not having the situation that exercises it.
+- **The harness is sized on two named axes.** The setup said to size each
+  job and pointed at action and context complexity, but neither axis was
+  defined anywhere — a promise with no definition behind it, on the surface
+  every task reads. The two are now defined: action complexity is how many
+  tools, decisions, dependencies, and handoffs a job coordinates; context
+  complexity is how much it must gather, retain, and retrieve. They move
+  independently, so a job can route widely while carrying little or carry a
+  lot while routing little, and each axis prices different machinery — action
+  complexity buys routing and tool surface, context complexity buys state and
+  retrieval. The average job is not the job: the union of what every kind of
+  agent needs describes almost no one, so the harness is specified per job
+  from its own axes.
+- **The three strain moves are defined, in the order they apply.** Reduce
+  (do fewer things), Offload (move what remains out of the window, onto disk
+  read on demand), Isolate (split the concern into its own context). Isolate
+  comes last because it adds the machinery the other two avoid. A team is
+  warranted only when the strain survives all three.
+- **Every harness feature is a bet that expires.** Each one encodes an
+  assumption that the model cannot do the thing on its own, so when the model
+  improves the feature becomes dead weight constraining the model it was
+  built for. A feature is a bet, and a bet is re-examined when the model
+  changes. The new `harnessaxes` gate asserts both axes survive on both
+  installed surfaces, the execution skill, and the reference that owns the
+  derivation.
+
+Gates: 35 -> 38.
+
 ## [8.0.0-beta.6] - 2026-11-10
 
 The trigger instrument stops waiting for one row at a time.

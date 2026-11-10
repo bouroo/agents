@@ -16,6 +16,7 @@ The goal decomposes into explicit subgoals joined by dependency edges; the workf
 - **Dependency edge** — typed, and typed because the type decides what blocks what: `DEPENDS_ON` (blocks), `PRODUCES` (feeds forward), `VERIFIES` (re-derives against an anchor), `RETURNS` (feedback with a payload), `ROUTES` (a named condition choosing one successor).
 - **Dynamic refinement** — when a unit returns, its evidence may make the next unit unnecessary, change its scope, or split it. The plan is compiled from the goal, then re-compiled from intermediate results. A plan that survives contact with the first result unchanged was never refined, only written down.
 - **Anchor** — the fixed external node every `VERIFIES` edge terminates in: a spec clause, the user's words, a failing test, captured output.
+- **Knowledge query** — the typed knowledge edges are queried by type, not by keyword: similarity for "what does X do", traversal for "why did X change and what is downstream". An auto-derived edge compounds per hop, so dedupe and date it, or the map grows faster than it stays true.
 
 The task graph is what crosses a session boundary (the wayfinder map) and what crosses agents (the team ledger). One writer per ledger, so no two agents hold divergent copies of the same graph.
 
@@ -66,6 +67,8 @@ Naming the units and drawing the edges is the easy half of the work. A structure
 4. **The change persists and transfers.** A structure that helped once and was thrown away is a coincidence; the value of engineering a structure is that the next job starts from the improved one.
 
 The failure is quiet: a graph selected by hand and fixed before the run looks like a live one until the run needs to change it, and then it cannot. The scoring dimensions below are what make the difference visible.
+
+**Hand-authored structure, and where machine search would earn its place.** The structure here is drawn by a person or an agent reading the work, and changed under evidence — the fourth property above is the whole point, because a structure that changes on evidence is one a person can reason about. Automated workflow search is a different instrument with a different cost: it treats the structure itself as the thing to optimize, which pays when the space of plausible structures is large and the objective is mechanical, and costs when the objective is a judgement only a person can make. So the boundary is not "never search" but "search where the objective is checkable": candidate structures that differ in fan-out width, routing, or decomposition can be compared by cost per successful completion, while a structure that encodes a judgement — which requirement the product actually has — is set by the party that owns that judgement and not by a search. The search never writes the anchors; it only proposes a structure that must still close on evidence.
 
 ## Shared meaning, or the graph records a disagreement as an agreement
 

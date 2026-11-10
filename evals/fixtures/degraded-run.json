@@ -1,0 +1,95 @@
+{
+  "_comment": "A degraded run: every property is exercised and missed. Used as the negative fixture -- the instrument must fail it, so a check that claims a property holds is falsifiable rather than tautological.",
+  "goal": {
+    "objective": "Split the reporting surface into independent units and merge the result.",
+    "criteria": [
+      "every unit closes its acceptance criterion",
+      "the merged report names one source per figure"
+    ],
+    "terminal_conditions": []
+  },
+  "participants": [
+    {
+      "id": "alpha",
+      "capabilities": ["extraction", "parsing"],
+      "terms": {"done": "the unit's acceptance criterion is closed and checked"}
+    },
+    {
+      "id": "beta",
+      "capabilities": ["extraction", "validation"],
+      "terms": {"done": "the unit finished and produced output"}
+    },
+    {
+      "id": "gamma",
+      "capabilities": ["verification"],
+      "terms": {"done": "the unit's acceptance criterion is closed and checked"}
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "worker": "alpha",
+      "requires_capability": "extraction",
+      "status": "done",
+      "closure": "every unit closes its acceptance criterion",
+      "attempts": 1,
+      "resumed_after_failure": false
+    },
+    {
+      "id": "t2",
+      "worker": "alpha",
+      "requires_capability": "verification",
+      "status": "done",
+      "closure": null,
+      "attempts": 1,
+      "resumed_after_failure": false
+    },
+    {
+      "id": "t3",
+      "worker": "beta",
+      "requires_capability": "validation",
+      "status": "failed",
+      "closure": null,
+      "attempts": 3,
+      "resumed_after_failure": false
+    },
+    {
+      "id": "t4",
+      "worker": "beta",
+      "requires_capability": "extraction",
+      "status": "failed",
+      "closure": null,
+      "attempts": 2,
+      "resumed_after_failure": false
+    }
+  ],
+  "events": [
+    {"type": "action", "worker": "alpha", "task": "t1", "start": 0, "end": 100, "tokens": 400},
+    {"type": "action", "worker": "alpha", "task": "t2", "start": 100, "end": 200, "tokens": 400},
+    {"type": "action", "worker": "beta", "task": "t3", "start": 200, "end": 220, "tokens": 200},
+    {"type": "decision", "worker": "gamma", "task": null, "start": 220, "end": 240, "tokens": 300},
+    {"type": "coordination", "worker": "gamma", "task": null, "start": 240, "end": 260, "tokens": 300},
+    {"type": "coordination", "worker": "alpha", "task": null, "start": 260, "end": 280, "tokens": 800},
+    {"type": "decision", "worker": "beta", "task": null, "start": 280, "end": 300, "tokens": 600}
+  ],
+  "decisions": [
+    {
+      "task": "t3",
+      "parts": [
+        {"worker": "alpha", "score": 0.80},
+        {"worker": "beta", "score": 0.75}
+      ],
+      "merged_score": 0.60
+    }
+  ],
+  "snapshots": [
+    {"task": "t1", "status": "done", "closure": "every unit closes its acceptance criterion"},
+    {"task": "t3", "status": "failed", "closure": null}
+  ],
+  "next_run": {
+    "tasks": [
+      {"id": "n1", "reused_structure_from": null},
+      {"id": "n2", "reused_structure_from": null}
+    ]
+  }
+}
