@@ -724,6 +724,44 @@
           "description": "the bottleneck framing and the control-objectives clause survive on both doctrines and the delivery skill"
         }
       ]
+    },
+    {
+      "id": "new-skill-obeys-spec-layout",
+      "prompt": "Add a new skill under skills/ with bundled reference material. It must follow the Agent Skills specification's directory layout.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py layout",
+          "expect_exit": 0,
+          "description": "every skill directory holds the required SKILL.md and keeps its references one level deep, so no skill enters unenumerated"
+        }
+      ]
+    },
+    {
+      "id": "skill-description-instructs-and-stays-pushy",
+      "prompt": "Write or revise a skill description so it activates on the right prompts, including when the user does not name the domain.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py skillvoice",
+          "expect_exit": 0,
+          "description": "every skill description instructs the agent, avoids a third-person self-description opening, and names contexts it applies to even when the domain is not named"
+        },
+        {
+          "cmd": "python3 scripts/check.py descriptions",
+          "expect_exit": 0,
+          "description": "the existing trigger-clause and boundary halves still hold"
+        }
+      ]
+    },
+    {
+      "id": "third-party-skill-stays-a-pointer",
+      "prompt": "Reference a third-party skill from skills/. The repository stores third-party content by pointer, never as its own artifact.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py thirdparty",
+          "expect_exit": 0,
+          "description": "a symlinked skill directory is untracked and documented with a URL, and its content stays outside every enumeration gate"
+        }
+      ]
     }
   ]
 }
