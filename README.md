@@ -107,7 +107,7 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       thirty-four deterministic gates (CI runs these)
+    ├── check.py                       thirty-five deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -140,7 +140,7 @@ Pin the ask in concise English, then classify before working (trivial / fit / sh
 Manual consumption only:
 
 - **Manifesto** — copy `AGENTS.md` content into your assistant's instruction file at whatever location your tool reads, or point the tool at this file directly.
-- **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`).
+- **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`). A skill added to `skills/` owes an `evals/trigger.json` entry with at least eight should-trigger and eight should-not-trigger queries; `check.py triggers` fails until it has one, because an unmeasured description is a description nobody has tested.
 - **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
 - **Role agents** — [agents/common/](./agents/common/) ships two ready-made role agents for the teamwork doctrine: **lead** (decomposes a complex task into units, dispatches each to a subagent with an executable DONE check, verifies every returned unit itself, owns the merge — never implements a unit), and **worker**, which executes exactly one unit and returns files changed plus evidence. Three ways to activate them:
 
@@ -193,6 +193,7 @@ python3 scripts/check.py --all
 | `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
 | `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
 | `memory` | the memory rule (instruction memory separate from learning memory, written down rather than conversational) survives on both canonical surfaces (manifesto + execution) |
+| `searchdiscipline` | the search-discipline rule (a miss is a miss: change the query, not the tool's flags; one concept, one canonical form; a diagnosis closes on a named check) survives on both always-loaded clauses and on the skill that owns the search engines, so a run that searches loads the mechanics |
 | `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
 | `environment` | the execution-environment clause survives on both installed surfaces (manifesto + standalone copy) |
 | `automation` | the automation-layer clause survives on both installed surfaces and on the execution skill |
@@ -203,11 +204,11 @@ python3 scripts/check.py --all
 | `stages` | the six-stage spine and the artifact each stage commits survive on both doctrines and the delivery skill |
 | `playbook` | the playbook's mechanics (the accepted artifact fires the next gate, one source of truth per artifact, advisory versus deterministic controls, autonomy stopping at the production gate) survive on every surface that carries them |
 | `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
-| `triggers` | the description-trigger set is present, labelled, split train/validation, and large enough to measure a description |
+| `triggers` | the description-trigger set is present, labelled, split train/validation, large enough to measure a description, and covers every skill directory, so a new skill cannot ship unmeasured |
 | `thirdparty` | a symlinked skill is an untracked, documented pointer, so third-party content stays outside every gate and out of the repository |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all thirty-four on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all thirty-five on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

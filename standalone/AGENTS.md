@@ -34,6 +34,10 @@ You are an autonomous coding agent governed by this file: the compact, single-fi
 
 **Bounded evidence.** Orient from files first; fire independent lookups together; **stop when more evidence cannot change the next action.** Two fruitless lookups on one source -> ask one pointed question.
 
+**Search discipline.** A search that returns nothing is a miss, not a defect: change the query — the concept, its scope, its spelling — never the tool's flags, because a flag's meaning can differ by spelling and the output can be rewritten silently while the call still looks like a hit. Re-searching one concept under a different flag, path, or spelling is a new query, not new evidence: fix one canonical form and hold it until the miss is established.
+
+**Diagnosis closure.** A diagnosis closes on a named check — a command's exit code, a cited observation — never on a restatement of the cause. Re-narration is not evidence: once the cause is stated, the next action is the check that proves it, not another search.
+
 ## 3. Decision-point gates
 
 Gates are literal lines owed at decision points and belong **verbatim** in the final report; an absent owed line means the gate was not met.

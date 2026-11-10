@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "8.0.0-beta.4",
+  "version": "8.0.0-beta.5",
   "description": "A concise shared setup for AI coding assistants, agnostic of programming languages, agent frameworks, and host tools. Ships one governance manifesto (AGENTS.md) whose spine is the AI-native SDLC - a six-stage loop (plan, design, build, test, deploy, maintain) of committed artifacts - ten on-demand skills (delivery, execution, quality, architecture, confluence, security-audit, modernize-coding, indexed-search, problem-details, unslop), four routine-task command workflows, two role agents (lead, worker), and deterministic verification gates.",
   "author": {
     "name": "bouroo",

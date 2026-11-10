@@ -6,11 +6,11 @@ Third-party skill sources are mounted as git submodules and surfaced into `skill
 
 - Upstream: https://github.com/Jdemon/ai-skill (`main`)
 - Submodule URL: https://github.com/bouroo/ai-skill (fork; it serves the pinned local branch)
-- Pin: gitlink `vendor/ai-skill`, branch `improve/layout-quality`
+- Pin: gitlink `vendor/ai-skill` at `fec9567`, branch `improve/conformance` (built on upstream `main`)
 - Surface, create locally once: `ln -s ../vendor/ai-skill/drawio-hla-architect skills/drawio-hla-architect`
 - The symlink is deliberately untracked: a tracked symlink would ship third-party content under this repository's name, and a gitlink under `skills/` has no `SKILL.md` on a clean clone. The `thirdparty` gate checks that the pointer is untracked, resolvable, and documented here with a URL.
-- Local improvements live on `improve/layout-quality` inside the submodule. The branch carries spec conformance on top of upstream `main`: a flat, identity-free `description`, and detail split into `references/` with stated load conditions.
-- Sync upstream: `git -C vendor/ai-skill remote add upstream https://github.com/Jdemon/ai-skill.git`, then `git -C vendor/ai-skill fetch upstream && git -C vendor/ai-skill merge upstream/main`. Re-run `python3 vendor/ai-skill/drawio-hla-architect/scripts/qa_verify_hla.py <sample>.drawio --strict`, push the branch to the fork, then commit the new pin here.
+- `improve/conformance` exists on the `fork` remote and is what the pin points at; the submodule checkout is detached, so start work with `git -C vendor/ai-skill checkout -B improve/conformance fork/improve/conformance`. It carries a flat, identity-free `description` and detail split into `references/`. `improve/layout-quality` is a separate line that carries the layout work but not the quoted description (merge base `7b7c448`), so read the description from the pin.
+- Sync upstream: `git -C vendor/ai-skill remote add upstream https://github.com/Jdemon/ai-skill.git`, then `git -C vendor/ai-skill fetch upstream && git -C vendor/ai-skill merge upstream/main` **on `improve/conformance`**. Re-run `python3 vendor/ai-skill/drawio-hla-architect/scripts/qa_verify_hla.py <sample>.drawio --strict`, push the branch to the fork, then commit the new pin here.
 - Do not run `git submodule update --remote`: it checks out the fetched default branch and drops the local branch.
 - Branch-local by design (AGENTS.md §10): upstream content may carry real-work identity, so it lives in the submodule and is documented here rather than copied. Never copy upstream files into tracked, non-submodule paths.
 - CI checks out without `submodules`, so vendored content never enters a gate run. That is the intended boundary, not a coverage gap.

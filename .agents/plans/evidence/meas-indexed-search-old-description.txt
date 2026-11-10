@@ -1,0 +1,25 @@
+OK set: 1 skill(s), 21 quer(ies), threshold=0.5, runs=3
+PASS indexed-search/train want=trigger rate=1.00 grep keeps timing out on this monorepo — can you find all uses of pars
+FAIL indexed-search/train want=trigger rate=0.00 search the whole tree for TODO markers mentioning billing
+PASS indexed-search/train want=trigger rate=1.00 I need to run about twenty searches across this repo today
+FAIL indexed-search/train want=trigger rate=0.33 does anything in this 40k-file tree reference the legacy endpoint?
+FAIL indexed-search/train want=trigger rate=0.00 prove that no file imports the deprecated package
+PASS indexed-search/train want=skip rate=0.00 make our API's search endpoint faster
+PASS indexed-search/train want=skip rate=0.00 find the definition of parse_config
+PASS indexed-search/train want=skip rate=0.00 list the files in src/
+FAIL indexed-search/train want=skip rate=0.67 look up the tgrep docs on the web
+PASS indexed-search/train want=skip rate=0.00 our Postgres full-text search is slow
+FAIL indexed-search/train want=trigger rate=0.00 the grep came back empty — should I widen the path or try a different 
+FAIL indexed-search/train want=trigger rate=0.00 I've searched for the voucher type three times now with different spel
+PASS indexed-search/train want=skip rate=0.00 what is the exact string constant declared in config.go?
+PASS indexed-search/validation want=trigger rate=1.00 use tgrep to find the retry helper
+FAIL indexed-search/validation want=trigger rate=0.00 find every YAML file that sets replicas: 0
+FAIL indexed-search/validation want=trigger rate=0.00 my search returned nothing — is the file really absent, or is the inde
+PASS indexed-search/validation want=skip rate=0.00 find the Confluence page about retries
+PASS indexed-search/validation want=skip rate=0.00 what does this function do?
+PASS indexed-search/validation want=skip rate=0.00 index our docs into Elasticsearch
+FAIL indexed-search/validation want=trigger rate=0.00 which flag does ripgrep actually take for recursive search, -r or -R?
+PASS indexed-search/validation want=skip rate=0.00 add a search box to the settings screen of the app
+RATE train: 7/13 = 0.54
+RATE validation: 5/8 = 0.62
+FAIL: 9 quer(ies) outside threshold

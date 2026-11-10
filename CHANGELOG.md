@@ -10,6 +10,39 @@ through 6.8.0-beta.1 are retired below, one line each. The full history lives in
 git tags and log (`v1.0.0` through `v3.11.0`, and `git show
 v6.8.0:CHANGELOG.md` for the retired detail).
 
+## [8.0.0-beta.5] - 2026-11-10
+
+A measured production run shows where the doctrine stopped the work, and the
+gaps that let it happen close into gates.
+
+- **The search discipline is stated where a search will load it.** A measured
+  production run spent half its 270 shell calls on search waste: one concept
+  re-searched 104 times under different flags and spellings, and 21 calls
+  passing a value-taking replace-flag in the positional slot, so the flag
+  consumed the pattern and the output came back silently rewritten while the
+  call still looked like a hit. Two clauses now sit in the intake section of
+  both doctrine surfaces: a search that returns nothing is a miss, so the
+  query changes and not the flags; and a diagnosis closes on a named check
+  rather than on a restatement of the cause. The mechanics live in the
+  `indexed-search` skill, whose trigger clause now also fires on a search that
+  returned nothing, on the same concept searched again under a different flag,
+  and on uncertainty about which flag to pass — the conditions the measured run
+  met and the old trigger did not name. The new `searchdiscipline` gate
+  asserts the rule survives on all three surfaces.
+- **The trigger instrument measures the conditions the description claims.**
+  The widened search-skill description names three conditions no query
+  covered, so the instrument could not see the change it was meant to measure.
+  Five queries now cover them, two of them near-miss negatives that hold the
+  boundary: a single known-string lookup in a small tree stays quiet, and a
+  search box in a UI is not a code search. Scored on the same 21 queries, the
+  old description to the new one, train holds at 0.54 and the held-out
+  validation split rises from 0.62 to 0.75 — the split that counts, because a
+  description tuned on train positives and validated on train negatives never
+  sees the shape it must generalize to.
+- **The gate count stops drifting from the gates.** The README and the CI
+  workflow both said thirty-four while `check.py` ran thirty-five. The new gate
+  is listed in both, so the table stays a faithful reading aid of what CI runs.
+
 ## [8.0.0-beta.4] - 2026-11-10
 
 The skills align with the Agent Skills specification and the two skill-authoring
