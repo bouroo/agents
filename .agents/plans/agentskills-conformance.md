@@ -28,6 +28,18 @@ body, 3140 bytes).
   still carries the folded `description: >-` and the layout work; read the
   quoted description from the pin, not from `improve/layout-quality`.
 
+### DONE_WHEN status
+
+| # | criterion | status | evidence |
+|---|---|---|---|
+| 1 | `check.py --all` exits 0 | met | `OK (34 gate(s))` on the merged branch, on a fresh `--depth 1` clone, and on a fresh `--recursive` clone with the submodule at `fec9567` |
+| 2 | new gate enforces the spec's content rules | met | `layout`, `skillvoice`, `thirdparty` added; 31 -> 34 |
+| 3 | every description follows the description rules | met | `descriptions` + `skillvoice` pass; 10/10 open with `Use`, longest 662 chars (limit 1024), always-on ~8159 of 9000 |
+| 4 | trigger set matches the spec's query shape | met | 8/8 to 10/10 per skill, train and validation both mixed; `triggers` gate passes |
+| 5 | per-skill train rate reported, edits guided by train | **partly met** | the table below has all ten rows, but nine predate `4b292fc`; see its provenance note |
+| 6 | vendored skill conformant, gates reach it | met, pointer sense | description is one quoted line, 760 chars, with a boundary; gates reach the pointer via `thirdparty`, not the content |
+| 7 | beta release | met | PR #105 and #106 merged, annotated tag, prerelease published |
+
 ### Measured trigger rate (train split, `--model haiku`, 3 runs/query)
 
 | skill | train | skill | train |
@@ -42,12 +54,12 @@ Source: `/tmp/kilo/probe/meas-<skill>.log`, 07:22-08:05 on 2026-11-10, i.e.
 **before** the final description commit `4b292fc` (10:23). Only `architecture`
 was re-measured after it (`/tmp/kilo/measure/architecture.train.log`, 11:38,
 7/10 unchanged). Nine of the ten rows therefore score the description as it
-stood before the last body-and-description pass: the numbers satisfy
-DONE_WHEN 5 as a measurement, not as evidence about the shipped descriptions,
-and a re-measure is owed before any such claim. Every `should-not-trigger` row
-scored 0.00 except one (`problem-details`, which over-triggers a single
-negative). So the shortfall is on the trigger side: a description that names
-the user's situation more precisely than it names the skill.
+stood before the last body-and-description pass: the numbers satisfy DONE_WHEN
+5 as a measurement, not as evidence about the shipped descriptions, and a
+re-measure is owed before any such claim. Every `should-not-trigger` row scored
+0.00 except one (`problem-details`, which over-triggers a single negative), so
+the shortfall sits on the trigger side: a description that names the user's
+situation rather than the skill.
 
 These are three-run samples on a host whose router is `combo-free`, so they
 read as direction, not precision.
@@ -136,20 +148,28 @@ Pre-work numbers below; the OUTCOME block carries the shipped state (34 gates,
 - `scripts/check.py --all` = 31 gates, exit 0 on `feat/agentskills-spec`.
 - Always-on budget: AGENTS.md ~6724 + descriptions ~1866 = ~8590 of 9000
   tokens → only ~410 tokens (~1640 chars) of headroom for all 10 descriptions.
-- Skill body headroom to 5000 tokens: execution +1 token (!), quality +17,
-  delivery +599; the other seven have >2200.
+- Skill body headroom to 5000 tokens at `ab00fd9`: execution +1 token (!),
+  quality +17, delivery +599; the other seven have >2200 (confluence +2235 is
+  the smallest of them).
 - Description shapes after the rewrite: 10/10 open with `Use …` (or `Use for`,
   `Use before`), each carries a clause keeping it in scope when the domain is
-  not named, and each keeps a boundary. Pre-work state was 4/10 imperative and
-  6/10 carrying "even if"/"even when".
-- `evals/trigger.json`: positives per skill = architecture 8, confluence 8,
-  delivery 10, execution 13, indexed-search 8, modernize-coding 8,
-  problem-details 8, quality 8, security-audit 8, unslop 15. Spec says
-  8-10 positives and 8-10 negatives → execution and unslop are over.
+  not named, and each keeps a boundary. Re-measured pre-work state at `ab00fd9`:
+  7/10 opened with an imperative verb and 3/10 with `Use …` (delivery,
+  execution, quality), 6/10 carried "even if"/"even when". The earlier "4/10
+  imperative" reading was not reproducible and is corrected here.
+- `evals/trigger.json` shipped shape: positives/negatives per skill = architecture 8/8, confluence 8/8,
+delivery 10/8, execution 10/8, indexed-search 8/8, modernize-coding 8/8, problem-details 8/8,
+quality 8/8, security-audit 8/8, unslop 10/10. Spec says 8-10 of each, so all ten
+are inside it. Pre-rewrite it was execution 13 and unslop 15 positives, both over.
 - Measurement mechanics: `claude -p <q> --model haiku --output-format
   stream-json --verbose` emits `tool_use` `{"name":"Skill","input":{"skill":
-  "<name>"}}` → the repo runner's default marker matches. ~22-60 s/run,
-  ~$0.19-0.65/run on haiku.
+  "<name>"}}` → the repo runner's default marker matches. Measured again on
+  the merged branch: 30-80 s/run, and the cost driver is the init payload, not
+  the prompt. `--strict-mcp-config` alone leaves ~$0.25-0.35/run, mostly MCP
+  tool schemas; adding `--tools Skill,Bash,Read,Edit,Write,Glob,Grep,Task`
+  drops the surface from 60+ tools to 8 and the run to ~$0.10, with the Skill
+  call still firing first. Calibrate the marker with `--tools` in place,
+  because the trigger decision is what is being measured, not the follow-up.
 - The host loads skill content from `~/.claude/skills` (a symlink to the
   repo's `skills/`), so a *worktree* edit does NOT change what triggers.
   Measurement must run against the checkout that `~/.claude/skills` points at.
@@ -158,6 +178,13 @@ Pre-work numbers below; the OUTCOME block carries the shipped state (34 gates,
   reports "1 symlinked skill pointer(s) untracked and documented". The earlier
   reading (symlinking breaks `descriptions`, `skillbudget`, `evals`) predates
   the `_skill_dirs` symlink exclusion and is withdrawn.
+- What "reach" means, measured rather than asserted: copied to
+  `skills/zz-vendored-test`, the same content fails `frontmatter` (directory
+  name != frontmatter name), `portable` (framework tokens in seven files),
+  `privacy` (a numeric real-work identifier in `references/style-strings.md`),
+  and drags `evals` red with it. So the gates reach the *pointer*, and its
+  content stays out by design; DONE_WHEN 6 is satisfied in the pointer sense
+  its own last clause asks for, not in the sense of the content passing them.
 - The vendored skill: 6701 tokens / 279 lines (over the 5000 budget),
   `description: >-` folded YAML (the repo's line-based frontmatter parser
   reads only the literal `>-`), and it carries real-work identity.
