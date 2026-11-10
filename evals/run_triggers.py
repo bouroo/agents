@@ -35,6 +35,7 @@ import re
 import shlex
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SET = ROOT / "evals" / "trigger.json"
@@ -150,7 +151,7 @@ def triggered(cmd: str, prompt: str, marker: re.Pattern) -> bool:
 
 
 def measure(suite: dict, skills: list[str], cmd: str, marker_tpl: str,
-            runs: int, threshold: float) -> int:
+            runs: int, threshold: float, workers: int = 8) -> int:
     """Print one line per query and a pass rate per split.
 
     The split rates are the point: a description tuned until train saturates
@@ -162,9 +163,12 @@ def measure(suite: dict, skills: list[str], cmd: str, marker_tpl: str,
     for name in skills:
         marker = re.compile(marker_tpl.replace("{skill}", re.escape(name)))
         for split, rows in suite["skills"][name].items():
-            for row in rows:
+            def rate_for(row):
                 hits = sum(triggered(cmd, row["query"], marker) for _ in range(runs))
-                rate = hits / runs
+                return hits / runs
+            with ThreadPoolExecutor(max_workers=workers) as ex:
+                rates = ex.map(rate_for, rows)
+            for row, rate in zip(rows, rates):
                 want = row["should_trigger"]
                 ok = rate >= threshold if want else rate < threshold
                 tally = totals.setdefault(split, [0, 0])
@@ -190,6 +194,8 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--runs", type=int, default=0, help="runs per query (default: set value)")
     ap.add_argument("--threshold", type=float, default=0.0,
                     help="pass threshold (default: set value)")
+    ap.add_argument("--workers", type=int, default=8,
+                    help="parallel rows per split")
     args = ap.parse_args(argv)
 
     try:
@@ -219,7 +225,8 @@ def main(argv: list[str]) -> int:
 
     runs = args.runs or int(suite.get("runs", 3))
     threshold = args.threshold or float(suite.get("threshold", 0.5))
-    failures = measure(suite, skills, args.invoke, args.marker, runs, threshold)
+    failures = measure(suite, skills, args.invoke, args.marker, runs, threshold,
+                        args.workers)
     print(f"{'OK' if not failures else 'FAIL'}: {failures} quer(ies) outside threshold")
     return 0 if not failures else 1
 
