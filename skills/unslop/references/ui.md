@@ -13,6 +13,15 @@ Adapted from [heydamir/unslop](https://github.com/heydamir/unslop) (`skills/unsl
 - **Real product, real material.** Previews look like the real app with plausible data; objects look like real things with weight, light and shadow.
 
 The difference between slop and craft is where the richness goes. Slop spreads colour and effects over the chrome. Craft keeps the chrome quiet and puts the richness into one or two moments of content.
+## Before the passes
+
+**Size the job honestly.** Audit against U10 first, then pick the path. Many signs across colour, type, icons, and copy: run every pass. A mostly designed screen with a few signs: fix only what the audit found, keep the palette, type, and layout, and report the larger ideas as suggestions rather than applying them. No signs: say so and stop; a good screen is not changed to make it different.
+
+**Read the project's own design system before inventing one.** A token file, a theme stylesheet, a component library, or a config naming the scale and the accent is the answer, and the passes then name its tokens instead of new values. A house style that a pass would flatten is a house style, not slop. Invent a ramp only when the project has none, and say in the report that it is new.
+
+**Judge what renders, not what the source says.** Open the page, run the app, take a screenshot, and look at it before changing a value; a rule can pass in the source and still look wrong on the screen. Re-render once after the passes and compare against the audit, rather than reasoning about the CSS.
+
+**Write the direction first, in five lines:** what the product does and for whom; two or three concrete character words ("clean", "modern", "minimal", and "premium" describe every template, so they are not words); the world it belongs to, which tints the neutrals and picks the accent; one or two moments that carry the richness; and one signature detail only this product would have. Derive all five from the product, never from what is trending.
 
 ## U1. Spacing
 
@@ -53,7 +62,7 @@ The difference between slop and craft is where the richness goes. Slop spreads c
 - Short labels: `Search`, not `Search anything...`.
 - A change says what it compares to: `+12% vs last month`.
 - Headlines, subheads, labels, buttons and captions end without a period. Only paragraphs of several sentences keep their periods.
-- No hype words like supercharge, seamless, unlock, magic, revolutionize, game-changing, and no `AI-powered` on everything.
+- No hype words like "supercharge", "seamless", "unlock", "magic", "revolutionize", "game-changing", and no `AI-powered` on everything.
 - Claims that cannot be checked, like `Loved by 10,000+ teams`, become quiet and specific if the user confirms they are real, and are removed otherwise.
 - Mock data looks real, with plausible numbers and names, never a bracketed placeholder.
 - Badges like `PRO`, `New` or `Beta` go away unless the product needs them, and then they are quiet text.

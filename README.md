@@ -89,6 +89,7 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   │                                  coverage and per-domain hunter rules
 │   └── unslop/                        remove AI residue from prose, code, and UI:
 │       └── references/                rule lists per surface, stable rule ids;
+│                                      preservation contract + audit mode;
 │                                      scanner script; prose (MIT) and UI (CC BY) credits
 ├── agents/                           role agents: lead + worker
 │   ├── lead.md, worker.md            root links, for omp's plugin-level scan
