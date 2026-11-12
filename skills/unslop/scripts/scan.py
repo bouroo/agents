@@ -56,6 +56,14 @@ PROSE_RULES: list[tuple[str, str, str]] = [
      "name the operation, the subject and the outcome"),
     ("P50", r"\b(?:In the future,? we (?:might|could|may) want to|Future work:)\b",
      "either the task ships it or the sentence goes"),
+    ("P51", r"\b(?:Here's the thing|It turns out|The uncomfortable truth"
+            r"|Let's (?:dive in|unpack|explore|break this down)|Here's why"
+            r"|The real \w+ is)\b",
+     "cut the frame and start at the point"),
+    ("P52", r"\b(?:As an AI language model|As a large language model"
+            r"|my (?:knowledge )?cutoff|I (?:don't|do not) have access to"
+            r"|based on the information (?:provided|you gave))\b",
+     "read the source or state plainly what the artifact does not cover"),
 ]
 
 CODE_RULES: list[tuple[str, str, str]] = [
@@ -199,6 +207,35 @@ def first_line_of_comment_block(text: str, lineno: int) -> bool:
     return not (previous.startswith("#") or previous.startswith("//"))
 
 
+def in_fence(text: str, lineno: int) -> bool:
+    """True when the line sits inside a fenced code block.
+
+    A fenced block in a document is an example, not the document's prose: a
+    README demonstrating "Something went wrong" is showing the defect, and
+    flagging it asks the author to break the example. Inline backticks stay
+    scanned, because a single quoted token is usually the real usage.
+    """
+    fences = sum(1 for line in text.splitlines()[:lineno - 1]
+                 if line.lstrip().startswith(("```", "~~~")))
+    return fences % 2 == 1
+
+
+def in_quote(text: str, offset: int) -> bool:
+    """True when the match sits inside a quoted span on its own line.
+
+    A rule list that names the residue has to quote it ("seamless", "synergy"),
+    and a document citing a bad example is showing the defect rather than
+    committing it. Only the same-line span counts, so an unbalanced quote
+    elsewhere cannot suppress a real finding.
+    """
+    start = text.rfind("\n", 0, offset) + 1
+    end = text.find("\n", offset)
+    line = text[start:end if end != -1 else len(text)]
+    before = line[:offset - start].count('"')
+    after = line[offset - start:].count('"')
+    return before % 2 == 1 and after >= 1
+
+
 def scan_text(text: str, families: list[tuple[str, re.Pattern, str]]) -> list[tuple[int, str, str, str]]:
     """Every rule hit in one text, with its line number."""
     hits: list[tuple[int, str, str, str]] = []
@@ -212,6 +249,9 @@ def scan_text(text: str, families: list[tuple[str, re.Pattern, str]]) -> list[tu
                     and typed_none_sentinel(text, lineno):
                 continue
             if rule_id in ("C12", "C15") and not first_line_of_comment_block(text, lineno):
+                continue
+            if rule_id.startswith("P") and (
+                    in_fence(text, lineno) or in_quote(text, match.start())):
                 continue
             snippet = " ".join(match.group(0).split())[:60]
             hits.append((lineno, rule_id, snippet, hint))
@@ -283,6 +323,14 @@ def self_test() -> int:
         # The hype register the forward test showed missing.
         ("prose.md", "A robust, seamless solution that handles errors gracefully.", "P7"),
         ("prose.md", "Our industry-leading approach leverages cutting-edge techniques.", "P7"),
+        # The new rules: the frame that delays the point, and the model talking
+        # about itself instead of reading the source.
+        ("prose.md", "Here's the thing about caching: it is hard.", "P51"),
+        ("prose.md", "As an AI language model, I cannot browse the site.", "P52"),
+        # A fenced block demonstrates the defect: the example is not the prose.
+        ("prose.md", "Wrap it:\n\n```text\nSomething went wrong\n```\n", None),
+        # A rule list names the residue inside quotes: that is the catalogue.
+        ("prose.md", 'Replace "seamless" and "synergy" with plain words.\n', None),
     ]
     failures = []
     for name, text, expected in cases:

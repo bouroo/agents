@@ -12,9 +12,19 @@ license: Apache-2.0
 
 **A tell marks unfinished work.** "Handles errors gracefully" beside a `catch` that swallows is a symptom. Rewording it hides the defect. Treat every prose claim as a specification to check against the code: where the code does not do what the sentence says, the code is what changes. Rewriting prose to agree with a defect is the one wrong move this skill can make.
 
+**A rewrite may not invent the fact.** Replacing "robust retry logic" with "three attempts over 500ms" is a fix only when the repository says so. The fact comes from the code, the test, the config, or the user's own words, never from what the sentence plausibly meant. Where nothing carries it, the sentence is cut, or the hit is *missing work*. An invented number is worse than the adjective it replaced, because it now looks checkable.
+
+**Preservation outranks polish.** A rewrite fixes the confirmed span and copies every other sentence unchanged, in its original order. Facts survive exactly: numbers, units, dates, names, paths, identifiers, quotes, citations, code. So do scope and negation, because "does not support" is not "partially supports", "most" is not "all", and "may" is not "does". Force-bearing words ("never", "must", "all") keep their force in a security, legal, or safety rule, where weakening them is the defect rather than the fix. No findings means the source comes back unchanged: a no-op beats an uncertain edit.
+
+**A hit is not a verdict, and a verdict is not a licence to invent.** The scanner flags a phrase; the judge decides whether this project, this voice, or this quoted example earns it. A literal use, a domain term, an attributed quote, and an accurately caveated claim are all protected. Nothing in this skill licenses a new fact, a new claim, or a new recommendation to fill a gap the rewrite opened.
+
+**Do not overshoot.** Cutting filler into clipped fragments, dropping articles to sound punchy, or swapping one cliché for another trades one machine register for another (P53). A rewrite that a reader has to decode is a second defect, not a fix.
+
 **Scope:** this skill owns the residue, not the craft. The `quality` skill owns craft, verification, and the comment rule; `architecture` owns structure and domain language; `modernize-coding` owns idiom. Where this skill touches those, it points at them rather than restating them. It adds nothing: it removes residue from artifacts the task already touches, and reports residue found outside that scope without rewriting it.
 
 ## 1. Route the surface
+
+**The project outranks these lists.** A project that declares its own design system, component library, glossary, or house style has already answered the question these rules are guessing at. Read the declaration before judging: the tokens file, the component config, the style guide, the glossary. Where the project's own choice conflicts with a default here, the choice stands and the report says so.
 
 | Surface | Artifacts | Rule list |
 | --- | --- | --- |
@@ -33,6 +43,8 @@ PENDING: file:line  RULE  what it would take
 
 `residue` is rewritten here; `missing work` is not, and carries the `PENDING:` line into the build queue. A claim with no referent is never quietly dropped.
 
+The scanner is report-only by construction: it prints findings and changes nothing. Run it when the ask is to flag, audit, or review; apply the rewrite yourself when the ask is to fix. Every report names the spans it protected and why.
+
 ## 2. Run it
 
 1. **Scope.** List the artifacts in the task's scope, one per surface. Everything else is report-only.
@@ -41,6 +53,8 @@ PENDING: file:line  RULE  what it would take
 4. **Rewrite.** Apply the fix the rule names. Preserve meaning, preserve the project's own voice, and keep the tone the author intended. A rewrite that changes behaviour is not a rewrite.
 5. **Verify.** Run the project's own gates. Prose claims must still be true of the code, code must still pass its tests, and a changed screen must still render. A rewrite that breaks the build is a regression, not a cleanup.
 6. **Report.** Per surface: what was found, what changed, what was deliberately kept, and what is left as `PENDING:`.
+
+**Audit only.** "Just flag it", "review this before I publish", "what would you cut": stop after step 3. Report every hit with its rule id, mark which are clear defects and which are judgement calls, and change nothing.
 
 `scripts/scan.py` flags the machine-detectable residue in a path (words, phrases, placeholder markers, leftover debug output) with the rule id attached. It finds candidates, not verdicts: every hit is judged before it is rewritten. Run `python3 skills/unslop/scripts/scan.py --self-test` to check the scanner itself.
 

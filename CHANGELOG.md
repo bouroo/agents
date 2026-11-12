@@ -29,6 +29,33 @@ The always-on surface is measured, not assumed, and a settled fact stays settled
   the bounded-evidence clause in the manifesto: record the result and read it
   back.
 
+## [8.0.0-beta.9] - 2026-11-11
+
+The unslop skill gains the half it was missing: preservation.
+
+- **Preservation outranks polish.** The skill could cut residue, but nothing
+  in it said what a rewrite must not touch. Facts, units, dates, names, paths,
+  identifiers, quotes, citations, and code now survive a rewrite exactly, and
+  so do scope, negation, and force-bearing words in a security or legal rule.
+  With no finding, the source returns unchanged: a no-op beats an uncertain
+  edit.
+- **A rewrite may not invent the fact.** "Robust retry logic" becomes "three
+  attempts over 500ms" only when the repository says so. Otherwise the sentence
+  is cut, or the hit is missing work and carries a `PENDING:` line.
+- **A hit is not a verdict.** Quoted examples, fenced demonstrations, domain
+  terms, and attributed quotes are protected, so the scanner stops flagging the
+  rule lists that name the residue and the documents that cite it.
+- **The project outranks the lists.** A declared design system, component
+  library, or glossary is read before judging; its choice beats a default here.
+- **Audit only.** "Just flag it" stops after the split, reports every hit with
+  its rule id, and changes nothing.
+- **Three prose rules added:** the throat-clearing opener (P51), the model
+  talking about itself instead of reading the source (P52), and the anti-slop
+  overshoot that swaps one machine register for another (P53).
+- **The interface surface gains its preconditions:** size the job honestly
+  before running nine passes, read the project's tokens before inventing a
+  palette, and write the five-line direction before touching a value.
+
 ## [8.0.0-beta.8] - 2026-11-10
 
 Context becomes a budget rather than a container.

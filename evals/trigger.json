@@ -701,6 +701,10 @@
           "should_trigger": true
         },
         {
+          "query": "review this README for AI tells but don't change anything",
+          "should_trigger": true
+        },
+        {
           "query": "the log messages don't say what operation ran - fix that",
           "should_trigger": false
         },

@@ -10,7 +10,7 @@ Adapted from the `unslop` skill in [cursor/plugins](https://github.com/cursor/pl
 
 **P5. Vague attributions.** "Experts believe", "Industry reports suggest", "Some critics argue". Name the source or delete the sentence.
 
-**P7. AI vocabulary.** Additionally, crucial, delve, enduring, enhance, fostering, garner, interplay, intricate, landscape (abstract), pivotal, showcase, tapestry (abstract), testament, underscore, vibrant. The same register adds seamless, robust, gracefully, comprehensive, groundbreaking, industry-leading, cutting-edge, state-of-the-art, best-in-class. Replace with the plain word, or with the fact it stood in for.
+**P7. AI vocabulary.** "Additionally", "crucial", "delve", "enduring", "enhance", "fostering", "garner", "interplay", "intricate", "landscape" (abstract), "pivotal", "showcase", "tapestry" (abstract), "testament", "underscore", "vibrant". The same register adds "seamless", "robust", "gracefully", "comprehensive", "groundbreaking", "industry-leading", "cutting-edge", "state-of-the-art", "best-in-class". Replace with the plain word, or with the fact it stood in for.
 
 **P8. Fancy ways to say "is".** "serves as", "stands as", "boasts", "features". Say "is" or "has".
 
@@ -54,7 +54,7 @@ Adapted from the `unslop` skill in [cursor/plugins](https://github.com/cursor/pl
 
 ## Jargon
 
-**P26. Abstract metaphor nouns.** Substrate (base), wedge, wedge in (add), vector (way, method), locus, vantage, nexus, primitive as a noun, harness as a metaphor, surface as in "API surface", bedrock, scaffolding as a metaphor, modality, paradigm, gold-plating, ratchet as a metaphor, evacuate for moving code, endgame, north star, flywheel. These read as technical but usually have a plainer concrete word.
+**P26. Abstract metaphor nouns.** "Substrate" (base), "wedge", "wedge in" (add), "vector" (way, method), "locus", "vantage", "nexus", "primitive" as a noun, "harness" as a metaphor, "surface" as in "API surface", "bedrock", "scaffolding" as a metaphor, "modality", "paradigm", "gold-plating", "ratchet" as a metaphor, "evacuate" for moving code, "endgame", "north star", "flywheel". These read as technical but usually have a plainer concrete word.
 
 ## Plain speech
 
@@ -94,20 +94,31 @@ Adapted from the `unslop` skill in [cursor/plugins](https://github.com/cursor/pl
 
 **P50. The roadmap that is a wishlist.** "In the future, we might want to add caching". Either the task adds it or the sentence goes. A wishlist in a changelog is a promise the release notes cannot honour.
 
+**P51. The throat-clearing opener.** "Here's the thing", "It turns out", "The uncomfortable truth is", "Let's dive in", "Let's unpack", "Here's why". The sentence delays the point it promises. Cut the frame and start at the point.
+
+**P52. The model talking about itself.** "As an AI language model", "I don't have access to real-time data", "my knowledge cutoff", "I cannot browse", "based on the information provided". In a delivered artifact this is never residue to reword, it is a fabrication or a gap: the run either reads the source or the artifact says plainly what it does not cover.
+
+**P53. The anti-slop overshoot.** The repair that becomes a second register: staccato fragments, dropped articles, one cliché traded for another, and a hedge upgraded to a claim ("may reduce latency" becomes "slashes latency"). Slop is vague, and its mirror image is clipped and mannered. The fix is a whole sentence with an actor, a mechanism, and a number, not less grammar.
+
+**Quoted and illustrative text is protected.** A sentence inside quotation marks, a block quote, or a code fence that demonstrates the defect is an example, not prose to rewrite: a rule list quoting "seamless" and "synergy" is doing its job. The same holds for a marker the sentence names as an instruction; the blind spots below carry those cases.
 
 ## Known blind spots
 
 The scanner finds candidates; these are the ones it cannot see, so a manual
 pass still owes them attention.
 
-- **A marker named as an instruction.** "`TBD` for the code" and "write `TBD` and
-  name who owes it" tell the author to use a marker; the marker itself is the
-  correct output. The scanner cannot tell an instruction from a leftover.
+- **A marker named as an instruction.** "Put a `TBD` for the code" and "write
+  a `TBD` and name who owes it" tell the author to use a marker; the marker
+  itself is the correct output. The scanner cannot tell an instruction from a
+  leftover, so these two hits stay in a scan of this file.
 - **A placeholder-shaped token in a code sample.** `typing.Optional[X]` holds a
   type variable named `X`, not an unsubstituted field.
 - **A claim with no hype word.** "Handles errors gracefully" and "the processor
   is optimized" carry no word from the P7 list, and fire under P40 only when a
   performance phrase is present. Read for the meaning, not for the vocabulary.
+- **A catalogue token inside inline code.** A rule list naming a marker or a
+  sample token writes it in backticks, and the scanner reads inline code as
+  real usage. Judge it by what the sentence does, not by the token.
 - **An unmeasured performance claim.** A benchmark with a number and a date is
   evidence; a benchmark with only a multiplier is residue (P40, C36), and the
   scanner sees the multiplier only as prose.
