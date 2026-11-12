@@ -31,7 +31,7 @@ Long-term memory also splits by kind, which decides where a fact belongs: **sema
 ## Authoring a rule
 
 - **Write the check, not the virtue.** "Keep code clean" is unenforceable; "run the project's test command after touching business logic" and "request handlers live under the service's handler directory" are checkable. A rule that cannot be checked becomes a deterministic gate, not louder prose.
-- **One topic per file.** Split style, testing, interface design, and security into separate files beside the project's instruction file. The main file stays a map of global, cross-cutting context — treat 200 lines as the ceiling, past which adherence drops and conflicts multiply.
+- **One topic per file.** Split style, testing, interface design, and security into separate files beside the project's instruction file. The main file stays a map of global, cross-cutting context — keep it to a few hundred lines, past which adherence drops and conflicts multiply.
 - **Load by path, never globally.** A rule scoped to a directory, file type, or role is loaded only when the agent works on matching files. Loading frontend conventions while editing a database migration is noise that competes with the rule that matters.
 - **Reference, do not copy.** Rules shared across repositories belong in one importable or symlinked package; a copy drifts and a fix reaches one repository only.
 - **Prune like code.** Cut anything the agent can derive by reading the repository (directory listings, obvious style, restated commands). Keep build/test commands, divergent conventions, and gotchas. A stale rule is worse than an absent one: it reads as current truth.

@@ -2,7 +2,7 @@
 
 > Load on demand. The short cycle lives in [quality](../SKILL.md); this file is the detail.
 
-Optimization without measurement is guessing, and guesses about bottlenecks are wrong ~80% of the time. Every step produces an artifact — a captured command, a report file, a benchmark result. The artifact is the evidence; the narrative is not.
+Optimization without measurement is guessing, and a guess about the bottleneck is as likely to be wrong as right until a profile names it. Every step produces an artifact — a captured command, a report file, a benchmark result. The artifact is the evidence; the narrative is not.
 
 ## The cycle
 
@@ -20,7 +20,7 @@ One change at a time is non-negotiable. Bundling changes destroys causality: you
 
 ## Rule out external bottlenecks first
 
-Before optimizing code, verify the bottleneck is in your process. If 90% of latency is a slow DB query or upstream API call, local allocation tuning will not move the number.
+Before optimizing code, verify the bottleneck is in your process. If most of the latency sits in a slow DB query or upstream API call, local allocation tuning will not move the number.
 
 - An **off-CPU profiler** shows I/O wait. If off-CPU dominates, the bottleneck is external.
 - **Distributed tracing** shows which upstream span is slow.

@@ -58,6 +58,12 @@ Static gates over docs/skills plus the distribution layer:
                     next gate, one source of truth per artifact, advisory
                     versus deterministic controls, autonomy stopping at the
                     production gate) survive on every surface that carries them
+    toolrouting     the tool-routing clause (read, search, and list through
+                    the purpose-built tools, shell only commands) survives on
+                    both doctrines and the reference that designs the surface
+    leadorientation the lead's orientation bound (graph, briefs, verification,
+                    merge, not exploration; first unit dispatched once the graph
+                    is written) survives on every lead role surface
 
 Run `python3 scripts/check.py --all`; CI runs the same. Exit 0 iff no gate
 fails. Notes: `.agents/plans/**` is deliberately outside every scan -- those
@@ -332,14 +338,15 @@ def g_budget() -> None:
 # bodies and references are on-demand and are budgeted by `skillbudget`.
 # The rewrite added four always-loaded rules (the accepted artifact fires the
 # next gate, one source of truth per artifact, advisory versus deterministic
-# controls, autonomy stopping at the gate), so the always-on footprint grew by
-# design. The budgets rise with it, keeping roughly the headroom the setup had
-# before: a ceiling that sits at 99% of the footprint turns the next legitimate
-# rule into a red gate, which is how a budget stops bounding cost and starts
-# blocking the work.
-ALWAYS_ON_TOKEN_BUDGET = 9000
-ALWAYS_ON_MANIFESTO_BUDGET = 7500
-ALWAYS_ON_STANDALONE_BUDGET = 5500
+# controls, autonomy stopping at the gate), and the tool-routing clause
+# followed, so the always-on footprint grew by design. The budgets rise with
+# it, keeping the several-hundred-token headroom the setup had before: a
+# ceiling that sits at 99% of the footprint turns the next legitimate rule
+# into a red gate, which is how a budget stops bounding cost and starts
+# blocking the work. Each ceiling carries ~300 tokens of slack.
+ALWAYS_ON_TOKEN_BUDGET = 9300
+ALWAYS_ON_MANIFESTO_BUDGET = 7800
+ALWAYS_ON_STANDALONE_BUDGET = 5800
 
 
 def _tokens(text: str) -> int:
@@ -806,6 +813,40 @@ RULE_SURFACES = {
         ("skills/execution/references/harness-design.md",
          re.compile(r"measure the schema cost", re.IGNORECASE)),
     ],
+    # A measured run spent most of its calls reaching through the shell for
+    # work a purpose-built tool already did: a file read printed whole into the
+    # window instead of a slice, a search printed matches instead of returning
+    # them, and one turn's print pushed the context to its largest size. The
+    # rule is stated in both always-loaded clauses, and the reference that
+    # designs the tool surface reads the same boundary from the other side --
+    # the surface that loads when a tool is being chosen.
+    "toolrouting": [
+        ("AGENTS.md", re.compile(r"read with the read tool, not `cat`",
+                                 re.IGNORECASE)),
+        ("standalone/AGENTS.md",
+         re.compile(r"read with the read tool, not `cat`", re.IGNORECASE)),
+        ("skills/execution/references/harness-design.md",
+         re.compile(r"same boundary read the other way", re.IGNORECASE)),
+    ],
+    # The lead explores before it dispatches, and the exploration duplicates
+    # work the first unit is about to redo: the measured run spent its opening
+    # phase in tool calls before any unit existed. The bound -- graph, briefs,
+    # verification, merge, then dispatch once the graph is written -- lives on
+    # every role surface, so a trimmed brief cannot quietly restore the habit.
+    "leadorientation": [
+        ("agents/common/lead.md",
+         re.compile(r"not exploration", re.IGNORECASE)),
+        ("agents/common/lead.plain.md",
+         re.compile(r"not exploration", re.IGNORECASE)),
+        ("agents/codex/lead.toml",
+         re.compile(r"not exploration", re.IGNORECASE)),
+        ("agents/common/lead.md",
+         re.compile(r"Dispatch the first unit as soon as the graph is written")),
+        ("agents/common/lead.plain.md",
+         re.compile(r"Dispatch the first unit as soon as the graph is written")),
+        ("agents/codex/lead.toml",
+         re.compile(r"Dispatch the first unit as soon as the graph is written")),
+    ],
     # Context is an attention budget, not a container: recall degrades as the
     # window grows, so "keep the window small" is an accuracy rule rather than
     # a cost rule. The altitude rule and the compaction policy come with it,
@@ -1007,6 +1048,36 @@ def g_schema() -> None:
                      f"{len(RULE_SURFACES['schema'])} canonical surface(s)")
 
 
+def g_toolrouting() -> None:
+    """The tool-routing rule survives where an agent chooses its tools.
+
+    A measured run spent its calls routing file reads, content searches, and
+    listings through the shell, so a file landed whole in the window and one
+    turn reached the largest input the run ever paid. Prose cannot be linted
+    for meaning, so this asserts PRESENCE on the always-loaded clauses and on
+    the reference that designs the tool surface, which loads exactly when a
+    tool is about to be chosen.
+    """
+    if _g_rule_surfaces("toolrouting"):
+        _add("PASS", "toolrouting: rule present on "
+                     f"{len(RULE_SURFACES['toolrouting'])} canonical surface(s)")
+
+
+def g_leadorientation() -> None:
+    """The lead's orientation bound survives on every lead role surface.
+
+    A lead that explores before it drafts units duplicates work the first unit
+    will redo, and a measured run made its opening calls that way before any
+    unit existed. The rule -- the lead owns the graph, the briefs, the
+    verification, and the merge, and dispatches once the graph is written --
+    is stated on every role surface, so a trim cannot restore the habit on one
+    variant only.
+    """
+    if _g_rule_surfaces("leadorientation"):
+        _add("PASS", "leadorientation: rule present on "
+                     f"{len(RULE_SURFACES['leadorientation'])} canonical surface(s)")
+
+
 def g_state() -> None:
     """The runtime-state rule survives on both doctrines and the skill.
 
@@ -1142,6 +1213,67 @@ def g_catalogue() -> None:
         return
     _add("PASS", f"{name}: {len(files)} doctrine file(s) free of "
                  f"catalogue-size counts")
+
+
+# A MEASUREMENT frozen into guidance: a statistic the doctrine asserts as
+# fact about the world -- "a measured turn hit 379k tokens", "intuition is
+# wrong 80% of the time", "typed comparison is 50-200x faster". Each number is
+# true of one run on one setup, and the reader cannot re-derive it, so it goes
+# stale silently and teaches a fact nobody can check. The mechanism carries
+# the rule; the number is the reader's to measure.
+#
+# A number inside a code span or a quotation is an EXAMPLE the doctrine names
+# on purpose (a rule about benchmark claims quotes "10x faster"); it teaches
+# the shape, not the statistic. So quoted and backticked matches pass.
+MEASURED_STAT_RE = re.compile(
+    r"(?:\bwrong\s*~?\d+(?:\.\d+)?\s*%|\b\d+(?:-\d+)?\s?x\s+"
+    r"(?:faster|slower|more|less)\b|\b\d+(?:\.\d+)?\s?k\s+tokens\b|"
+    r"\b\d+(?:\.\d+)?\s*%\s+of\s+(?:the\s+|total\s+)?"
+    r"(?:latency|time|errors|runtime)\b|\bre-?searched\s+\d+\s+times\b|"
+    r"\bhit\s+\d+(?:\.\d+)?\s?k\s+tokens\b|\b\d+(?:\.\d+)?\s*%\s+of\s+the\s+time\b)",
+    re.IGNORECASE)
+# A quoted span is an example; a backticked span is code the doctrine names.
+# Single quotes are left alone: an apostrophe in prose is not a quotation mark,
+# and treating it as one would hide a real hit behind the next apostrophe.
+MEASURED_EXAMPLE_RE = re.compile(r"`[^`]*`|\"[^\"]*\"")
+
+
+def _measured_spans(line: str) -> str:
+    """Return the parts of a line that are not quoted or backticked."""
+    return MEASURED_EXAMPLE_RE.sub(" ", line)
+
+
+def g_measured() -> None:
+    """No doctrine freezes a measurement as guidance.
+
+    A statistic asserted in prose -- a token count from one turn, a failure
+    rate from one run, a speed multiplier from one benchmark -- outlives the
+    run that produced it. The reader cannot check it, and it goes false
+    without anyone noticing. The mechanism carries the rule; the number is
+    the reader's to measure.
+    """
+    name = "measured"
+    files = [ROOT / "AGENTS.md", ROOT / "standalone" / "AGENTS.md"]
+    files += _skill_tree("*.md")
+    for sub in ("commands", "agents"):
+        files += sorted(p for p in (ROOT / sub).rglob("*.md")
+                        if _no_dotdir(p))
+    hits = []
+    for f in files:
+        if not f.is_file():
+            continue
+        rel = str(f.relative_to(ROOT))
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            m = MEASURED_STAT_RE.search(_measured_spans(line))
+            if m:
+                hits.append(f"{rel}:{i} '{m.group(0)}'")
+    if hits:
+        _add("FAIL", f"{name}: doctrine states a measurement as guidance "
+                     f"(state the mechanism, let the reader measure): "
+                     + "; ".join(hits))
+        return
+    _add("PASS", f"{name}: {len(files)} doctrine file(s) free of frozen "
+                 f"measurements")
 
 
 def g_dashes() -> None:
@@ -2113,7 +2245,7 @@ STANDALONE_RULES = [
     "swallow an error", "branch on error strings", "log secrets", "en-dash",
     "real-work identity", "speculative features", "restates the code",
     "non-derivable", "exported symbol", "executable evidence",
-    "optimize without measurement", "deterministic logic", "dirty checkout",
+    "optimize without measurement", "freeze a measurement", "deterministic logic", "dirty checkout",
     "destructive", "proof chain", "identical arguments", "not read this session",
     "edit or commit on the default branch",
 ]
@@ -2150,7 +2282,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("manifests", g_manifests),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes),
-         ("catalogue", g_catalogue),
+         ("catalogue", g_catalogue), ("measured", g_measured),
          ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
          ("searchdiscipline", g_searchdiscipline),
@@ -2158,6 +2290,8 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
          ("settled", g_settled), ("schema", g_schema),
+         ("toolrouting", g_toolrouting),
+         ("leadorientation", g_leadorientation),
          ("shared", g_shared), ("goal", g_goal), ("loop", g_loop),
          ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),

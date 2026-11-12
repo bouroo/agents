@@ -115,7 +115,7 @@ The `delivery` skill carries the plays for each stage — the steps, the governa
 │   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
 │   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
 └── scripts/
-    ├── check.py                       forty deterministic gates (CI runs these)
+    ├── check.py                       the deterministic gates (CI runs these)
     └── install.sh                     detect tools on a machine and install
 ```
 
@@ -199,6 +199,8 @@ python3 scripts/check.py --all
 | `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
 | `simplicity` | the simplicity rule survives on both canonical surfaces (manifesto + craft) |
 | `dashes` | the em-dash convention survives on both canonical surfaces (manifesto + craft), and the doctrine corpus carries no en-dash (digit-to-digit ranges are exempt as typographic data) |
+| `measured` | no doctrine freezes a measurement as guidance — a token count, failure rate, or speed multiplier asserted in prose is true of one run and cannot be re-derived, so the mechanism carries the rule and the reader measures the number |
+| `catalogue` | no doctrine states a catalogue's size as a number, so a rule never freezes one server's tool count into guidance |
 | `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
 | `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
 | `memory` | the memory rule (instruction memory separate from learning memory, written down rather than conversational) survives on both canonical surfaces (manifesto + execution) |

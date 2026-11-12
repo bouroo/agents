@@ -50,13 +50,13 @@ The guide's model, as a re-derivable calculation rather than a fact:
 
 - A sequential shape passing with per-cycle probability p spends, in expectation, 1/p cycles.
 - A parallel graph spends the same 1/p review cycles, but its reviews run concurrently — the wall-clock win — while each cycle pays every reviewer at once.
-- The graph's premium is therefore (number of reviewers) x (failure probability), which puts the claimed breakeven near p = 0.5: above it, concurrency repays; at p = 0.3 the guide prices the graph at ~3x tokens for the same result.
+- The graph's premium is therefore (number of reviewers) x (failure probability), which puts the breakeven where the reviewers' premium equals the sequential retry cost: above it, concurrency repays; below it, the graph is a tax for the same result.
 
 Re-derive on the job's own pass rates. Track **cost per successful completion** (total tokens and wall-clock divided by completed jobs), never wall-clock alone. Price the all-reviewers-fail path explicitly — reviewers that correlate (same lens, same blind spot) fail together, and correlated failures are what turn the premium into a tax.
 
 ## Temporal validity
 
-Auto-derived graphs decay: the guide's illustration prices 85% per-hop entity resolution at ~44% trustworthiness over five hops (0.85^5). Human-authored edges sidestep the compounding, but not expiry: knowledge edges (`SUPERSEDES`, `DEPENDS_ON`, ...) carry creation and last-verification dates — facts expire, they do not die — and an undated edge is stale until proven current.
+Auto-derived graphs decay: per-hop resolution priced at some rate below one compounds down over the hops, so trust falls the further the chain runs. Human-authored edges sidestep the compounding, but not expiry: knowledge edges (`SUPERSEDES`, `DEPENDS_ON`, ...) carry creation and last-verification dates — facts expire, they do not die — and an undated edge is stale until proven current.
 
 ## Cross-references
 

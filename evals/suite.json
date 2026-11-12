@@ -1090,6 +1090,53 @@
           "description": "the tool-schema cost rule is still present where the tool surface is designed"
         }
       ]
+    },
+    {
+      "id": "doctrine-freezes-no-measurement",
+      "prompt": "Add a note to the quality skill's performance section recording how much faster the typed comparison is than reflection. The doctrine must not freeze a measurement: a speed multiplier or a failure rate asserted in prose is true of one run on one setup, cannot be re-derived by the reader, and goes stale silently.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py measured",
+          "expect_exit": 0,
+          "description": "no doctrine file freezes a measurement as guidance, so a token count, failure rate, or speed multiplier cannot outlive the run that produced it"
+        },
+        {
+          "cmd": "python3 scripts/check.py standalone",
+          "expect_exit": 0,
+          "description": "the freeze-a-measurement constraint survives on both installed surfaces"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the note did not push a skill body past its token ceiling"
+        }
+      ]
+    },
+    {
+      "id": "tool-routing-rule-survives",
+      "prompt": "Trim the tool-routing clause in the manifesto and the standalone copy, or the paragraph of the lead role that bounds its orientation, to save space. The rule that a read, a search, and a listing go through the purpose-built tools, and that the lead dispatches once the graph is written instead of exploring first, must survive on every surface that states it.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py toolrouting",
+          "expect_exit": 0,
+          "description": "the tool-routing rule is present on both always-loaded clauses and on the reference that designs the tool surface, so a run chooses a purpose-built tool before reaching through the shell"
+        },
+        {
+          "cmd": "python3 scripts/check.py leadorientation",
+          "expect_exit": 0,
+          "description": "the lead's orientation bound and its dispatch-once-the-graph-is-written rule are present on every lead role surface, so one variant cannot lose it alone"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the harness-design reference is still named from its skill on a stated load condition, so the tool-surface half stays reachable"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "the trimmed prose adds no dangling relative link"
+        }
+      ]
     }
   ]
 }

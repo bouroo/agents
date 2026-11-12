@@ -18,9 +18,9 @@ Present -> drive it (§4-§5). Absent -> `command -v rg` and use ripgrep with th
 
 ## 2. Search discipline
 
-A search that returns nothing is a miss, not a defect. The measured failure was mechanical: one concept re-searched 34 times under different flags, 21 calls passing `-r` in recursive position so the flag ate the pattern and the output was rewritten while the call still looked like a hit.
+A search that returns nothing is a miss, not a defect. The measured failure was mechanical: one concept re-searched under a run of different flags, several calls passing `-r` in recursive position so the flag ate the pattern and the output was rewritten while the call still looked like a hit.
 
-- **One query, one concept.** Re-searching one concept under a different flag, path, or spelling is a new query, not new evidence. Fix one canonical form and hold it until the miss is established. A concept searched 34 ways is 34 facts about the flags, not 34 facts about the code.
+- **One query, one concept.** Re-searching one concept under a different flag, path, or spelling is a new query, not new evidence. Fix one canonical form and hold it until the miss is established. A concept searched many ways yields facts about the flags, not about the code.
 - **A miss is a miss.** Change the query — the concept, its scope, its spelling — never the tool's flags. Coaxing a result with a differently-spelled flag is the trap: a flag's meaning can differ by spelling, and the output can be rewritten silently while the call still looks like a hit. When a query legitimately must vary, vary one axis at a time and record which.
 - **The flag trap, concretely.** In ripgrep and tgrep alike, `-r` is `--replace` and takes a value: `rg -rn PATTERN` is `--replace n PATTERN`, so the pattern is consumed as the replacement text and the output comes back rewritten (exit 0, no error). `-n` is line numbers, and recursion is the default. Use `rg -n PATTERN` for line numbers, `rg -rn` never. Check the running engine's `--help` before trusting any flag spelling — this table included.
 - **Structured output goes to stdout, in the same call.** For machine-readable output, parse the command's stdout where it is produced; do not write a temp file and read it back in a later call. One call, one artifact: `rg --json PATTERN` piped into the parser that consumes it, not into a file.
