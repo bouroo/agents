@@ -9,7 +9,7 @@ The current line is carried in full; closed lines are retired below, one line
 each. The full history lives in git tags and log (`v1.0.0` through `v3.11.0`,
 and `git show v8.0.0-beta.6:CHANGELOG.md` for the retired detail).
 
-## [Unreleased]
+## [8.0.0-beta.10] - 2026-11-12
 
 The always-on surface is measured, not assumed, and a settled fact stays settled.
 
@@ -53,7 +53,7 @@ The always-on surface is measured, not assumed, and a settled fact stays settled
   surface, and the `leadorientation` gate keeps a trim from dropping it from
   one variant alone.
 
-Gates: 40 -> 42.
+Gates: 40 -> 46.
 
 ## [8.0.0-beta.9] - 2026-11-11
 
