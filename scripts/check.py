@@ -1215,6 +1215,67 @@ def g_catalogue() -> None:
                  f"catalogue-size counts")
 
 
+# A MEASUREMENT frozen into guidance: a statistic the doctrine asserts as
+# fact about the world -- "a measured turn hit 379k tokens", "intuition is
+# wrong 80% of the time", "typed comparison is 50-200x faster". Each number is
+# true of one run on one setup, and the reader cannot re-derive it, so it goes
+# stale silently and teaches a fact nobody can check. The mechanism carries
+# the rule; the number is the reader's to measure.
+#
+# A number inside a code span or a quotation is an EXAMPLE the doctrine names
+# on purpose (a rule about benchmark claims quotes "10x faster"); it teaches
+# the shape, not the statistic. So quoted and backticked matches pass.
+MEASURED_STAT_RE = re.compile(
+    r"(?:\bwrong\s*~?\d+(?:\.\d+)?\s*%|\b\d+(?:-\d+)?\s?x\s+"
+    r"(?:faster|slower|more|less)\b|\b\d+(?:\.\d+)?\s?k\s+tokens\b|"
+    r"\b\d+(?:\.\d+)?\s*%\s+of\s+(?:the\s+|total\s+)?"
+    r"(?:latency|time|errors|runtime)\b|\bre-?searched\s+\d+\s+times\b|"
+    r"\bhit\s+\d+(?:\.\d+)?\s?k\s+tokens\b|\b\d+(?:\.\d+)?\s*%\s+of\s+the\s+time\b)",
+    re.IGNORECASE)
+# A quoted span is an example; a backticked span is code the doctrine names.
+# Single quotes are left alone: an apostrophe in prose is not a quotation mark,
+# and treating it as one would hide a real hit behind the next apostrophe.
+MEASURED_EXAMPLE_RE = re.compile(r"`[^`]*`|\"[^\"]*\"")
+
+
+def _measured_spans(line: str) -> str:
+    """Return the parts of a line that are not quoted or backticked."""
+    return MEASURED_EXAMPLE_RE.sub(" ", line)
+
+
+def g_measured() -> None:
+    """No doctrine freezes a measurement as guidance.
+
+    A statistic asserted in prose -- a token count from one turn, a failure
+    rate from one run, a speed multiplier from one benchmark -- outlives the
+    run that produced it. The reader cannot check it, and it goes false
+    without anyone noticing. The mechanism carries the rule; the number is
+    the reader's to measure.
+    """
+    name = "measured"
+    files = [ROOT / "AGENTS.md", ROOT / "standalone" / "AGENTS.md"]
+    files += _skill_tree("*.md")
+    for sub in ("commands", "agents"):
+        files += sorted(p for p in (ROOT / sub).rglob("*.md")
+                        if _no_dotdir(p))
+    hits = []
+    for f in files:
+        if not f.is_file():
+            continue
+        rel = str(f.relative_to(ROOT))
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            m = MEASURED_STAT_RE.search(_measured_spans(line))
+            if m:
+                hits.append(f"{rel}:{i} '{m.group(0)}'")
+    if hits:
+        _add("FAIL", f"{name}: doctrine states a measurement as guidance "
+                     f"(state the mechanism, let the reader measure): "
+                     + "; ".join(hits))
+        return
+    _add("PASS", f"{name}: {len(files)} doctrine file(s) free of frozen "
+                 f"measurements")
+
+
 def g_dashes() -> None:
     name = "dashes"
     if not _g_rule_surfaces(name):
@@ -2184,7 +2245,7 @@ STANDALONE_RULES = [
     "swallow an error", "branch on error strings", "log secrets", "en-dash",
     "real-work identity", "speculative features", "restates the code",
     "non-derivable", "exported symbol", "executable evidence",
-    "optimize without measurement", "deterministic logic", "dirty checkout",
+    "optimize without measurement", "freeze a measurement", "deterministic logic", "dirty checkout",
     "destructive", "proof chain", "identical arguments", "not read this session",
     "edit or commit on the default branch",
 ]
@@ -2221,7 +2282,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("manifests", g_manifests),
          ("privacy", g_privacy), ("comments", g_comments),
          ("simplicity", g_simplicity), ("dashes", g_dashes),
-         ("catalogue", g_catalogue),
+         ("catalogue", g_catalogue), ("measured", g_measured),
          ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
          ("searchdiscipline", g_searchdiscipline),

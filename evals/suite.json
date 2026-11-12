@@ -1092,6 +1092,27 @@
       ]
     },
     {
+      "id": "doctrine-freezes-no-measurement",
+      "prompt": "Add a note to the quality skill's performance section recording how much faster the typed comparison is than reflection. The doctrine must not freeze a measurement: a speed multiplier or a failure rate asserted in prose is true of one run on one setup, cannot be re-derived by the reader, and goes stale silently.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py measured",
+          "expect_exit": 0,
+          "description": "no doctrine file freezes a measurement as guidance, so a token count, failure rate, or speed multiplier cannot outlive the run that produced it"
+        },
+        {
+          "cmd": "python3 scripts/check.py standalone",
+          "expect_exit": 0,
+          "description": "the freeze-a-measurement constraint survives on both installed surfaces"
+        },
+        {
+          "cmd": "python3 scripts/check.py skillbudget",
+          "expect_exit": 0,
+          "description": "the note did not push a skill body past its token ceiling"
+        }
+      ]
+    },
+    {
       "id": "tool-routing-rule-survives",
       "prompt": "Trim the tool-routing clause in the manifesto and the standalone copy, or the paragraph of the lead role that bounds its orientation, to save space. The rule that a read, a search, and a listing go through the purpose-built tools, and that the lead dispatches once the graph is written instead of exploring first, must survive on every surface that states it.",
       "checks": [

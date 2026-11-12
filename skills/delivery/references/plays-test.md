@@ -10,7 +10,7 @@
 
 The feedback loop is not the same as a verifier subagent. The loop runs through the whole task as many times as the work; the verifier subagent packages the final check by running a fresh context window once the session believes the work is done, so the verdict is not colored by the assumptions that produced the code.
 
-**Getting started.** A test suite and a build that run locally with one command each. For interface work, a way for the agent to see the result is crucial — a browser tool or a screenshot utility.
+**Getting started.** A test suite and a build that run locally with one command each. For interface work, the agent needs a way to see the result — a browser tool or a screenshot utility.
 
 **Steps.**
 

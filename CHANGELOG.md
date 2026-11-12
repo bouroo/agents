@@ -13,6 +13,17 @@ and `git show v8.0.0-beta.6:CHANGELOG.md` for the retired detail).
 
 The always-on surface is measured, not assumed, and a settled fact stays settled.
 
+- **The doctrine freezes no measurement.** A statistic asserted in prose — a
+  token count from one turn, a failure rate from one run, a speed multiplier
+  from one benchmark — is true of one setup on one day, cannot be re-derived by
+  the reader, and goes stale without anyone noticing. The doctrine stated
+  several: intuition about the bottleneck is wrong most of the time, typed
+  comparison beats reflection by a fixed multiple, a container's memory limit
+  belongs at a fixed share of its ceiling, a re-searched concept was searched a
+  fixed number of ways. Each now names the mechanism and leaves the number to
+  the reader's own measurement. The new `measured` gate holds the line, and the
+  manifesto's hard constraints carry it on both installed surfaces.
+
 - **A tool's schema is prompt the agent reads on every turn.** A connected
   server's catalogue is not a capability the agent pays for only when it calls
   it — the schemas sit in the window before the job starts and stay there for

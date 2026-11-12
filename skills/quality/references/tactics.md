@@ -5,9 +5,9 @@
 ## Allocation churn
 
 - **Object pooling** — reuse objects through a checkout/return pool in tight loops; tune pool size against contention. Pool only hot paths — maintenance can exceed allocation cost on cold ones.
-- **Preallocation** — reserve capacity when the final size is known, to avoid repeated reallocation and copying. Never preallocate speculatively (10,000 slots for a 10-item common case); preallocate on executable evidence of capacity.
+- **Preallocation** — reserve capacity when the final size is known, to avoid repeated reallocation and copying. Never preallocate speculatively (far more slots than the common case needs); preallocate on executable evidence of capacity.
 - **Field alignment** — order struct/record fields largest to smallest to minimize padding and improve cache locality.
-- **Avoid boxing and reflection in hot paths.** Concrete types over erased/dynamic interfaces in loops; typed comparison is 50-200x faster than dynamic reflection.
+- **Avoid boxing and reflection in hot paths.** Concrete types over erased/dynamic interfaces in loops; typed comparison beats dynamic reflection by a margin you measure in your own hot path.
 - **Incremental building** — linear-time string/bytes builders over repeated concatenation, which is quadratic in naive forms.
 - **Keep short-lived values off the heap.** Avoid pointers-to-locals and large closure captures that force escape; confirm with an allocation profiler.
 
@@ -41,19 +41,19 @@
 
 - **Auto-vectorization first**: keep data contiguous, branch-free, loop-independent; reach for explicit vector primitives only when measurement proves auto-vectorization failed on a hot loop. Prefer a struct-of-arrays layout and vector-aligned data.
 - **Branch elimination** — conditional moves/bitwise masks where measurement supports it; a mispredicted branch costs more than the arithmetic it replaces.
-- **Release builds are evidence**; debug builds prove nothing. Container runtimes need memory and collector limits at 80-90% of the limit — no limit eventually means exhaustion.
-- **Unsafe tricks** — justified only when profiling shows >10% improvement in a verified hot path; otherwise safety and portability outweigh them.
+- **Release builds are evidence**; debug builds prove nothing. Container runtimes need memory and collector limits set below the limit — no limit eventually means exhaustion.
+- **Unsafe tricks** — justified only when profiling shows a material improvement in a verified hot path; otherwise safety and portability outweigh them.
 - **Document why** — non-obvious optimizations carry a comment citing benchmark evidence, so cleanup does not silently regress them.
 
 ## Pitfall checklist
 
 | Mistake | Fix |
 |---|---|
-| Optimizing without profiling | Profile first; intuition is wrong ~80% of the time |
+| Optimizing without profiling | Profile first; intuition is a hypothesis until the profile names the bottleneck |
 | Logging in hot loops | Guard evaluation behind an enabled-check or lazy attributes |
 | Untuned default network and database clients | Defaults cap connections low; size to concurrency |
-| Reflection / deep equality in production paths | 50-200x slower than typed comparison |
-| No container memory limit | Runtime allocation and collector limit at 80-90% of container memory |
+| Reflection / deep equality in production paths | Typed comparison; measure the gap on your own hot path |
+| No container memory limit | Runtime allocation and collector limit set below the container memory limit |
 | Speculative preallocation | Capacity known via executable evidence only |
 | One big benchmark touching everything | Isolate functions; contaminated results mislead |
 
