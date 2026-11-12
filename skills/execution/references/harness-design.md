@@ -69,6 +69,12 @@ A proposed action is a **structured intent**: what it would do, on what, and und
 
 Give the agent only the tools its job needs: a narrower surface means less confusion, fewer misuses, and less exposure to injected instructions arriving through tool output. Breadth is not capability — it is surface area. A worker's spawn brief scopes its tools to its task for the same reason ([teamwork](../SKILL.md)); the node contract names what the worker may touch, not just what it owes.
 
+**A tool's schema is prompt the agent reads on every turn.** A surface is paid for in context, not only in choice: a server's whole catalogue occupies the window before the job begins, and the agent carries that weight whether or not it calls those tools. So breadth has a second price beyond confusion — the always-on cost of the schemas themselves.
+
+Scope the surface at the boundary where it is cheapest. When a server can be registered with a subset of its tools, register the subset the work uses rather than the whole catalogue; measure the schema cost of a surface before connecting it, because a tool the job never calls still occupies the window every turn. The same reasoning that narrows a worker's tools narrows a server's.
+
+The cost is a measurement, so take it fresh: a catalogue's size is a property of one server on one day, and a rule that names it as a number goes stale the moment the server changes. State the mechanism — the schema is always-on prompt — and let the count come from the surface in front of you.
+
 ## Inject known context; do not ask the model for it
 
 Anything the system already knows — the date, the file path, the schema, the project's conventions — is supplied deterministically into the context, never inferred by the model or requested through a tool. Asking the model to recall or fetch a known fact spends a round-trip and adds a failure mode to information the harness already holds. This is §10's *never put deterministic logic in the model* applied at the context boundary: retrieval is for what the system does not know.

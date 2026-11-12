@@ -788,6 +788,24 @@ RULE_SURFACES = {
         ("standalone/AGENTS.md", re.compile(r"not a retry instruction")),
         ("skills/execution/SKILL.md", re.compile(r"not a retry instruction")),
     ],
+    # A settled fact is settled, and a tool's schema is prompt the agent
+    # reads every turn. Both cost the same way: work that looks like
+    # diligence while the run pays for it again. The re-derivation rule
+    # sits beside bounded evidence on the always-loaded clause; the schema
+    # rule lives where the tool surface is designed, because the surface is
+    # scoped at the boundary that offers the narrower registration.
+    "settled": [
+        ("AGENTS.md", re.compile(r"settled fact is settled", re.IGNORECASE)),
+        ("standalone/AGENTS.md",
+         re.compile(r"settled fact is settled", re.IGNORECASE)),
+    ],
+    "schema": [
+        ("skills/execution/references/harness-design.md",
+         re.compile(r"schema is prompt the agent reads on every turn",
+                    re.IGNORECASE)),
+        ("skills/execution/references/harness-design.md",
+         re.compile(r"measure the schema cost", re.IGNORECASE)),
+    ],
     # Context is an attention budget, not a container: recall degrades as the
     # window grows, so "keep the window small" is an accuracy rule rather than
     # a cost rule. The altitude rule and the compaction policy come with it,
@@ -963,6 +981,32 @@ def g_loop() -> None:
                      f"{len(RULE_SURFACES['loop'])} canonical surface(s)")
 
 
+def g_settled() -> None:
+    """The settled-fact rule survives on both doctrines.
+
+    Re-running a check whose answer is already recorded looks like diligence
+    because each individual re-check is fast and passes; it is the most
+    common form of wasted work in a long run. The rule that stops it is short,
+    so it is asserted on the always-loaded surfaces where it fires.
+    """
+    if _g_rule_surfaces("settled"):
+        _add("PASS", f"settled: rule present on "
+                     f"{len(RULE_SURFACES['settled'])} canonical surface(s)")
+
+
+def g_schema() -> None:
+    """The tool-schema cost rule survives where the tool surface is designed.
+
+    A connected server's tool schemas are always-on prompt, not a cost paid
+    only when the tool is called, so breadth has a price beyond confusion.
+    The surface is scoped where the narrower registration is offered, which
+    is the reference that designs it.
+    """
+    if _g_rule_surfaces("schema"):
+        _add("PASS", f"schema: rule present on "
+                     f"{len(RULE_SURFACES['schema'])} canonical surface(s)")
+
+
 def g_state() -> None:
     """The runtime-state rule survives on both doctrines and the skill.
 
@@ -1044,6 +1088,60 @@ def g_branch() -> None:
 # same reason (CHANGELOG bodies are additionally frozen by the release contract:
 # published notes must equal committed bytes).
 EN_PROSE_DASH_RE = re.compile(r"\s\u2013|\u2013\s")
+
+# A catalogue's SIZE, stated as a count: how many tools or schemas a server
+# exposes. A number like this is true of one server on one day and false the
+# moment that server changes, so a rule that names it goes stale and teaches a
+# reader a fact they cannot check. State the mechanism instead and let the
+# count come from the surface in front of you.
+#
+# The magnitude must be able to describe a size: "one tool" is a relation
+# between two things ("one tool, one authority"), not the size of anything.
+# A count that sets a threshold or a ratio is a rule, not a measurement.
+CATALOGUE_SIZE_RE = re.compile(
+    r"\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+    r"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|"
+    r"twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|"
+    r"hundred|thousand|million|billion|\d+(?:[.,]\d+)*)\s+"
+    r"(?:tools?|schemas?)\b",
+    re.IGNORECASE)
+CATALOGUE_SIZE_BENIGN_RE = re.compile(
+    r"(?:\bper\b|\bas the ceiling\b|\bat most\b|\bunder\b|\bbelow\b|"
+    r"\bup to\b|\bor fewer\b|\bor more\b|\bno more than\b|\bone .* one\b)",
+    re.IGNORECASE)
+
+
+def g_catalogue() -> None:
+    """No doctrine states a catalogue's size as a number.
+
+    A rule that says "a server exposing ninety-six tools" is a measurement of
+    one setup on one day, frozen into guidance that outlives it. The reader
+    cannot check it, and it goes false the moment the server changes. The
+    mechanism -- a schema is always-on prompt -- carries the rule; the count
+    is the reader's to measure.
+    """
+    name = "catalogue"
+    files = [ROOT / "AGENTS.md", ROOT / "standalone" / "AGENTS.md"]
+    files += _skill_tree("*.md")
+    for sub in ("commands", "agents"):
+        files += sorted(p for p in (ROOT / sub).rglob("*.md")
+                        if _no_dotdir(p))
+    hits = []
+    for f in files:
+        if not f.is_file():
+            continue
+        rel = str(f.relative_to(ROOT))
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            m = CATALOGUE_SIZE_RE.search(line)
+            if m and not CATALOGUE_SIZE_BENIGN_RE.search(line):
+                hits.append(f"{rel}:{i} '{m.group(0)}'")
+    if hits:
+        _add("FAIL", f"{name}: doctrine states a catalogue's size as a number "
+                     f"(state the mechanism, let the reader measure): "
+                     + "; ".join(hits))
+        return
+    _add("PASS", f"{name}: {len(files)} doctrine file(s) free of "
+                 f"catalogue-size counts")
 
 
 def g_dashes() -> None:
@@ -2051,12 +2149,15 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("agnostic", g_agnostic), ("portable", g_portable),
          ("manifests", g_manifests),
          ("privacy", g_privacy), ("comments", g_comments),
-         ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
+         ("simplicity", g_simplicity), ("dashes", g_dashes),
+         ("catalogue", g_catalogue),
+         ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
          ("searchdiscipline", g_searchdiscipline),
          ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
+         ("settled", g_settled), ("schema", g_schema),
          ("shared", g_shared), ("goal", g_goal), ("loop", g_loop),
          ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),
