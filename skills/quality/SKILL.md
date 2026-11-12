@@ -21,7 +21,7 @@ Twelve commandments, plus the artifact gates every report owes.
 9. **Design failure handling upfront.** Check every error at birth; keep the happy path unindented; retry transient with a bound; propagate the rest with context.
 10. **Log actionable information only.** Structured fields, never secrets; logs, traces, and metrics stay distinct.
 11. **Ship a walking skeleton first.** End-to-end "shameless green" through the real path validates design before refinement.
-12. **Refactor while context is fresh.** Reinvest ~10% right after building: names, duplication, dead branches.
+12. **Refactor while context is fresh.** Right after building: names, duplication, dead code.
 
 **Artifact gates** (canonical; owed verbatim in the report, and an owed-but-absent line means the gate was not met):
 
@@ -90,8 +90,7 @@ The doctrine is configuration an agent executes, so it is regression-tested like
 
 ## Performance
 
-Optimize only after correctness holds, and only by measurement. Every optimization claim cites **benchmark evidence** — command + output + delta. No measurement, no change; intuition about bottlenecks is wrong ~80% of the time.
-
+Optimize only after correctness holds, and only by measurement. Every optimization claim cites **benchmark evidence** — command + output + delta. No measurement, no change; intuition about the bottleneck is a hypothesis until a profile settles it.
 **The measure-first cycle: Define, Benchmark, Diagnose, Improve, Compare.** Define one target metric (latency, throughput, memory, CPU) and its target value; benchmark one function at a time and capture the baseline to a numbered file; diagnose by ruling out external bottlenecks first, then route the signal; improve ONE change at a time; compare with a statistical comparator and paste the delta. The artifact is the evidence.
 
 **Rule out external bottlenecks first.** When profiling says the time is not yours to move — a slow query, an upstream span, blocked workers — fix that component and re-profile; local tuning cannot move the number. Read [measurement](references/measurement.md) for its sensors or a per-finding fix.

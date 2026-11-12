@@ -9,6 +9,52 @@ The current line is carried in full; closed lines are retired below, one line
 each. The full history lives in git tags and log (`v1.0.0` through `v3.11.0`,
 and `git show v8.0.0-beta.6:CHANGELOG.md` for the retired detail).
 
+## [8.0.0-beta.10] - 2026-11-12
+
+The always-on surface is measured, not assumed, and a settled fact stays settled.
+
+- **The doctrine freezes no measurement.** A statistic asserted in prose — a
+  token count from one turn, a failure rate from one run, a speed multiplier
+  from one benchmark — is true of one setup on one day, cannot be re-derived by
+  the reader, and goes stale without anyone noticing. The doctrine stated
+  several: intuition about the bottleneck is wrong most of the time, typed
+  comparison beats reflection by a fixed multiple, a container's memory limit
+  belongs at a fixed share of its ceiling, a re-searched concept was searched a
+  fixed number of ways. Each now names the mechanism and leaves the number to
+  the reader's own measurement. The new `measured` gate holds the line, and the
+  manifesto's hard constraints carry it on both installed surfaces.
+
+- **A tool's schema is prompt the agent reads on every turn.** A connected
+  server's catalogue is not a capability the agent pays for only when it calls
+  it — the schemas sit in the window before the job starts and stay there for
+  every turn, so breadth has a price beyond confusion. The rule is now in
+  `execution/references/harness-design.md`: scope a server's surface where it
+  is cheapest, and measure the schema cost before connecting it. The count
+  itself stays out of the doctrine — a catalogue's size is a property of one
+  server on one day, and a rule that names it as a number goes stale the
+  moment that server changes. The `catalogue` gate holds that line.
+- **A settled fact is settled.** When a check has already returned its answer,
+  re-running it costs a round trip and buys nothing. Re-deriving a known result
+  is the most common form of wasted work in a long run, and it looks like
+  diligence because each individual re-check is fast. The rule now sits beside
+  the bounded-evidence clause in the manifesto: record the result and read it
+  back.
+- **A read, a search, and a listing go through the tool built for each.** A
+  measured run reached through the shell for all three, so a file printed whole
+  into the window instead of a bounded slice, and one turn carried the largest
+  input the run ever paid. The rule now names the purpose-built tool in both
+  doctrines and in the reference that designs the tool surface, and the shell
+  keeps the commands only it can run. The `toolrouting` gate holds it on every
+  surface that states it.
+- **The lead dispatches once the graph is written.** The lead owns the graph,
+  the briefs, the verification, and the merge, and exploration before dispatch
+  duplicates work the first unit will redo: a measured run spent its opening
+  phase reading before any unit existed. The rule now sits on every lead role
+  surface, and the `leadorientation` gate keeps a trim from dropping it from
+  one variant alone.
+
+Gates: 40 -> 46.
+
 ## [8.0.0-beta.9] - 2026-11-11
 
 The unslop skill gains the half it was missing: preservation.
