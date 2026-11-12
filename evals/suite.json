@@ -1042,6 +1042,38 @@
           "description": "the published release body still reads verbatim from the changelog section"
         }
       ]
+    },
+    {
+      "id": "settled-fact-rule-survives-doctrine-edits",
+      "prompt": "Condense the manifesto and the standalone copy. The rule that a settled fact stays settled must survive the edit on both always-loaded surfaces.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py settled",
+          "expect_exit": 0,
+          "description": "the settled-fact rule is present on the manifesto and the standalone copy, so a run that re-checks a known answer is stopped by the rule it reads"
+        },
+        {
+          "cmd": "python3 scripts/check.py standalone",
+          "expect_exit": 0,
+          "description": "the standalone copy still carries every hard constraint the manifesto states"
+        }
+      ]
+    },
+    {
+      "id": "tool-schema-cost-rule-survives",
+      "prompt": "Trim the harness-design reference. The rule that a tool's schema is prompt the agent reads on every turn must survive the edit on the surface that designs the tool surface.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py schema",
+          "expect_exit": 0,
+          "description": "the tool-schema cost rule is present where the tool surface is designed, so a run that connects a server scopes the catalogue before paying for it"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the trimmed reference is still named from its skill on a stated load condition, so it stays reachable"
+        }
+      ]
     }
   ]
 }

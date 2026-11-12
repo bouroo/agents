@@ -9,6 +9,28 @@ The current line is carried in full; closed lines are retired below, one line
 each. The full history lives in git tags and log (`v1.0.0` through `v3.11.0`,
 and `git show v8.0.0-beta.6:CHANGELOG.md` for the retired detail).
 
+## [Unreleased]
+
+The always-on surface is measured, not assumed, and a settled fact stays settled.
+
+- **A tool's schema is prompt the agent reads on every turn.** A connected
+  server's catalogue is not a capability the agent pays for only when it calls
+  it — the schemas sit in the window before the job starts and stay there for
+  every turn. Measured on this setup: the connected Atlassian server alone
+  carried 96 tool schemas, roughly 31,000 tokens of always-on prompt, for
+  seventeen tools actually used across two months of sessions. Registering the
+  server with the tool subsets the work uses cut the always-on prompt by about
+  11,500 tokens, and the seventeen-tool subset cut it by about 23,000. The
+  rule is now in `execution/references/harness-design.md`: scope a server's
+  surface where it is cheapest, and measure the schema cost before connecting
+  it, because breadth has a price beyond confusion.
+- **A settled fact is settled.** When a check has already returned its answer,
+  re-running it costs a round trip and buys nothing. Re-deriving a known result
+  is the most common form of wasted work in a long run, and it looks like
+  diligence because each individual re-check is fast. The rule now sits beside
+  the bounded-evidence clause in the manifesto: record the result and read it
+  back.
+
 ## [8.0.0-beta.8] - 2026-11-10
 
 Context becomes a budget rather than a container.

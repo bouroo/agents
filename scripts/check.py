@@ -788,6 +788,24 @@ RULE_SURFACES = {
         ("standalone/AGENTS.md", re.compile(r"not a retry instruction")),
         ("skills/execution/SKILL.md", re.compile(r"not a retry instruction")),
     ],
+    # A settled fact is settled, and a tool's schema is prompt the agent
+    # reads every turn. Both cost the same way: work that looks like
+    # diligence while the run pays for it again. The re-derivation rule
+    # sits beside bounded evidence on the always-loaded clause; the schema
+    # rule lives where the tool surface is designed, because the surface is
+    # scoped at the boundary that offers the narrower registration.
+    "settled": [
+        ("AGENTS.md", re.compile(r"settled fact is settled", re.IGNORECASE)),
+        ("standalone/AGENTS.md",
+         re.compile(r"settled fact is settled", re.IGNORECASE)),
+    ],
+    "schema": [
+        ("skills/execution/references/harness-design.md",
+         re.compile(r"schema is prompt the agent reads on every turn",
+                    re.IGNORECASE)),
+        ("skills/execution/references/harness-design.md",
+         re.compile(r"measure the schema cost", re.IGNORECASE)),
+    ],
     # Context is an attention budget, not a container: recall degrades as the
     # window grows, so "keep the window small" is an accuracy rule rather than
     # a cost rule. The altitude rule and the compaction policy come with it,
@@ -961,6 +979,32 @@ def g_loop() -> None:
     if _g_rule_surfaces("loop"):
         _add("PASS", f"loop: rule present on "
                      f"{len(RULE_SURFACES['loop'])} canonical surface(s)")
+
+
+def g_settled() -> None:
+    """The settled-fact rule survives on both doctrines.
+
+    Re-running a check whose answer is already recorded looks like diligence
+    because each individual re-check is fast and passes; it is the most
+    common form of wasted work in a long run. The rule that stops it is short,
+    so it is asserted on the always-loaded surfaces where it fires.
+    """
+    if _g_rule_surfaces("settled"):
+        _add("PASS", f"settled: rule present on "
+                     f"{len(RULE_SURFACES['settled'])} canonical surface(s)")
+
+
+def g_schema() -> None:
+    """The tool-schema cost rule survives where the tool surface is designed.
+
+    A connected server's tool schemas are always-on prompt, not a cost paid
+    only when the tool is called, so breadth has a price beyond confusion.
+    The surface is scoped where the narrower registration is offered, which
+    is the reference that designs it.
+    """
+    if _g_rule_surfaces("schema"):
+        _add("PASS", f"schema: rule present on "
+                     f"{len(RULE_SURFACES['schema'])} canonical surface(s)")
 
 
 def g_state() -> None:
@@ -2057,6 +2101,7 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("bottleneck", g_bottleneck),
          ("environment", g_environment), ("automation", g_automation),
          ("state", g_state), ("branch", g_branch), ("sizing", g_sizing),
+         ("settled", g_settled), ("schema", g_schema),
          ("shared", g_shared), ("goal", g_goal), ("loop", g_loop),
          ("stages", g_stages), ("playbook", g_playbook),
          ("modernize", g_modernize),
