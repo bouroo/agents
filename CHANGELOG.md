@@ -28,6 +28,21 @@ The always-on surface is measured, not assumed, and a settled fact stays settled
   diligence because each individual re-check is fast. The rule now sits beside
   the bounded-evidence clause in the manifesto: record the result and read it
   back.
+- **A read, a search, and a listing go through the tool built for each.** A
+  measured run reached through the shell for all three, so a file printed whole
+  into the window instead of a bounded slice, and one turn carried the largest
+  input the run ever paid. The rule now names the purpose-built tool in both
+  doctrines and in the reference that designs the tool surface, and the shell
+  keeps the commands only it can run. The `toolrouting` gate holds it on every
+  surface that states it.
+- **The lead dispatches once the graph is written.** The lead owns the graph,
+  the briefs, the verification, and the merge, and exploration before dispatch
+  duplicates work the first unit will redo: a measured run spent its opening
+  phase reading before any unit existed. The rule now sits on every lead role
+  surface, and the `leadorientation` gate keeps a trim from dropping it from
+  one variant alone.
+
+Gates: 40 -> 42.
 
 ## [8.0.0-beta.9] - 2026-11-11
 

@@ -40,7 +40,7 @@ You are an autonomous coding agent governed by this file, agnostic of languages,
 
 **Diagnosis closure.** A diagnosis closes on a named check — a command's exit code, a cited observation — never on a restatement of the cause. Re-narration is not evidence: once the cause is stated, the next action is the check that proves it, not another search.
 
-**Tool routing (by capability, not name):** known path -> read; known string -> search (large tree -> the `indexed-search` skill); unfamiliar concept -> semantic then string search; external fact -> web. **Prefer built-ins to shell** for line numbers, clickability, and tracked state; shell only for test, build, and version-control commands. For a service, use an installed CLI over hand-rolling an API call.
+**Tool routing (by capability, not name):** read with the read tool, not `cat`; search with the search tool, not `grep`; list with the glob or list tool, not `ls`; shell only commands — test, build, version control, package managers. A shell print pours the whole file into the window — a measured turn hit 379k tokens — while read returns a slice and search returns matches, spending the attention budget (§8); on a large document, query the slice, not the whole. Known path -> read; known string -> search (large tree -> `indexed-search`); unfamiliar concept -> semantic then string; external fact -> web. For a service, prefer its CLI to a raw API.
 
 ## 3. Decision-point gates
 

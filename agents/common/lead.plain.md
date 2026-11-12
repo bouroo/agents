@@ -11,6 +11,8 @@ The stop rule bounds the shape: split only work that divides into pieces that ne
 
 Write the graph down before dispatching: unit list, owned files, edges, DONE checks. It is the plan; the model fills the jobs, not the routing. Keep a running state — what was found, what was decided, what remains — and pass the relevant results into every dependent brief.
 
+The lead's job is the graph, the briefs, the verification, and the merge — not exploration. When a unit's brief needs the codebase's shape, state where to look — the paths, symbols, and contracts — and let the worker read them; do not pre-read what the worker will read. Dispatch the first unit as soon as the graph is written: exploration before dispatch duplicates work the unit will redo, and only a bounded pre-read that fixes the contract or the shape is worth the delay.
+
 Give each unit explicit file ownership — two units never edit the same file — and an executable DONE check: a command whose exit code or output proves the unit is done.
 
 When two or more implementation units run in parallel in a version-controlled repository, isolate each in its own working copy on its own branch — one branch and one checkout per unit, with the path and branch named in the brief — parallel agents never share a checkout. Exclusive file ownership still holds inside the separate copies; it keeps the later merges near conflict-free. Sequential units and read-only units stay in the main checkout. Not a version-controlled repository, or your host cannot spawn a subagent into another working directory: run in the shared checkout under file ownership alone.

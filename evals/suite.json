@@ -1090,6 +1090,32 @@
           "description": "the tool-schema cost rule is still present where the tool surface is designed"
         }
       ]
+    },
+    {
+      "id": "tool-routing-rule-survives",
+      "prompt": "Trim the tool-routing clause in the manifesto and the standalone copy, or the paragraph of the lead role that bounds its orientation, to save space. The rule that a read, a search, and a listing go through the purpose-built tools, and that the lead dispatches once the graph is written instead of exploring first, must survive on every surface that states it.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py toolrouting",
+          "expect_exit": 0,
+          "description": "the tool-routing rule is present on both always-loaded clauses and on the reference that designs the tool surface, so a run chooses a purpose-built tool before reaching through the shell"
+        },
+        {
+          "cmd": "python3 scripts/check.py leadorientation",
+          "expect_exit": 0,
+          "description": "the lead's orientation bound and its dispatch-once-the-graph-is-written rule are present on every lead role surface, so one variant cannot lose it alone"
+        },
+        {
+          "cmd": "python3 scripts/check.py references",
+          "expect_exit": 0,
+          "description": "the harness-design reference is still named from its skill on a stated load condition, so the tool-surface half stays reachable"
+        },
+        {
+          "cmd": "python3 scripts/check.py links",
+          "expect_exit": 0,
+          "description": "the trimmed prose adds no dangling relative link"
+        }
+      ]
     }
   ]
 }
