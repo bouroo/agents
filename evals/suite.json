@@ -1074,6 +1074,22 @@
           "description": "the trimmed reference is still named from its skill on a stated load condition, so it stays reachable"
         }
       ]
+    },
+    {
+      "id": "doctrine-carries-no-catalogue-size",
+      "prompt": "Edit the harness-design reference to explain the cost of a tool's schema. The doctrine must not carry a catalogue's size as a number, because a count of one server's tools goes stale when the server changes.",
+      "checks": [
+        {
+          "cmd": "python3 scripts/check.py catalogue",
+          "expect_exit": 0,
+          "description": "no doctrine file states a catalogue's size as a number, so a rule never freezes one server's tool count into guidance"
+        },
+        {
+          "cmd": "python3 scripts/check.py schema",
+          "expect_exit": 0,
+          "description": "the tool-schema cost rule is still present where the tool surface is designed"
+        }
+      ]
     }
   ]
 }

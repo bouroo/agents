@@ -16,14 +16,12 @@ The always-on surface is measured, not assumed, and a settled fact stays settled
 - **A tool's schema is prompt the agent reads on every turn.** A connected
   server's catalogue is not a capability the agent pays for only when it calls
   it — the schemas sit in the window before the job starts and stay there for
-  every turn. Measured on this setup: the connected Atlassian server alone
-  carried 96 tool schemas, roughly 31,000 tokens of always-on prompt, for
-  seventeen tools actually used across two months of sessions. Registering the
-  server with the tool subsets the work uses cut the always-on prompt by about
-  11,500 tokens, and the seventeen-tool subset cut it by about 23,000. The
-  rule is now in `execution/references/harness-design.md`: scope a server's
-  surface where it is cheapest, and measure the schema cost before connecting
-  it, because breadth has a price beyond confusion.
+  every turn, so breadth has a price beyond confusion. The rule is now in
+  `execution/references/harness-design.md`: scope a server's surface where it
+  is cheapest, and measure the schema cost before connecting it. The count
+  itself stays out of the doctrine — a catalogue's size is a property of one
+  server on one day, and a rule that names it as a number goes stale the
+  moment that server changes. The `catalogue` gate holds that line.
 - **A settled fact is settled.** When a check has already returned its answer,
   re-running it costs a round trip and buys nothing. Re-deriving a known result
   is the most common form of wasted work in a long run, and it looks like

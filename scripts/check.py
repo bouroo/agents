@@ -1089,6 +1089,60 @@ def g_branch() -> None:
 # published notes must equal committed bytes).
 EN_PROSE_DASH_RE = re.compile(r"\s\u2013|\u2013\s")
 
+# A catalogue's SIZE, stated as a count: how many tools or schemas a server
+# exposes. A number like this is true of one server on one day and false the
+# moment that server changes, so a rule that names it goes stale and teaches a
+# reader a fact they cannot check. State the mechanism instead and let the
+# count come from the surface in front of you.
+#
+# The magnitude must be able to describe a size: "one tool" is a relation
+# between two things ("one tool, one authority"), not the size of anything.
+# A count that sets a threshold or a ratio is a rule, not a measurement.
+CATALOGUE_SIZE_RE = re.compile(
+    r"\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+    r"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|"
+    r"twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|"
+    r"hundred|thousand|million|billion|\d+(?:[.,]\d+)*)\s+"
+    r"(?:tools?|schemas?)\b",
+    re.IGNORECASE)
+CATALOGUE_SIZE_BENIGN_RE = re.compile(
+    r"(?:\bper\b|\bas the ceiling\b|\bat most\b|\bunder\b|\bbelow\b|"
+    r"\bup to\b|\bor fewer\b|\bor more\b|\bno more than\b|\bone .* one\b)",
+    re.IGNORECASE)
+
+
+def g_catalogue() -> None:
+    """No doctrine states a catalogue's size as a number.
+
+    A rule that says "a server exposing ninety-six tools" is a measurement of
+    one setup on one day, frozen into guidance that outlives it. The reader
+    cannot check it, and it goes false the moment the server changes. The
+    mechanism -- a schema is always-on prompt -- carries the rule; the count
+    is the reader's to measure.
+    """
+    name = "catalogue"
+    files = [ROOT / "AGENTS.md", ROOT / "standalone" / "AGENTS.md"]
+    files += _skill_tree("*.md")
+    for sub in ("commands", "agents"):
+        files += sorted(p for p in (ROOT / sub).rglob("*.md")
+                        if _no_dotdir(p))
+    hits = []
+    for f in files:
+        if not f.is_file():
+            continue
+        rel = str(f.relative_to(ROOT))
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            m = CATALOGUE_SIZE_RE.search(line)
+            if m and not CATALOGUE_SIZE_BENIGN_RE.search(line):
+                hits.append(f"{rel}:{i} '{m.group(0)}'")
+    if hits:
+        _add("FAIL", f"{name}: doctrine states a catalogue's size as a number "
+                     f"(state the mechanism, let the reader measure): "
+                     + "; ".join(hits))
+        return
+    _add("PASS", f"{name}: {len(files)} doctrine file(s) free of "
+                 f"catalogue-size counts")
+
 
 def g_dashes() -> None:
     name = "dashes"
@@ -2095,7 +2149,9 @@ GATES = [("budget", g_budget), ("cost", g_cost),
          ("agnostic", g_agnostic), ("portable", g_portable),
          ("manifests", g_manifests),
          ("privacy", g_privacy), ("comments", g_comments),
-         ("simplicity", g_simplicity), ("dashes", g_dashes), ("l1", g_l1),
+         ("simplicity", g_simplicity), ("dashes", g_dashes),
+         ("catalogue", g_catalogue),
+         ("l1", g_l1),
          ("veriloop", g_veriloop), ("memory", g_memory),
          ("searchdiscipline", g_searchdiscipline),
          ("bottleneck", g_bottleneck),
