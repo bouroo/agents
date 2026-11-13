@@ -9,6 +9,49 @@ The current line is carried in full; closed lines are retired below, one line
 each. The full history lives in git tags and log (`v1.0.0` through `v3.11.0`,
 and `git show v8.0.0-beta.6:CHANGELOG.md` for the retired detail).
 
+## [8.0.0] - 2026-11-14
+
+Stable cut of the 8.0.0 line, unchanged in behavior since
+`v8.0.0-beta.10`: the setup is rewritten on the AI-native SDLC spine and
+made agnostic of programming language, agent framework, and host harness.
+
+- **A six-stage loop replaces the phase sequence.** Plan, Design, Build,
+  Test, Deploy, and Maintain each commit a readable artifact the next stage
+  begins from, the accepted artifact fires the next gate, and the chain of
+  commits is the audit trail. Sizing is part of the loop: the compact path
+  is the default, and the full path is owed only when the work is large,
+  irreversible, outward-facing, cross-session, or multi-agent.
+- **Rules name roles, not stacks.** Every rule in the manifesto is stated
+  so it survives a change of language, framework, or harness, and the
+  `agnostic` and `portable` gates reject a host-binding or stack-specific
+  token that creeps back in.
+- **A loop declares when to stop.** Terminal conditions, the requirements
+  still owed, and a failure route chosen from the evidence replace the
+  default of retry; escalation stops and asks rather than resolving a human
+  decision by inference.
+- **Context is an attention budget.** The window is kept small because
+  recall degrades as it grows, instructions sit at the altitude that states
+  the outcome and the check, and a compaction preserves the decisions, the
+  owed requirements, the position, and the anchors while dropping what disk
+  can re-derive.
+- **The harness is sized on two named axes.** Action complexity and context
+  complexity price different machinery, so the harness is specified per job
+  rather than as the union of what every kind of agent needs; every harness
+  feature is a bet that expires when the model no longer needs it.
+- **Claims about a structure are measured.** The nine system-level
+  properties are scored from a run trace by an instrument that passes an
+  organized run and fails a degraded one, so a property that cannot fail is
+  not a property.
+- **The doctrine freezes no measurement and settles no re-check.** A
+  statistic asserted in prose is true of one setup on one day, so each rule
+  names the mechanism and leaves the number to the reader; a check that has
+  already answered is recorded and read back rather than re-run.
+- **The changelog is a map.** Closed lines retire to one line each with the
+  full text in git history, held by the `changelog` gate, so the release a
+  reader wants is not buried under the archive.
+
+Gates: 46, `python3 scripts/check.py --all` green.
+
 ## [8.0.0-beta.10] - 2026-11-12
 
 The always-on surface is measured, not assumed, and a settled fact stays settled.
