@@ -201,6 +201,10 @@ python3 scripts/check.py --all
 | `dashes` | the em-dash convention survives on both canonical surfaces (manifesto + craft), and the doctrine corpus carries no en-dash (digit-to-digit ranges are exempt as typographic data) |
 | `measured` | no doctrine freezes a measurement as guidance — a token count, failure rate, or speed multiplier asserted in prose is true of one run and cannot be re-derived, so the mechanism carries the rule and the reader measures the number |
 | `catalogue` | no doctrine states a catalogue's size as a number, so a rule never freezes one server's tool count into guidance |
+| `settled` | a check that already returned its answer is recorded and read back rather than re-run, since re-deriving a known result costs a round trip and buys nothing |
+| `schema` | a connected server's tool schemas are always-on prompt, so the rule that a tool surface is scoped where it is cheapest survives where the surface is designed |
+| `toolrouting` | a read, a search, and a listing each go through the tool built for it, and the shell keeps the commands only it can run, so a file is not printed whole into the window |
+| `leadorientation` | the lead dispatches once the graph is written rather than exploring first, and the rule survives on every role surface so a trim cannot drop it from one variant alone |
 | `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
 | `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
 | `memory` | the memory rule (instruction memory separate from learning memory, written down rather than conversational) survives on both canonical surfaces (manifesto + execution) |
@@ -223,7 +227,7 @@ python3 scripts/check.py --all
 | `thirdparty` | a symlinked skill is an untracked, documented pointer, so third-party content stays outside every gate and out of the repository |
 | `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
 
-CI runs all forty on every push and pull request. Pushing a version tag additionally runs the release workflow.
+CI runs all forty-six on every push and pull request. Pushing a version tag additionally runs the release workflow.
 
 
 Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).

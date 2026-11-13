@@ -6,7 +6,7 @@ name: validate
 # broken artifact never lands on main or develop. The measurement harness
 # under evals/ is code, so it carries a check of its own.
 #
-# Gates: `python3 scripts/check.py --all` runs all forty. The
+# Gates: `python3 scripts/check.py --all` runs all forty-six. The
 # authoritative list is `python3 scripts/check.py --help`; the summary below is
 # a reading aid, not the registry, so a gate added there without a line here
 # still runs. The file that enforces a gate is scripts/check.py.
@@ -63,6 +63,15 @@ name: validate
 #                trace, and the instrument fails a degraded run
 #   harnessaxes  the two axes that size the harness (action complexity,
 #                context complexity) survive on every carrying surface
+#   settled      a check already answered is recorded and read back, not re-run
+#   catalogue    no doctrine states a catalogue's size as a number
+#   measured     no doctrine freezes a measurement as guidance
+#   context      the attention budget, the altitude, and the compaction policy
+#                survive on every surface that carries them
+#   changelog    the changelog stays a map; closed lines retire to one line each
+#   schema       a server's tool schemas are always-on prompt, so scope the surface
+#   toolrouting  read, search, and list through their own tool, not the shell
+#   leadorientation the lead dispatches after writing the graph, not before
 #   standalone   every hard constraint is present in the standalone copy too
 
 on:
