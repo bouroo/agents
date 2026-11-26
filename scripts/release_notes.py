@@ -8,6 +8,7 @@ committed notes are the same bytes.
 
     python3 scripts/release_notes.py 6.0.0-beta.1   # body only
     python3 scripts/release_notes.py --tag v6.0.0    # strip a leading 'v'
+    python3 scripts/release_notes.py --current       # the current line
 
 Exit 0 with the body on stdout; exit 1 (message on stderr) when the version has
 no section, so a tag without notes fails the release rather than publishing an
@@ -46,12 +47,25 @@ def section(text: str, version: str) -> str | None:
     return "\n".join(lines[start:end]).strip()
 
 
+def current_version(text: str) -> str | None:
+    """The version of the first `## [version]` heading: the current line.
+
+    The closed lines carry no heading, so the top one is always the line
+    under release.
+    """
+    m = re.search(r"^##\s+\[([^\]]+)\]", text, re.M)
+    return m.group(1) if m else None
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
         description="Print one version's CHANGELOG section.")
-    parser.add_argument("version", help="version to extract, e.g. 6.0.0-beta.1")
+    parser.add_argument("version", nargs="?",
+                        help="version to extract, e.g. 6.0.0-beta.1")
     parser.add_argument("--tag", action="store_true",
                         help="treat the argument as a git tag (strip a leading 'v')")
+    parser.add_argument("--current", action="store_true",
+                        help="print the section of the current line (the top one)")
     args = parser.parse_args(argv)
 
     if not CHANGELOG.is_file():
@@ -59,8 +73,18 @@ def main(argv: list[str]) -> int:
         return 1
 
     version = args.version
-    if args.tag and version.startswith("v"):
+    if args.current:
+        version = current_version(CHANGELOG.read_text())
+        if version is None:
+            print("release_notes: CHANGELOG.md has no version section",
+                  file=sys.stderr)
+            return 1
+    elif version is None:
+        print("release_notes: give a version or --current", file=sys.stderr)
+        return 1
+    elif args.tag and version.startswith("v"):
         version = version[1:]
+
 
     body = section(CHANGELOG.read_text(), version)
     if body is None:

@@ -1037,7 +1037,7 @@
           "description": "the retired-list pointers into git history still resolve as text the release contract reads"
         },
         {
-          "cmd": "python3 scripts/release_notes.py --tag v8.0.0-beta.7",
+          "cmd": "python3 scripts/release_notes.py --current",
           "expect_exit": 0,
           "description": "the published release body still reads verbatim from the changelog section"
         }
