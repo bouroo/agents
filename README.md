@@ -1,233 +1,69 @@
-[![Last commit](https://img.shields.io/github/last-commit/bouroo/agents?logo=github)](https://github.com/bouroo/agents)
-![Type](https://img.shields.io/badge/type-AI%20agent%20config-blue)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE.md)
+# coder-agents
 
-# bouroo/agents
+A lean shared setup for autonomous coding agents — agnostic of programming languages, agent frameworks, and host tools. One entry point ([`AGENTS.md`](AGENTS.md)) carries the working loop and four decision-point gates; five skills load on demand.
 
-A shared setup for autonomous coding agents that is **agnostic of programming languages, agent frameworks, and agent harnesses**: one governance manifesto, ten on-demand skills, four routine-task command workflows, and two role agents (lead, worker). The rules name roles — a project context file, a skill, a pre-action check, a change request, a pipeline — never a vendor product, so a rule stays applicable on any stack. Any coding agent that reads repository instruction files can consume it as-is — no installer, no manifests, no per-tool copies.
+## How it works
 
-## The foundation: the AI-native delivery loop
+- **One source of truth.** `AGENTS.md` holds the doctrine: intake, the work loop, checks, parallelism, project-memory discipline, sessions, unattended runs. Host-specific files (e.g. `CLAUDE.md`) just point at it.
+- **Four forced lines at decision points.** `ASK:` before the first edit, `INTENT:` before a behavior-changing edit, `AUTH:` before any outward/irreversible effect, `OWED:` closing every report.
+- **Skills load on demand.** Names and triggers live in the entry point; bodies load only when the trigger holds, so procedures stay out of the always-loaded context.
+- **Scope precedence.** Organization → project → personal: the closest instruction file wins on conflict.
 
-The doctrine's spine is the **AI-native SDLC** — six stages that run as a loop, not a phase sequence. Code stopped being the bottleneck once agents could write it faster than humans could plan, review, and ship around it, so the constraint moves to the steps around it — plan, review, deploy — which still run at human speed. Every stage commits a readable artifact the next begins from, and that chain of commits is the audit trail. The old control objectives stay; only the enforcement changes.
-
-```mermaid
-flowchart LR
-    P["Plan · Originator<br/>intent.md"] --> D["Design · Steward<br/>spec.md + ADRs"]
-    D --> B["Build · Implementer<br/>PLAN.md + STATUS.md<br/>then diff + tests"]
-    B --> T["Test · Verifier<br/>L1/L2/L3 evidence"]
-    T -->|"fails review"| B
-    T -->|"evidence passes"| X["Deploy · Approver<br/>review findings + AUTH:"]
-    X --> M["Maintain · Operator<br/>incident → new intent.md"]
-    M -.->|"reopens the loop"| P
-```
-
-`Test → Build` is the canonical review back-edge; `Maintain → Plan` reopens the loop. Seven **seats** own the stages — one agent may hold several at once, but the Implementer never approves its own work and the Verifier is always independent of what it judges. Within a stage, work is shaped by the **execution graph** (below): the lifecycle says *which stage and what it commits*; the graph says *how that work runs*.
-
-Four rules carry the loop, and they are what turn a set of phases into a process that survives agents:
-
-- **The accepted artifact fires the next gate.** A committed `intent.md` triggers the design pass; an approved `spec.md` triggers planning; a merged change triggers the pipeline. The handoff is the commit, so a person holds the gate rather than the handoff.
-- **One source of truth per artifact.** Where a legacy system already holds the record, name it the source of truth and keep the committed artifact as a linked working copy. Two copies with no link are two truths.
-- **Advisory controls make violations rare; deterministic controls make them close to impossible.** A skill shapes the work while it is written; a policy that must always hold needs a deterministic check behind it. A control an individual can switch off is not a control: the project tier lives in shared configuration, and what the organization declares non-negotiable sits above it, centrally owned.
-- **Autonomy stops at the gate.** The agent acts up to the production gate and nothing past it, tiered per environment, so the human gate sits above the automation rather than inside it.
-
-The `delivery` skill carries the plays for each stage — the steps, the governance, and the leading and lagging indicators that say whether each one worked.
-
-## What's inside
+## Repository layout
 
 ```
-├── AGENTS.md                          the manifesto: intake route, decision gates,
-│                                      the six-stage delivery loop, the execution
-│                                      graph, verification dial, context/state,
-│                                      constraints
-├── skills/
-│   ├── delivery/                      the spine: six stages and their exit checks,
-│   │                                  the plays, controls, and automation tiers;
-│   │                                  the artifact shapes, plan-first grilling,
-│   │                                  the wayfinder decision map
-│   │   └── references/                plays: per-stage steps, governance, and
-│   │                                  measurement; artifact shapes; grilling;
-│   │                                  wayfinder; common mistakes
-│   ├── execution/                     the execution-graph grammar: nodes, typed edges,
-│   │                                  caps, anchors, shapes, cost; the three coupled
-│   │                                  views (task, coordination, state) and their
-│   │                                  scorecard; worked topologies; harness design:
-│   │                                  minimal-harness ladder, the two sizing axes
-│   │                                  (action complexity, context complexity), ACI,
-│   │                                  external-system context, the execution
-│   │                                  environment, automation, runtime state
-│   │                                  (governed transitions, fault localization,
-│   │                                  recovery boundary, adaptation vs evolution),
-│   │                                  loop control (terminal conditions, failure
-│   │                                  routes, continuity, capability record);
-│   │                                  context engineering (the attention budget,
-│   │                                  instruction altitude, compaction policy)
-│   ├── quality/                       craftsmanship, verification, evals, and
-│   │   └── references/                performance: the twelve commandments, evidence as
-│   │                                  anchors, the regression suite, measure-first;
-│   │                                  structural evaluation, flowcharts, evolution,
-│   │                                  measurement, tactics
-│   ├── quality/                       craftsmanship, verification, evals, and
-│   │   └── references/                performance: the twelve commandments, evidence as
-│   │                                  anchors, the regression suite, measure-first;
-│   │                                  flowcharts, evolution, measurement, tactics
-│   ├── architecture/                  ASRs + SEI scenarios, pattern selection by
-│   │   └── references/                tradeoff, ADRs, C4 modeling, domain language,
-│   │                                  GoF patterns, interactive system maps
-│   ├── confluence/                    operate Atlassian wikis via Rovo or
-│   │                                  mcp-atlassian MCP servers
-│   ├── modernize-coding/              bring a project's code to current patterns
-│   │   └── references/                per-language adapters: go, java, rust,
-│   │                                  python, typescript
-│   ├── indexed-search/                large-tree search: probe tgrep, index/serve
-│   │                                  lifecycle, fallback ladder rg -> Grep
-│   ├── problem-details/               RFC 9457 error responses: five-member
-│   │   └── references/                application/problem+json contract, extension
-│   │                                  members, greenfield + retrofit adoption;
-│   │                                  schema, stack snippets, contract test
-│   ├── security-audit/                the candidate gate, calibrated severity,
-│   │   └── references/                needs_validation discipline; attack-class
-│   │                                  coverage and per-domain hunter rules
-│   └── unslop/                        remove AI residue from prose, code, and UI:
-│       └── references/                rule lists per surface, stable rule ids;
-│                                      preservation contract + audit mode;
-│                                      scanner script; prose (MIT) and UI (CC BY) credits
-├── agents/                           role agents: lead + worker
-│   ├── lead.md, worker.md            root links, for omp's plugin-level scan
-│   ├── common/                       md + plain.md variants of both
-│   └── codex/                        codex toml variants
-├── commands/
-│   ├── cmd-verify.md                  Test: quality-gate pipeline with fix/re-verify
-│   ├── cmd-review.md                  Test: severity-grouped review with one verdict
-│   ├── cmd-refactor.md                Build: behavior-preserving restructure, measured
-│   └── cmd-document.md                Spec: bootstrap/sync a docs/ tree
-├── evals/                            the harness regression suite (CI-gated):
-│   ├── suite.json                    one realistic task per eval, objective checks
-│   ├── trigger.json                  labelled prompt set that measures descriptions
-│   ├── run_suite.py                  suite runner: executes the checks, reports the
-│   │                                pass rate, exits non-zero when a check is red
-│   ├── run_triggers.py               trigger-rate runner (train/validation split)
-│   ├── properties.py                 scores the nine system-level properties from a run trace
-│   └── fixtures/                     two run traces that disagree on every property
-├── .claude-plugin/, .cursor-plugin/   marketplace plugin + listing metadata
-├── .minimax-plugin/                   MiniMax Code plugin metadata
-├── gemini-extension.json              extension discovery metadata
-├── standalone/
-│   ├── AGENTS.md                      the compact single-file doctrine (install --standalone)
-│   └── SOUL.md                        per-host variant for hosts whose instruction file is SOUL.md
-└── scripts/
-    ├── check.py                       the deterministic gates (CI runs these)
-    └── install.sh                     detect tools on a machine and install
+AGENTS.md                  # the entry point (doctrine)
+CLAUDE.md                  # pointer: @AGENTS.md
+skills/                    # on-demand skills, one directory each
+  plan/  verify/  review/  refactor/  skill-creation/
+scripts/install.sh         # host-aware installer (the only host-specific code)
+.claude-plugin/            # Claude Code plugin + marketplace manifests
+.cursor-plugin/            # Cursor plugin + marketplace manifests
+.minimax-plugin/           # MiniMax plugin manifest
+gemini-extension.json      # Gemini CLI extension manifest
 ```
 
-## The execution graph
+## Skills
 
-Inside a lifecycle stage, every job runs as an **execution graph**: THINK → ACT → PROVE → GROW are the role-nodes most jobs need, edges are typed and conditional, and every cycle is capped — the forbidden shape is a node re-entering itself with no new evidence. Three coupled views organize anything above trivial: the **task graph** (what: units, dependencies, DONE_WHEN), the **coordination graph** (who: the capability, team, and communication views — solo → delegation → team), and the **state graph** (how it operates: the repository as system of record). A job with more workers but no three views is a crowd — adding agents buys nothing until the views exist. Every proof chain terminates in an **anchor** — a fixed external node like a spec clause, the user's words, or captured command output that the machinery may read but never rewrite; the authority rank (user statement > spec > checks > code) is the anchor ordering. A run also needs a **controller**: it declares its terminal conditions up front, tracks the requirements still owed, and picks a failure's route from the evidence — revise, take another capability, recover, escalate to a human, or terminate — rather than defaulting to retry. The grammar lives in [graph-engineering](./skills/execution/SKILL.md), the three views worked out in [the views](./skills/execution/references/graphs.md), the controller in [loop control](./skills/execution/references/loop-control.md); entering at the least agency that closes on evidence — a prompt before a workflow, a workflow before an agent loop — is the [minimal-harness ladder](./skills/execution/references/harness-design.md).
-
-The loop as a chart — the role-nodes, the surprise back-edges, the hard cap, and GROW's knowledge edge back into the machinery:
-
-```mermaid
-flowchart TD
-    THINK["THINK: define DONE_WHEN —<br/>the anchor every downstream edge cites"] --> ACT["ACT: one bounded change,<br/>state checkpointed under .agents/"]
-    ACT --> PROVE["PROVE: run the named check yourself,<br/>mutation-probe it, exactly one verdict"]
-    PROVE -->|"mechanical mistake<br/>in the change"| ACT
-    PROVE -->|"surprise: observation contradicts<br/>the model of the problem"| THINK
-    PROVE -->|"3rd failed cycle on one issue"| STOP(["STOP: hand back — attempts,<br/>failure output, current hypothesis"])
-    PROVE -->|"VERIFIED / VERIFIED WITH CAVEATS"| EXIT(["clean exit: evidence captured,<br/>next action stated"])
-    PROVE -->|"same failure class recurred"| GROW["GROW: the failure becomes a<br/>deterministic gate, proven by evals"]
-    GROW -.->|"knowledge: the machinery<br/>the next run executes"| THINK
-```
-
-The full decision charts — the intake router, each node's internal loop, and the judge protocol — render in [quality/references/flowcharts.md](./skills/quality/references/flowcharts.md).
-
-## The doctrine in one line
-
-Pin the ask in concise English, then classify before working (trivial / fit / shape); owe named gates at decision points (`PROMPT:` `INTENT:` `TWINS:` `AUTH:` `PENDING:`); size each job on two axes — action complexity (tools, decisions, dependencies, handoffs coordinated) and context complexity (information gathered, retained, retrieved) — and keep the harness to what those two demand, adding machinery only on an observed failure and cutting it when a stronger model makes it redundant; run every job through the six-stage delivery loop, sized to the job — the compact path (one THINK, one ACT, one PROVE, no artifact chain) is the default for a small, local, reversible change, and the six-stage path is owed when the work is large, irreversible, outward-facing, cross-session, or multi-agent; shape each stage's work as an execution graph with typed edges and capped cycles; terminate every proof chain in an anchor; prove with layered evidence (L1 static / L2 runtime / L3 end-to-end), a mutation probe on high-risk work, and a hard verify bound of 3 failed cycles; pass large or hard-to-derive deliverables through Generate-Verify-Refine-Deliver — an adversarial Verifier persona re-derives the pinned constraints point-by-point, and a Verification Report (Requirement Check / Logic Audit / Final Verdict) precedes the deliverable — while every other deliverable is verified in place; grow by governed evolution — recurring failures become deterministic gates, the eval suite proves an evolution helped, and controls better models make redundant are cut.
-
-## Using it
-
-Manual consumption only:
-
-- **Manifesto** — copy `AGENTS.md` content into your assistant's instruction file at whatever location your tool reads, or point the tool at this file directly.
-- **Skills** — copy or symlink individual `skills/<name>/` directories into the skill path your runtime discovers (they carry standard Agent-Skills frontmatter: `name` + `description`). A skill added to `skills/` owes an `evals/trigger.json` entry with at least eight should-trigger and eight should-not-trigger queries; `check.py triggers` fails until it has one, because an unmeasured description is a description nobody has tested.
-- **Commands** — `commands/<name>.md` are self-contained routine-task workflows (verify / review / refactor / document); paste their arguments after invocation wherever your tool surfaces custom prompts, or load them on demand.
-- **Role agents** — [agents/common/](./agents/common/) ships two ready-made role agents for the teamwork doctrine: **lead** (decomposes a complex task into units, dispatches each to a subagent with an executable DONE check, verifies every returned unit itself, owns the merge — never implements a unit), and **worker**, which executes exactly one unit and returns files changed plus evidence. Three ways to activate them:
-
-  - **Installer (recommended)** — `./scripts/install.sh install` places the right variant in each host's agent directory automatically: hosts that accept a `name:` frontmatter key (Claude Code, Gemini CLI, Qwen, pi, omp) get [lead.md](./agents/common/lead.md) and [worker.md](./agents/common/worker.md); hosts that derive the id from the filename (opencode, kilo) get the `.plain.md` no-name variants (lead as `mode: primary`, worker as `mode: subagent`); Codex gets the TOML variants copied into `~/.codex/agents/`. Confirm with `./scripts/install.sh status` — `agents=ok` means both are in place. Hosts without an agents surface (openclaw, hermes, MiniMax) install the manifesto and skills only.
-  - **Claude Code plugin** — the marketplace metadata lists both agents, so `/plugin marketplace add bouroo/agents` then `/plugin install coder-agents@bouroo-agents` makes them dispatchable by name.
-  - **Manual** — copy or symlink [agents/common/lead.md](./agents/common/lead.md) (or its `.plain.md` variant where the host rejects a `name:` key) into the agent directory your runtime scans.
-
-  Once active, invoke the lead agent by name through your host's subagent dispatch — a Task/agent tool call, an @mention, or a spawn by name — and it routes implementation units to `worker` when present, else to the host's general-purpose agent.
-- **Marketplaces** — the repository ships plugin/extension discovery metadata at its canonical paths (`.claude-plugin/`, `.cursor-plugin/`, `.minimax-plugin/`, `gemini-extension.json`), so Agent-Skills-compatible CLIs can add it directly from GitHub (`npx skills add bouroo/agents`) and host marketplaces consume it without any generation step. omp consumes the same marketplace through its Claude Code-compatible fallback (`/marketplace add bouroo/agents`); its plugin loader takes skills from the manifest path lists and role agents from the repo-root `agents/` directory. MiniMax Code additionally accepts the repository directly as a plugin from a public GitHub repo, since its plugin root is the repository root.
-- **Local installer** — `scripts/install.sh` detects which compatible tools live on the machine and links (or copies) the setup into each one's config directory:
-
-  ```bash
-  ./scripts/install.sh detect               # what did we find?
-  ./scripts/install.sh install              # all detected tools
-  ./scripts/install.sh install --dry-run    # preview the exact actions
-  ./scripts/install.sh status               # per-tool link state
-  ./scripts/install.sh uninstall            # removes only links pointing into this repo
-  ./scripts/install.sh install --standalone # compact single-file doctrine only
-  ```
-
-
-If a previous major version installed symlinks on your machine, remove them with that version's uninstaller from git history — v4 ships nothing that writes outside this repository.
-
-## Verification
-
-```bash
-python3 scripts/check.py --all
-```
-
-| Gate | Enforces |
+| Skill | Trigger |
 | --- | --- |
-| `budget` | `AGENTS.md` stays within its line budget (the concision charter) |
-| `frontmatter` | every skill/command carries valid, colon-safe Agent-Skills metadata, the spec's required and optional keys accepted, `compatibility` length-bounded |
-| `cost` | the always-on footprint stays within its token budget — the manifesto plus the skill descriptions the host loads, and the standalone copy on its own — so per-task cost does not grow with the setup |
-| `descriptions` | every description carries an imperative trigger clause and a boundary naming what it is not for |
-| `skillvoice` | every skill description instructs the agent and names the contexts it applies to even when the domain is not named, so it fires on the ask that never says the word |
-| `layout` | every skill directory holds the required `SKILL.md` and its references stay one level deep |
-| `skillbudget` | every skill body stays within 500 lines / 5000 tokens, every bundled reference within the same ceiling — a reference is read whole when it is read — and every command within 120 lines |
-| `references` | every bundled reference is named from its skill **and** its link states the condition that loads it, so progressive disclosure actually fires |
-| `links` | every relative Markdown link resolves |
-| `agnostic` | core doctrine is free of host-binding tokens |
-| `portable` | core doctrine is free of language, framework, and stack-specific tokens, so a rule names the role and not one vendor's product |
-| `shared` | the shared-meaning rule (one term per concept, held in the project's shared vocabulary) survives on every surface that introduces the three views |
-| `goal` | the goal-object rule (a goal names its completion criteria, constraints, authorization scope, priority, and provenance) survives on the doctrine and the delivery skill |
-| `loop` | the loop-control rule (terminal conditions declared up front, the requirements still owed, and a route chosen from the evidence rather than defaulting to retry) survives on the doctrine and the execution skill |
-| `manifests` | marketplace manifests parse; version fields agree across files |
-| `privacy` | doctrine is free of real-work identifiers (engagements, spaces, titles) |
-| `comments` | the comment rule survives on both canonical surfaces (manifesto + craft) |
-| `simplicity` | the simplicity rule survives on both canonical surfaces (manifesto + craft) |
-| `dashes` | the em-dash convention survives on both canonical surfaces (manifesto + craft), and the doctrine corpus carries no en-dash (digit-to-digit ranges are exempt as typographic data) |
-| `measured` | no doctrine freezes a measurement as guidance — a token count, failure rate, or speed multiplier asserted in prose is true of one run and cannot be re-derived, so the mechanism carries the rule and the reader measures the number |
-| `catalogue` | no doctrine states a catalogue's size as a number, so a rule never freezes one server's tool count into guidance |
-| `settled` | a check that already returned its answer is recorded and read back rather than re-run, since re-deriving a known result costs a round trip and buys nothing |
-| `schema` | a connected server's tool schemas are always-on prompt, so the rule that a tool surface is scoped where it is cheapest survives where the surface is designed |
-| `toolrouting` | a read, a search, and a listing each go through the tool built for it, and the shell keeps the commands only it can run, so a file is not printed whole into the window |
-| `leadorientation` | the lead dispatches once the graph is written rather than exploring first, and the rule survives on every role surface so a trim cannot drop it from one variant alone |
-| `l1` | the owed `L1:` done-report lint-evidence line survives on both canonical surfaces (manifesto + craft) |
-| `veriloop` | the Generate-Verify-Refine-Deliver loop survives on both canonical surfaces (manifesto + craft) |
-| `memory` | the memory rule (instruction memory separate from learning memory, written down rather than conversational) survives on both canonical surfaces (manifesto + execution) |
-| `searchdiscipline` | the search-discipline rule (a miss is a miss: change the query, not the tool's flags; one concept, one canonical form; a diagnosis closes on a named check) survives on both always-loaded clauses and on the skill that owns the search engines, so a run that searches loads the mechanics |
-| `modernize` | every `modernize-coding` adapter is present, each version claim is pinned, and the anchored ones (Go, Java) match their toolchain's own local record |
-| `environment` | the execution-environment clause survives on both installed surfaces (manifesto + standalone copy) |
-| `automation` | the automation-layer clause survives on both installed surfaces and on the execution skill |
-| `state` | the runtime-state rule (proposed-validated-committed recording, evidence-tested attribution, named recovery boundary) survives on both doctrines and the execution skill |
-| `branch` | the task-branch rule survives on every surface that can reach a git repository (both doctrines, the execution skill, the lead and worker agents), so a run never edits or commits on the default branch |
-| `sizing` | the three cost-sizing rules (the compact path, the proportional confirmation stop, the sized verification loop) survive on every surface that carries them — both doctrines, the delivery skill, and the quality skill |
-| `bottleneck` | the framing the loop rests on — code stopped being the bottleneck, and the old control objectives stay while the enforcement changes — survives on every surface that carries it |
-| `stages` | the six-stage spine and the artifact each stage commits survive on both doctrines and the delivery skill |
-| `playbook` | the playbook's mechanics (the accepted artifact fires the next gate, one source of truth per artifact, advisory versus deterministic controls, autonomy stopping at the production gate) survive on every surface that carries them |
-| `evals` | the harness regression suite exists, is well-formed, and runs green through `evals/run_suite.py` |
-| `triggers` | the description-trigger set is present, labelled, split train/validation, large enough to measure a description, and covers every skill directory, so a new skill cannot ship unmeasured |
-| `properties` | the nine system-level properties are measured from a run trace by an instrument that passes an organized run and fails a degraded one, so a property that cannot fail is not a property |
-| `harnessaxes` | the two axes that size the harness — action complexity and context complexity — survive on both installed surfaces, the execution skill, and the reference that owns the derivation, so sizing is never left to taste |
-| `context` | the context rules — the attention budget, the instruction altitude, and what a compaction must preserve — survive on both installed surfaces, the execution skill, and the reference that owns them, so context quality is never left to chance |
-| `changelog` | the changelog stays a readable map of what changed rather than an archive of every release in full — the closed lines retire to one line each, with the full text reachable in git history — so the release a reader wants is not buried under the archive |
-| `thirdparty` | a symlinked skill is an untracked, documented pointer, so third-party content stays outside every gate and out of the repository |
-| `standalone` | every hard constraint in the manifesto is present in `standalone/AGENTS.md` too, so the two installed surfaces cannot drift apart |
+| `plan` | Scope is ambiguous, an action is irreversible or outward-facing, or a plan was requested. Interviews the user, writes the plan artifact, stops for approval. |
+| `verify` | Before claiming work done, or judging any completion claim. Runs checks and reads outputs; never trusts a report alone. |
+| `review` | A diff is written and someone must decide whether it merges. Read-only judgment by severity, one verdict. |
+| `refactor` | Behavior-preserving restructuring of correct-but-unclear, unsafe, or slow code. Not for new features. |
+| `skill-creation` | Creating a new skill or revising an existing one after real runs expose gaps. |
 
-CI runs all forty-six on every push and pull request. Pushing a version tag additionally runs the release workflow.
+## Install
 
+### Script (any supported host)
 
-Git tags are the version source; release notes live in [CHANGELOG.md](./CHANGELOG.md). Pushing a `v<major>.<minor>.<patch>` tag triggers the [release workflow](./.github/workflows/release.yml), which re-runs the gates on the tagged commit and publishes a GitHub Release whose body is the matching CHANGELOG section, read verbatim by `scripts/release_notes.py`. A tag carrying a prerelease suffix (`-beta.1`, `-rc.1`) is published as a **prerelease** and does not become the latest download until a stable tag is cut. Licensed Apache-2.0 ([LICENSE.md](./LICENSE.md)).
+```sh
+git clone https://github.com/bouroo/agents.git
+cd agents
+./scripts/install.sh detect     # show compatible tools found on this machine
+./scripts/install.sh install    # install into every detected tool
+```
+
+The installer symlinks `AGENTS.md` (renamed per host) and each skill directory into the host's config dir, so updates in this repo propagate to every tool. Real files are never clobbered.
+
+| Command | Effect |
+| --- | --- |
+| `detect` | List detected tools |
+| `list` | List every supported tool |
+| `install [<code>...]` | Install (default: all detected tools) |
+| `uninstall [<code>...]` | Remove installed symlinks (real files need `--force`) |
+| `status` | State of every artifact on every tool |
+
+Options: `--all` (include undetected tools), `--copy` (copy instead of symlink), `--force` (replace foreign links / refresh copies), `--dry-run`.
+
+Supported hosts: `gemini`, `codex`, `claude`, `qwen`, `opencode`, `kilo`, `openclaw`, `hermes`, `pi`, `omp`, `minimax`. Adding a harness is one line in the script's `HOSTS` table.
+
+### Plugin / extension
+
+- **Claude Code:** `/plugin marketplace add bouroo/agents`, then `/plugin install coder-agents@bouroo-agents`
+- **Gemini CLI:** `gemini extensions install https://github.com/bouroo/agents`
+- **Cursor / MiniMax:** manifests ship in `.cursor-plugin/` and `.minimax-plugin/`
+
+## License
+
+[Apache-2.0](LICENSE.md)
