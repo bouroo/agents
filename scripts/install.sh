@@ -7,9 +7,14 @@
 #
 # Per host it installs:
 #   AGENTS.md -> <instruction file>   (the entry point, renamed per host)
-#   skills/<name>/ -> skills/<name>/   (per skill; dot-directories skipped, since
-#                                       a CLI's own skills/.system/ is that
-#                                       tool's machine state, not our method)
+#   skills/ -> skills/                (whole-directory link: git pull in this
+#                                      repo updates the host, new skills
+#                                      included. A host whose skills/ holds
+#                                      foreign entries gets per-skill links
+#                                      instead so nothing is shadowed; content
+#                                      still updates on pull, new skills need
+#                                      an install re-run. Dot-directories never
+#                                      ship as skills.)
 #
 # Host table format: code|config_dir|instruction_file|skills
 #   skills is 1/0. An empty instruction_file means the host has no global
@@ -128,10 +133,11 @@ place() {
   fi
 }
 
-# skill_dirs - the skill directories this repository actually ships.
-# A dot-directory under skills/ is machine-local runtime state (a coding CLI
-# drops its own skills into skills/.system/), never doctrine: linking the whole
-# directory would install another tool's private skill set into every host.
+# skill_dirs - the skill directories this repository actually ships, used for
+# per-skill placement, migration, uninstall and status. A dot-directory under
+# skills/ is machine-local runtime state (a coding CLI drops its own skills
+# into skills/.system/), never doctrine: keep it untracked (see .gitignore),
+# since a whole-dir link exposes everything in the directory.
 skill_dirs() {
   local d
   for d in "$REPO_DIR/$SKILLS_DIR"/*/; do
@@ -141,34 +147,47 @@ skill_dirs() {
   done
 }
 
-# place_skills <skills-dir> - install each shipped skill into the host's
-# skills directory. Per-skill placement, not one directory link: the host's
-# skills directory is shared territory, and a link of the whole repository
-# skills/ tree would both publish untracked dot-directories and take over any
-# skill the user already keeps there.
+# place_skills <skills-dir> - link the whole repository skills/ directory when
+# the target is absent, a link, or a real dir holding only our own artifacts
+# (per-skill links are migrated away first). One directory link means git pull
+# updates the host with no re-run, new skills included. When the dir holds
+# foreign entries (the host's own skills, a CLI's skills/.system/ state), a
+# whole-dir link would shadow them, so fall back to per-skill placement.
 place_skills() {
-  local dest_dir="$1" src
-  if [[ -L "$dest_dir" ]]; then
-    case "$(readlink "$dest_dir")" in
-      "$REPO_DIR"/*)
-        [[ "$DRY_RUN" == "1" ]] || { rm "$dest_dir"; mkdir -p "$dest_dir"; }
-        log "  ($SKILLS_DIR/) migrated legacy dir link $dest_dir -> per-skill placement"
-        ;;
-      *)
-        log "  ($SKILLS_DIR/) SKIP: $dest_dir symlink $(readlink "$dest_dir") (not ours) (migrate manually)"
-        return 0
-        ;;
-    esac
+  local dest_dir="$1" src entry foreign
+  if [[ -d "$dest_dir" && ! -L "$dest_dir" ]]; then
+    foreign=0
+    while IFS= read -r entry; do
+      ours "$entry" || foreign=1
+    done < <(find "$dest_dir" -mindepth 1 -maxdepth 1)
+    if [[ "$foreign" == "1" ]]; then
+      log "  ($SKILLS_DIR/) $dest_dir holds foreign entries: per-skill links (a dir link would shadow them)"
+      while IFS= read -r src; do
+        place "$src" "$dest_dir/$(basename "$src")" "$SKILLS_DIR/$(basename "$src")"
+      done < <(skill_dirs)
+      return 0
+    fi
+    if [[ "$DRY_RUN" == "1" ]]; then
+      log "  ($SKILLS_DIR/) link $dest_dir -> $REPO_DIR/$SKILLS_DIR (replaces real dir)"
+      return 0
+    fi
+    while IFS= read -r entry; do
+      rm -f "$entry"
+    done < <(find "$dest_dir" -mindepth 1 -maxdepth 1)
+    rmdir "$dest_dir"
   fi
-  while IFS= read -r src; do
-    place "$src" "$dest_dir/$(basename "$src")" "$SKILLS_DIR/$(basename "$src")"
-  done < <(skill_dirs)
+  place "$REPO_DIR/$SKILLS_DIR" "$dest_dir" "$SKILLS_DIR/"
 }
 
-# remove_skills <skills-dir> - remove this repository's per-skill links, then
-# the directory itself only when nothing else (a user's own skill) remains.
+# remove_skills <skills-dir> - remove our whole-dir link, or our per-skill
+# links (fallback/legacy), then the directory itself only when nothing else
+# (a user's own skill) remains.
 remove_skills() {
   local dest_dir="$1" src
+  if [[ -L "$dest_dir" ]]; then
+    remove_one "$dest_dir" "$SKILLS_DIR/"
+    return 0
+  fi
   while IFS= read -r src; do
     remove_one "$dest_dir/$(basename "$src")" "$SKILLS_DIR/$(basename "$src")"
   done < <(skill_dirs)
@@ -240,11 +259,12 @@ for h in $(selected_hosts); do
       else s="-"; fi
       out+=" $name=$s"
     done
-    # Skills report as a set: a host whose skills dir predates per-skill
-    # placement still shows a legacy whole-directory link as ok or stale.
+    # Skills: a whole-dir link into this repo is the desired state (ok); a
+    # real dir reports how many shipped skills are linked per-skill (fallback
+    # for hosts that keep their own entries in skills/).
     sk_dest="$cdir/$SKILLS_DIR"
     if [[ -L "$sk_dest" ]]; then
-      if ours "$sk_dest"; then out+=" $SKILLS_DIR=legacy"
+      if ours "$sk_dest"; then out+=" $SKILLS_DIR=ok"
       else out+=" $SKILLS_DIR=stale"; fi
     elif [[ -d "$sk_dest" ]]; then
       sk_total=0; sk_ok=0
@@ -253,7 +273,8 @@ for h in $(selected_hosts); do
         ours "$sk_dest/$(basename "$src")" && sk_ok=$((sk_ok + 1))
       done < <(skill_dirs)
       if [[ "$sk_total" == "0" ]]; then out+=" $SKILLS_DIR=-"
-      elif [[ "$sk_ok" == "$sk_total" ]]; then out+=" $SKILLS_DIR=ok ($sk_ok/$sk_total)"
+      elif [[ "$sk_ok" == "$sk_total" ]]; then out+=" $SKILLS_DIR=per-skill ($sk_ok/$sk_total)"
+      elif [[ "$sk_ok" == "0" ]]; then out+=" $SKILLS_DIR=foreign"
       else out+=" $SKILLS_DIR=partial ($sk_ok/$sk_total)"; fi
     else
       out+=" $SKILLS_DIR=-"

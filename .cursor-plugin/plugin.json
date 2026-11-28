@@ -1,6 +1,6 @@
 {
   "name": "coder-agents",
-  "version": "9.1.0",
+  "version": "9.2.0",
   "description": "A lean shared setup for autonomous coding agents, agnostic of programming languages, agent frameworks, and host tools: one entry point (AGENTS.md) carrying the working loop, four decision-point gates, and six on-demand skills (plan, verify, review, refactor, skill-creation, swe).",
   "author": {
     "name": "bouroo"
