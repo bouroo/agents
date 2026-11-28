@@ -61,9 +61,10 @@ If the host harness reads a different instruction filename, this file stays auth
 - Teamwork core: one lead draws the unit graph and never implements alongside workers; files have exclusive ownership, so two agents never edit one file; each brief is self-contained — goal, context, owned files, constraints, done check, evidence to return; and a worker's report is testimony, not proof, so re-run its check.
 - Bound the fan-out: at most three failed cycles per unit, at most one re-split of a failed unit, and never spawn more than you can verify.
 
-## §5 This file — project memory discipline
+## §5 This file — memory discipline
 
-- Only write here what the agent cannot find by reading the repo, or spends time rediscovering every session; test both: could it find this, and would it look?
+- This file is user-level: only cross-project rules go here; project-specific facts go in the project's instruction file.
+- Only write here what the agent cannot find by reading a repo, or spends time rediscovering every session; test both: could it find this, and would it look?
 - Temporary instructions go in the prompt; long-lived rules go here.
 - Keep it short, because every line loads into every task.
 - Scope a rule to the area it governs where the harness supports scoped rules.

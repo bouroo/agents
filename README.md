@@ -4,7 +4,7 @@ A lean shared setup for autonomous coding agents — agnostic of programming lan
 
 ## How it works
 
-- **One source of truth.** `AGENTS.md` holds the doctrine: intake, the work loop, checks, parallelism, project-memory discipline, sessions, unattended runs. Host-specific files (e.g. `CLAUDE.md`) just point at it.
+- **One source of truth.** `AGENTS.md` holds the doctrine: intake, the work loop, checks, parallelism, memory discipline, sessions, unattended runs. Host-specific files (e.g. `CLAUDE.md`) just point at it.
 - **Four forced lines at decision points.** `ASK:` before the first edit, `INTENT:` before a behavior-changing edit, `AUTH:` before any outward/irreversible effect, `OWED:` closing every report.
 - **Skills load on demand.** Names and triggers live in the entry point; bodies load only when the trigger holds, so procedures stay out of the always-loaded context.
 - **Scope precedence.** Organization → project → personal: the closest instruction file wins on conflict.
