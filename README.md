@@ -1,6 +1,6 @@
 # coder-agents
 
-A lean shared setup for autonomous coding agents — agnostic of programming languages, agent frameworks, and host tools. One entry point ([`AGENTS.md`](AGENTS.md)) carries the working loop and four decision-point gates; five skills load on demand.
+A lean shared setup for autonomous coding agents — agnostic of programming languages, agent frameworks, and host tools. One entry point ([`AGENTS.md`](AGENTS.md)) carries the working loop and four decision-point gates; six skills load on demand.
 
 ## How it works
 
@@ -15,7 +15,7 @@ A lean shared setup for autonomous coding agents — agnostic of programming lan
 AGENTS.md                  # the entry point (doctrine)
 CLAUDE.md                  # pointer: @AGENTS.md
 skills/                    # on-demand skills, one directory each
-  plan/  verify/  review/  refactor/  skill-creation/
+  plan/  verify/  review/  refactor/  skill-creation/  swe/
 scripts/install.sh         # host-aware installer (the only host-specific code)
 .claude-plugin/            # Claude Code plugin + marketplace manifests
 .cursor-plugin/            # Cursor plugin + marketplace manifests
@@ -32,6 +32,7 @@ gemini-extension.json      # Gemini CLI extension manifest
 | `review` | A diff is written and someone must decide whether it merges. Read-only judgment by severity, one verdict. |
 | `refactor` | Behavior-preserving restructuring of correct-but-unclear, unsafe, or slow code. Not for new features. |
 | `skill-creation` | Creating a new skill or revising an existing one after real runs expose gaps. |
+| `swe` | Craft best practices for writing/reviewing/refactoring code in any language: clarity, errors, security, resources, concurrency, tests, idiom currency, and unslopping AI-generated code/text/UI. |
 
 ## Install
 
