@@ -1,17 +1,3 @@
-# The re-include must reopen the directory first: a user-level ignore of
-# `.agents/` (this machine has one) otherwise wins, and a directory ignore
-# cannot be undone for files below it.
-!.agents/
-# Runtime ledger must live in the target project, not this config repo.
-# Ignore all of .agents/ EXCEPT .agents/plans/, which holds committed
-# migration plans and retros for traceability.
-.agents/*
-!.agents/plans/
 .DS_Store
 __pycache__/
 .system/
-# Trigram-index search state (indexed-search skill) — tool-managed, never tracked.
-.tgrep/
-# Third-party skill pointers are local setup, never tracked: the repo stores a
-# gitlink plus a URL, never the content. See vendor/README.md.
-skills/drawio-hla-architect
