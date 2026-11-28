@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "name": "coder-agents",
   "displayName": "Coder Agents",
-  "version": "9.2.0",
+  "version": "9.2.1",
   "description": "A lean shared setup for autonomous coding agents, agnostic of programming languages, agent frameworks, and host tools: one entry point (AGENTS.md) carrying the working loop, four decision-point gates, and six on-demand skills (plan, verify, review, refactor, skill-creation, swe).",
   "author": "bouroo",
   "exampleQueries": [
